@@ -1,0 +1,351 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Lit Memo: Statement Forecast — Research Lab</title>
+  <meta name="description" content="Literature map for non-embedding financial-statement / fundamentals forecasting, FR Y-9C BHC panel application." />
+  <link rel="stylesheet" href="../../assets/site.css" />
+</head>
+<body>
+
+<nav class="site-nav" aria-label="Site navigation">
+  <div class="site-nav__inner">
+    <a class="site-nav__logo" href="../../index.html">Research Lab</a>
+    <ul class="site-nav__links">
+      <li><a href="../../index.html">Home</a></li>
+      <li><a href="index.html" class="active">Statement Forecast</a></li>
+      <li><a href="../y9c-panel/index.html">Y-9C Panel</a></li>
+      <li><a href="../dfm-sinkhorn/index.html">DFM × Sinkhorn</a></li>
+    </ul>
+  </div>
+</nav>
+
+<header class="page-header">
+  <div class="page-header__inner">
+    <div class="page-header__eyebrow">Track 1 · Literature Memo</div>
+    <h1>Non-embedding Financial-Statement Forecasting: Literature Map</h1>
+    <p class="page-header__sub">
+      Application panel: FR Y-9C (BHC consolidated) + Yahoo smoke.
+      Date: 2026-09-23. Research memo only — not investment advice. Separate from Portfolios.
+    </p>
+  </div>
+</header>
+
+<main class="page-content page-content--narrow">
+
+  <nav class="breadcrumb" aria-label="Breadcrumb">
+    <a href="../../index.html">Home</a>
+    <span aria-hidden="true">›</span>
+    <a href="index.html">Statement Forecast</a>
+    <span aria-hidden="true">›</span>
+    Lit Memo
+  </nav>
+
+  <div class="callout">
+    <strong>Do not claim:</strong> Forma OOS numbers transfer to Y-9C.
+    All rankings and "what we'd try" synthesized via NVIDIA NIM glm-5.3-flash;
+    paper anchors from manual WebSearch/WebFetch/arXiv HTML.
+  </div>
+
+  <div class="prose">
+
+    <h2>1. Scope</h2>
+
+    <p>
+      <strong>In scope:</strong> Joint (or multi-item) forecasting of complete-ish statements —
+      income, balance sheet, CF-like flows — at horizons ~1–20 quarters, on a panel of many
+      firms/BHCs, with preference for methods that can respect accounting identities / coherence.
+    </p>
+    <p>
+      <strong>Primary application panel:</strong> FR Y-9C bank holding company consolidated reports
+      via FFIEC NIC BHCF bulk zips (preferred data path).<br />
+      <strong>Smoke path:</strong> Yahoo Finance quarterly revenue/expense for BHC tickers in a
+      reporting hierarchy.
+    </p>
+
+    <p><strong>Method families included:</strong></p>
+    <ol>
+      <li>Classical / statistical: VAR/VECM, DFM/factor, state-space/Kalman, Bayesian hierarchical / empirical-Bayes dynamic panels, MIDAS / mixed-frequency, nowcasting panels.</li>
+      <li>Structured ML (non-LLM backbone): GBM/RF, elastic-net / sg-LASSO, GPs, quantile / distributional regression, multi-task / multi-output, small multitask nets (not foundation FT).</li>
+      <li>Probabilistic / coherent: multivariate densities, quantile stacks, forecast reconciliation (MinT / general linear constraints).</li>
+      <li>LLM-as-feature-guide only (prompted sentiment as exogenous) — not FT embeddings.</li>
+    </ol>
+
+    <p>
+      <strong>Excluded:</strong> Large embedding / transformer foundation models trained or heavily
+      fine-tuned on statements (Forma-class) — contrast only. Pure price/return alpha ML.
+    </p>
+
+    <hr />
+
+    <h2>2. Cluster map</h2>
+
+    <h3>Cluster A — Y-9C / BHC Panel Anchors</h3>
+    <table>
+      <thead>
+        <tr><th>Paper</th><th>Claim</th><th>Fit</th></tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><strong>Liu, Moon, Schorfheide</strong> — <em>Forecasting with Dynamic Panel Data Models</em>, NBER w25102 (2018)</td>
+          <td>Empirical-Bayes / Tweedie posterior means for heterogeneous dynamic-panel coefficients; forecasts BHC PPNR from Y-9C under actual vs severely adverse macros.</td>
+          <td><strong>#1 NIM pick.</strong> Direct Y-9C PPNR application; hierarchical shrinkage for unbalanced BHC panel; posterior predictive = probabilistic.</td>
+        </tr>
+        <tr>
+          <td><strong>Mitra et al.</strong> — <em>Interest rate uncertainty and the predictability of bank revenues</em>, Journal of Forecasting</td>
+          <td>Extends Liu-style Bayes panel PPNR with rate-uncertainty; NII vs noninterest split.</td>
+          <td>Stress-test relevant exogenous for Y-9C revenue blocks.</td>
+        </tr>
+        <tr>
+          <td>Medeiros-style firm VAR/VECM statement systems</td>
+          <td>Cointegrated statement systems; impulse responses.</td>
+          <td>Single-firm / small-N intuition for identities; not primary for large BHC panel.</td>
+        </tr>
+      </tbody>
+    </table>
+
+    <h3>Cluster B — Full / Multi-item Statement ML</h3>
+    <table>
+      <thead>
+        <tr><th>Paper</th><th>Claim</th><th>Fit</th></tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><strong>Geertsema, Lu, Ma</strong> — <em>Projecting Financial Statements with AI</em> (SSRN 5039433)</td>
+          <td>Multi-target chained GBM for interdependent IS+BS items; articulation via chain order.</td>
+          <td><strong>#2 NIM pick.</strong> Closest non-transformer full-statement baseline.</td>
+        </tr>
+        <tr>
+          <td><strong>Alberg &amp; Lipton</strong> (2017/18); <strong>Chauhan, Alberg, Lipton</strong> (ICML 2020)</td>
+          <td>Joint multi-fundamental forecasts with uncertainty via multitask FFNN/LSTM.</td>
+          <td><strong>#6 NIM pick.</strong> Classical multitask net benchmark (not foundation FT).</td>
+        </tr>
+        <tr>
+          <td><strong>Divo et al.</strong> — <em>Forecasting Company Fundamentals</em>, TMLR 2025</td>
+          <td>Benchmark of ~24 models on selected fundamentals; open code (<a href="https://github.com/felixdivo/Forecasting-Company-Fundamentals">GitHub</a>).</td>
+          <td>Protocol / baseline zoo for Yahoo smoke before Y-9C scale.</td>
+        </tr>
+        <tr>
+          <td>Chen, Cho, Dou, Lev (JAR 2022) — RF/GBM on detailed financials</td>
+          <td>Earnings-change direction from rich XBRL/financial features.</td>
+          <td>Item-level tree baselines on Y-9C MDRMs.</td>
+        </tr>
+      </tbody>
+    </table>
+
+    <h3>Cluster C — Cross-section Earnings Classics</h3>
+    <table>
+      <thead>
+        <tr><th>Paper</th><th>Claim</th><th>Fit</th></tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><strong>Hou, van Dijk, Zhang</strong> (JAE 2012)</td>
+          <td>Cross-sectional earnings model for ICC; coverage vs analysts.</td>
+          <td>Foundational earnings forecast anchor; map to BHCK income lines.</td>
+        </tr>
+        <tr>
+          <td><strong>Li &amp; Mohanram</strong> (RAST 2014)</td>
+          <td>EP/RI cross-section vs HVZ for ICC.</td>
+          <td>Parsimonious cross-section competitors.</td>
+        </tr>
+        <tr>
+          <td>Fairfield, Sweeney, Yohn / Nissim–Penman</td>
+          <td>Disaggregation &amp; ratio mean-reversion.</td>
+          <td>Feature design for Y-9C ratios.</td>
+        </tr>
+        <tr>
+          <td>Fama–French profitability forecasting (JB 2000; JF 2006)</td>
+          <td>Cross-section profitability predictability.</td>
+          <td>Mean-reversion baselines.</td>
+        </tr>
+      </tbody>
+    </table>
+
+    <h3>Cluster D — Mixed-frequency / Nowcasting</h3>
+    <table>
+      <thead>
+        <tr><th>Paper</th><th>Claim</th><th>Fit</th></tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><strong>Ball &amp; Ghysels</strong> (Management Science 2018) — MIDAS earnings</td>
+          <td>MIDAS earnings; combine with analysts; daily→quarterly.</td>
+          <td><strong>#5 NIM pick.</strong> Yahoo daily → quarterly Y-9C smoke.</td>
+        </tr>
+        <tr>
+          <td><strong>Babii, Ball, Ghysels, Striaukas</strong> — Panel MIDAS sg-LASSO (arXiv 2307.02673)</td>
+          <td>Sparse-group LASSO MIDAS panel nowcasts P/E &amp; earnings with news+macro.</td>
+          <td><strong>#4 NIM pick.</strong> Structured high-dim mixed-freq for many BHCs.</td>
+        </tr>
+      </tbody>
+    </table>
+
+    <h3>Cluster E — Coherence / Reconciliation</h3>
+    <table>
+      <thead>
+        <tr><th>Paper</th><th>Claim</th><th>Fit</th></tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><strong>Wickramasuriya, Athanasopoulos, Hyndman</strong> — MinT (JASA 2019)</td>
+          <td>Trace-minimization reconciliation for hierarchical/grouped series.</td>
+          <td>Post-process any base Y-9C forecasts to satisfy additivity. FoReco / hts R packages.</td>
+        </tr>
+        <tr>
+          <td><strong>Girolimetto &amp; Di Fonzo</strong> (Stat Methods Appl 2024; arXiv 2305.05330)</td>
+          <td>Point &amp; probabilistic reconciliation for general linear constraints.</td>
+          <td>Accounting identities as signed linear constraints — native for Y-9C hierarchies.</td>
+        </tr>
+        <tr>
+          <td>Forma (Johnson et al., arXiv 2608.11327) — variance-weighted identity projection</td>
+          <td>Reconciliation cost on statement forecasts (<em>contrast</em>).</td>
+          <td>Proof that variance-weighted projection matters; do not adopt Forma FT path.</td>
+        </tr>
+      </tbody>
+    </table>
+
+    <h3>Cluster F — Distributional / Quantile</h3>
+    <table>
+      <thead>
+        <tr><th>Paper</th><th>Claim</th><th>Fit</th></tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><strong>Konstantinidi &amp; Pope</strong> (CAR 2016)</td>
+          <td>Quantile regressions → earnings distribution / risk metrics.</td>
+          <td>Tail risk on Y-9C PPNR / NI; feed CRPS evaluation.</td>
+        </tr>
+      </tbody>
+    </table>
+
+    <h3>Cluster H — Parked / Deprioritized</h3>
+    <table>
+      <thead>
+        <tr><th>Item</th><th>Why parked</th></tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>Forma tuple-set transformer + ProForma-20Q</td>
+          <td>Specialist FT on Compustat statements; gated weights; not Y-9C MDRM schema; non-embedding path requested first.</td>
+        </tr>
+        <tr>
+          <td>Chronos / TimesFM / frontier LLM zero-shot statement prompts</td>
+          <td>Weak change-space R² on Forma's own table; expensive; not identity-native.</td>
+        </tr>
+        <tr>
+          <td>Large FT embedding models without call-report FT track record</td>
+          <td>Explicitly out of scope until FT workflow proven.</td>
+        </tr>
+      </tbody>
+    </table>
+
+    <hr />
+
+    <h2>3. Recommended stack (Yahoo smoke → Y-9C bulk)</h2>
+
+    <ol>
+      <li><strong>Liu–Moon–Schorfheide EB dynamic panel (PPNR)</strong> — Hierarchical empirical-Bayes shrinkage across BHCs; needs BHCF quarterly PPNR + macros.</li>
+      <li><strong>Geertsema–Lu–Ma chained GBM</strong> — Multi-target chained boosting across IS+BS; needs full BHCF item set per BHC-quarter.</li>
+      <li><strong>MinT + Girolimetto–Di Fonzo reconciliation</strong> — Probabilistic post-layer enforcing Y-9C additivity; needs hierarchy metadata from BHCF.</li>
+      <li><strong>Babii et al. sg-LASSO MIDAS</strong> — Sparse mixed-frequency map from Yahoo daily → quarterly Y-9C; smoke + bulk dual use.</li>
+      <li><strong>Ball–Ghysels MIDAS</strong> — Classic daily→quarterly baseline for Yahoo smoke before scaling.</li>
+      <li><strong>Alberg–Lipton multitask FFNN</strong> — Joint multi-line neural benchmark (classical multitask, not foundation FT).</li>
+      <li><em>(Honorable)</em> Hou–van Dijk–Zhang / Li–Mohanram cross-section earnings — fast earnings-only baselines on BHCK income.</li>
+      <li><em>(Honorable)</em> Konstantinidi–Pope quantiles — distributional layer / CRPS targets on PPNR &amp; NI.</li>
+    </ol>
+
+    <p>
+      <strong>Preferred data path:</strong>
+      FFIEC NIC <code>ReturnBHCFZipFiles?zipfilename=BHCF{YYYYMMDD}.zip</code> → <code>y9c/</code> scripts.
+      Yahoo under <code>yahoo_bank_quarterly/</code> is smoke only.
+    </p>
+
+    <hr />
+
+    <h2>4. Not recommended now</h2>
+    <ul>
+      <li>Forma-class / large statement transformers and embedding FT without a validated call-report FT track record.</li>
+      <li>Zero-shot frontier LLMs as primary statement engines (cost, non-determinism, weak change-space skill).</li>
+      <li>Equal-weighted identity projection without predictive variances (Forma Table 3 warning).</li>
+      <li>Claiming Compustat/Forma OOS metrics transfer to Y-9C.</li>
+    </ul>
+
+    <hr />
+
+    <h2>5. Open questions / next experiments</h2>
+
+    <p><strong>E1 — Yahoo smoke (Ball–Ghysels + sg-LASSO MIDAS).</strong>
+    Forecast quarterly PPNR for ~20 large BHCs from Yahoo daily (yields, VIX, spreads);
+    score vs BHCF actuals with rolling-origin RMSE/CRPS.</p>
+
+    <p><strong>E2 — Bulk EB panel (Liu–Moon–Schorfheide).</strong>
+    EB dynamic panel on all BHCF filers' PPNR; coverage &amp; small-BHC shrinkage vs pooled OLS.</p>
+
+    <p><strong>E3 — Articulation + reconciliation (chained GBM → MinT).</strong>
+    Fit chained GBM on IS+BS MDRMs; apply MinT/Girolimetto–Di Fonzo; measure identity-violation
+    reduction pre/post.</p>
+
+    <p><strong>Additional:</strong> Map ProForma-style identity list → Y-9C MDRM linear constraints.
+    Point-in-time / revision awareness for Y-9C restatements. Scenario conditioning (unemployment,
+    FF rate, spreads) à la Liu stress path — without Forma pinned-future FT.</p>
+
+    <hr />
+
+    <h2>6. Citation anchors</h2>
+    <ol>
+      <li>Liu, Moon, Schorfheide — NBER w25102 / dynamic panel EB forecasting (Y-9C PPNR app).</li>
+      <li>Mitra et al. — <em>J. Forecasting</em>, bank revenue + rate uncertainty.</li>
+      <li>Geertsema, Lu, Ma — SSRN 5039433, chained GBM statements.</li>
+      <li>Hou, van Dijk, Zhang — <em>J. Accounting &amp; Economics</em> 2012.</li>
+      <li>Li &amp; Mohanram — <em>Review of Accounting Studies</em> 2014.</li>
+      <li>Ball &amp; Ghysels — <em>Management Science</em> 2018.</li>
+      <li>Babii, Ball, Ghysels, Striaukas — arXiv 2307.02673.</li>
+      <li>Wickramasuriya, Athanasopoulos, Hyndman — MinT, <em>JASA</em> 2019.</li>
+      <li>Girolimetto &amp; Di Fonzo — <em>Statistical Methods &amp; Applications</em> 2024.</li>
+      <li>Konstantinidi &amp; Pope — <em>Contemporary Accounting Research</em> 2016.</li>
+      <li>Alberg &amp; Lipton; Chauhan et al. ICML 2020.</li>
+      <li>Divo et al. — TMLR 2025.</li>
+      <li>Chen, Cho, Dou, Lev — <em>JAR</em> 2022.</li>
+      <li>Johnson et al. — Forma / ProForma-20Q, arXiv 2608.11327 (<em>contrast only</em>).</li>
+    </ol>
+
+    <hr />
+
+    <h2>7. Operational pointers</h2>
+    <ul>
+      <li>Y-9C download/build: <code>python scripts/download_y9c.py</code>; <code>python scripts/build_y9c_panel.py</code></li>
+      <li>Yahoo bank quarterly: <code>python scripts/yahoo_bank_quarterly.py</code></li>
+      <li>Processed: <code>y9c/processed/y9c_panel_long.parquet</code>, <code>yahoo_bank_quarterly/processed/yahoo_bank_quarterly_long.parquet</code></li>
+    </ul>
+
+  </div><!-- /.prose -->
+
+  <div style="margin-top: 2rem; padding-top: 1rem; border-top: 1px solid var(--rule); font-size: .85rem; color: var(--text-muted);">
+    Generated 2026-09-23 ET. See also:
+    <a href="teaching.html">Teaching note</a> ·
+    <a href="../y9c-panel/index.html">Y-9C Panel notes</a> ·
+    <a href="index.html">Track overview</a>
+  </div>
+
+</main>
+
+<footer class="site-footer">
+  <div class="site-footer__inner">
+    <p class="site-footer__disclaimer">
+      <strong>Independent research lab</strong> ·
+      Not affiliated with any employer or financial institution ·
+      Not investment advice.
+    </p>
+    <div class="site-footer__links">
+      <a href="../../index.html">Home</a>
+      <a href="index.html">Statement Forecast</a>
+      <a href="teaching.html">Teaching note</a>
+      <a href="https://github.com/jgridifier/research-lab">GitHub</a>
+    </div>
+  </div>
+</footer>
+
+</body>
+</html>

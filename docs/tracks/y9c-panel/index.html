@@ -1,0 +1,188 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Y-9C / Yahoo Bank Panel — Research Lab</title>
+  <meta name="description" content="Research data path for bank statement forecasting: FFIEC NIC FR Y-9C bulk downloads and Yahoo Finance quarterly smoke." />
+  <link rel="stylesheet" href="../../assets/site.css" />
+</head>
+<body>
+
+<nav class="site-nav" aria-label="Site navigation">
+  <div class="site-nav__inner">
+    <a class="site-nav__logo" href="../../index.html">Research Lab</a>
+    <ul class="site-nav__links">
+      <li><a href="../../index.html">Home</a></li>
+      <li><a href="../statement-forecast/index.html">Statement Forecast</a></li>
+      <li><a href="index.html" class="active">Y-9C Panel</a></li>
+      <li><a href="../dfm-sinkhorn/index.html">DFM × Sinkhorn</a></li>
+    </ul>
+  </div>
+</nav>
+
+<header class="page-header">
+  <div class="page-header__inner">
+    <div class="page-header__eyebrow">Track 2</div>
+    <h1>Y-9C + Yahoo Bank Quarterly Panels</h1>
+    <p class="page-header__sub">
+      Maintainable research data path for statement-forecasting: FFIEC NIC FR Y-9C bulk downloads
+      and Yahoo Finance quarterly smoke. Not Portfolios; not a paper-faithful Forma reproduction.
+    </p>
+  </div>
+</header>
+
+<main class="page-content page-content--narrow">
+
+  <nav class="breadcrumb" aria-label="Breadcrumb">
+    <a href="../../index.html">Home</a>
+    <span aria-hidden="true">›</span>
+    Y-9C Panel
+  </nav>
+
+  <div class="callout">
+    Research scripts only; not investment advice.
+    Prefer re-running scripts over hand-editing parquet.
+    Idempotent: re-download skips cached ZIPs; Yahoo rewrites processed outputs.
+  </div>
+
+  <div class="prose">
+
+    <h2>Repository layout</h2>
+
+    <pre><code>forma_adhoc/
+  scripts/                      # convenience wrappers
+    download_y9c.py
+    build_y9c_panel.py
+    yahoo_bank_quarterly.py
+  y9c/
+    core_items.yaml             # core MDRM → names (+ extension hooks)
+    raw/                        # cached BHCF*.zip
+    processed/                  # long/wide parquet + coverage
+    scripts/
+      download_y9c.py
+      build_y9c_panel.py
+  yahoo_bank_quarterly/
+    YAHOO_VS_Y9C.md
+    tickers/seed_us_banks.txt
+    raw/                        # per-ticker CSV cache
+    processed/                  # long parquet + coverage_by_ticker.csv
+    scripts/yahoo_bank_quarterly.py
+  README_Y9C_YAHOO_PANEL.md</code></pre>
+
+    <h2>1. FR Y-9C (NIC bulk)</h2>
+
+    <p>
+      <strong>Official source:</strong>
+      <a href="https://www.ffiec.gov/npw/FinancialReport/FinancialDataDownload">NIC Financial Data Download</a>
+    </p>
+
+    <p><strong>Scripted ZIP URL pattern (no auth):</strong></p>
+    <pre><code>https://www.ffiec.gov/npw/FinancialReport/ReturnBHCFZipFiles?zipfilename=BHCF{YYYYMMDD}.zip</code></pre>
+    <p>
+      Example: <code>BHCF20241231.zip</code> → one <code>^</code>-delimited
+      <code>BHCF20241231.txt</code> (latin-1).
+      Chicago Fed historical page still lists older quarters but redirects current window to NIC.
+      This pipeline uses NIC only.
+    </p>
+
+    <h3>Refresh (default: last 12 quarters)</h3>
+    <pre><code>cd /workspace/research/forma_adhoc
+source .venv/bin/activate
+
+python scripts/download_y9c.py --n-quarters 12
+python scripts/build_y9c_panel.py --require-assets --write-csv</code></pre>
+
+    <p>Expand history:</p>
+    <pre><code>python scripts/download_y9c.py --all-since 2018
+python scripts/build_y9c_panel.py --require-assets</code></pre>
+
+    <p><strong>Outputs</strong> under <code>y9c/processed/</code>:</p>
+    <ul>
+      <li><code>y9c_panel_long.parquet</code> / <code>.csv</code> — <code>rssd_id</code>, <code>report_date</code>, <code>item_code</code>, <code>item_name</code>, <code>value</code>, …</li>
+      <li><code>y9c_panel_wide_core.parquet</code> — pivoted core items</li>
+      <li><code>coverage_summary.csv</code></li>
+    </ul>
+
+    <p>
+      Core P&amp;L/BS mapping: <code>y9c/core_items.yaml</code>
+      (assets, equity, NII, noninterest, provisions, NI, capital…).
+      Add codes with <code>--extra-item-codes BHCK....</code> or by editing the YAML.
+    </p>
+
+    <h3>Manual fallback</h3>
+    <p>If download is blocked/captcha/HTML:</p>
+    <ol>
+      <li>Open the NIC page, pick year/quarter, download <code>BHCF*.zip</code></li>
+      <li>Drop into <code>y9c/raw/</code></li>
+      <li>Run <code>build_y9c_panel.py</code> (parser does not need the downloader)</li>
+    </ol>
+
+    <h2>2. Yahoo bank quarterly</h2>
+
+    <pre><code>cd /workspace/research/forma_adhoc
+source .venv/bin/activate
+
+python scripts/yahoo_bank_quarterly.py --write-csv
+# or custom list:
+python scripts/yahoo_bank_quarterly.py --tickers JPM,BAC,WFC --write-csv</code></pre>
+
+    <p><strong>Outputs</strong> under <code>yahoo_bank_quarterly/processed/</code>:</p>
+    <ul>
+      <li><code>yahoo_bank_quarterly_long.parquet</code> — <code>ticker</code>, <code>period_end</code>, <code>statement</code>, <code>line</code>, <code>line_raw</code>, <code>value</code></li>
+      <li><code>coverage_by_ticker.csv</code></li>
+    </ul>
+
+    <p>Seed tickers: <code>yahoo_bank_quarterly/tickers/seed_us_banks.txt</code>.</p>
+
+    <p>
+      Alignment limits (YTD vs quarterly, labels ≠ MDRM):
+      see <code>yahoo_bank_quarterly/YAHOO_VS_Y9C.md</code>.
+    </p>
+
+    <h2>Known quirks</h2>
+    <ul>
+      <li>
+        Yahoo ticker <strong>BK</strong> often returns empty quarterly statements via yfinance;
+        seed list uses <strong>BNY</strong> (Bank of New York Mellon).
+      </li>
+      <li>
+        Y-9C HI items are typically <strong>YTD</strong>; Yahoo quarterly IS lines are usually
+        <strong>quarterly</strong> — see <code>YAHOO_VS_Y9C.md</code>.
+      </li>
+      <li>NIC BHCF values are generally in <strong>thousands of USD</strong>.</li>
+    </ul>
+
+    <h2>Environment</h2>
+    <pre><code>source /workspace/research/forma_adhoc/.venv/bin/activate
+# already has: pandas pyarrow requests yfinance pyyaml tqdm</code></pre>
+
+    <h2>Related tracks</h2>
+    <ul>
+      <li><a href="../statement-forecast/index.html">Statement Forecast</a> — methods that use this panel.</li>
+      <li><a href="../statement-forecast/teaching.html">Teaching note</a> — how to build on the panel.</li>
+      <li><a href="../statement-forecast/lit-memo.html">Lit memo</a> — literature context for Y-9C forecasting.</li>
+    </ul>
+
+  </div><!-- /.prose -->
+
+</main>
+
+<footer class="site-footer">
+  <div class="site-footer__inner">
+    <p class="site-footer__disclaimer">
+      <strong>Independent research lab</strong> ·
+      Not affiliated with any employer or financial institution ·
+      Not investment advice.
+    </p>
+    <div class="site-footer__links">
+      <a href="../../index.html">Home</a>
+      <a href="../statement-forecast/index.html">Statement Forecast</a>
+      <a href="index.html">Y-9C Panel</a>
+      <a href="https://github.com/jgridifier/research-lab">GitHub</a>
+    </div>
+  </div>
+</footer>
+
+</body>
+</html>

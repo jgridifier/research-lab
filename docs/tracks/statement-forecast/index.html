@@ -1,0 +1,135 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Statement Forecast — Research Lab</title>
+  <meta name="description" content="Non-embedding financial statement forecasting: FR Y-9C BHC panel, empirical-Bayes panels, chained GBM, MIDAS, MinT reconciliation." />
+  <link rel="stylesheet" href="../../assets/site.css" />
+</head>
+<body>
+
+<nav class="site-nav" aria-label="Site navigation">
+  <div class="site-nav__inner">
+    <a class="site-nav__logo" href="../../index.html">Research Lab</a>
+    <ul class="site-nav__links">
+      <li><a href="../../index.html">Home</a></li>
+      <li><a href="index.html" class="active">Statement Forecast</a></li>
+      <li><a href="../y9c-panel/index.html">Y-9C Panel</a></li>
+      <li><a href="../dfm-sinkhorn/index.html">DFM × Sinkhorn</a></li>
+    </ul>
+  </div>
+</nav>
+
+<header class="page-header">
+  <div class="page-header__inner">
+    <div class="page-header__eyebrow">Track 1</div>
+    <h1>Financial Statement Forecasting</h1>
+    <p class="page-header__sub">
+      Non-embedding methods for joint multi-item forecasting of bank holding company
+      statements on the FR Y-9C panel. Empirical-Bayes dynamic panels, chained GBM,
+      MIDAS mixed-frequency, and MinT reconciliation.
+    </p>
+  </div>
+</header>
+
+<main class="page-content">
+
+  <nav class="breadcrumb" aria-label="Breadcrumb">
+    <a href="../../index.html">Home</a>
+    <span aria-hidden="true">›</span>
+    Statement Forecast
+  </nav>
+
+  <div class="callout">
+    <strong>Application panel:</strong> FR Y-9C BHC consolidated reports (FFIEC NIC BHCF bulk
+    downloads). Yahoo Finance quarterly data as cheap smoke. Research only — not a Portfolios
+    handoff; not investment advice.
+  </div>
+
+  <p class="section-heading">Track Resources</p>
+
+  <ul class="resource-list">
+    <li>
+      <a href="teaching.html">
+        <span class="resource-list__type">Teaching</span>
+        Non-embedding forecasting of financial statements — method families, intuition, and recommended stack
+      </a>
+    </li>
+    <li>
+      <a href="lit-memo.html">
+        <span class="resource-list__type">Lit Memo</span>
+        Literature map: non-embedding financial-statement / fundamentals forecasting (Y-9C focus)
+      </a>
+    </li>
+    <li>
+      <a href="../y9c-panel/index.html">
+        <span class="resource-list__type">Data</span>
+        Y-9C + Yahoo bank quarterly panel — data assembly and scripts
+      </a>
+    </li>
+  </ul>
+
+  <p class="section-heading">Overview</p>
+
+  <div class="prose" style="max-width: var(--max-w-narrow);">
+    <p>
+      Valuation, credit, and stress testing need <em>joint</em> paths for many statement lines
+      over multi-quarter horizons — not only next-quarter EPS. This track covers transparent,
+      testable, non-embedding methods that work on the FR Y-9C panel without gated fine-tuned
+      transformer weights.
+    </p>
+
+    <h3>Core method families</h3>
+    <ul>
+      <li>
+        <strong>Empirical-Bayes dynamic panels</strong> — Liu–Moon–Schorfheide Tweedie
+        posterior means for heterogeneous BHC coefficients; probabilistic PPNR forecasts.
+      </li>
+      <li>
+        <strong>Chained multi-output GBM</strong> — Geertsema–Lu–Ma ordering of statement
+        lines so upstream predictions become downstream features; soft identity approximation.
+      </li>
+      <li>
+        <strong>MIDAS / sg-LASSO MIDAS</strong> — Ball–Ghysels and Babii et al. for
+        connecting Yahoo daily smoke to quarterly Y-9C targets.
+      </li>
+      <li>
+        <strong>Forecast reconciliation (MinT)</strong> — Wickramasuriya et al. / Girolimetto–Di Fonzo
+        projection onto the accounting-identity constraint set.
+      </li>
+      <li>
+        <strong>Multitask FFNN</strong> — Alberg–Lipton small networks sharing strength across MDRMs.
+      </li>
+    </ul>
+
+    <h3>Primary references</h3>
+    <ul>
+      <li>Liu, Moon &amp; Schorfheide — Forecasting with dynamic panel data models (NBER w25102)</li>
+      <li>Geertsema, Lu &amp; Ma — Projecting financial statements with AI (SSRN 5039433)</li>
+      <li>Wickramasuriya, Athanasopoulos &amp; Hyndman (2019) JASA — MinT reconciliation</li>
+      <li>Ball &amp; Ghysels (2018) Management Science — automated MIDAS earnings</li>
+      <li>Babii, Ball, Ghysels &amp; Striaukas — Panel MIDAS sg-LASSO (arXiv 2307.02673)</li>
+    </ul>
+  </div>
+
+</main>
+
+<footer class="site-footer">
+  <div class="site-footer__inner">
+    <p class="site-footer__disclaimer">
+      <strong>Independent research lab</strong> ·
+      Not affiliated with any employer or financial institution ·
+      Not investment advice.
+    </p>
+    <div class="site-footer__links">
+      <a href="../../index.html">Home</a>
+      <a href="teaching.html">Teaching note</a>
+      <a href="lit-memo.html">Lit memo</a>
+      <a href="https://github.com/jgridifier/research-lab">GitHub</a>
+    </div>
+  </div>
+</footer>
+
+</body>
+</html>

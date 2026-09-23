@@ -1,0 +1,295 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Teaching: Non-embedding Statement Forecasting — Research Lab</title>
+  <meta name="description" content="Teaching note on non-embedding financial statement forecasting for FR Y-9C BHC panel." />
+  <link rel="stylesheet" href="../../assets/site.css" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <!-- MathJax for inline TeX notation -->
+  <script>
+    window.MathJax = {
+      tex: { inlineMath: [['\\(','\\)']], displayMath: [['\\[','\\]']] },
+      options: { skipHtmlTags: ['script','noscript','style','textarea','pre'] }
+    };
+  </script>
+  <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml.js" async></script>
+  <style>
+    /* Teaching-specific overrides to match site theme */
+    .t-card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      padding: 1rem 1.2rem;
+      margin: 1rem 0;
+    }
+    .t-tag {
+      display: inline-block;
+      font-size: .7rem;
+      text-transform: uppercase;
+      letter-spacing: .05em;
+      font-weight: 600;
+      padding: .12rem .4rem;
+      border: 1px solid var(--border);
+      background: var(--surface-alt);
+      color: var(--text-muted);
+      margin-right: .35rem;
+      vertical-align: middle;
+    }
+    .t-tag.nim {
+      background: #eaf3ea;
+      color: #2a6a2a;
+      border-color: #b8d8b8;
+    }
+    .t-tag.web {
+      background: #eef2f7;
+      color: #2a4a6a;
+      border-color: #b8cce0;
+    }
+    .t-prov {
+      border: 1px solid var(--border);
+      border-left: 3px solid var(--accent);
+      background: var(--accent-light);
+      padding: .7rem 1rem;
+      margin: 1rem 0;
+      font-size: .875rem;
+      color: var(--text-secondary);
+    }
+    .t-math {
+      font-family: var(--font-mono);
+      font-size: .9rem;
+      background: var(--surface-alt);
+      border: 1px solid var(--border);
+      padding: .6rem 1rem;
+      margin: .6rem 0;
+      overflow-x: auto;
+    }
+    ol.methods li { margin: .55rem 0; }
+  </style>
+</head>
+<body>
+
+<nav class="site-nav" aria-label="Site navigation">
+  <div class="site-nav__inner">
+    <a class="site-nav__logo" href="../../index.html">Research Lab</a>
+    <ul class="site-nav__links">
+      <li><a href="../../index.html">Home</a></li>
+      <li><a href="index.html" class="active">Statement Forecast</a></li>
+      <li><a href="../y9c-panel/index.html">Y-9C Panel</a></li>
+      <li><a href="../dfm-sinkhorn/index.html">DFM × Sinkhorn</a></li>
+    </ul>
+  </div>
+</nav>
+
+<header class="page-header">
+  <div class="page-header__inner">
+    <div class="page-header__eyebrow">Track 1 · Teaching Note</div>
+    <h1>Non-embedding Forecasting of Financial Statements</h1>
+    <p class="page-header__sub">
+      Primary panel: FR Y-9C (BHC consolidated) · Yahoo quarterly as smoke.
+      Research only; not investment advice. Separate from Portfolios.
+    </p>
+  </div>
+</header>
+
+<main class="page-content page-content--narrow">
+
+  <nav class="breadcrumb" aria-label="Breadcrumb">
+    <a href="../../index.html">Home</a>
+    <span aria-hidden="true">›</span>
+    <a href="index.html">Statement Forecast</a>
+    <span aria-hidden="true">›</span>
+    Teaching Note
+  </nav>
+
+  <div class="t-prov">
+    <span class="t-tag nim">NIM glm-5.3-flash</span> Ranking, experiments, and "what we'd try"
+    synthesized via NVIDIA NIM direct chat.
+    <span class="t-tag web">WebSearch</span> Paper anchors, venues, and classical cluster detail.
+    Feynman CLI was attempted; TTY typescript was empty — flash model via direct NIM was the
+    working path (≥125s latency; use ≥400s client timeout).
+  </div>
+
+  <div class="prose">
+
+    <h2>1. Why this review</h2>
+    <div class="t-card">
+      <p>
+        Valuation, credit, and stress testing need <em>joint</em> paths for many statement lines
+        over multi-quarter horizons — not only next-quarter EPS. The application panel is
+        <strong>bank holding companies</strong> on <strong>FR Y-9C</strong> (preferred:
+        FFIEC NIC BHCF bulk zips), with cheap <strong>Yahoo Finance</strong> quarterly smoke
+        for tickers in the reporting hierarchy.
+      </p>
+      <p>
+        Forma-class transformers are a useful <em>contrast</em> (complete statements, identities,
+        1–20Q), but this note prioritizes <strong>transparent, testable, non-embedding</strong>
+        methods that can move Yahoo → Y-9C without gated fine-tuned weights.
+      </p>
+    </div>
+
+    <h2>2. What the lit finds</h2>
+    <div class="t-card">
+      <ul>
+        <li>
+          <span class="t-tag web">Web</span>
+          Most academic work forecasts <strong>one item</strong> (earnings) cross-sectionally
+          (Hou–van Dijk–Zhang; Li–Mohanram) or with trees (Chen–Cho–Dou–Lev).
+        </li>
+        <li>
+          <span class="t-tag web">Web</span>
+          Full-statement non-transformer systems exist mainly as
+          <strong>chained GBM</strong> (Geertsema–Lu–Ma) and multitask nets (Alberg–Lipton).
+        </li>
+        <li>
+          <span class="t-tag web">Web</span>
+          <strong>Bank-native</strong> gold: Liu–Moon–Schorfheide empirical-Bayes dynamic panels
+          on <strong>Y-9C PPNR</strong> under macro scenarios.
+        </li>
+        <li>
+          <span class="t-tag web">Web</span>
+          Mixed-frequency (Ball–Ghysels MIDAS; Babii et al. sg-LASSO MIDAS) connects Yahoo daily
+          smoke to quarterly statements.
+        </li>
+        <li>
+          <span class="t-tag web">Web</span>
+          Accounting identities are <strong>linear constraints</strong> — MinT / Girolimetto–Di Fonzo
+          reconciliation is the coherence layer.
+        </li>
+        <li>
+          <span class="t-tag nim">NIM</span>
+          Recommended stack: EB panel → chained GBM → reconciliation, with MIDAS for smoke and
+          multitask FFNN as neural baseline; park Forma FT.
+        </li>
+      </ul>
+    </div>
+
+    <h2>3. Core method families</h2>
+
+    <div class="t-card">
+      <h3>A. Empirical-Bayes dynamic panel</h3>
+      <p>
+        Each BHC \(i\) has coefficients \(\theta_i\) in a short dynamic regression (lags + macros).
+        Pooling ignores heterogeneity; firm-by-firm OLS is noisy. EB / Tweedie maps the noisy
+        \(\hat\theta_i\) toward the cross-sectional prior:
+      </p>
+      <div class="t-math">\(\mathbb{E}[\theta_i \mid \hat\theta_i] \approx \hat\theta_i + \Sigma \nabla \log m(\hat\theta_i)\)</div>
+      <p>
+        Forecasts integrate posterior predictive draws — natural for stress scenarios on Y-9C PPNR
+        (Liu–Moon–Schorfheide).
+      </p>
+    </div>
+
+    <div class="t-card">
+      <h3>B. Chained multi-output GBM</h3>
+      <p>
+        Predict line items in an order that mirrors articulation (e.g. revenue → expenses → NI → RE
+        → equity → assets). Upstream predictions become features for downstream models. Approximates
+        identities softly; pair with hard reconciliation.
+      </p>
+    </div>
+
+    <div class="t-card">
+      <h3>C. MIDAS / sg-LASSO MIDAS</h3>
+      <p>
+        Quarterly target \(y_{t+h}\) on high-frequency \(x\) with parsimonious lag weights
+        \(w(k;\beta)\). sg-LASSO selects groups of mixed-freq predictors across a panel of firms —
+        Yahoo daily → Y-9C quarterly.
+      </p>
+    </div>
+
+    <div class="t-card">
+      <h3>D. Forecast reconciliation</h3>
+      <p>Base forecasts \(\tilde{y}\) projected onto \(\{y : Cy = 0\}\) (or \(Cy = c\)):</p>
+      <div class="t-math">\(\hat{y} = \tilde{y} - W C^\top (C W C^\top)^{-1} C\tilde{y}\)</div>
+      <p>
+        MinT chooses \(W\) from forecast-error covariances; Girolimetto–Di Fonzo covers general
+        linear constraints and probabilistic versions. Use predictive variances — equal-weight
+        projection can wreck small lines.
+      </p>
+    </div>
+
+    <div class="t-card">
+      <h3>E. Quantiles / multitask nets</h3>
+      <p>
+        Quantile regressions build earnings / PPNR distributions (Konstantinidi–Pope). Small
+        multitask FFNNs share strength across MDRMs without foundation-model fine-tuning
+        (Alberg–Lipton).
+      </p>
+    </div>
+
+    <h2>4. Recommended stack for this panel</h2>
+    <div class="t-card">
+      <p><span class="t-tag nim">NIM Top 6</span> Yahoo smoke → FFIEC Y-9C bulk:</p>
+      <ol class="methods">
+        <li><strong>Liu–Moon–Schorfheide EB panel</strong> on BHCF PPNR (and NII / noninterest splits).</li>
+        <li><strong>Geertsema–Lu–Ma chained GBM</strong> on a curated MDRM set (<code>y9c/core_items.yaml</code>).</li>
+        <li><strong>MinT + Girolimetto–Di Fonzo</strong> post-layer for identities.</li>
+        <li><strong>Babii sg-LASSO MIDAS</strong> and <strong>Ball–Ghysels MIDAS</strong> for Yahoo daily → quarterly smoke.</li>
+        <li><strong>Alberg–Lipton multitask FFNN</strong> as classical neural baseline.</li>
+      </ol>
+      <p>
+        Data paths: <code>y9c/processed/y9c_panel_long.parquet</code>,
+        <code>yahoo_bank_quarterly/processed/yahoo_bank_quarterly_long.parquet</code>.
+        Preferred bulk: NIC BHCF zips via <code>scripts/download_y9c.py</code>.
+      </p>
+    </div>
+
+    <h2>5. How to evaluate</h2>
+    <div class="t-card">
+      <ul>
+        <li><strong>Point:</strong> rolling-origin RMSE / MAE on change-space (or asinh-scaled) PPNR and core MDRMs; Diebold–Mariano across calendar quarters.</li>
+        <li><strong>Probabilistic:</strong> CRPS, PIT, interval coverage (nominal 50/90).</li>
+        <li><strong>Coherence:</strong> median |identity residual| / gross scale pre vs post reconciliation; never celebrate equal-weight projection alone.</li>
+        <li><strong>Smoke gate:</strong> MIDAS Yahoo→PPNR must beat seasonal random walk before bulk EB/GBM spend.</li>
+        <li><strong>No transfer claims:</strong> do not quote Forma Compustat R² as Y-9C performance.</li>
+      </ul>
+    </div>
+
+    <h2>6. Key citations</h2>
+    <div class="t-card">
+      <ol>
+        <li>Liu, L., Moon, H. R., &amp; Schorfheide, F. — Forecasting with dynamic panel data models (NBER w25102).</li>
+        <li>Geertsema, P., Lu, H., &amp; Ma, G. — Projecting financial statements with AI (SSRN 5039433).</li>
+        <li>Hou, K., van Dijk, M., &amp; Zhang, Y. (2012). JAE — ICC via cross-section earnings.</li>
+        <li>Li, K., &amp; Mohanram, P. (2014). RAST — EP/RI vs HVZ.</li>
+        <li>Ball, R., &amp; Ghysels, E. (2018). Management Science — automated MIDAS earnings.</li>
+        <li>Babii, A., Ball, R., Ghysels, E., &amp; Striaukas, J. — Panel MIDAS sg-LASSO (arXiv 2307.02673).</li>
+        <li>Wickramasuriya, S., Athanasopoulos, G., &amp; Hyndman, R. (2019). JASA — MinT.</li>
+        <li>Girolimetto, D., &amp; Di Fonzo, T. (2024). SMA — general linear-constraint reconciliation.</li>
+        <li>Konstantinidi, T., &amp; Pope, P. (2016). CAR — forecasting risk in earnings.</li>
+        <li>Alberg, J., &amp; Lipton, Z.; Chauhan et al. (ICML 2020) — multitask fundamentals.</li>
+        <li>Divo et al. (TMLR 2025) — Forecasting Company Fundamentals benchmark.</li>
+        <li>Johnson et al. — Forma / ProForma-20Q (arXiv 2608.11327) — <em>contrast only</em>.</li>
+      </ol>
+    </div>
+
+  </div><!-- /.prose -->
+
+  <div style="margin-top: 2rem; padding-top: 1rem; border-top: 1px solid var(--rule); font-size: .85rem; color: var(--text-muted);">
+    Generated 2026-09-23 ET. See also:
+    <a href="lit-memo.html">Lit memo</a> ·
+    <a href="../y9c-panel/index.html">Y-9C Panel notes</a> ·
+    <a href="index.html">Track overview</a>
+  </div>
+
+</main>
+
+<footer class="site-footer">
+  <div class="site-footer__inner">
+    <p class="site-footer__disclaimer">
+      <strong>Independent research lab</strong> ·
+      Not affiliated with any employer or financial institution ·
+      Not investment advice.
+    </p>
+    <div class="site-footer__links">
+      <a href="../../index.html">Home</a>
+      <a href="index.html">Statement Forecast</a>
+      <a href="lit-memo.html">Lit memo</a>
+      <a href="https://github.com/jgridifier/research-lab">GitHub</a>
+    </div>
+  </div>
+</footer>
+
+</body>
+</html>

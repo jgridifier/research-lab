@@ -1,0 +1,297 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Teaching: DFM × Sinkhorn Nowcasting — Research Lab</title>
+  <meta name="description" content="Teaching note on dynamic factor nowcasting meets Sinkhorn loss: why, what was found, and a research recipe." />
+  <link rel="stylesheet" href="../../assets/site.css" />
+  <script>
+    window.MathJax = {
+      tex: { inlineMath: [['\\(','\\)']], displayMath: [['\\[','\\]']] },
+      options: { skipHtmlTags: ['script','noscript','style','textarea','pre'] }
+    };
+  </script>
+  <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml.js" async></script>
+  <style>
+    .t-card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      padding: 1rem 1.25rem;
+      margin: 1rem 0;
+    }
+    .t-callout {
+      border: 1px solid var(--border);
+      border-left: 3px solid var(--accent);
+      background: var(--accent-light);
+      padding: .85rem 1rem;
+      margin: 1rem 0;
+      font-size: .9rem;
+    }
+    .t-callout.warn {
+      border-left-color: #5a7a9a;
+    }
+    .badge-adhoc {
+      display: inline-block;
+      font-size: .7rem;
+      font-weight: 600;
+      letter-spacing: .07em;
+      text-transform: uppercase;
+      background: var(--surface-alt);
+      border: 1px solid var(--border);
+      color: var(--text-muted);
+      padding: .15rem .5rem;
+      margin-bottom: .6rem;
+    }
+  </style>
+</head>
+<body>
+
+<nav class="site-nav" aria-label="Site navigation">
+  <div class="site-nav__inner">
+    <a class="site-nav__logo" href="../../index.html">Research Lab</a>
+    <ul class="site-nav__links">
+      <li><a href="../../index.html">Home</a></li>
+      <li><a href="../statement-forecast/index.html">Statement Forecast</a></li>
+      <li><a href="../y9c-panel/index.html">Y-9C Panel</a></li>
+      <li><a href="index.html" class="active">DFM × Sinkhorn</a></li>
+    </ul>
+  </div>
+</nav>
+
+<header class="page-header">
+  <div class="page-header__inner">
+    <div class="page-header__eyebrow">Track 3 · Teaching Note</div>
+    <h1>Dynamic Factor Nowcasting Meets Sinkhorn Loss</h1>
+    <p class="page-header__sub">
+      Teaching note for a literature / tooling exercise.
+      Not investment advice. Not branded to any employer. Not an ETF Portfolios handoff.
+    </p>
+  </div>
+</header>
+
+<main class="page-content page-content--narrow">
+
+  <nav class="breadcrumb" aria-label="Breadcrumb">
+    <a href="../../index.html">Home</a>
+    <span aria-hidden="true">›</span>
+    <a href="index.html">DFM × Sinkhorn</a>
+    <span aria-hidden="true">›</span>
+    Teaching Note
+  </nav>
+
+  <div class="badge-adhoc">Ad hoc research · tool test</div>
+
+  <div class="prose">
+
+    <h2>1. Why this paper cluster</h2>
+
+    <p>Two mature literatures sit next to each other:</p>
+    <ul>
+      <li>
+        <strong>Dynamic factor models (DFMs)</strong> for large panels and <em>ragged-edge</em>
+        nowcasting (data arrive at different lags).
+      </li>
+      <li>
+        <strong>Sinkhorn / entropic optimal transport</strong> as a differentiable loss between
+        probability measures (batch distributions, residual clouds, feature maps).
+      </li>
+    </ul>
+    <p>
+      The natural research question: can a Sinkhorn divergence replace or augment the usual
+      Gaussian / MSE observation criterion inside a factor state-space model, so forecasts respect
+      <em>distributional</em> structure while still exploiting low-rank co-movement?
+    </p>
+
+    <div class="t-callout warn">
+      <strong>Honest map:</strong> On arXiv-first retrieval, the true intersection is <em>thin</em>.
+      Most hits are adjacent (deep TS + Sinkhorn, Wasserstein tensors, COT-GANs, martingale OT in
+      derivatives). The clearest intersection paper found in this test is journal-side:
+      Spelta, Pagnottoni &amp; Pecora (JRSS-A 2025).
+    </div>
+
+    <h2>2. What original work found</h2>
+
+    <h3>Classical DFM forecasting</h3>
+    <ul>
+      <li>
+        <strong>Stock &amp; Watson</strong>: few latent factors summarize panels; forecast via
+        estimated factors.
+      </li>
+      <li>
+        <strong>Banbura, Giannone &amp; Reichlin</strong>: nowcasting with mixed-frequency /
+        ragged-edge data via state-space DFMs and Kalman filtering/smoothing; EM for parameters.
+        Observation equation \(y_t = \Lambda f_t + e_t\), factor dynamics (VAR), missing entries
+        handled by Kalman with time-varying observation selection; typically Gaussian / MSE loss.
+      </li>
+    </ul>
+
+    <h3>Sinkhorn divergence technology</h3>
+    <ul>
+      <li>
+        <strong>Cuturi (2013)</strong>: entropic regularization makes OT differentiable/scalable
+        via Sinkhorn–Knopp matrix scaling.
+      </li>
+      <li>
+        <strong>Genevay / Feydy-style Sinkhorn divergence</strong>: debiased Sinkhorn loss
+        \(S_\varepsilon(\mu,\nu) = OT_\varepsilon(\mu,\nu) - \tfrac12 OT_\varepsilon(\mu,\mu) - \tfrac12 OT_\varepsilon(\nu,\nu)\),
+        usable as a training criterion between empirical measures.
+      </li>
+    </ul>
+
+    <h3>True intersection: Spelta et al. (JRSS-A 2025)</h3>
+    <div class="t-callout">
+      <strong>Spelta, Pagnottoni &amp; Pecora</strong> —
+      <em>Short-term forecasting with optimal transport</em>,
+      JRSS-A 2025
+      (DOI <a href="https://doi.org/10.1093/jrsssa/qnaf036">10.1093/jrsssa/qnaf036</a>).
+      They (i) propose a Sinkhorn-divergence loss treating two batches from the same dataset as
+      sharing a distribution, for filling missing low-frequency entries, and (ii) add that Sinkhorn
+      step as a complement to the <strong>EM algorithm of a Dynamic Factor Model</strong>, with
+      Monte Carlo and US GDP nowcasting evidence.
+      This paper was <em>not</em> in the arXiv priority brief (paywalled journal; no arXiv abs in
+      cached hits) — it was found via Jev Ultrafast on the landing page.
+    </div>
+
+    <h2>3. Adjacent clusters (arXiv hits — what each is <em>not</em>)</h2>
+
+    <table>
+      <thead>
+        <tr>
+          <th>Cluster</th>
+          <th>Why adjacent, not true ∩</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>N-BEATS + Sinkhorn alignment — Lee et al., <a href="https://arxiv.org/abs/2305.15196">2305.15196</a></td>
+          <td>Stack-wise Sinkhorn on N-BEATS features for domain generalization — no DFM / ragged-edge nowcasting.</td>
+        </tr>
+        <tr>
+          <td>SWIFT Wasserstein factorization — Afshar et al., <a href="https://arxiv.org/abs/2010.04081">2010.04081</a></td>
+          <td>Tensor CP under Wasserstein loss — static factorization, not dynamic factors for forecasting.</td>
+        </tr>
+        <tr>
+          <td>R-WAE — Han et al., <a href="https://arxiv.org/abs/2101.07496">2101.07496</a></td>
+          <td>Recurrent Wasserstein AE for sequential disentanglement — generative seq model, not DFM nowcasting.</td>
+        </tr>
+        <tr>
+          <td>COT-GAN — Xu et al., <a href="https://arxiv.org/abs/2006.08571">2006.08571</a></td>
+          <td>Causal OT + Sinkhorn for sequential GANs — adversarial generation, not factor state-space.</td>
+        </tr>
+        <tr>
+          <td>Spatial Sinkhorn forecast verification — Francis et al., <a href="https://arxiv.org/abs/2412.16063">2412.16063</a></td>
+          <td>Sinkhorn as verification metric for precipitation fields — eval, not DFM training.</td>
+        </tr>
+        <tr>
+          <td>Nonlinear filter Sinkhorn stability — Mandal et al., <a href="https://arxiv.org/abs/2208.10810">2208.10810</a></td>
+          <td>Sinkhorn/Wasserstein to probe filter stability (PF/EnKF) — diagnostic, not panel DFM loss.</td>
+        </tr>
+        <tr>
+          <td>q-fin martingale Sinkhorn</td>
+          <td>Sinkhorn for martingale OT / IV surfaces / SV calibration — finance math, not DFM nowcasting.</td>
+        </tr>
+        <tr>
+          <td>Chaos OT regularization — Melo et al., <a href="https://arxiv.org/abs/2604.21097">2604.21097</a></td>
+          <td>Sinkhorn/WGAN OT to match attractor statistics — emulator fidelity, not macro panel factors.</td>
+        </tr>
+      </tbody>
+    </table>
+
+    <h2>4. Research recipe: DFM + Sinkhorn observation loss</h2>
+
+    <div class="t-card">
+      <p>
+        <strong>Goal:</strong> Improve ragged-edge multi-series short-horizon forecasts by replacing
+        or augmenting Gaussian observation likelihood with a Sinkhorn divergence between predicted
+        and observed <strong>panel distributions</strong>, following the Spelta-style
+        "distribution-preserving imputation" idea.
+      </p>
+
+      <h3>Assumptions</h3>
+      <ol>
+        <li>Approximate low-rank factor structure: \(y_t = \Lambda f_t + e_t\), \(f_t\) VAR / state-space.</li>
+        <li>Missingness is ragged-edge / publication lag, treated as missing-at-random conditional on the information set at forecast origin \(t_0\).</li>
+        <li>Sinkhorn acts on empirical measures over cross-section and/or residual batches.</li>
+        <li>Entropic regularization \(\varepsilon\) chosen for stability; debiasing (Sinkhorn divergence) preferred.</li>
+      </ol>
+
+      <h3>Protocol (leakage-safe)</h3>
+      <ul>
+        <li><strong>Walk-forward:</strong> expanding or rolling origin; use only data available at each origin.</li>
+        <li><strong>No same-period leakage:</strong> never train or evaluate with contemporaneous realizations that arrive after the decision time.</li>
+        <li><strong>Imputation vs prediction:</strong> if Sinkhorn fills missing entries inside EM (Spelta-like), freeze filled values for out-of-sample scoring; score point (RMSE/MAE) and distributional (Sinkhorn / CRPS) metrics separately.</li>
+      </ul>
+
+      <h3>Candidate nulls / baselines</h3>
+      <ol>
+        <li>Classical Gaussian DFM + Kalman (MSE) — Banbura/Giannone/Reichlin-style.</li>
+        <li>Same DFM with Student-t / Huber observation loss (robustness without OT).</li>
+        <li>Sinkhorn-only nonparametric imputer <em>without</em> factors (Spelta stand-alone arm).</li>
+        <li>Factor model + MSE, then Sinkhorn only as <em>evaluation</em> metric (not train).</li>
+        <li>Feature-aligned N-BEATS + Sinkhorn (<a href="https://arxiv.org/abs/2305.15196">2305.15196</a>) on the same panel.</li>
+      </ol>
+
+      <h3>Success criteria</h3>
+      <ul>
+        <li>Statistically better short-horizon scores vs baseline (1) on held-out origins, with Diebold–Mariano.</li>
+        <li>Gains concentrated where raggedness is severe (ablate missingness rate).</li>
+        <li>Ablation: remove Sinkhorn step → performance collapses toward MSE-DFM.</li>
+      </ul>
+    </div>
+
+    <h2>5. Top citations</h2>
+    <ol>
+      <li>Stock &amp; Watson — dynamic factor / diffusion-index forecasting (classical DFM).</li>
+      <li>Banbura, Giannone &amp; Reichlin — DFM nowcasting with ragged edge / Kalman.</li>
+      <li>Cuturi (2013) + Genevay/Feydy Sinkhorn divergence — OT loss technology.</li>
+      <li><strong>Spelta, Pagnottoni &amp; Pecora (JRSS-A 2025)</strong> — DFM-EM + Sinkhorn loss nowcasting. DOI <a href="https://doi.org/10.1093/jrsssa/qnaf036">10.1093/jrsssa/qnaf036</a>.</li>
+      <li>Lee et al. <a href="https://arxiv.org/abs/2305.15196">2305.15196</a> — strongest adjacent forecasting+Sinkhorn deep baseline.</li>
+    </ol>
+
+    <h2>6. Open questions</h2>
+    <ol>
+      <li>Is Sinkhorn best as an EM augmentation (Spelta), a direct observation loss in gradient-based state-space learning, or only an evaluation metric?</li>
+      <li>How to define the ground metric on heterogeneous financial panels (scales, signs, mixed frequencies)?</li>
+      <li>Computational scaling: Sinkhorn per EM iteration vs large \(N\) panels — when does it dominate Kalman cost?</li>
+      <li>Does distributional matching help tail events / crises, or only average nowcast RMSE?</li>
+      <li>Identification: can Sinkhorn over-smooth factor dynamics and hurt multi-step forecasts?</li>
+      <li>Replication: open re-implementation of Spelta DFM+Sinkhorn on a generic public panel (e.g. FRED-MD style) under strict vintage rules.</li>
+    </ol>
+
+    <h2>7. Tooling notes</h2>
+    <ul>
+      <li>OpenAlex / <code>feynman rank</code> and raw arXiv API hit 429 earlier in the workflow; abs HTML cache + <code>arxiv_hits.json</code> + <code>priority_brief.md</code> were the reliable literature substrate.</li>
+      <li><strong>Jev Ultrafast</strong> successfully opened the Spelta JRSS-A landing page — critical because the true ∩ paper was journal-first, not in the arXiv brief.</li>
+      <li>Feynman (GLM via NVIDIA NIM) was used for one-shot synthesis from the brief head.</li>
+    </ul>
+
+  </div><!-- /.prose -->
+
+  <div style="margin-top: 2rem; padding-top: 1rem; border-top: 1px solid var(--rule); font-size: .85rem; color: var(--text-muted);">
+    Ad hoc tool test only. See also:
+    <a href="lit-memo.html">Lit memo</a> ·
+    <a href="index.html">Track overview</a> ·
+    <a href="../../index.html">Home</a>
+  </div>
+
+</main>
+
+<footer class="site-footer">
+  <div class="site-footer__inner">
+    <p class="site-footer__disclaimer">
+      <strong>Independent research lab</strong> ·
+      Not affiliated with any employer or financial institution ·
+      Not investment advice.
+    </p>
+    <div class="site-footer__links">
+      <a href="../../index.html">Home</a>
+      <a href="index.html">DFM × Sinkhorn</a>
+      <a href="lit-memo.html">Lit memo</a>
+      <a href="https://github.com/jgridifier/research-lab">GitHub</a>
+    </div>
+  </div>
+</footer>
+
+</body>
+</html>

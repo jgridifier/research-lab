@@ -1,0 +1,127 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Research Lab — Ad-hoc Quant &amp; Bank-Fundamentals Research</title>
+  <meta name="description" content="Jared's independent ad-hoc quantitative research lab: statement forecasting, Y-9C bank panels, DFM×Sinkhorn nowcasting. Not investment advice." />
+  <link rel="stylesheet" href="assets/site.css" />
+</head>
+<body>
+
+<nav class="site-nav" aria-label="Site navigation">
+  <div class="site-nav__inner">
+    <a class="site-nav__logo" href="index.html">Research Lab</a>
+    <ul class="site-nav__links">
+      <li><a href="index.html" class="active">Home</a></li>
+      <li><a href="tracks/statement-forecast/index.html">Statement Forecast</a></li>
+      <li><a href="tracks/y9c-panel/index.html">Y-9C Panel</a></li>
+      <li><a href="tracks/dfm-sinkhorn/index.html">DFM × Sinkhorn</a></li>
+    </ul>
+  </div>
+</nav>
+
+<header class="page-header">
+  <div class="page-header__inner">
+    <div class="page-header__eyebrow">Independent Research</div>
+    <h1>Ad-hoc Quant &amp; Bank-Fundamentals Research</h1>
+    <p class="page-header__sub">
+      A personal research notebook exploring non-embedding financial-statement forecasting,
+      FR Y-9C bank holding company panels, and DFM–Sinkhorn nowcasting methods.
+      Separate from any Portfolios or production pipeline work.
+    </p>
+  </div>
+</header>
+
+<main class="page-content">
+
+  <div class="callout">
+    <strong>What this lab is.</strong>
+    Ad-hoc quant research — lit synthesis, teaching notes, and method sketches — on bank
+    fundamentals forecasting and adjacent quantitative problems. All work is independently
+    motivated; no content here constitutes financial advice or employer output.
+  </div>
+
+  <p class="section-heading">Research Tracks</p>
+
+  <div class="track-grid">
+    <a class="track-card" href="tracks/statement-forecast/index.html">
+      <div class="track-card__label">Track 1</div>
+      <div class="track-card__title">Financial Statement Forecasting</div>
+      <p class="track-card__desc">
+        Non-embedding methods for joint multi-item forecasting of bank holding company
+        income statements and balance sheets — FR Y-9C panel with Yahoo smoke.
+        Covers empirical-Bayes panels, chained GBM, MIDAS, MinT reconciliation.
+      </p>
+    </a>
+    <a class="track-card" href="tracks/y9c-panel/index.html">
+      <div class="track-card__label">Track 2</div>
+      <div class="track-card__title">Y-9C / Yahoo Bank Panel</div>
+      <p class="track-card__desc">
+        Research data path for bank statement forecasting: FFIEC NIC FR Y-9C bulk
+        downloads and Yahoo Finance quarterly smoke. Panel assembly scripts, alignment
+        notes, and known quirks.
+      </p>
+    </a>
+    <a class="track-card" href="tracks/dfm-sinkhorn/index.html">
+      <div class="track-card__label">Track 3</div>
+      <div class="track-card__title">DFM × Sinkhorn Nowcasting</div>
+      <p class="track-card__desc">
+        Literature exploration at the intersection of dynamic factor models (ragged-edge
+        nowcasting) and Sinkhorn / entropic optimal transport as an observation or
+        imputation loss. Thin but real intersection; anchored by Spelta et al. (JRSS-A 2025).
+      </p>
+    </a>
+  </div>
+
+  <p class="section-heading">About this Lab</p>
+
+  <div style="max-width: var(--max-w-narrow);" class="prose">
+    <h3>Scope</h3>
+    <p>
+      This lab collects independent research on quantitative methods for bank fundamentals
+      and macroeconomic nowcasting. The primary application is the
+      <strong>FR Y-9C</strong> BHC consolidated reporting panel (FFIEC NIC bulk downloads),
+      with Yahoo Finance quarterly data as a cheap smoke-test path.
+    </p>
+
+    <h3>What is not here</h3>
+    <ul>
+      <li>Production Portfolios or ETF pipeline work (see <code>usa-etf-feature-pipeline</code>).</li>
+      <li>Raw panel CSVs, HF checkpoints, or secrets.</li>
+      <li>Gated data or paywalled assets.</li>
+      <li>Forma-release or proforma-20q production outputs.</li>
+    </ul>
+
+    <h3>How to navigate</h3>
+    <p>
+      Each <strong>track</strong> has an overview page, one or more
+      <strong>teaching pages</strong> (method intuition, worked sketches), and
+      <strong>lit memos</strong> (structured literature synthesis). Use the top nav to
+      jump between tracks.
+    </p>
+
+    <h3>Adding a new track</h3>
+    <p>See the <a href="https://github.com/jgridifier/research-lab#adding-a-new-track">README</a> for the one-page checklist.</p>
+  </div>
+
+</main>
+
+<footer class="site-footer">
+  <div class="site-footer__inner">
+    <p class="site-footer__disclaimer">
+      <strong>Independent research lab</strong> ·
+      Not affiliated with any employer or financial institution ·
+      Not investment advice.
+    </p>
+    <div class="site-footer__links">
+      <a href="https://github.com/jgridifier/research-lab">GitHub</a>
+      <a href="tracks/statement-forecast/index.html">Statement Forecast</a>
+      <a href="tracks/y9c-panel/index.html">Y-9C Panel</a>
+      <a href="tracks/dfm-sinkhorn/index.html">DFM × Sinkhorn</a>
+    </div>
+  </div>
+</footer>
+
+</body>
+</html>
