@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>DFM × Sinkhorn — Research Lab</title>
+  <meta name="description" content="Literature and methods at the intersection of dynamic factor models and Sinkhorn entropic OT as an observation or imputation loss for nowcasting." />
+  <link rel="stylesheet" href="../../assets/site.css" />
+</head>
+<body>
+
+<nav class="site-nav" aria-label="Site navigation">
+  <div class="site-nav__inner">
+    <a class="site-nav__logo" href="../../index.html">Research Lab</a>
+    <ul class="site-nav__links">
+      <li><a href="../../index.html">Home</a></li>
+      <li><a href="../statement-forecast/index.html">Statement Forecast</a></li>
+      <li><a href="../y9c-panel/index.html">Y-9C Panel</a></li>
+      <li><a href="index.html" class="active">DFM × Sinkhorn</a></li>
+    </ul>
+  </div>
+</nav>
+
+<header class="page-header">
+  <div class="page-header__inner">
+    <div class="page-header__eyebrow">Track 3</div>
+    <h1>DFM × Sinkhorn Nowcasting</h1>
+    <p class="page-header__sub">
+      The intersection of dynamic factor models (ragged-edge nowcasting) and Sinkhorn / entropic
+      optimal transport as an observation or imputation loss. Thin but real; anchored by
+      Spelta, Pagnottoni &amp; Pecora (JRSS-A 2025).
+    </p>
+  </div>
+</header>
+
+<main class="page-content">
+
+  <nav class="breadcrumb" aria-label="Breadcrumb">
+    <a href="../../index.html">Home</a>
+    <span aria-hidden="true">›</span>
+    DFM × Sinkhorn
+  </nav>
+
+  <div class="callout warn">
+    <strong>Honest finding:</strong> On arXiv-first retrieval, the true intersection of classical
+    DFM/Kalman nowcasting with Sinkhorn (entropic OT) as observation / imputation loss is
+    <em>thin</em>. Most retrieved hits are adjacent. The clearest intersection paper found is
+    journal-side: Spelta et al. (JRSS-A 2025) — not in the arXiv brief.
+  </div>
+
+  <p class="section-heading">Track Resources</p>
+
+  <ul class="resource-list">
+    <li>
+      <a href="teaching.html">
+        <span class="resource-list__type">Teaching</span>
+        Dynamic factor nowcasting meets Sinkhorn loss — why, what was found, and research recipe
+      </a>
+    </li>
+    <li>
+      <a href="lit-memo.html">
+        <span class="resource-list__type">Lit Memo</span>
+        Lit synthesis: DFM forecasting ∩ Sinkhorn-as-loss — cluster map and open questions
+      </a>
+    </li>
+  </ul>
+
+  <p class="section-heading">Overview</p>
+
+  <div class="prose" style="max-width: var(--max-w-narrow);">
+    <h3>The research question</h3>
+    <p>
+      Two mature literatures sit next to each other:
+    </p>
+    <ul>
+      <li>
+        <strong>Dynamic factor models (DFMs)</strong> for large panels and ragged-edge
+        nowcasting — observation equation \(y_t = \Lambda f_t + e_t\), Kalman filter/smoother,
+        EM for parameters (Stock &amp; Watson; Banbura, Giannone &amp; Reichlin).
+      </li>
+      <li>
+        <strong>Sinkhorn / entropic optimal transport</strong> as a differentiable loss between
+        probability measures (Cuturi 2013; Genevay / Feydy-style Sinkhorn divergence).
+      </li>
+    </ul>
+    <p>
+      The natural research question: can a Sinkhorn divergence replace or augment the usual
+      Gaussian / MSE observation criterion inside a factor state-space model, so forecasts respect
+      <em>distributional</em> structure while still exploiting low-rank co-movement?
+    </p>
+
+    <h3>Key finding</h3>
+    <p>
+      <strong>Spelta, Pagnottoni &amp; Pecora</strong> (JRSS-A 2025,
+      DOI <a href="https://doi.org/10.1093/jrsssa/qnaf036">10.1093/jrsssa/qnaf036</a>)
+      is the clearest intersection: they propose a Sinkhorn-divergence loss treating two batches
+      from the same dataset as sharing a distribution, for filling missing low-frequency entries,
+      and add that Sinkhorn step as a complement to the EM algorithm of a Dynamic Factor Model,
+      with Monte Carlo and US GDP nowcasting evidence.
+    </p>
+
+    <h3>Adjacent work (not true ∩)</h3>
+    <p>
+      Most arXiv hits cluster around: deep time-series + Sinkhorn alignment (N-BEATS),
+      Wasserstein tensor factorization, COT-GANs, martingale OT in derivatives pricing,
+      Sinkhorn for precipitation verification — none combine DFM/Kalman nowcasting
+      with Sinkhorn as the training/imputation loss.
+    </p>
+  </div>
+
+</main>
+
+<footer class="site-footer">
+  <div class="site-footer__inner">
+    <p class="site-footer__disclaimer">
+      <strong>Independent research lab</strong> ·
+      Not affiliated with any employer or financial institution ·
+      Not investment advice.
+    </p>
+    <div class="site-footer__links">
+      <a href="../../index.html">Home</a>
+      <a href="teaching.html">Teaching note</a>
+      <a href="lit-memo.html">Lit memo</a>
+      <a href="https://github.com/jgridifier/research-lab">GitHub</a>
+    </div>
+  </div>
+</footer>
+
+</body>
+</html>
