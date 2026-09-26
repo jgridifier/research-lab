@@ -39,14 +39,24 @@ def dm_table(frame):
 
 
 def dm_headline(frame):
-    clauses = []
-    for row in frame.itertuples():
-        loss = 'absolute-error' if row.loss == 'abs' else 'squared-error'
-        method = "naive's" if row.mean_diff < 0 else "pooled AR's" if row.mean_diff > 0 else 'neither method’s'
-        verdict = 'is' if row.p_value < 0.05 else 'is not'
-        clauses.append(f"{method} lower {loss} loss {verdict} statistically distinguishable from zero "
-                       f"(t = {row.t_stat:.3f}, df = {row.df}, p = {row.p_value:.4f})")
-    return 'At the 5% level, ' + '; '.join(clauses) + '.'
+    """One plain sentence on the mean loss difference (naive minus pooled AR) at a fixed 5% level."""
+    sentences = []
+    for i, row in enumerate(frame.itertuples()):
+        loss = 'absolute error' if row.loss == 'abs' else 'squared error'
+        favored = 'naive' if row.mean_diff < 0 else 'pooled AR' if row.mean_diff > 0 else 'neither method'
+        stats = f"t = {row.t_stat:.2f}, df = {row.df}, p = {row.p_value:.2g}"
+        if row.p_value < 0.05 and row.p_value >= 0.04:
+            sentences.append(f"For {loss} it is borderline ({stats}).")
+        elif row.p_value < 0.05:
+            sentences.append(f"the mean loss difference favors {favored} for {loss} ({stats}).")
+        else:
+            sentences.append(f"For {loss} the mean loss difference is not distinguishable from zero ({stats}).")
+    text = ' '.join(sentences)
+    if text.startswith('the mean loss difference'):
+        text = 'At the 5% level, ' + text
+    else:
+        text = 'At the 5% level: ' + text
+    return text + ' Neither p-value is adjusted for testing two loss functions.'
 
 
 def winners(values):
