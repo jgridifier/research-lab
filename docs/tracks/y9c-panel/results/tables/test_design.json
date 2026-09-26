@@ -301,5 +301,35 @@
       "training_rows": 1349,
       "training_last_target": "2026Q1"
     }
+  ],
+  "dm_full_sample": [
+    {
+      "scope": "full",
+      "loss": "abs",
+      "n": 893,
+      "G": 18,
+      "df": 17,
+      "mean_diff": -16225.314055228662,
+      "se": 6577.395745155882,
+      "t_stat": -2.466829530088451,
+      "p_value": 0.024556706048764074,
+      "favored": "naive",
+      "note": "CR1; assumes independent target-quarter clusters",
+      "inference": "cluster-robust t, df=G-1"
+    },
+    {
+      "scope": "full",
+      "loss": "squared",
+      "n": 893,
+      "G": 18,
+      "df": 17,
+      "mean_diff": -15815555433.578777,
+      "se": 7446160561.392085,
+      "t_stat": -2.1239879671117388,
+      "p_value": 0.04864321847477837,
+      "favored": "naive",
+      "note": "CR1; assumes independent target-quarter clusters",
+      "inference": "cluster-robust t, df=G-1"
+    }
   ]
 }

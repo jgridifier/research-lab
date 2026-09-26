@@ -56,6 +56,7 @@ pyzmq==27.2.0
 referencing==0.37.0
 requests==2.34.2
 rpds-py==2026.6.3
+scipy==1.18.1
 six==1.17.0
 soupsieve==2.10
 stack-data==0.6.3

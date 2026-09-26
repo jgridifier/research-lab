@@ -90,8 +90,8 @@
     <tr>
       <td>Naive</td>
       <td>893</td>
-      <td>117,823.277</td>
-      <td>275,791.187</td>
+      <td>117,823</td>
+      <td>275,791</td>
       <td>13.082</td>
       <td>893</td>
       <td>3.453</td>
@@ -99,8 +99,8 @@
     <tr>
       <td>Seasonal naive</td>
       <td>893</td>
-      <td>345,028.732</td>
-      <td>767,683.569</td>
+      <td>345,029</td>
+      <td>767,684</td>
       <td>33.802</td>
       <td>893</td>
       <td>10.740</td>
@@ -108,16 +108,71 @@
     <tr>
       <td>Pooled panel AR</td>
       <td>893</td>
-      <td>134,048.591</td>
-      <td>303,111.092</td>
+      <td>134,049</td>
+      <td>303,111</td>
       <td>14.020</td>
       <td>893</td>
       <td>4.267</td>
     </tr>
   </tbody>
 </table>
+  <h3>Is naive's edge over pooled AR distinguishable from noise?</h3>
+  <p>At the 5% level, the mean loss difference favors naive for absolute error (t = -2.47, df = 17, p = 0.025). For squared error it is borderline (t = -2.12, df = 17, p = 0.049). Neither p-value is adjusted for testing two loss functions.</p>
+  <p>Paired Diebold–Mariano loss differential: L(naive) − L(pooled AR), with error = forecast − actual.
+  Negative values favor naive. All 893 matched cases are included.
+  Standard errors cluster by target quarter to absorb cross-sectional correlation within a quarter,
+  using the CR1 correction G/(G−1) and a Student t(G−1) reference distribution.
+  One-step forecasts are assumed to have no serial dependence across quarters beyond what is captured;
+  this test does not adjust for correlation between quarters. The stated significance threshold is 5%.</p>
+  <table class="dataframe">
+  <thead>
+    <tr style="text-align: right;">
+      <th>Scope</th>
+      <th>Loss / differential units</th>
+      <th>n</th>
+      <th>G</th>
+      <th>Mean loss differential</th>
+      <th>Cluster-robust SE</th>
+      <th>Cluster-robust t</th>
+      <th>df</th>
+      <th>Two-sided p</th>
+      <th>Favored method</th>
+      <th>Inference</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>full</td>
+      <td>Absolute error (thousands USD)</td>
+      <td>893</td>
+      <td>18</td>
+      <td>-16,225</td>
+      <td>6,577</td>
+      <td>-2.4668</td>
+      <td>17</td>
+      <td>0.0246</td>
+      <td>Naive</td>
+      <td>cluster-robust t, df=G-1</td>
+    </tr>
+    <tr>
+      <td>full</td>
+      <td>Squared error ((thousands USD)²)</td>
+      <td>893</td>
+      <td>18</td>
+      <td>-15,815,555,434</td>
+      <td>7,446,160,561</td>
+      <td>-2.1240</td>
+      <td>17</td>
+      <td>0.0486</td>
+      <td>Naive</td>
+      <td>cluster-robust t, df=G-1</td>
+    </tr>
+  </tbody>
+</table>
   <h3>By target year</h3>
-  <p>The final year may be partial.</p>
+  <p>The final year may be partial. <strong>Per-year results (including pooled AR's 2025 and 2026 wins)
+  are descriptive only: 4 clusters per year (2 in 2026), so clustered inference is weak (df=3)
+  or essentially undefined (df=1).</strong></p>
   <table class="dataframe">
   <thead>
     <tr style="text-align: right;">
@@ -136,8 +191,8 @@
       <td>2022</td>
       <td>Naive</td>
       <td>198</td>
-      <td>192,429.672</td>
-      <td>414,745.873</td>
+      <td>192,430</td>
+      <td>414,746</td>
       <td>31.854</td>
       <td>198</td>
       <td>8.073</td>
@@ -146,8 +201,8 @@
       <td>2022</td>
       <td>Seasonal naive</td>
       <td>198</td>
-      <td>458,285.949</td>
-      <td>917,090.224</td>
+      <td>458,286</td>
+      <td>917,090</td>
       <td>79.484</td>
       <td>198</td>
       <td>19.506</td>
@@ -156,8 +211,8 @@
       <td>2022</td>
       <td>Pooled panel AR</td>
       <td>198</td>
-      <td>219,619.991</td>
-      <td>467,760.957</td>
+      <td>219,620</td>
+      <td>467,761</td>
       <td>33.567</td>
       <td>198</td>
       <td>9.402</td>
@@ -166,8 +221,8 @@
       <td>2023</td>
       <td>Naive</td>
       <td>199</td>
-      <td>104,897.558</td>
-      <td>213,572.534</td>
+      <td>104,898</td>
+      <td>213,573</td>
       <td>8.634</td>
       <td>199</td>
       <td>3.981</td>
@@ -176,8 +231,8 @@
       <td>2023</td>
       <td>Seasonal naive</td>
       <td>199</td>
-      <td>462,895.623</td>
-      <td>1,027,731.542</td>
+      <td>462,896</td>
+      <td>1,027,732</td>
       <td>24.441</td>
       <td>199</td>
       <td>15.751</td>
@@ -186,8 +241,8 @@
       <td>2023</td>
       <td>Pooled panel AR</td>
       <td>199</td>
-      <td>144,051.346</td>
-      <td>244,310.990</td>
+      <td>144,051</td>
+      <td>244,311</td>
       <td>10.973</td>
       <td>199</td>
       <td>6.261</td>
@@ -196,8 +251,8 @@
       <td>2024</td>
       <td>Naive</td>
       <td>200</td>
-      <td>79,489.700</td>
-      <td>159,863.273</td>
+      <td>79,490</td>
+      <td>159,863</td>
       <td>6.254</td>
       <td>200</td>
       <td>2.619</td>
@@ -206,8 +261,8 @@
       <td>2024</td>
       <td>Seasonal naive</td>
       <td>200</td>
-      <td>198,305.510</td>
-      <td>359,476.629</td>
+      <td>198,306</td>
+      <td>359,477</td>
       <td>15.642</td>
       <td>200</td>
       <td>7.815</td>
@@ -216,8 +271,8 @@
       <td>2024</td>
       <td>Pooled panel AR</td>
       <td>200</td>
-      <td>94,570.869</td>
-      <td>202,791.490</td>
+      <td>94,571</td>
+      <td>202,791</td>
       <td>6.480</td>
       <td>200</td>
       <td>2.758</td>
@@ -226,8 +281,8 @@
       <td>2025</td>
       <td>Naive</td>
       <td>198</td>
-      <td>110,835.182</td>
-      <td>294,096.479</td>
+      <td>110,835</td>
+      <td>294,096</td>
       <td>10.254</td>
       <td>198</td>
       <td>2.823</td>
@@ -236,8 +291,8 @@
       <td>2025</td>
       <td>Seasonal naive</td>
       <td>198</td>
-      <td>268,043.051</td>
-      <td>619,879.440</td>
+      <td>268,043</td>
+      <td>619,879</td>
       <td>26.317</td>
       <td>198</td>
       <td>7.587</td>
@@ -246,8 +301,8 @@
       <td>2025</td>
       <td>Pooled panel AR</td>
       <td>198</td>
-      <td>102,578.670</td>
-      <td>287,347.836</td>
+      <td>102,579</td>
+      <td>287,348</td>
       <td>10.151</td>
       <td>198</td>
       <td>2.253</td>
@@ -256,8 +311,8 @@
       <td>2026</td>
       <td>Naive</td>
       <td>98</td>
-      <td>85,685.622</td>
-      <td>161,296.663</td>
+      <td>85,686</td>
+      <td>161,297</td>
       <td>3.833</td>
       <td>98</td>
       <td>2.239</td>
@@ -266,8 +321,8 @@
       <td>2026</td>
       <td>Seasonal naive</td>
       <td>98</td>
-      <td>331,838.622</td>
-      <td>697,178.120</td>
+      <td>331,839</td>
+      <td>697,178</td>
       <td>12.697</td>
       <td>98</td>
       <td>9.134</td>
@@ -276,8 +331,8 @@
       <td>2026</td>
       <td>Pooled panel AR</td>
       <td>98</td>
-      <td>84,996.583</td>
-      <td>152,252.621</td>
+      <td>84,997</td>
+      <td>152,253</td>
       <td>3.922</td>
       <td>98</td>
       <td>2.352</td>
@@ -287,6 +342,156 @@
   <ul><li>2022: MAE: Naive; RMSE: Naive; MAPE: Naive.</li><li>2023: MAE: Naive; RMSE: Naive; MAPE: Naive.</li><li>2024: MAE: Naive; RMSE: Naive; MAPE: Naive.</li><li>2025: MAE: Pooled panel AR; RMSE: Pooled panel AR; MAPE: Pooled panel AR.</li><li>2026: MAE: Pooled panel AR; RMSE: Pooled panel AR; MAPE: Naive.</li></ul>
   <p>Supplementary MdAPE winners by target year:</p>
   <ul><li>2022: Naive.</li><li>2023: Naive.</li><li>2024: Naive.</li><li>2025: Pooled panel AR.</li><li>2026: Naive.</li></ul>
+  <h3>Per-year DM comparisons — descriptive only</h3>
+  <table class="dataframe">
+  <thead>
+    <tr style="text-align: right;">
+      <th>Scope</th>
+      <th>Loss / differential units</th>
+      <th>n</th>
+      <th>G</th>
+      <th>Mean loss differential</th>
+      <th>Cluster-robust SE</th>
+      <th>Cluster-robust t</th>
+      <th>df</th>
+      <th>Two-sided p</th>
+      <th>Favored method</th>
+      <th>Inference</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>2022</td>
+      <td>Absolute error (thousands USD)</td>
+      <td>198</td>
+      <td>4</td>
+      <td>-27,190</td>
+      <td>9,698</td>
+      <td>-2.8038</td>
+      <td>3</td>
+      <td>0.0676</td>
+      <td>Naive</td>
+      <td>descriptive only (G=4)</td>
+    </tr>
+    <tr>
+      <td>2022</td>
+      <td>Squared error ((thousands USD)²)</td>
+      <td>198</td>
+      <td>4</td>
+      <td>-46,786,174,302</td>
+      <td>24,291,046,626</td>
+      <td>-1.9261</td>
+      <td>3</td>
+      <td>0.1497</td>
+      <td>Naive</td>
+      <td>descriptive only (G=4)</td>
+    </tr>
+    <tr>
+      <td>2023</td>
+      <td>Absolute error (thousands USD)</td>
+      <td>199</td>
+      <td>4</td>
+      <td>-39,154</td>
+      <td>8,000</td>
+      <td>-4.8943</td>
+      <td>3</td>
+      <td>0.0163</td>
+      <td>Naive</td>
+      <td>descriptive only (G=4)</td>
+    </tr>
+    <tr>
+      <td>2023</td>
+      <td>Squared error ((thousands USD)²)</td>
+      <td>199</td>
+      <td>4</td>
+      <td>-14,074,632,511</td>
+      <td>6,712,706,829</td>
+      <td>-2.0967</td>
+      <td>3</td>
+      <td>0.1270</td>
+      <td>Naive</td>
+      <td>descriptive only (G=4)</td>
+    </tr>
+    <tr>
+      <td>2024</td>
+      <td>Absolute error (thousands USD)</td>
+      <td>200</td>
+      <td>4</td>
+      <td>-15,081</td>
+      <td>15,571</td>
+      <td>-0.9685</td>
+      <td>3</td>
+      <td>0.4042</td>
+      <td>Naive</td>
+      <td>descriptive only (G=4)</td>
+    </tr>
+    <tr>
+      <td>2024</td>
+      <td>Squared error ((thousands USD)²)</td>
+      <td>200</td>
+      <td>4</td>
+      <td>-15,568,122,459</td>
+      <td>12,291,160,795</td>
+      <td>-1.2666</td>
+      <td>3</td>
+      <td>0.2947</td>
+      <td>Naive</td>
+      <td>descriptive only (G=4)</td>
+    </tr>
+    <tr>
+      <td>2025</td>
+      <td>Absolute error (thousands USD)</td>
+      <td>198</td>
+      <td>4</td>
+      <td>8,257</td>
+      <td>14,214</td>
+      <td>0.5809</td>
+      <td>3</td>
+      <td>0.6021</td>
+      <td>Pooled panel AR</td>
+      <td>descriptive only (G=4)</td>
+    </tr>
+    <tr>
+      <td>2025</td>
+      <td>Squared error ((thousands USD)²)</td>
+      <td>198</td>
+      <td>4</td>
+      <td>3,923,959,968</td>
+      <td>9,942,936,641</td>
+      <td>0.3946</td>
+      <td>3</td>
+      <td>0.7195</td>
+      <td>Pooled panel AR</td>
+      <td>descriptive only (G=4)</td>
+    </tr>
+    <tr>
+      <td>2026</td>
+      <td>Absolute error (thousands USD)</td>
+      <td>98</td>
+      <td>2</td>
+      <td>689</td>
+      <td>14,699</td>
+      <td>0.0469</td>
+      <td>1</td>
+      <td>0.9702</td>
+      <td>Pooled panel AR</td>
+      <td>descriptive only (G=2)</td>
+    </tr>
+    <tr>
+      <td>2026</td>
+      <td>Squared error ((thousands USD)²)</td>
+      <td>98</td>
+      <td>2</td>
+      <td>2,835,753,035</td>
+      <td>10,393,793,412</td>
+      <td>0.2728</td>
+      <td>1</td>
+      <td>0.8304</td>
+      <td>Pooled panel AR</td>
+      <td>descriptive only (G=2)</td>
+    </tr>
+  </tbody>
+</table>
   <h2>Figures</h2>
   <figure><img src="figures/jpm_nii.png" alt="JPMorgan quarterly and reported YTD net interest income" width="100%" /><figcaption>JPMorgan (RSSD 1039502): quarterly and reported YTD NII, thousands USD. Complete-year quarterly sums equal Q4 YTD.</figcaption></figure>
 <figure><img src="figures/coverage.png" alt="Quarterly Y-9C filer count and top-50 asset cutoff" width="100%" /><figcaption>Filers with reported consolidated assets (BHC count) and the 50th-largest asset value (thousands USD). The 2018Q3 threshold change mainly affects small filers.</figcaption></figure>
@@ -294,7 +499,7 @@
 <figure><img src="figures/aggregate_nii.png" alt="Actual and forecast aggregate NII for evaluated top-50 cases" width="100%" /><figcaption>NII summed over the same evaluated BHCs within each target quarter, thousands USD. Membership changes over time; aggregate cancellation can hide institution-level errors.</figcaption></figure>
   <h2>Data vintage</h2>
   <p>Coverage: <strong>2018Q1–2026Q2</strong>,
-  34 quarters. Build time (UTC): 2026-09-26T03:36:04.414086+00:00.
+  34 quarters. Build time (UTC): 2026-09-26T04:00:45.659404+00:00.
   Source: <a href="https://www.ffiec.gov/npw/FinancialReport/FinancialDataDownload">FFIEC NIC Financial Data Download</a>.
   Cached files are reused; first-seen timestamps are not claimed as original download times.</p>
   <details><summary>NIC download dates and cache provenance (UTC)</summary>
@@ -303,7 +508,8 @@
   <p><a href="tables/vintage.json">Vintage and SHA-256 metadata</a> ·
   <a href="tables/test_design.json">Test design and origin-level counts</a> ·
   <a href="tables/overall_errors.csv">Overall errors CSV</a> ·
-  <a href="tables/by_year_errors.csv">By-year errors CSV</a></p>
+  <a href="tables/by_year_errors.csv">By-year errors CSV</a> ·
+  <a href="tables/dm_tests.csv">DM tests CSV</a> · <a href="tables/dm_tests.json">DM tests JSON</a></p>
   <h2>Reproduce</h2>
   <pre><code>git clone https://github.com/jgridifier/research-lab &amp;&amp; cd research-lab &amp;&amp; make y9c</code></pre>
   <p>Requires Python 3.13, venv/pip, make, and network access to NIC and the package index.
