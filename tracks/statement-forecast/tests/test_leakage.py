@@ -104,3 +104,49 @@ def test_end_to_end_forecasts_through_target_ignore_target_and_later_data(panel,
         keep = lambda frame: frame.loc[frame.target_quarter.le(target), columns].reset_index(drop=True)
         assert len(keep(before)) > 0
         assert_frame_equal(keep(before), keep(after), check_exact=True)
+
+
+YTD = {'nii_q': 'nii_ytd', 'noninterest_income_q': 'noninterest_income_ytd',
+       'noninterest_expense_q': 'noninterest_expense_ytd'}
+
+
+def decumulated(ytd_panel):
+    """Quarterly flows from YTD with the shared y9c de-cumulation (no copy)."""
+    from y9c.panel import decumulate
+    panel = ytd_panel.copy()
+    for quarterly, ytd in YTD.items():
+        panel[quarterly], _ = decumulate(panel, ytd)
+    return panel
+
+
+@pytest.mark.parametrize('target', ['2023Q2', '2024Q1', '2025Q4'])
+def test_decumulation_future_ytd_perturbation_leaves_forecasts_identical(panel, spec, target):
+    """Perturb YTD reported at dates >= t, de-cumulate, evaluate: forecasts for targets <= t are identical."""
+    from statement_forecast.evaluate import evaluate_line
+    target = pd.Period(target)
+    ytd_panel = panel.drop(columns=list(YTD)).copy()
+    year = [ytd_panel.rssd_id, ytd_panel.report_date.dt.year]
+    for quarterly, ytd in YTD.items():
+        ytd_panel[ytd] = panel[quarterly].groupby(year).cumsum()
+    base = decumulated(ytd_panel)
+    np.testing.assert_allclose(base[list(YTD)], panel[list(YTD)], rtol=1e-12)
+    changed_ytd = ytd_panel.copy()
+    future = changed_ytd.report_date.dt.to_period('Q').ge(target)
+    rng = np.random.default_rng(21)
+    for ytd in YTD.values():
+        changed_ytd.loc[future, ytd] *= rng.uniform(.3, 3, future.sum())
+    changed = decumulated(changed_ytd)
+    quarter = changed.report_date.dt.to_period('Q')
+    # The perturbation reaches the de-cumulated target quarter and later ones only.
+    assert not np.allclose(changed.loc[quarter.eq(target), 'nii_q'], base.loc[quarter.eq(target), 'nii_q'])
+    np.testing.assert_array_equal(changed.loc[quarter.lt(target), list(YTD)], base.loc[quarter.lt(target), list(YTD)])
+    columns = ['rssd_id', 'quarter', 'target_quarter', *METHODS, 'eb_panel', 'ar_fallback', 'eb_fallback']
+    for line in spec['lines']:
+        before = evaluate_line(base, line['key'], spec)[0]
+        after = evaluate_line(changed, line['key'], spec)[0]
+        keep = lambda frame: frame.loc[frame.target_quarter.le(target), columns].reset_index(drop=True)
+        assert len(keep(before)) > 0
+        assert_frame_equal(keep(before), keep(after), check_exact=True)
+        # Non-vacuous: the next target's forecasts do move with the perturbed data.
+        nxt = lambda frame: frame.loc[frame.target_quarter.eq(target + 1), 'eb_panel'].to_numpy()
+        assert not np.allclose(nxt(before), nxt(after))

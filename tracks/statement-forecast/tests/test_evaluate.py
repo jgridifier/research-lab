@@ -52,8 +52,13 @@ def test_aggregate_outputs_only(panel, spec, tmp_path):
     vintage = tmp_path / 'vintage.json'
     vintage.write_text(json.dumps(dict(synthetic=True, first_quarter='2018Q1', last_quarter='2026Q2',
                                        n_quarters=34, build_time_utc='synthetic', downloads={})) + '\n')
+    for incomplete in [{}, {'run_start_time_utc': 'synthetic start'}, {'git_head': '0' * 40},
+                       {'run_start_time_utc': '', 'git_head': '0' * 40}]:
+        with pytest.raises(ValueError, match='run_meta must supply'):
+            write_outputs(results, tmp_path / 'rejected', vintage, incomplete)
+    assert not (tmp_path / 'rejected').exists()
     write_outputs(results, tmp_path / 'results', vintage, {'run_start_time_utc':'synthetic start',
-                  'prereg_commit':'synthetic', 'prereg_commit_time':'<untrusted timestamp>'})
+                  'git_head': '0' * 40, 'prereg_commit':'synthetic', 'prereg_commit_time':'<untrusted timestamp>'})
     tables = tmp_path / 'results/tables'
     expected = {f'{name}.{ext}' for name in ['overall_errors','by_year_errors','dm_tests','eb_parameters']
                 for ext in ['csv','json']} | {'verdicts.json','run_metadata.json','test_design.json','vintage.json'}
@@ -66,7 +71,7 @@ def test_aggregate_outputs_only(panel, spec, tmp_path):
     assert (tables / 'vintage.json').read_bytes() == vintage.read_bytes()
     meta = json.loads((tables / 'run_metadata.json').read_text())
     assert meta['test_design_sha256'] == hashlib.sha256(DESIGN_PATH.read_bytes()).hexdigest()
-    assert len(meta['git_head']) == 40
+    assert meta['git_head'] == '0' * 40
     assert meta['run_start_time_utc'] == 'synthetic start'
     assert len(meta['fallback_counts']) == 3
     assert len(results['eb_parameters']) == 54

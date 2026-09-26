@@ -76,16 +76,21 @@ def fit_qmle(Y, Ylag, S, y0):
     def objective(theta):
         return -profile_loglik(theta[0], theta[1:], Y, Ylag, S, y0)['loglik'] / (N * T)
 
-    fits = [minimize(objective, start, method='BFGS', options={'gtol': 1e-7, 'maxiter': 1000})
-            for start in (within, pooled)]
     # BFGS can stop with "precision loss" at an optimum; accept a finite point
-    # whose gradient of the (N*T-scaled) objective is numerically zero.
-    fits = [f for f in fits if np.isfinite(getattr(f, 'fun', np.nan))
-            and np.isfinite(getattr(f, 'x', np.nan)).all()
-            and (f.success or np.max(np.abs(getattr(f, 'jac', np.inf))) < GRADIENT_TOL)]
+    # whose gradient of the (N*T-scaled) objective is numerically zero. The
+    # winning start and how it was accepted are recorded with the fit.
+    fits = []
+    for label, start in (('within', within), ('pooled', pooled)):
+        f = minimize(objective, start, method='BFGS', options={'gtol': 1e-7, 'maxiter': 1000})
+        if not (np.isfinite(getattr(f, 'fun', np.nan)) and np.isfinite(getattr(f, 'x', np.nan)).all()):
+            continue
+        max_grad = float(np.max(np.abs(getattr(f, 'jac', np.inf))))
+        if f.success or max_grad < GRADIENT_TOL:
+            fits.append((label, f, max_grad))
     if not fits:
         raise ValueError('Neither QMLE starting point converged to a finite optimum')
-    theta = min(fits, key=lambda f: f.fun).x
+    label, best, max_grad = min(fits, key=lambda item: item[1].fun)
+    theta = best.x
     pieces = profile_loglik(theta[0], theta[1:], Y, Ylag, S, y0)
     scale = pieces['sigma2'] / T
     var = pieces['omega2'] + scale
@@ -97,6 +102,10 @@ def fit_qmle(Y, Ylag, S, y0):
                   post_mean=post, shrinkage=float(scale / var))
     if not all(np.isfinite(np.asarray(v)).all() for v in result.values()):
         raise ValueError('Nonfinite QMLE result')
+    result.update(optimizer_start=label, optimizer_success=bool(best.success),
+                  optimizer_message=str(getattr(best, 'message', '')), optimizer_max_abs_grad=max_grad,
+                  optimizer_accepted_by='success' if best.success else f'gradient<{GRADIENT_TOL:g}',
+                  optimizer_starts_converged=[item[0] for item in fits])
     return result
 
 
@@ -144,7 +153,8 @@ def eb_forecast_origin(panel_or_ratio, origin, universe_ids, column, T=12):
     if not np.isfinite(forecast.eb_panel).all():
         raise ValueError(f'{origin}: nonfinite EB forecast; no clipping or silent case removal')
     params = {k: fit[k] for k in ['rho', 'alpha', 'sigma2', 'phi0', 'phi1', 'omega2',
-                                 'shrinkage', 'N', 'T', 'loglik']}
+                                 'shrinkage', 'N', 'T', 'loglik', 'optimizer_start', 'optimizer_success',
+                                 'optimizer_message', 'optimizer_max_abs_grad', 'optimizer_accepted_by']}
     used = ratio.loc[ratio.index.get_level_values('rssd_id').isin(used_ids)
                      & ratio.index.get_level_values('quarter').isin(quarters)]
     # Latest report quarter of any value that entered estimation or scaling

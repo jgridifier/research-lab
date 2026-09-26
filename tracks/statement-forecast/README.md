@@ -18,18 +18,16 @@ Y-9C results with committed SHA-256 hashes.
 ## Fixed specification
 
 [`test_design.json`](test_design.json) is the fixed pre-registration; do not edit it to fit results.
-Commit it separately before the first real-data run. The notebook checks its exact SHA-256 against
-`git show HEAD:tracks/statement-forecast/test_design.json`, records the most recent commit touching
-that file and its commit time, and refuses an uncommitted or changed specification. The committed
-notebook holds the single real-data run (pre-registration commit `3ea20c8`, 2026-09-26 17:14:22 ET;
-run start 2026-09-26 17:15:34 ET). The result was published whatever the verdict.
-
-## Result (first run)
-
-**0 of 3 lines pass the pre-registered bar.** On the same 893 matched cases per line, naive beats the
-EB panel on MAE for NII (117,823 vs 150,011 thousand USD; abs-error DM p = 0.0026, favoring naive),
-noninterest income (294,201 vs 394,099; p = 0.0002) and noninterest expense (230,601 vs 277,329;
-p = 0.0158). See the [results page](../../docs/tracks/statement-forecast/results/index.html).
+It was committed on its own in `3ea20c8` (2026-09-26 17:14:22 ET) before the first real-data run.
+`statement_forecast.prereg.verify_preregistration()` pins that commit and the file's SHA-256
+(`915d8b220f9dcbdc844d464f7b98db739cc986fa48f9f14e0ed7b73d01ffa68f`): the notebook refuses to run
+unless the design on disk and at HEAD hash to the pinned digest (and, when `3ea20c8` is in local
+history, its blob does too) and the working tree is clean. A later committed edit to
+`test_design.json` therefore fails the check rather than becoming a new pre-registration.
+`write_outputs` requires the run start time and git HEAD from the caller. The committed notebook holds
+the single real-data run (run start 2026-09-26 17:15:34 ET at `081a63a`); the checks above were
+tightened after the Chief of Staff review without re-executing it, and no computed value changed.
+The result is published whatever the verdict.
 
 Liu, Moon & Schorfheide, *Forecasting with Dynamic Panel Data Models*, NBER Working Paper 25102
 (2018); Econometrica 88(1), 171–201 (2020), [paper](https://www.nber.org/papers/w25102).
@@ -49,6 +47,15 @@ Each line passes only if EB MAE is strictly below naive MAE and the full-sample 
 clustered DM two-sided p is ≤ 0.05. Undefined p fails. The headline counts passes out of three.
 No multiplicity adjustment. Seasonal-naive/pooled-AR comparisons, RMSE/squared-error DM,
 per-year results and parameter summaries are descriptive only.
+
+## Result (first run)
+
+**0 of 3 lines pass the pre-registered bar.** On the same 893 matched cases per line, naive beats the
+EB panel on MAE for NII (117,823 vs 150,011 thousand USD; abs-error DM p = 0.0026, favoring naive),
+noninterest income (294,201 vs 394,099; p = 0.0002) and noninterest expense (230,601 vs 277,329;
+p = 0.0158). See the [results page](../../docs/tracks/statement-forecast/results/index.html), which also
+carries descriptive diagnostics from the Chief of Staff review (acquisition spikes, merger-quarter asset
+scaling, low estimated rho); those are not pre-registered tests.
 
 ## Point-in-time design and reuse
 

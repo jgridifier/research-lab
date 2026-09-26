@@ -44,6 +44,10 @@ def test_recovery_and_oracle_shrinkage():
     assert fit['shrinkage'] == pytest.approx(scale / (omega2 + scale), abs=.05)
     assert np.corrcoef(fit['post_mean'], oracle)[0, 1] > .99
     assert np.mean((fit['post_mean'] - lam)**2) < np.mean((fit['lam_hat'] - lam)**2)
+    # The winning BFGS start and how the optimum was accepted are recorded.
+    assert fit['optimizer_start'] in fit['optimizer_starts_converged'] and fit['optimizer_start'] in ('within', 'pooled')
+    assert isinstance(fit['optimizer_success'], bool) and isinstance(fit['optimizer_message'], str)
+    assert fit['optimizer_accepted_by'] == 'success' or fit['optimizer_max_abs_grad'] < 1e-5
 
 
 def test_gaussian_tweedie_closed_form():

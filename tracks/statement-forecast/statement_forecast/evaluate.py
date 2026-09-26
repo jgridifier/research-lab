@@ -1,20 +1,19 @@
 """Fixed-window, matched-case evaluation; export aggregate results only."""
-from datetime import datetime, timezone
 import hashlib
 import json
 from pathlib import Path
 import shutil
-import subprocess
 
 import numpy as np
 import pandas as pd
 from y9c import forecast as y9c
 
 from .eb import eb_forecast_origin
-from .paths import DESIGN_PATH, ROOT, load_design
+from .paths import DESIGN_PATH, load_design
 
 LINES = load_design()['lines']
 METHODS = y9c.METHODS
+REQUIRED_RUN_META = ('run_start_time_utc', 'git_head')
 
 
 def evaluate_line(panel, line, design_json):
@@ -93,11 +92,15 @@ def run_all(panel, design_json):
 def write_outputs(results, out_dir, vintage_path, run_meta):
     """Write an explicit allowlist of aggregate tables, plus provenance.
 
-    Callers supply run_start_time_utc at run start. Defaults support standalone
-    callers; notebook runs also provide the verified pre-registration provenance.
+    The caller must supply run_start_time_utc (captured when the run starts)
+    and git_head (the commit the run executed); neither is inferred at write
+    time. Missing or empty values raise.
     """
     if results['test_design'] != load_design():
         raise ValueError('Results design differs from the fixed pre-registration')
+    missing = [key for key in REQUIRED_RUN_META if not run_meta.get(key)]
+    if missing:
+        raise ValueError(f'run_meta must supply {missing}; they are not inferred at write time')
     tables = Path(out_dir) / 'tables'
     tables.mkdir(parents=True, exist_ok=True)
     for name in ['overall_errors', 'by_year_errors', 'dm_tests', 'eb_parameters']:
@@ -109,9 +112,6 @@ def write_outputs(results, out_dir, vintage_path, run_meta):
                    else frame.to_json(orient='records', indent=2))
         (tables / f'{name}.json').write_text(content + '\n')
     metadata = dict(run_meta)
-    metadata.setdefault('run_start_time_utc', datetime.now(timezone.utc).isoformat())
-    if 'git_head' not in metadata:
-        metadata['git_head'] = subprocess.check_output(['git', 'rev-parse', 'HEAD'], cwd=ROOT, text=True).strip()
     metadata.update(test_design_sha256=hashlib.sha256(DESIGN_PATH.read_bytes()).hexdigest(),
                     fallback_counts={key: {name: audit[name] for name in ['ar_fallbacks', 'eb_fallbacks']}
                                      for key, audit in results['audits'].items()},

@@ -16,6 +16,44 @@ def text(value):
     return escape(str(value))
 
 
+def plural(count, one, many):
+    return one if count == 1 else many
+
+
+# Descriptive diagnostics from the Chief of Staff review of PR #4 (2026-09-26).
+# They are NOT pre-registered tests, do not change any verdict, and are not
+# recomputed by this pipeline; figures in millions of USD (MAE gap vs naive).
+REVIEW_DIAGNOSTICS = """
+  <h2>Diagnostics from the Chief of Staff review · not pre-registered</h2>
+  <p><strong>Descriptive only.</strong> These notes come from the Chief of Staff's review of the result.
+  They are diagnostics, not pre-registered tests: they were measured after the result was known and do not
+  change any verdict or table value above. Gaps are EB MAE minus naive MAE, in millions of USD
+  (equal weight per BHC-quarter, same 893 cases per line).</p>
+  <ul>
+    <li><strong>Acquisition spikes in noninterest income.</strong> First Citizens BancShares reported
+    2023Q1 noninterest income of 10,339,597 thousand USD (482,722 in 2022Q4), driven by the bargain-purchase
+    gain on its Silicon Valley Bank acquisition. Flagstar Financial (RSSD 2132932, then filing as New York
+    Community Bancorp) had a 2023Q1 spike to 2,085,260 thousand USD (217,003 in 2022Q4). While such a quarter
+    sits in the 12-quarter window it inflates the estimated noise variance and lowers estimated persistence
+    (see the parameter figure). First Citizens alone accounts for 24.4M of the 99.9M noninterest-income MAE
+    gap versus naive.</li>
+    <li><strong>Lagged-asset scaling in merger quarters.</strong> Because y(t) = 400·X(t)/A(t−1) and the level
+    forecast multiplies by A(t)/400, the persistence part of the forecast is X(t)·A(t)/A(t−1). In a merger
+    quarter the flow already jumps with the acquisition and the forecast is scaled up again by the asset jump,
+    so merger quarters are hit twice. This costs 8.4M (NII), 25.6M (noninterest income) and 34.8M (noninterest
+    expense) of the MAE gap versus naive.</li>
+    <li><strong>Low estimated persistence.</strong> The remaining gap mainly reflects low estimated rho
+    (median about 0.63 for NII across origins; see the parameter summary), which pulls forecasts toward
+    each bank's window mean while NII trended through the 2022–2024 rate cycle. The Tweedie shrinkage step
+    itself costs only about 1M (NII), 17M (noninterest income) and 6M (noninterest expense) relative to the
+    unshrunk plug-in intercepts.</li>
+  </ul>
+  <p><strong>Published whatever the result.</strong> The specification and pass bar were committed before the
+  first real-data run, the real data were run once, and this page reports that run as it came out, including
+  the 0-of-3 outcome.</p>
+"""
+
+
 def error_table(frame, dm=None):
     rows = []
     for row in frame.itertuples():
@@ -81,7 +119,7 @@ def render(results_dir):
 <p><strong>{text(verdict_text)}</strong> Verdicts use unrounded values.</p>
 <p>EB fallbacks: {fallback['eb_fallbacks']:,}; pooled AR fallbacks: {fallback['ar_fallbacks']:,}.
 Of {audit['selected']:,} selected origin–BHC pairs, {audit['dropped_target_missing']:,} lack targets and
-{audit['dropped_history']:,} additional pairs lack current or seasonal history.
+{audit['dropped_history']:,} additional {plural(audit['dropped_history'], 'pair lacks', 'pairs lack')} current or seasonal history.
 Estimation membership precedes these evaluation exclusions.</p>''')
         yearly.append(f'''<h3>{text(line['label'])} · Descriptive only</h3>
 {error_table(annual.loc[annual.line.eq(key)])}
@@ -154,6 +192,7 @@ Estimation membership precedes these evaluation exclusions.</p>''')
   Positive t favors EB. CR1 standard errors cluster by target quarter; two-sided p uses Student t(G−1).
   There is no correction for dependence between quarters. Undefined p means FAIL.</p>
   {''.join(sections)}
+  {REVIEW_DIAGNOSTICS}
   <h2>Specification and paper deviations</h2>
   <p>{text(design['method']['equation'])}</p>
   <ul>{notes}</ul>

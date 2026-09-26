@@ -35,7 +35,8 @@ Run `make statement-forecast` for the empirical-Bayes panel notebook and results
 Y-9C data pipeline and baselines. Run `make statement-forecast-test` for synthetic tests. The fixed
 [pre-registration](tracks/statement-forecast/test_design.json) covers next-quarter NII, noninterest
 income and expense; see the [pipeline README](tracks/statement-forecast/README.md). Commit the
-pre-registration separately before the first real-data run; the notebook verifies it against HEAD.
+pre-registration separately before the first real-data run; the notebook verifies the file against
+the pinned pre-registration digest (commit `3ea20c8`) and requires a clean working tree.
 
 ---
 

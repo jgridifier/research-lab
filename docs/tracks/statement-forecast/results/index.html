@@ -109,7 +109,7 @@
 <p><strong>FAIL: EB MAE 150,011 &gt;= naive MAE 117,823 thousands USD; absolute-error DM p = 0.0026 (bar ≤ 0.05).</strong> Verdicts use unrounded values.</p>
 <p>EB fallbacks: 3; pooled AR fallbacks: 21.
 Of 900 selected origin–BHC pairs, 6 lack targets and
-1 additional pairs lack current or seasonal history.
+1 additional pair lacks current or seasonal history.
 Estimation membership precedes these evaluation exclusions.</p><h3>Noninterest income (BHCK4079)</h3>
 <table class="dataframe">
   <thead>
@@ -170,7 +170,7 @@ Estimation membership precedes these evaluation exclusions.</p><h3>Noninterest i
 <p><strong>FAIL: EB MAE 394,099 &gt;= naive MAE 294,201 thousands USD; absolute-error DM p = 0.0002 (bar ≤ 0.05).</strong> Verdicts use unrounded values.</p>
 <p>EB fallbacks: 3; pooled AR fallbacks: 4.
 Of 900 selected origin–BHC pairs, 6 lack targets and
-1 additional pairs lack current or seasonal history.
+1 additional pair lacks current or seasonal history.
 Estimation membership precedes these evaluation exclusions.</p><h3>Noninterest expense (BHCK4093)</h3>
 <table class="dataframe">
   <thead>
@@ -231,8 +231,37 @@ Estimation membership precedes these evaluation exclusions.</p><h3>Noninterest e
 <p><strong>FAIL: EB MAE 277,329 &gt;= naive MAE 230,601 thousands USD; absolute-error DM p = 0.0158 (bar ≤ 0.05).</strong> Verdicts use unrounded values.</p>
 <p>EB fallbacks: 3; pooled AR fallbacks: 7.
 Of 900 selected origin–BHC pairs, 6 lack targets and
-1 additional pairs lack current or seasonal history.
+1 additional pair lacks current or seasonal history.
 Estimation membership precedes these evaluation exclusions.</p>
+  
+  <h2>Diagnostics from the Chief of Staff review · not pre-registered</h2>
+  <p><strong>Descriptive only.</strong> These notes come from the Chief of Staff's review of the result.
+  They are diagnostics, not pre-registered tests: they were measured after the result was known and do not
+  change any verdict or table value above. Gaps are EB MAE minus naive MAE, in millions of USD
+  (equal weight per BHC-quarter, same 893 cases per line).</p>
+  <ul>
+    <li><strong>Acquisition spikes in noninterest income.</strong> First Citizens BancShares reported
+    2023Q1 noninterest income of 10,339,597 thousand USD (482,722 in 2022Q4), driven by the bargain-purchase
+    gain on its Silicon Valley Bank acquisition. Flagstar Financial (RSSD 2132932, then filing as New York
+    Community Bancorp) had a 2023Q1 spike to 2,085,260 thousand USD (217,003 in 2022Q4). While such a quarter
+    sits in the 12-quarter window it inflates the estimated noise variance and lowers estimated persistence
+    (see the parameter figure). First Citizens alone accounts for 24.4M of the 99.9M noninterest-income MAE
+    gap versus naive.</li>
+    <li><strong>Lagged-asset scaling in merger quarters.</strong> Because y(t) = 400·X(t)/A(t−1) and the level
+    forecast multiplies by A(t)/400, the persistence part of the forecast is X(t)·A(t)/A(t−1). In a merger
+    quarter the flow already jumps with the acquisition and the forecast is scaled up again by the asset jump,
+    so merger quarters are hit twice. This costs 8.4M (NII), 25.6M (noninterest income) and 34.8M (noninterest
+    expense) of the MAE gap versus naive.</li>
+    <li><strong>Low estimated persistence.</strong> The remaining gap mainly reflects low estimated rho
+    (median about 0.63 for NII across origins; see the parameter summary), which pulls forecasts toward
+    each bank's window mean while NII trended through the 2022–2024 rate cycle. The Tweedie shrinkage step
+    itself costs only about 1M (NII), 17M (noninterest income) and 6M (noninterest expense) relative to the
+    unshrunk plug-in intercepts.</li>
+  </ul>
+  <p><strong>Published whatever the result.</strong> The specification and pass bar were committed before the
+  first real-data run, the real data were run once, and this page reports that run as it came out, including
+  the 0-of-3 outcome.</p>
+
   <h2>Specification and paper deviations</h2>
   <p>y_it = lambda_i + rho * y_i,t-1 + alpha&#x27; s_t + u_it,  u_it ~ iid N(0, sigma^2)</p>
   <ul><li>y_it = 400 * X_it / A_i,t-1: the de-cumulated quarterly flow X (thousands USD) divided by the bank&#x27;s own BHCK2170 total assets at the previous calendar quarter-end, annualized percent (LMS scale PPNR by assets times 400). Lagged assets are used so that the level forecast needs only A_it, known at origin t. Calendar-key lookups; no bridging of gaps.</li><li>Xhat_i,t+1 = yhat_i,t+1 * A_it / 400</li><li>Rolling: at origin t the estimation sample for bank i is y_i,t-11..y_it (T = 12 equations) with initial condition y_i0 = y_i,t-12 (LMS use rolling samples of T+1 observations plus the target).</li><li>s_t = (1{q(t)=1}, 1{q(t)=2}, 1{q(t)=3}) - 1/4, common coefficients alpha across banks, deterministic calendar terms known in advance. LMS remove seasonality by annual time aggregation; a one-quarter-ahead quarterly forecast cannot, so centered quarter-of-year dummies enter as common regressors Z (LMS eq. 1). With T = 12 each quarter appears three times, so s_t averages to zero over the window.</li><li>QMLE (LMS eq. 24): maximize the integrated Gaussian likelihood jointly over (rho, alpha, sigma^2, phi0, phi1, omega^2). (phi0, phi1, sigma^2, omega^2) are profiled in closed form given (rho, alpha); (rho, alpha) are found numerically. Refit at every origin on data dated &lt;= t only.</li><li>lambda_i | y_i0 ~ N(phi0 + phi1 * y_i0, omega^2), omega^2 &gt;= 0</li><li>Posterior mean E[lambda_i | lambda_hat_i, y_i0] = lambda_hat_i + (sigma^2 / T) * d/d lambda_hat log p_hat(lambda_hat_i | y_i0), where lambda_hat_i = mean over the window of (y_it - rho y_i,t-1 - alpha&#x27; s_t) and p_hat is the estimated marginal density of the sufficient statistic, N(phi0 + phi1 y_i0, omega^2 + sigma^2 / T) (LMS eqs. 17, 20, 30).</li><li>Banks selected into the top 50 by BHCK2170 at origin t (y9c.forecast.design rule, RSSD tie-break) that have all 13 ratios y_i,t-12..y_it observed. Selection uses only data dated &lt;= t and never depends on target (t+1) availability.</li><li>An evaluation case whose bank lacks the complete 13-ratio window (entry, missing or non-positive lagged assets, missing de-cumulated flow) receives the naive forecast; counts are reported per line.</li><li>T, transform, regressors, prior family and estimator are fixed here. No trimming, winsorizing, clipping or case removal; nonfinite forecasts raise an error.</li></ul>
