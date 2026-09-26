@@ -5,21 +5,21 @@ import pandas as pd
 METHODS = ['naive', 'seasonal_naive', 'pooled_ar']
 
 
-def design(panel):
+def design(panel, column='nii_q'):
     data = panel.copy()
     data['quarter'] = data.report_date.dt.to_period('Q')
     data = data.set_index(['rssd_id', 'quarter']).sort_index()
     # Calendar-key joins, never row shifts across gaps in a bank's history.
-    y = data.nii_q
+    y = data[column]
     ids = data.index.get_level_values('rssd_id')
     dates = data.index.get_level_values('quarter')
     for lag in [1, 3, 4, -1]:
         keys = pd.MultiIndex.from_arrays([ids, dates - lag], names=data.index.names)
         data[f'y_lag{lag}'] = y.reindex(keys).to_numpy()
-    positive = data[['nii_q', 'y_lag1', 'y_lag3', 'y_lag4']].gt(0).all(axis=1)
-    data['g_now'] = np.log(data.nii_q.where(positive)) - np.log(data.y_lag1.where(positive))
+    positive = data[[column, 'y_lag1', 'y_lag3', 'y_lag4']].gt(0).all(axis=1)
+    data['g_now'] = np.log(data[column].where(positive)) - np.log(data.y_lag1.where(positive))
     data['g_season'] = np.log(data.y_lag3.where(positive)) - np.log(data.y_lag4.where(positive))
-    data['g_next'] = np.log(data['y_lag-1'].where(data['y_lag-1'].gt(0))) - np.log(data.nii_q.where(data.nii_q.gt(0)))
+    data['g_next'] = np.log(data['y_lag-1'].where(data['y_lag-1'].gt(0))) - np.log(data[column].where(data[column].gt(0)))
     data = data.reset_index()
     selected = (data.dropna(subset=['total_assets'])
                 .sort_values(['quarter', 'total_assets', 'rssd_id'], ascending=[True, False, True])
@@ -28,15 +28,13 @@ def design(panel):
     return data
 
 
-def evaluate(panel):
-    data = design(panel)
-    last = data.quarter.max()
-    origins = pd.period_range('2021Q4', last - 1, freq='Q')
+def baseline_forecasts(data, origins, column='nii_q'):
+    """Shared calendar-key cases, pooled AR fits and origin audits."""
     predictions, audit = [], []
     for origin in origins:
         candidates = data[data.quarter.eq(origin) & data.selected].copy()
         target_ok = candidates['y_lag-1'].notna()
-        history_ok = candidates[['nii_q', 'y_lag3']].notna().all(axis=1)
+        history_ok = candidates[[column, 'y_lag3']].notna().all(axis=1)
         cases = candidates[target_ok & history_ok].copy()
         # A historical training row's origin is s, so s < t guarantees s+1 <= t.
         train = data[data.selected & data.quarter.lt(origin)].dropna(subset=['g_now', 'g_season', 'g_next'])
@@ -47,12 +45,12 @@ def evaluate(panel):
         if rank != 3:
             raise ValueError(f'{origin}: rank-deficient pooled AR training matrix')
         cases['actual'] = cases['y_lag-1']
-        cases['naive'] = cases.nii_q
+        cases['naive'] = cases[column]
         cases['seasonal_naive'] = cases.y_lag3
-        cases['pooled_ar'] = cases.nii_q
+        cases['pooled_ar'] = cases[column]
         usable = cases[['g_now', 'g_season']].notna().all(axis=1)
         xp = np.column_stack([np.ones(usable.sum()), cases.loc[usable, 'g_now'], cases.loc[usable, 'g_season']])
-        cases.loc[usable, 'pooled_ar'] = cases.loc[usable, 'nii_q'] * np.exp(xp @ coefficients)
+        cases.loc[usable, 'pooled_ar'] = cases.loc[usable, column] * np.exp(xp @ coefficients)
         if not np.isfinite(cases[METHODS + ['actual']].to_numpy()).all():
             raise ValueError(f'{origin}: nonfinite forecast; no clipping or silent case removal')
         cases['target_quarter'] = origin + 1
@@ -66,6 +64,14 @@ def evaluate(panel):
     forecasts = pd.concat(predictions, ignore_index=True)
     if forecasts.empty:
         raise ValueError('No evaluation cases')
+    return forecasts, audit
+
+
+def evaluate(panel):
+    data = design(panel)
+    last = data.quarter.max()
+    origins = pd.period_range('2021Q4', last - 1, freq='Q')
+    forecasts, audit = baseline_forecasts(data, origins)
     forecasts['target_year'] = forecasts.target_quarter.dt.year
     overall = metrics(forecasts)
     by_year = pd.concat([metrics(group).assign(target_year=int(year))
@@ -93,9 +99,9 @@ def evaluate(panel):
     return forecasts, overall, by_year, summary
 
 
-def metrics(cases):
+def metrics(cases, methods=METHODS):
     rows = []
-    for method in METHODS:
+    for method in methods:
         error = cases[method] - cases.actual
         nonzero = cases.actual.ne(0)
         rows.append(dict(method=method, n_forecasts=len(cases), mae=float(error.abs().mean()),
@@ -106,10 +112,11 @@ def metrics(cases):
     return pd.DataFrame(rows)
 
 
-def clustered_dm(d, clusters):
+def clustered_dm(d, clusters, negative='naive', positive='pooled_ar'):
     """Paired mean loss differential with target-quarter CR1 standard error.
 
-    Positive differences favor pooled_ar. Independent clusters are assumed;
+    Positive differences favor `positive` (default pooled_ar), negative ones
+    favor `negative` (default naive). Independent clusters are assumed;
     no correction for serial dependence between target quarters is applied.
     Zero standard error yields undefined inference, including an exact tie.
     """
@@ -126,7 +133,7 @@ def clustered_dm(d, clusters):
     mean = float(d.mean()) if n else float('nan')
     result = dict(n=n, G=g, df=g - 1, mean_diff=mean, se=float('nan'),
                   t_stat=float('nan'), p_value=float('nan'),
-                  favored='naive' if mean < 0 else 'pooled_ar' if mean > 0 else 'tie',
+                  favored=negative if mean < 0 else positive if mean > 0 else 'tie',
                   note='CR1; assumes independent target-quarter clusters')
     if g < 2:
         result['note'] = 'undefined (G<2)'
@@ -142,17 +149,20 @@ def clustered_dm(d, clusters):
     return result
 
 
-def dm_tests(forecasts):
-    """Compare naive and pooled AR on every supplied matched evaluation case."""
+def dm_tests(forecasts, first='naive', second='pooled_ar'):
+    """Compare two methods (default naive vs pooled AR) on every matched case.
+
+    d = L(first) - L(second); positive mean differences favor `second`.
+    """
     rows = []
     groups = [('full', forecasts), *[(str(year), group)
               for year, group in forecasts.groupby('target_year')]]
     for scope, cases in groups:
-        naive = cases.naive - cases.actual
-        pooled = cases.pooled_ar - cases.actual
+        naive = cases[first] - cases.actual
+        pooled = cases[second] - cases.actual
         for loss, differential in [('abs', naive.abs() - pooled.abs()),
                                    ('squared', naive ** 2 - pooled ** 2)]:
-            result = clustered_dm(differential, cases.target_quarter)
+            result = clustered_dm(differential, cases.target_quarter, negative=first, positive=second)
             rows.append(dict(scope=scope, loss=loss, **result,
                              inference='cluster-robust t, df=G-1' if scope == 'full'
                              else f'descriptive only (G={result["G"]})'))

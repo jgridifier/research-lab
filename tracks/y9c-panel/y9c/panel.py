@@ -123,7 +123,8 @@ def main():
             part['value_quarterly'] = quarterly
             wide[meta['name'] + '_ytd'] = raw[code]
             wide[meta['name'] + '_q'] = quarterly
-            missing_any |= missing
+            if meta.get('y9c_core', True):
+                missing_any |= missing
             if code == 'BHCK4074':
                 missing_nii = missing
         else:

@@ -1,0 +1,58 @@
+{
+  "track": "statement-forecast",
+  "status": "PRE-REGISTERED: committed on its own before the first real-data run; not edited after that run",
+  "research_only": "Independent research lab. Not affiliated with any employer or financial institution. Not investment advice.",
+  "question": "Does the Liu-Moon-Schorfheide empirical-Bayes dynamic panel forecaster beat the Y-9C baselines one quarter ahead on three FR Y-9C income-statement lines for the top-50 BHC panel?",
+  "method": {
+    "key": "eb_panel",
+    "label": "Empirical-Bayes dynamic panel (LMS Tweedie posterior mean)",
+    "citation": "Liu, Laura, Hyungsik Roger Moon, and Frank Schorfheide. Forecasting with Dynamic Panel Data Models. NBER Working Paper 25102 (2018); Econometrica 88(1), 171-201 (2020).",
+    "citation_url": "https://www.nber.org/papers/w25102",
+    "paper_predictor_followed": "Posterior mean predictor with QMLE common parameters and parametric (Gaussian correlated-random-effects) Tweedie correction; the LMS empirical application's preferred predictor (Section 7.1, Tables 7-9).",
+    "equation": "y_it = lambda_i + rho * y_i,t-1 + alpha' s_t + u_it,  u_it ~ iid N(0, sigma^2)",
+    "transform": "y_it = 400 * X_it / A_i,t-1: the de-cumulated quarterly flow X (thousands USD) divided by the bank's own BHCK2170 total assets at the previous calendar quarter-end, annualized percent (LMS scale PPNR by assets times 400). Lagged assets are used so that the level forecast needs only A_it, known at origin t. Calendar-key lookups; no bridging of gaps.",
+    "level_forecast": "Xhat_i,t+1 = yhat_i,t+1 * A_it / 400",
+    "seasonal_regressors": "s_t = (1{q(t)=1}, 1{q(t)=2}, 1{q(t)=3}) - 1/4, common coefficients alpha across banks, deterministic calendar terms known in advance. LMS remove seasonality by annual time aggregation; a one-quarter-ahead quarterly forecast cannot, so centered quarter-of-year dummies enter as common regressors Z (LMS eq. 1). With T = 12 each quarter appears three times, so s_t averages to zero over the window.",
+    "window_T": 12,
+    "window": "Rolling: at origin t the estimation sample for bank i is y_i,t-11..y_it (T = 12 equations) with initial condition y_i0 = y_i,t-12 (LMS use rolling samples of T+1 observations plus the target).",
+    "estimation_cross_section": "Banks selected into the top 50 by BHCK2170 at origin t (y9c.forecast.design rule, RSSD tie-break) that have all 13 ratios y_i,t-12..y_it observed. Selection uses only data dated <= t and never depends on target (t+1) availability.",
+    "correlated_random_effects": "lambda_i | y_i0 ~ N(phi0 + phi1 * y_i0, omega^2), omega^2 >= 0",
+    "estimation": "QMLE (LMS eq. 24): maximize the integrated Gaussian likelihood jointly over (rho, alpha, sigma^2, phi0, phi1, omega^2). (phi0, phi1, sigma^2, omega^2) are profiled in closed form given (rho, alpha); (rho, alpha) are found numerically. Refit at every origin on data dated <= t only.",
+    "tweedie": "Posterior mean E[lambda_i | lambda_hat_i, y_i0] = lambda_hat_i + (sigma^2 / T) * d/d lambda_hat log p_hat(lambda_hat_i | y_i0), where lambda_hat_i = mean over the window of (y_it - rho y_i,t-1 - alpha' s_t) and p_hat is the estimated marginal density of the sufficient statistic, N(phi0 + phi1 y_i0, omega^2 + sigma^2 / T) (LMS eqs. 17, 20, 30).",
+    "forecast": "yhat_i,t+1 = E[lambda_i | .] + rho * y_it + alpha' s_t+1, with all estimates from the origin-t fit",
+    "fallback": "An evaluation case whose bank lacks the complete 13-ratio window (entry, missing or non-positive lagged assets, missing de-cumulated flow) receives the naive forecast; counts are reported per line.",
+    "no_tuning": "T, transform, regressors, prior family and estimator are fixed here. No trimming, winsorizing, clipping or case removal; nonfinite forecasts raise an error."
+  },
+  "lines": [
+    {"key": "nii", "column": "nii_q", "mdrm": "BHCK4074", "label": "Net interest income"},
+    {"key": "noninterest_income", "column": "noninterest_income_q", "mdrm": "BHCK4079", "label": "Noninterest income"},
+    {"key": "noninterest_expense", "column": "noninterest_expense_q", "mdrm": "BHCK4093", "label": "Noninterest expense"}
+  ],
+  "units": "thousands USD; quarterly flows de-cumulated from calendar-year YTD by the shared y9c panel code (y9c.panel.decumulate)",
+  "horizon_quarters": 1,
+  "universe": "Top 50 BHCs by reported BHCK2170 at each origin t, RSSD ID breaks ties; identical to Y-9C (y9c.forecast.design).",
+  "test_window": {"first_target": "2022Q1", "last_target": "2026Q2", "first_origin": "2021Q4", "last_origin": "2026Q1", "n_target_quarters": 18},
+  "evaluation_cases": "Per line, the Y-9C case rule from y9c.forecast: bank selected at origin t, target X_t+1 observed, X_t and X_t-3 observed. All four methods are scored on exactly the same cases within a line.",
+  "baselines": {
+    "source": "Imported from y9c.forecast (not reimplemented): naive Xhat_t+1 = X_t; seasonal naive Xhat_t+1 = X_t-3; pooled AR on log growth g(s+1) = a + b1 g(s) + b4 g(s-3), expanding pooled OLS on historical top-50 rows with s+1 <= t, naive fallback when log inputs are missing or non-positive.",
+    "methods": ["naive", "seasonal_naive", "pooled_ar"]
+  },
+  "metrics": "MAE and RMSE in thousands USD, equal weight per BHC-quarter (y9c.forecast.metrics). Displayed in whole thousands.",
+  "dm_test": "y9c.forecast.clustered_dm: d = L(baseline) - L(eb_panel) for absolute and squared error (error = forecast - actual), CR1 standard error clustered by target quarter, two-sided p from Student t(G-1). Positive mean favors eb_panel. Computed per line against each of the three baselines on the full sample; per-year versions are descriptive only.",
+  "pass_bar": {
+    "rule": "For a given line, eb_panel PASSES iff MAE(eb_panel) < MAE(naive) AND the full-sample clustered DM two-sided p-value on absolute error (naive vs eb_panel) <= 0.05. An undefined p-value is a FAIL.",
+    "alpha": 0.05,
+    "comparator": "naive",
+    "loss": "absolute error"
+  },
+  "headline": "Per-line PASS/FAIL verdict for all three lines; the headline states how many of the 3 lines pass.",
+  "descriptive_only": [
+    "Per-year breakdowns (errors and DM)",
+    "Comparisons with seasonal naive and pooled AR",
+    "RMSE and squared-error DM",
+    "EB parameter summaries"
+  ],
+  "multiple_testing": "No multiplicity adjustment across lines or losses; each line has its own pre-registered verdict.",
+  "timing_limitation": "Report-quarter backtest on currently downloaded NIC filings, as in Y-9C: period-t filings are treated as available at t; filing lags and later revisions are not modeled.",
+  "runs": "Synthetic and unit tests first; then the real-data evaluation is run once and published whatever the result."
+}

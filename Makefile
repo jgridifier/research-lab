@@ -30,3 +30,23 @@ y9c:
 
 y9c-test: $(VENV_STAMP)
 	PYTHONPATH=$(TRACK) $(PYTHON) -m pytest $(TRACK)/tests -q
+
+SF_TRACK = tracks/statement-forecast
+
+.PHONY: statement-forecast-test statement-forecast-notebook statement-forecast-page statement-forecast
+
+statement-forecast-test: $(VENV_STAMP)
+	PYTHONPATH=$(TRACK):$(SF_TRACK) $(PYTHON) -m pytest $(SF_TRACK)/tests -q
+
+statement-forecast-notebook: $(VENV_STAMP)
+	$(PYTHON) -m ipykernel install --prefix .venv --name y9c-venv --display-name 'Y-9C (.venv)'
+	.venv/bin/jupyter nbconvert --to notebook --execute --inplace --ExecutePreprocessor.kernel_name=y9c-venv --ExecutePreprocessor.timeout=600 $(SF_TRACK)/notebooks/statement_forecast_eb.ipynb
+
+statement-forecast-page: $(VENV_STAMP)
+	$(PYTHON) $(SF_TRACK)/scripts/render_results_page.py
+
+statement-forecast:
+	$(MAKE) y9c-venv
+	$(MAKE) y9c-data
+	$(MAKE) statement-forecast-notebook
+	$(MAKE) statement-forecast-page
