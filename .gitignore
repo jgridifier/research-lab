@@ -1,0 +1,8 @@
+.venv/
+tracks/y9c-panel/data/
+__pycache__/
+.ipynb_checkpoints/
+*.zip
+*.parquet
+BHCF*.txt
+.pytest_cache/

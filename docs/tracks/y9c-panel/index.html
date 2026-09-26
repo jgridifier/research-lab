@@ -40,35 +40,31 @@
     Y-9C Panel
   </nav>
 
+  <ul class="resource-list">
+    <li><a href="results/index.html">Results — next-quarter NII forecast on the top-50 BHC panel</a></li>
+  </ul>
+
   <div class="callout">
     Research scripts only; not investment advice.
     Prefer re-running scripts over hand-editing parquet.
-    Idempotent: re-download skips cached ZIPs; Yahoo rewrites processed outputs.
+    Idempotent: re-download skips validated cached ZIPs; the in-repository notebook regenerates aggregate results.
   </div>
 
   <div class="prose">
 
     <h2>Repository layout</h2>
 
-    <pre><code>forma_adhoc/
-  scripts/                      # convenience wrappers
-    download_y9c.py
-    build_y9c_panel.py
-    yahoo_bank_quarterly.py
-  y9c/
-    core_items.yaml             # core MDRM → names (+ extension hooks)
-    raw/                        # cached BHCF*.zip
-    processed/                  # long/wide parquet + coverage
-    scripts/
-      download_y9c.py
-      build_y9c_panel.py
-  yahoo_bank_quarterly/
-    YAHOO_VS_Y9C.md
-    tickers/seed_us_banks.txt
-    raw/                        # per-ticker CSV cache
-    processed/                  # long parquet + coverage_by_ticker.csv
-    scripts/yahoo_bank_quarterly.py
-  README_Y9C_YAHOO_PANEL.md</code></pre>
+    <pre><code>tracks/y9c-panel/
+  README.md
+  requirements.txt
+  core_items.yaml
+  y9c/                          # download, panel, forecast modules
+  scripts/                      # thin command-line entry points
+  notebooks/y9c_nii_forecast.ipynb
+  tests/
+  data/raw/                     # ignored runtime ZIP cache
+  data/processed/               # ignored panel and coverage outputs
+docs/tracks/y9c-panel/results/   # generated aggregate results</code></pre>
 
     <h2>1. FR Y-9C (NIC bulk)</h2>
 
@@ -86,39 +82,32 @@
       This pipeline uses NIC only.
     </p>
 
-    <h3>Refresh (default: last 12 quarters)</h3>
-    <pre><code>cd /workspace/research/forma_adhoc
-source .venv/bin/activate
-
-python scripts/download_y9c.py --n-quarters 12
-python scripts/build_y9c_panel.py --require-assets --write-csv</code></pre>
-
-    <p>Expand history:</p>
-    <pre><code>python scripts/download_y9c.py --all-since 2018
-python scripts/build_y9c_panel.py --require-assets</code></pre>
-
-    <p><strong>Outputs</strong> under <code>y9c/processed/</code>:</p>
+    <h3>Refresh: 2018Q1 through the latest available quarter</h3>
+    <pre><code>make y9c-venv
+make y9c-data</code></pre>
+    <p>From the repository root, <code>make y9c</code> also executes the notebook and renders
+    the results page. The pipeline lives in <code>tracks/y9c-panel/</code>; see its
+    <a href="https://github.com/jgridifier/research-lab/tree/main/tracks/y9c-panel">README and code</a>.</p>
+    <p><strong>Outputs</strong> under <code>tracks/y9c-panel/data/processed/</code>:</p>
     <ul>
-      <li><code>y9c_panel_long.parquet</code> / <code>.csv</code> — <code>rssd_id</code>, <code>report_date</code>, <code>item_code</code>, <code>item_name</code>, <code>value</code>, …</li>
-      <li><code>y9c_panel_wide_core.parquet</code> — pivoted core items</li>
-      <li><code>coverage_summary.csv</code></li>
+      <li><code>panel_long.parquet</code> — reported and de-cumulated quarterly values by RSSD/date/item</li>
+      <li><code>panel_wide.parquet</code> — one row per RSSD/date, including assets and NII</li>
+      <li><code>coverage.csv</code> and <code>vintage.json</code> — coverage, de-cumulation drops and provenance</li>
     </ul>
-
-    <p>
-      Core P&amp;L/BS mapping: <code>y9c/core_items.yaml</code>
-      (assets, equity, NII, noninterest, provisions, NI, capital…).
-      Add codes with <code>--extra-item-codes BHCK....</code> or by editing the YAML.
-    </p>
-
+    <p>The small <code>tracks/y9c-panel/core_items.yaml</code> corrects the reference mapping:
+    BHCK4074 is net interest income, BHCK4107 total interest income and BHCK4073 total interest expense.
+    Income items are de-cumulated only when the immediately prior quarter in the same calendar year is present.
+    Values are thousands of USD. Raw data and panels stay in the ignored runtime cache.</p>
     <h3>Manual fallback</h3>
-    <p>If download is blocked/captcha/HTML:</p>
+    <p>If NIC returns a redirect, HTML, or a captcha, the downloader fails clearly for required quarters:</p>
     <ol>
-      <li>Open the NIC page, pick year/quarter, download <code>BHCF*.zip</code></li>
-      <li>Drop into <code>y9c/raw/</code></li>
-      <li>Run <code>build_y9c_panel.py</code> (parser does not need the downloader)</li>
+      <li>Open the NIC download page and download the named <code>BHCF*.zip</code>.</li>
+      <li>Drop it into <code>tracks/y9c-panel/data/raw/</code>.</li>
+      <li>Rerun <code>make y9c-data</code>.</li>
     </ol>
 
     <h2>2. Yahoo bank quarterly</h2>
+    <p>Historical off-repository notes only; the pipeline and results in this repository use FR Y-9C alone.</p>
 
     <pre><code>cd /workspace/research/forma_adhoc
 source .venv/bin/activate
@@ -153,7 +142,7 @@ python scripts/yahoo_bank_quarterly.py --tickers JPM,BAC,WFC --write-csv</code><
       <li>NIC BHCF values are generally in <strong>thousands of USD</strong>.</li>
     </ul>
 
-    <h2>Environment</h2>
+    <h2>Historical Yahoo environment (off-repository)</h2>
     <pre><code>source /workspace/research/forma_adhoc/.venv/bin/activate
 # already has: pandas pyarrow requests yfinance pyyaml tqdm</code></pre>
 

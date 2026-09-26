@@ -1,0 +1,350 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Y-9C NII Forecast Results — Research Lab</title>
+  <meta name="description" content="Reproducible next-quarter net interest income forecasts for the largest 50 Y-9C filers at each origin." />
+  <link rel="stylesheet" href="../../../assets/site.css" />
+</head>
+<body>
+<nav class="site-nav" aria-label="Site navigation">
+  <div class="site-nav__inner">
+    <a class="site-nav__logo" href="../../../index.html">Research Lab</a>
+    <ul class="site-nav__links">
+      <li><a href="../../../index.html">Home</a></li>
+      <li><a href="../../../tracks/statement-forecast/index.html">Statement Forecast</a></li>
+      <li><a href="../index.html" class="active">Y-9C Panel</a></li>
+      <li><a href="../../../tracks/dfm-sinkhorn/index.html">DFM × Sinkhorn</a></li>
+    </ul>
+  </div>
+</nav>
+<header class="page-header">
+  <div class="page-header__inner">
+    <div class="page-header__eyebrow">Track 2 · Results</div>
+    <h1>Next-quarter net interest income</h1>
+    <p class="page-header__sub">A fixed forecasting comparison on the top-50 FR Y-9C panel. Research only.</p>
+  </div>
+</header>
+<main class="page-content prose">
+  <nav class="breadcrumb" aria-label="Breadcrumb">
+    <a href="../../../index.html">Home</a><span aria-hidden="true"> › </span>
+    <a href="../index.html">Y-9C Panel</a><span aria-hidden="true"> › </span>Results
+  </nav>
+  <h2>Question and design</h2>
+  <p>Can pooled historical NII growth improve on simple next-quarter forecasts? The single target is
+  net interest income (BHCK4074), the difference between interest income and interest expense,
+  de-cumulated from calendar-year YTD to quarterly flows. All monetary values are <strong>thousands of USD</strong>.
+  The corrected mapping is BHCK4107 − BHCK4073 = BHCK4074. The identity holds across
+  13,095 comparable rows, with maximum discrepancy
+  0 thousand USD.</p>
+  <p>At each origin t, rank BHCs by reported total assets (BHCK2170) at t and take the largest 50;
+  break asset ties by RSSD ID. Historical training membership uses this same rule at each historical
+  origin. Future assets and membership never select the origin universe. Forecast y(t+1) using only
+  report quarters through t. This is a report-quarter backtest with currently downloaded filings,
+  not a real-time filing-vintage backtest: reporting lags and later revisions are not modeled.</p>
+  <p>The test window was fixed a priori: target quarters <strong>2022Q1–2026Q2</strong>,
+  origins 2021Q4–2026Q1. Roughly 3.5 initial years are reserved for burn-in.
+  The models, universe, test window and headline metrics are unchanged; MdAPE is a supplementary post-review diagnostic.</p>
+  <h2>Methods</h2>
+  <ul>
+    <li><strong>Naive:</strong> ŷ(t+1) = y(t).</li>
+    <li><strong>Seasonal naive:</strong> ŷ(t+1) = y(t−3), the same quarter last year.</li>
+    <li><strong>Pooled panel AR:</strong> g(s) = log y(s) − log y(s−1);
+      g(s+1) = a + b1 g(s) + b4 g(s−3). Expanding pooled OLS with an intercept,
+      refitted at every origin using historical top-50 rows with s+1 ≤ t and positive required NII values.
+      Forecast y(t) × exp(predicted growth). Missing/nonpositive log inputs trigger a naive fallback.
+      No clipping, regularization, weighting, or parameter tuning.</li>
+  </ul>
+  <p>All three methods share <strong>893 evaluated forecasts per method</strong>
+  over 18 target quarters. Of 900 selected origin–BHC pairs,
+  6 lack reported/de-cumulated next-quarter NII (including exits/mergers), and
+  1 additional pairs lack current or seasonal history. These are disjoint drop counts;
+  a missing target is not proof of a merger. There are 21 AR fallbacks among evaluated cases.</p>
+  <h2>Forecast errors</h2>
+  <p>Equal weight per evaluated BHC-quarter. MAE and RMSE are in thousands USD; MAPE is the mean
+  absolute error divided by absolute actual NII, in percent. 0 zero actuals
+  are excluded from MAPE and supplementary MdAPE. All other comparisons use the same intersection of cases.</p>
+  <p><strong>Overall metric winners:</strong> MAE: Naive; RMSE: Naive; MAPE: Naive. These are the observed results,
+  including baseline wins.</p>
+  <p><strong>MdAPE (median absolute percentage error, %): supplementary, added after observing MAPE outliers; does not replace MAPE.</strong>
+  It uses the same absolute percentage errors and zero-actual exclusion as MAPE.
+  Its winner is reported separately: <strong>Naive</strong>.</p>
+  <p>MAPE is driven by a few foreign-bank IHCs with near-zero or negative NII, including BNP Paribas USA,
+  Mizuho Americas and Credit Suisse USA. There are 10 nonpositive actuals among
+  893 evaluated cases. BNP Paribas USA's 2022Q1 naive absolute percentage error
+  is about 3,350%. The notebook shows the ten largest naive percentage errors; no cases are removed.</p>
+  <table class="dataframe">
+  <thead>
+    <tr style="text-align: right;">
+      <th>Method</th>
+      <th>Forecasts (count)</th>
+      <th>MAE (thousands USD)</th>
+      <th>RMSE (thousands USD)</th>
+      <th>MAPE (%)</th>
+      <th>Percentage-error cases (count)</th>
+      <th>MdAPE (%, supplementary)</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>Naive</td>
+      <td>893</td>
+      <td>117,823.277</td>
+      <td>275,791.187</td>
+      <td>13.082</td>
+      <td>893</td>
+      <td>3.453</td>
+    </tr>
+    <tr>
+      <td>Seasonal naive</td>
+      <td>893</td>
+      <td>345,028.732</td>
+      <td>767,683.569</td>
+      <td>33.802</td>
+      <td>893</td>
+      <td>10.740</td>
+    </tr>
+    <tr>
+      <td>Pooled panel AR</td>
+      <td>893</td>
+      <td>134,048.591</td>
+      <td>303,111.092</td>
+      <td>14.020</td>
+      <td>893</td>
+      <td>4.267</td>
+    </tr>
+  </tbody>
+</table>
+  <h3>By target year</h3>
+  <p>The final year may be partial.</p>
+  <table class="dataframe">
+  <thead>
+    <tr style="text-align: right;">
+      <th>Target year</th>
+      <th>Method</th>
+      <th>Forecasts (count)</th>
+      <th>MAE (thousands USD)</th>
+      <th>RMSE (thousands USD)</th>
+      <th>MAPE (%)</th>
+      <th>Percentage-error cases (count)</th>
+      <th>MdAPE (%, supplementary)</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>2022</td>
+      <td>Naive</td>
+      <td>198</td>
+      <td>192,429.672</td>
+      <td>414,745.873</td>
+      <td>31.854</td>
+      <td>198</td>
+      <td>8.073</td>
+    </tr>
+    <tr>
+      <td>2022</td>
+      <td>Seasonal naive</td>
+      <td>198</td>
+      <td>458,285.949</td>
+      <td>917,090.224</td>
+      <td>79.484</td>
+      <td>198</td>
+      <td>19.506</td>
+    </tr>
+    <tr>
+      <td>2022</td>
+      <td>Pooled panel AR</td>
+      <td>198</td>
+      <td>219,619.991</td>
+      <td>467,760.957</td>
+      <td>33.567</td>
+      <td>198</td>
+      <td>9.402</td>
+    </tr>
+    <tr>
+      <td>2023</td>
+      <td>Naive</td>
+      <td>199</td>
+      <td>104,897.558</td>
+      <td>213,572.534</td>
+      <td>8.634</td>
+      <td>199</td>
+      <td>3.981</td>
+    </tr>
+    <tr>
+      <td>2023</td>
+      <td>Seasonal naive</td>
+      <td>199</td>
+      <td>462,895.623</td>
+      <td>1,027,731.542</td>
+      <td>24.441</td>
+      <td>199</td>
+      <td>15.751</td>
+    </tr>
+    <tr>
+      <td>2023</td>
+      <td>Pooled panel AR</td>
+      <td>199</td>
+      <td>144,051.346</td>
+      <td>244,310.990</td>
+      <td>10.973</td>
+      <td>199</td>
+      <td>6.261</td>
+    </tr>
+    <tr>
+      <td>2024</td>
+      <td>Naive</td>
+      <td>200</td>
+      <td>79,489.700</td>
+      <td>159,863.273</td>
+      <td>6.254</td>
+      <td>200</td>
+      <td>2.619</td>
+    </tr>
+    <tr>
+      <td>2024</td>
+      <td>Seasonal naive</td>
+      <td>200</td>
+      <td>198,305.510</td>
+      <td>359,476.629</td>
+      <td>15.642</td>
+      <td>200</td>
+      <td>7.815</td>
+    </tr>
+    <tr>
+      <td>2024</td>
+      <td>Pooled panel AR</td>
+      <td>200</td>
+      <td>94,570.869</td>
+      <td>202,791.490</td>
+      <td>6.480</td>
+      <td>200</td>
+      <td>2.758</td>
+    </tr>
+    <tr>
+      <td>2025</td>
+      <td>Naive</td>
+      <td>198</td>
+      <td>110,835.182</td>
+      <td>294,096.479</td>
+      <td>10.254</td>
+      <td>198</td>
+      <td>2.823</td>
+    </tr>
+    <tr>
+      <td>2025</td>
+      <td>Seasonal naive</td>
+      <td>198</td>
+      <td>268,043.051</td>
+      <td>619,879.440</td>
+      <td>26.317</td>
+      <td>198</td>
+      <td>7.587</td>
+    </tr>
+    <tr>
+      <td>2025</td>
+      <td>Pooled panel AR</td>
+      <td>198</td>
+      <td>102,578.670</td>
+      <td>287,347.836</td>
+      <td>10.151</td>
+      <td>198</td>
+      <td>2.253</td>
+    </tr>
+    <tr>
+      <td>2026</td>
+      <td>Naive</td>
+      <td>98</td>
+      <td>85,685.622</td>
+      <td>161,296.663</td>
+      <td>3.833</td>
+      <td>98</td>
+      <td>2.239</td>
+    </tr>
+    <tr>
+      <td>2026</td>
+      <td>Seasonal naive</td>
+      <td>98</td>
+      <td>331,838.622</td>
+      <td>697,178.120</td>
+      <td>12.697</td>
+      <td>98</td>
+      <td>9.134</td>
+    </tr>
+    <tr>
+      <td>2026</td>
+      <td>Pooled panel AR</td>
+      <td>98</td>
+      <td>84,996.583</td>
+      <td>152,252.621</td>
+      <td>3.922</td>
+      <td>98</td>
+      <td>2.352</td>
+    </tr>
+  </tbody>
+</table>
+  <ul><li>2022: MAE: Naive; RMSE: Naive; MAPE: Naive.</li><li>2023: MAE: Naive; RMSE: Naive; MAPE: Naive.</li><li>2024: MAE: Naive; RMSE: Naive; MAPE: Naive.</li><li>2025: MAE: Pooled panel AR; RMSE: Pooled panel AR; MAPE: Pooled panel AR.</li><li>2026: MAE: Pooled panel AR; RMSE: Pooled panel AR; MAPE: Naive.</li></ul>
+  <p>Supplementary MdAPE winners by target year:</p>
+  <ul><li>2022: Naive.</li><li>2023: Naive.</li><li>2024: Naive.</li><li>2025: Pooled panel AR.</li><li>2026: Naive.</li></ul>
+  <h2>Figures</h2>
+  <figure><img src="figures/jpm_nii.png" alt="JPMorgan quarterly and reported YTD net interest income" width="100%" /><figcaption>JPMorgan (RSSD 1039502): quarterly and reported YTD NII, thousands USD. Complete-year quarterly sums equal Q4 YTD.</figcaption></figure>
+<figure><img src="figures/coverage.png" alt="Quarterly Y-9C filer count and top-50 asset cutoff" width="100%" /><figcaption>Filers with reported consolidated assets (BHC count) and the 50th-largest asset value (thousands USD). The 2018Q3 threshold change mainly affects small filers.</figcaption></figure>
+<figure><img src="figures/annual_mae.png" alt="Mean absolute forecast error by target year and method" width="100%" /><figcaption>MAE by target year, thousands USD. The final year may be partial; every method uses the same evaluated cases.</figcaption></figure>
+<figure><img src="figures/aggregate_nii.png" alt="Actual and forecast aggregate NII for evaluated top-50 cases" width="100%" /><figcaption>NII summed over the same evaluated BHCs within each target quarter, thousands USD. Membership changes over time; aggregate cancellation can hide institution-level errors.</figcaption></figure>
+  <h2>Data vintage</h2>
+  <p>Coverage: <strong>2018Q1–2026Q2</strong>,
+  34 quarters. Build time (UTC): 2026-09-26T03:36:04.414086+00:00.
+  Source: <a href="https://www.ffiec.gov/npw/FinancialReport/FinancialDataDownload">FFIEC NIC Financial Data Download</a>.
+  Cached files are reused; first-seen timestamps are not claimed as original download times.</p>
+  <details><summary>NIC download dates and cache provenance (UTC)</summary>
+    <table><thead><tr><th>Quarter</th><th>Downloaded / first seen (UTC)</th></tr></thead><tbody><tr><td>2018Q1</td><td>2026-09-26T03:35:21.592924+00:00</td></tr><tr><td>2018Q2</td><td>2026-09-26T03:35:22.829567+00:00</td></tr><tr><td>2018Q3</td><td>2026-09-26T03:35:24.017568+00:00</td></tr><tr><td>2018Q4</td><td>2026-09-26T03:35:25.264072+00:00</td></tr><tr><td>2019Q1</td><td>2026-09-26T03:35:26.389697+00:00</td></tr><tr><td>2019Q2</td><td>2026-09-26T03:35:27.576250+00:00</td></tr><tr><td>2019Q3</td><td>2026-09-26T03:35:28.865786+00:00</td></tr><tr><td>2019Q4</td><td>2026-09-26T03:35:30.118481+00:00</td></tr><tr><td>2020Q1</td><td>2026-09-26T03:35:31.266314+00:00</td></tr><tr><td>2020Q2</td><td>2026-09-26T03:35:32.472669+00:00</td></tr><tr><td>2020Q3</td><td>2026-09-26T03:35:33.610023+00:00</td></tr><tr><td>2020Q4</td><td>2026-09-26T03:35:34.811950+00:00</td></tr><tr><td>2021Q1</td><td>2026-09-26T03:35:35.926911+00:00</td></tr><tr><td>2021Q2</td><td>2026-09-26T03:35:37.131801+00:00</td></tr><tr><td>2021Q3</td><td>2026-09-26T03:35:38.252124+00:00</td></tr><tr><td>2021Q4</td><td>2026-09-26T03:35:39.440905+00:00</td></tr><tr><td>2022Q1</td><td>2026-09-26T03:35:40.570573+00:00</td></tr><tr><td>2022Q2</td><td>2026-09-26T03:35:41.782064+00:00</td></tr><tr><td>2022Q3</td><td>2026-09-26T03:35:42.886568+00:00</td></tr><tr><td>2022Q4</td><td>2026-09-26T03:35:44.064858+00:00</td></tr><tr><td>2023Q1</td><td>2026-09-26T03:35:45.236208+00:00</td></tr><tr><td>2023Q2</td><td>2026-09-26T03:35:46.451469+00:00</td></tr><tr><td>2023Q3</td><td>2026-09-26T03:35:47.607440+00:00</td></tr><tr><td>2023Q4</td><td>2026-09-26T03:35:48.846202+00:00</td></tr><tr><td>2024Q1</td><td>2026-09-26T03:35:49.981232+00:00</td></tr><tr><td>2024Q2</td><td>2026-09-26T03:35:51.184648+00:00</td></tr><tr><td>2024Q3</td><td>2026-09-26T03:35:52.316133+00:00</td></tr><tr><td>2024Q4</td><td>2026-09-26T03:35:53.546359+00:00</td></tr><tr><td>2025Q1</td><td>2026-09-26T03:35:54.724380+00:00</td></tr><tr><td>2025Q2</td><td>2026-09-26T03:35:55.899594+00:00</td></tr><tr><td>2025Q3</td><td>2026-09-26T03:35:57.068819+00:00</td></tr><tr><td>2025Q4</td><td>2026-09-26T03:35:58.312856+00:00</td></tr><tr><td>2026Q1</td><td>2026-09-26T03:35:59.488062+00:00</td></tr><tr><td>2026Q2</td><td>2026-09-26T03:36:00.652232+00:00</td></tr></tbody></table>
+  </details>
+  <p><a href="tables/vintage.json">Vintage and SHA-256 metadata</a> ·
+  <a href="tables/test_design.json">Test design and origin-level counts</a> ·
+  <a href="tables/overall_errors.csv">Overall errors CSV</a> ·
+  <a href="tables/by_year_errors.csv">By-year errors CSV</a></p>
+  <h2>Reproduce</h2>
+  <pre><code>git clone https://github.com/jgridifier/research-lab &amp;&amp; cd research-lab &amp;&amp; make y9c</code></pre>
+  <p>Requires Python 3.13, venv/pip, make, and network access to NIC and the package index.
+  The in-repository <a href="https://github.com/jgridifier/research-lab/tree/main/tracks/y9c-panel">pipeline and notebook</a>
+  download from 2018Q1 through the latest completed quarter, build the panel, execute the notebook,
+  and render this page. Runtime raw files and panels are ignored by git; only aggregate outputs are published.</p>
+  <h2>Caveats</h2>
+  <ul>
+    <li>RSSD IDs are used as reported, with no pro-forma merger adjustments. Entrants appear when they start filing;
+    exiters retain their historical training rows but are not forecast after their final filing.
+    Acquisition-related NII jumps remain in the data and can cause forecast errors.</li>
+    <li>Q1 quarterly NII equals Q1 YTD. Q2–Q4 require the immediately previous quarter of the same calendar year,
+    with a nonmissing value. 49 BHC-quarters lose quarterly NII for missing predecessors
+    across the full panel. No imputation or subtraction across gaps is performed.</li>
+    <li>There are 36 negative Q2–Q4 NII de-cumulations across the full panel;
+    6 follow a year in which every earlier quarter was observed and positive.
+    These are diagnostics, not corrections or exclusions. BNP Paribas USA reported YTD NII of 1,910,303
+    in 2021Q3 and 192,866 in 2021Q4, implying quarterly NII of −1,717,437 thousand USD.
+    This is consistent with a within-year consolidation-scope change or restated YTD, but the flag alone
+    does not establish the cause. Reported data are retained as-is.</li>
+    <li>The 2018Q3 reporting threshold increased from $1 billion to $3 billion, mainly affecting small filers.
+    The coverage figure counts institutions with reported consolidated assets, not every record in the bulk file.</li>
+    <li>Foreign-bank intermediate holding companies file Y-9C and may be in the top 50. Parent and subsidiary
+    filers are not consolidated across RSSD IDs; the aggregate is a sample sum, not a non-overlapping sector total.</li>
+    <li>Monetary values are thousands of USD. Dollar losses emphasize large institutions. MAPE can be unstable near
+    zero or sign changes; nonpositive values cannot enter log-growth training.</li>
+    <li>Current downloaded filings can include revisions. The latest cached quarter may be incomplete.
+    The final test year may cover fewer than four quarters. Research only; not investment advice.</li>
+  </ul>
+</main>
+<footer class="site-footer">
+  <div class="site-footer__inner">
+    <p class="site-footer__disclaimer"><strong>Independent research lab</strong> ·
+      Not affiliated with any employer or financial institution · Not investment advice.</p>
+    <div class="site-footer__links">
+      <a href="../../../index.html">Home</a>
+      <a href="../../../tracks/statement-forecast/index.html">Statement Forecast</a>
+      <a href="../index.html">Y-9C Panel</a>
+      <a href="https://github.com/jgridifier/research-lab">GitHub</a>
+    </div>
+  </div>
+</footer>
+</body>
+</html>

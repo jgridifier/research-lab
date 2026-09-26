@@ -1,0 +1,370 @@
+{
+  "first_quarter": "2018Q1",
+  "last_quarter": "2026Q2",
+  "n_quarters": 34,
+  "quarters": [
+    "2018Q1",
+    "2018Q2",
+    "2018Q3",
+    "2018Q4",
+    "2019Q1",
+    "2019Q2",
+    "2019Q3",
+    "2019Q4",
+    "2020Q1",
+    "2020Q2",
+    "2020Q3",
+    "2020Q4",
+    "2021Q1",
+    "2021Q2",
+    "2021Q3",
+    "2021Q4",
+    "2022Q1",
+    "2022Q2",
+    "2022Q3",
+    "2022Q4",
+    "2023Q1",
+    "2023Q2",
+    "2023Q3",
+    "2023Q4",
+    "2024Q1",
+    "2024Q2",
+    "2024Q3",
+    "2024Q4",
+    "2025Q1",
+    "2025Q2",
+    "2025Q3",
+    "2025Q4",
+    "2026Q1",
+    "2026Q2"
+  ],
+  "build_time_utc": "2026-09-26T03:36:04.414086+00:00",
+  "downloads": {
+    "BHCF20180331.zip": {
+      "quarter": "2018Q1",
+      "url": "https://www.ffiec.gov/npw/FinancialReport/ReturnBHCFZipFiles?zipfilename=BHCF20180331.zip",
+      "bytes": 1130735,
+      "sha256": "38668791ec31af29de242fcbedacc5cb70dd5b56794148e4c4838dfa0006055a",
+      "downloaded_at_utc": "2026-09-26T03:35:21.592924+00:00"
+    },
+    "BHCF20180630.zip": {
+      "quarter": "2018Q2",
+      "url": "https://www.ffiec.gov/npw/FinancialReport/ReturnBHCFZipFiles?zipfilename=BHCF20180630.zip",
+      "bytes": 1903647,
+      "sha256": "e6c3ddcc9e87572e9c215db4559a03061347450d016b6a40b5619c59a588488e",
+      "downloaded_at_utc": "2026-09-26T03:35:22.829567+00:00"
+    },
+    "BHCF20180930.zip": {
+      "quarter": "2018Q3",
+      "url": "https://www.ffiec.gov/npw/FinancialReport/ReturnBHCFZipFiles?zipfilename=BHCF20180930.zip",
+      "bytes": 706292,
+      "sha256": "8e491fe96e5edbfe994078856cf22242a4706d5065adea4f546b760c7b162fee",
+      "downloaded_at_utc": "2026-09-26T03:35:24.017568+00:00"
+    },
+    "BHCF20181231.zip": {
+      "quarter": "2018Q4",
+      "url": "https://www.ffiec.gov/npw/FinancialReport/ReturnBHCFZipFiles?zipfilename=BHCF20181231.zip",
+      "bytes": 1634329,
+      "sha256": "90a987c817a003b89ccf986528999d37e9e469456d88ae2ff4c82eb6788cfb02",
+      "downloaded_at_utc": "2026-09-26T03:35:25.264072+00:00"
+    },
+    "BHCF20190331.zip": {
+      "quarter": "2019Q1",
+      "url": "https://www.ffiec.gov/npw/FinancialReport/ReturnBHCFZipFiles?zipfilename=BHCF20190331.zip",
+      "bytes": 679287,
+      "sha256": "0f50b92380dd339f19ba7df4bdde9242653b32b2b4a787d967ff65678ccc93d5",
+      "downloaded_at_utc": "2026-09-26T03:35:26.389697+00:00"
+    },
+    "BHCF20190630.zip": {
+      "quarter": "2019Q2",
+      "url": "https://www.ffiec.gov/npw/FinancialReport/ReturnBHCFZipFiles?zipfilename=BHCF20190630.zip",
+      "bytes": 1511353,
+      "sha256": "320bdb9eb7a9f89acb8b7bafa7bfac8fe63e6ddcb2f3c31c9dff5eacbf1e9af1",
+      "downloaded_at_utc": "2026-09-26T03:35:27.576250+00:00"
+    },
+    "BHCF20190930.zip": {
+      "quarter": "2019Q3",
+      "url": "https://www.ffiec.gov/npw/FinancialReport/ReturnBHCFZipFiles?zipfilename=BHCF20190930.zip",
+      "bytes": 685232,
+      "sha256": "086b29cb77cb947bdc272ed53b0ca74e1775a4cd87c143b1bd400f88e65472ac",
+      "downloaded_at_utc": "2026-09-26T03:35:28.865786+00:00"
+    },
+    "BHCF20191231.zip": {
+      "quarter": "2019Q4",
+      "url": "https://www.ffiec.gov/npw/FinancialReport/ReturnBHCFZipFiles?zipfilename=BHCF20191231.zip",
+      "bytes": 1562798,
+      "sha256": "3e8a7dea2ebdf5597e637cb5351947f1aa27fe38ac4d249a30d7ade64c391aeb",
+      "downloaded_at_utc": "2026-09-26T03:35:30.118481+00:00"
+    },
+    "BHCF20200331.zip": {
+      "quarter": "2020Q1",
+      "url": "https://www.ffiec.gov/npw/FinancialReport/ReturnBHCFZipFiles?zipfilename=BHCF20200331.zip",
+      "bytes": 612514,
+      "sha256": "752fc8ea47a4e6b38419912f36e8589c49accf376abe6ad8b59b7c2a63291a08",
+      "downloaded_at_utc": "2026-09-26T03:35:31.266314+00:00"
+    },
+    "BHCF20200630.zip": {
+      "quarter": "2020Q2",
+      "url": "https://www.ffiec.gov/npw/FinancialReport/ReturnBHCFZipFiles?zipfilename=BHCF20200630.zip",
+      "bytes": 1437223,
+      "sha256": "233ac977e5a5373bd47fe83938fc4e462df7114ae1edee49e77e45d91ea8511f",
+      "downloaded_at_utc": "2026-09-26T03:35:32.472669+00:00"
+    },
+    "BHCF20200930.zip": {
+      "quarter": "2020Q3",
+      "url": "https://www.ffiec.gov/npw/FinancialReport/ReturnBHCFZipFiles?zipfilename=BHCF20200930.zip",
+      "bytes": 617300,
+      "sha256": "ae2c5a47e5f80a8206c5dc1f4657a55ce970e6f2df7820bc920401c116fccaa1",
+      "downloaded_at_utc": "2026-09-26T03:35:33.610023+00:00"
+    },
+    "BHCF20201231.zip": {
+      "quarter": "2020Q4",
+      "url": "https://www.ffiec.gov/npw/FinancialReport/ReturnBHCFZipFiles?zipfilename=BHCF20201231.zip",
+      "bytes": 1527579,
+      "sha256": "1bc82152c3873ff06f1de27662e01f7a5eab0a7af8dd5a522b34f78b166e5464",
+      "downloaded_at_utc": "2026-09-26T03:35:34.811950+00:00"
+    },
+    "BHCF20210331.zip": {
+      "quarter": "2021Q1",
+      "url": "https://www.ffiec.gov/npw/FinancialReport/ReturnBHCFZipFiles?zipfilename=BHCF20210331.zip",
+      "bytes": 607537,
+      "sha256": "f435c0347a50596ff8917842c36ccd5131c9aa84e05733673fa508ef271baa69",
+      "downloaded_at_utc": "2026-09-26T03:35:35.926911+00:00"
+    },
+    "BHCF20210630.zip": {
+      "quarter": "2021Q2",
+      "url": "https://www.ffiec.gov/npw/FinancialReport/ReturnBHCFZipFiles?zipfilename=BHCF20210630.zip",
+      "bytes": 1424390,
+      "sha256": "2d3d8a71932f69e82501c74be47f4c549921200ecd68ad7f42db25039ddd045c",
+      "downloaded_at_utc": "2026-09-26T03:35:37.131801+00:00"
+    },
+    "BHCF20210930.zip": {
+      "quarter": "2021Q3",
+      "url": "https://www.ffiec.gov/npw/FinancialReport/ReturnBHCFZipFiles?zipfilename=BHCF20210930.zip",
+      "bytes": 613001,
+      "sha256": "5225bbea465f70d919bace418bbcd988d80403503cec5f140e8fd259a9213dfb",
+      "downloaded_at_utc": "2026-09-26T03:35:38.252124+00:00"
+    },
+    "BHCF20211231.zip": {
+      "quarter": "2021Q4",
+      "url": "https://www.ffiec.gov/npw/FinancialReport/ReturnBHCFZipFiles?zipfilename=BHCF20211231.zip",
+      "bytes": 1512380,
+      "sha256": "efde40f01e75d6bf60976d8132a496834f64a8f545b5873012809b6c4af52859",
+      "downloaded_at_utc": "2026-09-26T03:35:39.440905+00:00"
+    },
+    "BHCF20220331.zip": {
+      "quarter": "2022Q1",
+      "url": "https://www.ffiec.gov/npw/FinancialReport/ReturnBHCFZipFiles?zipfilename=BHCF20220331.zip",
+      "bytes": 635568,
+      "sha256": "087a851189dc79be5ce89bc431a3c0ee0eb2a34452880ebd84f75da971e6b532",
+      "downloaded_at_utc": "2026-09-26T03:35:40.570573+00:00"
+    },
+    "BHCF20220630.zip": {
+      "quarter": "2022Q2",
+      "url": "https://www.ffiec.gov/npw/FinancialReport/ReturnBHCFZipFiles?zipfilename=BHCF20220630.zip",
+      "bytes": 1433100,
+      "sha256": "35fb54729ff40e3c21e86304c01a9dedb7ca27d58a8898f1e240501a5be94e87",
+      "downloaded_at_utc": "2026-09-26T03:35:41.782064+00:00"
+    },
+    "BHCF20220930.zip": {
+      "quarter": "2022Q3",
+      "url": "https://www.ffiec.gov/npw/FinancialReport/ReturnBHCFZipFiles?zipfilename=BHCF20220930.zip",
+      "bytes": 646501,
+      "sha256": "747650a0b0e61bd03beb086860a2f661df88c815efa8f0b2f88413f036f9ac38",
+      "downloaded_at_utc": "2026-09-26T03:35:42.886568+00:00"
+    },
+    "BHCF20221231.zip": {
+      "quarter": "2022Q4",
+      "url": "https://www.ffiec.gov/npw/FinancialReport/ReturnBHCFZipFiles?zipfilename=BHCF20221231.zip",
+      "bytes": 1518533,
+      "sha256": "ff1e66a79d18a9074b1b44c6ee5e24739400b8872e40a69d295cef1a953dc4d0",
+      "downloaded_at_utc": "2026-09-26T03:35:44.064858+00:00"
+    },
+    "BHCF20230331.zip": {
+      "quarter": "2023Q1",
+      "url": "https://www.ffiec.gov/npw/FinancialReport/ReturnBHCFZipFiles?zipfilename=BHCF20230331.zip",
+      "bytes": 649086,
+      "sha256": "d4f7e44d12645fef8422e75bc7776804f51cb123781b92594c3f797655fe8240",
+      "downloaded_at_utc": "2026-09-26T03:35:45.236208+00:00"
+    },
+    "BHCF20230630.zip": {
+      "quarter": "2023Q2",
+      "url": "https://www.ffiec.gov/npw/FinancialReport/ReturnBHCFZipFiles?zipfilename=BHCF20230630.zip",
+      "bytes": 1441648,
+      "sha256": "81cb62b61e489985ea18950ac45f1c23b41434d12a285f29d39b090ae7f2eb13",
+      "downloaded_at_utc": "2026-09-26T03:35:46.451469+00:00"
+    },
+    "BHCF20230930.zip": {
+      "quarter": "2023Q3",
+      "url": "https://www.ffiec.gov/npw/FinancialReport/ReturnBHCFZipFiles?zipfilename=BHCF20230930.zip",
+      "bytes": 668426,
+      "sha256": "7ce9508d3ab1c66e3aade9aebe54bed4057ae23326dc98d9392233b69979829f",
+      "downloaded_at_utc": "2026-09-26T03:35:47.607440+00:00"
+    },
+    "BHCF20231231.zip": {
+      "quarter": "2023Q4",
+      "url": "https://www.ffiec.gov/npw/FinancialReport/ReturnBHCFZipFiles?zipfilename=BHCF20231231.zip",
+      "bytes": 1525077,
+      "sha256": "9046f7a3a80a167af763b7c851c6a2dea4fcd3db6dc3c6464698d666e9aeeb99",
+      "downloaded_at_utc": "2026-09-26T03:35:48.846202+00:00"
+    },
+    "BHCF20240331.zip": {
+      "quarter": "2024Q1",
+      "url": "https://www.ffiec.gov/npw/FinancialReport/ReturnBHCFZipFiles?zipfilename=BHCF20240331.zip",
+      "bytes": 655353,
+      "sha256": "b5f407d9f2e45916acad2f1c24a529b4a7022bab5c91f802368e4974e96d7064",
+      "downloaded_at_utc": "2026-09-26T03:35:49.981232+00:00"
+    },
+    "BHCF20240630.zip": {
+      "quarter": "2024Q2",
+      "url": "https://www.ffiec.gov/npw/FinancialReport/ReturnBHCFZipFiles?zipfilename=BHCF20240630.zip",
+      "bytes": 1419145,
+      "sha256": "1288bc62f2b3b447a21b2558108f17611414ad2dd200678f69dfc1a0fbf2ce5d",
+      "downloaded_at_utc": "2026-09-26T03:35:51.184648+00:00"
+    },
+    "BHCF20240930.zip": {
+      "quarter": "2024Q3",
+      "url": "https://www.ffiec.gov/npw/FinancialReport/ReturnBHCFZipFiles?zipfilename=BHCF20240930.zip",
+      "bytes": 663508,
+      "sha256": "cc4ad328f78e31fabdbbe4fce30a3d1f927d1f156106810e3d6e90bc548caa62",
+      "downloaded_at_utc": "2026-09-26T03:35:52.316133+00:00"
+    },
+    "BHCF20241231.zip": {
+      "quarter": "2024Q4",
+      "url": "https://www.ffiec.gov/npw/FinancialReport/ReturnBHCFZipFiles?zipfilename=BHCF20241231.zip",
+      "bytes": 1509614,
+      "sha256": "97d90fc4a2fc24682255518f8ad179070ac63bc4e5b0aab2ec696df266b2267a",
+      "downloaded_at_utc": "2026-09-26T03:35:53.546359+00:00"
+    },
+    "BHCF20250331.zip": {
+      "quarter": "2025Q1",
+      "url": "https://www.ffiec.gov/npw/FinancialReport/ReturnBHCFZipFiles?zipfilename=BHCF20250331.zip",
+      "bytes": 661296,
+      "sha256": "1a7db7d1e0e337e9418635b9646e617d85cc562fe53fa21725fa6c10722ef521",
+      "downloaded_at_utc": "2026-09-26T03:35:54.724380+00:00"
+    },
+    "BHCF20250630.zip": {
+      "quarter": "2025Q2",
+      "url": "https://www.ffiec.gov/npw/FinancialReport/ReturnBHCFZipFiles?zipfilename=BHCF20250630.zip",
+      "bytes": 1403797,
+      "sha256": "217a67a2ce6418887099fe6b894fffb0fc1104ff4ff8af26b3e0841d5011948c",
+      "downloaded_at_utc": "2026-09-26T03:35:55.899594+00:00"
+    },
+    "BHCF20250930.zip": {
+      "quarter": "2025Q3",
+      "url": "https://www.ffiec.gov/npw/FinancialReport/ReturnBHCFZipFiles?zipfilename=BHCF20250930.zip",
+      "bytes": 664483,
+      "sha256": "8154362e6baaa35182c6ecb5b46e7dea0865e0ce939ab0a3c2ad3d7a080e7349",
+      "downloaded_at_utc": "2026-09-26T03:35:57.068819+00:00"
+    },
+    "BHCF20251231.zip": {
+      "quarter": "2025Q4",
+      "url": "https://www.ffiec.gov/npw/FinancialReport/ReturnBHCFZipFiles?zipfilename=BHCF20251231.zip",
+      "bytes": 1473841,
+      "sha256": "414ea18ded55a0fb65b25815bbb0ca4d28438391082d3566a1fd00c6cfef26db",
+      "downloaded_at_utc": "2026-09-26T03:35:58.312856+00:00"
+    },
+    "BHCF20260331.zip": {
+      "quarter": "2026Q1",
+      "url": "https://www.ffiec.gov/npw/FinancialReport/ReturnBHCFZipFiles?zipfilename=BHCF20260331.zip",
+      "bytes": 659868,
+      "sha256": "b7f3ef6748bd05172d56b4d191a4345f729de7c56fbae8893bd4a7dcc8907c1d",
+      "downloaded_at_utc": "2026-09-26T03:35:59.488062+00:00"
+    },
+    "BHCF20260630.zip": {
+      "quarter": "2026Q2",
+      "url": "https://www.ffiec.gov/npw/FinancialReport/ReturnBHCFZipFiles?zipfilename=BHCF20260630.zip",
+      "bytes": 1371169,
+      "sha256": "f541514d2d7e4ea032d79ad6192b19cbaf7cf163fca0cbdda1c7c1dc52a339e0",
+      "downloaded_at_utc": "2026-09-26T03:36:00.652232+00:00"
+    }
+  },
+  "n_bhcs_per_quarter": {
+    "2018Q1": 656,
+    "2018Q2": 650,
+    "2018Q3": 372,
+    "2018Q4": 373,
+    "2019Q1": 364,
+    "2019Q2": 363,
+    "2019Q3": 358,
+    "2019Q4": 353,
+    "2020Q1": 353,
+    "2020Q2": 350,
+    "2020Q3": 348,
+    "2020Q4": 348,
+    "2021Q1": 349,
+    "2021Q2": 347,
+    "2021Q3": 346,
+    "2021Q4": 351,
+    "2022Q1": 369,
+    "2022Q2": 364,
+    "2022Q3": 365,
+    "2022Q4": 364,
+    "2023Q1": 379,
+    "2023Q2": 379,
+    "2023Q3": 381,
+    "2023Q4": 379,
+    "2024Q1": 387,
+    "2024Q2": 381,
+    "2024Q3": 381,
+    "2024Q4": 383,
+    "2025Q1": 390,
+    "2025Q2": 383,
+    "2025Q3": 382,
+    "2025Q4": 379,
+    "2026Q1": 387,
+    "2026Q2": 384
+  },
+  "dropped_missing_prior_nii": 49,
+  "dropped_missing_prior_any_flow": 49,
+  "negative_nii_decumulations": 36,
+  "negative_nii_after_positive": 6,
+  "negative_nii_definition": "Negative de-cumulated Q2\u2013Q4 NII; after_positive requires every earlier quarter of the same year observed and positive. Values retained as reported.",
+  "units": "thousands USD",
+  "sanity": {
+    "jpm_complete_year_checks": [
+      {
+        "year": 2018,
+        "quarterly_sum": 55396000.0,
+        "q4_ytd": 55396000.0
+      },
+      {
+        "year": 2019,
+        "quarterly_sum": 57595000.0,
+        "q4_ytd": 57595000.0
+      },
+      {
+        "year": 2020,
+        "quarterly_sum": 55000000.0,
+        "q4_ytd": 55000000.0
+      },
+      {
+        "year": 2021,
+        "quarterly_sum": 52539000.0,
+        "q4_ytd": 52539000.0
+      },
+      {
+        "year": 2022,
+        "quarterly_sum": 67129000.0,
+        "q4_ytd": 67129000.0
+      },
+      {
+        "year": 2023,
+        "quarterly_sum": 89699000.0,
+        "q4_ytd": 89699000.0
+      },
+      {
+        "year": 2024,
+        "quarterly_sum": 93193000.0,
+        "q4_ytd": 93193000.0
+      },
+      {
+        "year": 2025,
+        "quarterly_sum": 95919000.0,
+        "q4_ytd": 95919000.0
+      }
+    ],
+    "identity_rows": 13095,
+    "max_identity_difference_thousands_usd": 0.0
+  }
+}
