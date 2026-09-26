@@ -13,13 +13,21 @@ Ad-hoc quant research Pages — bank fundamentals forecasting, Y-9C panels, DFM 
 | Track | Description |
 |-------|-------------|
 | [Statement Forecast](docs/tracks/statement-forecast/index.html) | Non-embedding methods for joint multi-item forecasting of bank holding company statements on the FR Y-9C panel |
-| [Y-9C / Yahoo Bank Panel](docs/tracks/y9c-panel/index.html) | Research data path: FFIEC NIC FR Y-9C bulk downloads + Yahoo Finance quarterly smoke |
+| [Y-9C / Yahoo Bank Panel](docs/tracks/y9c-panel/index.html) | FR Y-9C pipeline and [next-quarter NII forecast results](docs/tracks/y9c-panel/results/index.html); historical Yahoo notes |
 | [DFM × Sinkhorn](docs/tracks/dfm-sinkhorn/index.html) | Literature at the intersection of dynamic factor models and Sinkhorn / entropic OT as observation loss |
 
 Each track has:
 - An **overview** page (`index.html`)
 - One or more **teaching pages** (method intuition, worked sketches)
 - **Lit memos** (structured literature synthesis)
+
+---
+
+## Y-9C pipeline
+
+From the repository root, run `make y9c` for the full pipeline, notebook and results page, or `make y9c-data` for download + panel build. Both install pinned dependencies into `.venv` when needed. Requires Python 3.13 with venv/pip and make. The data cache under `tracks/y9c-panel/data/` is gitignored.
+
+See the [pipeline README](tracks/y9c-panel/README.md) and [results](docs/tracks/y9c-panel/results/index.html).
 
 ---
 

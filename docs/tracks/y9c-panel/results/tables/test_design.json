@@ -1,0 +1,305 @@
+{
+  "target": "BHCK4074 quarterly net interest income",
+  "units": "thousands USD",
+  "fixed_test_start": "2022Q1",
+  "test_end": "2026Q2",
+  "first_origin": "2021Q4",
+  "last_origin": "2026Q1",
+  "n_forecasts_per_method": 893,
+  "n_target_quarters": 18,
+  "selected_origin_bhc_pairs": 900,
+  "dropped_target_missing": 6,
+  "dropped_history": 1,
+  "ar_fallbacks": 21,
+  "zero_actuals_excluded_from_mape": 0,
+  "nonpositive_actuals": 10,
+  "supplementary_metric_note": "MdAPE (median absolute percentage error, %): supplementary, added after observing MAPE outliers; does not replace MAPE",
+  "supplementary_mdape_winners": [
+    "naive"
+  ],
+  "supplementary_by_year_mdape_winners": {
+    "2022": [
+      "naive"
+    ],
+    "2023": [
+      "naive"
+    ],
+    "2024": [
+      "naive"
+    ],
+    "2025": [
+      "pooled_ar"
+    ],
+    "2026": [
+      "naive"
+    ]
+  },
+  "winners": {
+    "mae": [
+      "naive"
+    ],
+    "rmse": [
+      "naive"
+    ],
+    "mape": [
+      "naive"
+    ]
+  },
+  "by_year_winners": {
+    "2022": {
+      "mae": [
+        "naive"
+      ],
+      "rmse": [
+        "naive"
+      ],
+      "mape": [
+        "naive"
+      ]
+    },
+    "2023": {
+      "mae": [
+        "naive"
+      ],
+      "rmse": [
+        "naive"
+      ],
+      "mape": [
+        "naive"
+      ]
+    },
+    "2024": {
+      "mae": [
+        "naive"
+      ],
+      "rmse": [
+        "naive"
+      ],
+      "mape": [
+        "naive"
+      ]
+    },
+    "2025": {
+      "mae": [
+        "pooled_ar"
+      ],
+      "rmse": [
+        "pooled_ar"
+      ],
+      "mape": [
+        "pooled_ar"
+      ]
+    },
+    "2026": {
+      "mae": [
+        "pooled_ar"
+      ],
+      "rmse": [
+        "pooled_ar"
+      ],
+      "mape": [
+        "naive"
+      ]
+    }
+  },
+  "origin_audit": [
+    {
+      "origin": "2021Q4",
+      "target": "2022Q1",
+      "selected": 50,
+      "dropped_target_missing": 1,
+      "dropped_history": 0,
+      "evaluated": 49,
+      "ar_fallbacks": 3,
+      "training_rows": 526,
+      "training_last_target": "2021Q4"
+    },
+    {
+      "origin": "2022Q1",
+      "target": "2022Q2",
+      "selected": 50,
+      "dropped_target_missing": 1,
+      "dropped_history": 0,
+      "evaluated": 49,
+      "ar_fallbacks": 2,
+      "training_rows": 572,
+      "training_last_target": "2022Q1"
+    },
+    {
+      "origin": "2022Q2",
+      "target": "2022Q3",
+      "selected": 50,
+      "dropped_target_missing": 0,
+      "dropped_history": 0,
+      "evaluated": 50,
+      "ar_fallbacks": 2,
+      "training_rows": 619,
+      "training_last_target": "2022Q2"
+    },
+    {
+      "origin": "2022Q3",
+      "target": "2022Q4",
+      "selected": 50,
+      "dropped_target_missing": 0,
+      "dropped_history": 0,
+      "evaluated": 50,
+      "ar_fallbacks": 3,
+      "training_rows": 667,
+      "training_last_target": "2022Q3"
+    },
+    {
+      "origin": "2022Q4",
+      "target": "2023Q1",
+      "selected": 50,
+      "dropped_target_missing": 1,
+      "dropped_history": 0,
+      "evaluated": 49,
+      "ar_fallbacks": 2,
+      "training_rows": 714,
+      "training_last_target": "2022Q4"
+    },
+    {
+      "origin": "2023Q1",
+      "target": "2023Q2",
+      "selected": 50,
+      "dropped_target_missing": 0,
+      "dropped_history": 0,
+      "evaluated": 50,
+      "ar_fallbacks": 0,
+      "training_rows": 761,
+      "training_last_target": "2023Q1"
+    },
+    {
+      "origin": "2023Q2",
+      "target": "2023Q3",
+      "selected": 50,
+      "dropped_target_missing": 0,
+      "dropped_history": 0,
+      "evaluated": 50,
+      "ar_fallbacks": 0,
+      "training_rows": 811,
+      "training_last_target": "2023Q2"
+    },
+    {
+      "origin": "2023Q3",
+      "target": "2023Q4",
+      "selected": 50,
+      "dropped_target_missing": 0,
+      "dropped_history": 0,
+      "evaluated": 50,
+      "ar_fallbacks": 0,
+      "training_rows": 861,
+      "training_last_target": "2023Q3"
+    },
+    {
+      "origin": "2023Q4",
+      "target": "2024Q1",
+      "selected": 50,
+      "dropped_target_missing": 0,
+      "dropped_history": 0,
+      "evaluated": 50,
+      "ar_fallbacks": 0,
+      "training_rows": 911,
+      "training_last_target": "2023Q4"
+    },
+    {
+      "origin": "2024Q1",
+      "target": "2024Q2",
+      "selected": 50,
+      "dropped_target_missing": 0,
+      "dropped_history": 0,
+      "evaluated": 50,
+      "ar_fallbacks": 1,
+      "training_rows": 960,
+      "training_last_target": "2024Q1"
+    },
+    {
+      "origin": "2024Q2",
+      "target": "2024Q3",
+      "selected": 50,
+      "dropped_target_missing": 0,
+      "dropped_history": 0,
+      "evaluated": 50,
+      "ar_fallbacks": 1,
+      "training_rows": 1009,
+      "training_last_target": "2024Q2"
+    },
+    {
+      "origin": "2024Q3",
+      "target": "2024Q4",
+      "selected": 50,
+      "dropped_target_missing": 0,
+      "dropped_history": 0,
+      "evaluated": 50,
+      "ar_fallbacks": 1,
+      "training_rows": 1058,
+      "training_last_target": "2024Q3"
+    },
+    {
+      "origin": "2024Q4",
+      "target": "2025Q1",
+      "selected": 50,
+      "dropped_target_missing": 0,
+      "dropped_history": 0,
+      "evaluated": 50,
+      "ar_fallbacks": 1,
+      "training_rows": 1107,
+      "training_last_target": "2024Q4"
+    },
+    {
+      "origin": "2025Q1",
+      "target": "2025Q2",
+      "selected": 50,
+      "dropped_target_missing": 1,
+      "dropped_history": 0,
+      "evaluated": 49,
+      "ar_fallbacks": 1,
+      "training_rows": 1156,
+      "training_last_target": "2025Q1"
+    },
+    {
+      "origin": "2025Q2",
+      "target": "2025Q3",
+      "selected": 50,
+      "dropped_target_missing": 0,
+      "dropped_history": 0,
+      "evaluated": 50,
+      "ar_fallbacks": 1,
+      "training_rows": 1204,
+      "training_last_target": "2025Q2"
+    },
+    {
+      "origin": "2025Q3",
+      "target": "2025Q4",
+      "selected": 50,
+      "dropped_target_missing": 1,
+      "dropped_history": 0,
+      "evaluated": 49,
+      "ar_fallbacks": 1,
+      "training_rows": 1253,
+      "training_last_target": "2025Q3"
+    },
+    {
+      "origin": "2025Q4",
+      "target": "2026Q1",
+      "selected": 50,
+      "dropped_target_missing": 1,
+      "dropped_history": 0,
+      "evaluated": 49,
+      "ar_fallbacks": 1,
+      "training_rows": 1301,
+      "training_last_target": "2025Q4"
+    },
+    {
+      "origin": "2026Q1",
+      "target": "2026Q2",
+      "selected": 50,
+      "dropped_target_missing": 0,
+      "dropped_history": 1,
+      "evaluated": 49,
+      "ar_fallbacks": 1,
+      "training_rows": 1349,
+      "training_last_target": "2026Q1"
+    }
+  ]
+}

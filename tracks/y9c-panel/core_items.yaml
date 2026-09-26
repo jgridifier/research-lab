@@ -1,0 +1,12 @@
+# NIC monetary values: thousands of USD. Income items are calendar-year YTD.
+# Correction to the reference mapping: 4074 is NET interest income, not total
+# interest income; 4107 is total interest income and 4073 is interest expense.
+# 4079 is noninterest income, 4093 noninterest expense, 4135 salaries/benefits,
+# 4070 fiduciary income; provision codes are 4230 (pre-CECL) / JJ33 (post-CECL).
+core_items:
+  BHCK2170: {name: total_assets, kind: stock}
+  BHCK3210: {name: total_equity_capital, kind: stock}
+  BHCK2948: {name: total_liabilities, kind: stock}
+  BHCK4107: {name: total_interest_income, kind: flow_ytd}
+  BHCK4073: {name: total_interest_expense, kind: flow_ytd}
+  BHCK4074: {name: nii, kind: flow_ytd}
