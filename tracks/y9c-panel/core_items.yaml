@@ -10,3 +10,7 @@ core_items:
   BHCK4107: {name: total_interest_income, kind: flow_ytd}
   BHCK4073: {name: total_interest_expense, kind: flow_ytd}
   BHCK4074: {name: nii, kind: flow_ytd}
+# BHCK4079/4093 are pulled for the Statement Forecast track and excluded from the Y-9C any-flow drop count so Y-9C metadata is unchanged.
+# y9c_core defaults to true for the original flow set.
+  BHCK4079: {name: noninterest_income, kind: flow_ytd, y9c_core: false}
+  BHCK4093: {name: noninterest_expense, kind: flow_ytd, y9c_core: false}
