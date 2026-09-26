@@ -1,0 +1,35 @@
+{
+  "nii": {
+    "verdict": "FAIL",
+    "passed": false,
+    "eb_mae": 150011.1633941675,
+    "naive_mae": 117823.27659574468,
+    "p_value": 0.0026185453831989577,
+    "alpha": 0.05,
+    "t_stat": -3.5215894106000776,
+    "comparator": "naive",
+    "loss": "abs"
+  },
+  "noninterest_income": {
+    "verdict": "FAIL",
+    "passed": false,
+    "eb_mae": 394098.82436938427,
+    "naive_mae": 294201.3617021277,
+    "p_value": 0.000183199238859318,
+    "alpha": 0.05,
+    "t_stat": -4.755822102535911,
+    "comparator": "naive",
+    "loss": "abs"
+  },
+  "noninterest_expense": {
+    "verdict": "FAIL",
+    "passed": false,
+    "eb_mae": 277329.21283170435,
+    "naive_mae": 230601.00223964165,
+    "p_value": 0.015825804901738173,
+    "alpha": 0.05,
+    "t_stat": -2.679867114061905,
+    "comparator": "naive",
+    "loss": "abs"
+  }
+}

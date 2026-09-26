@@ -20,8 +20,16 @@ Y-9C results with committed SHA-256 hashes.
 [`test_design.json`](test_design.json) is the fixed pre-registration; do not edit it to fit results.
 Commit it separately before the first real-data run. The notebook checks its exact SHA-256 against
 `git show HEAD:tracks/statement-forecast/test_design.json`, records the most recent commit touching
-that file and its commit time, and refuses an uncommitted or changed specification. The delivered
-notebook is unexecuted. Run once on real data and publish whatever the verdict.
+that file and its commit time, and refuses an uncommitted or changed specification. The committed
+notebook holds the single real-data run (pre-registration commit `3ea20c8`, 2026-09-26 17:14:22 ET;
+run start 2026-09-26 17:15:34 ET). The result was published whatever the verdict.
+
+## Result (first run)
+
+**0 of 3 lines pass the pre-registered bar.** On the same 893 matched cases per line, naive beats the
+EB panel on MAE for NII (117,823 vs 150,011 thousand USD; abs-error DM p = 0.0026, favoring naive),
+noninterest income (294,201 vs 394,099; p = 0.0002) and noninterest expense (230,601 vs 277,329;
+p = 0.0158). See the [results page](../../docs/tracks/statement-forecast/results/index.html).
 
 Liu, Moon & Schorfheide, *Forecasting with Dynamic Panel Data Models*, NBER Working Paper 25102
 (2018); Econometrica 88(1), 171–201 (2020), [paper](https://www.nber.org/papers/w25102).
@@ -65,8 +73,7 @@ remain; no pro-forma histories or cross-RSSD consolidation are constructed.
 Aggregate tables and figures go to `docs/tracks/statement-forecast/results/`: overall/by-year errors,
 DM tests and origin-level EB parameters (CSV/JSON), verdicts, run metadata with audits and fallback
 counts, an exact design copy and shared vintage copy. Only aggregate outputs are exported, never
-per-bank forecasts. The renderer uses these outputs and the shared site CSS. The repository result
-directory stays absent until the first real run.
+per-bank forecasts. The renderer uses these outputs and the shared site CSS.
 
 For a synthetic notebook run, set `SF_PANEL_PATH` to a synthetic parquet and `SF_RESULTS_DIR` to a
 temporary output directory. Vintage defaults to `vintage.json` beside the supplied panel;
