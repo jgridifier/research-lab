@@ -89,6 +89,7 @@ def evaluate(panel):
                                               for metric in ['mae', 'rmse', 'mape']}
                                     for year, group in by_year.groupby('target_year')},
                    origin_audit=audit)
+    summary['dm_full_sample'] = dm_tests(forecasts).query("scope == 'full'").to_dict(orient='records')
     return forecasts, overall, by_year, summary
 
 
@@ -102,4 +103,57 @@ def metrics(cases):
                          mape=float((error[nonzero].abs() / cases.loc[nonzero, 'actual'].abs()).mean() * 100),
                          n_mape=int(nonzero.sum()),
                          mdape=float((error[nonzero].abs() / cases.loc[nonzero, 'actual'].abs()).median() * 100)))
+    return pd.DataFrame(rows)
+
+
+def clustered_dm(d, clusters):
+    """Paired mean loss differential with target-quarter CR1 standard error.
+
+    Positive differences favor pooled_ar. Independent clusters are assumed;
+    no correction for serial dependence between target quarters is applied.
+    Zero standard error yields undefined inference, including an exact tie.
+    """
+    from scipy.stats import t
+
+    d = np.asarray(d, dtype=float)
+    clusters = np.asarray(clusters)
+    if d.ndim != 1 or clusters.ndim != 1 or len(d) != len(clusters):
+        raise ValueError('d and clusters must be one-dimensional and equally sized')
+    if not np.isfinite(d).all() or pd.isna(clusters).any():
+        raise ValueError('d and clusters must contain no missing/nonfinite values')
+    codes, labels = pd.factorize(clusters)
+    n, g = len(d), len(labels)
+    mean = float(d.mean()) if n else float('nan')
+    result = dict(n=n, G=g, df=g - 1, mean_diff=mean, se=float('nan'),
+                  t_stat=float('nan'), p_value=float('nan'),
+                  favored='naive' if mean < 0 else 'pooled_ar' if mean > 0 else 'tie',
+                  note='CR1; assumes independent target-quarter clusters')
+    if g < 2:
+        result['note'] = 'undefined (G<2)'
+        return result
+    sums = np.bincount(codes, weights=d - mean)
+    se = float(np.sqrt(g / (g - 1) * np.sum(sums ** 2) / n ** 2))
+    result['se'] = se
+    if se == 0:
+        result['note'] = 'undefined (se=0)'
+        return result
+    statistic = mean / se
+    result.update(t_stat=statistic, p_value=float(2 * t.sf(abs(statistic), df=g - 1)))
+    return result
+
+
+def dm_tests(forecasts):
+    """Compare naive and pooled AR on every supplied matched evaluation case."""
+    rows = []
+    groups = [('full', forecasts), *[(str(year), group)
+              for year, group in forecasts.groupby('target_year')]]
+    for scope, cases in groups:
+        naive = cases.naive - cases.actual
+        pooled = cases.pooled_ar - cases.actual
+        for loss, differential in [('abs', naive.abs() - pooled.abs()),
+                                   ('squared', naive ** 2 - pooled ** 2)]:
+            result = clustered_dm(differential, cases.target_quarter)
+            rows.append(dict(scope=scope, loss=loss, **result,
+                             inference='cluster-robust t, df=G-1' if scope == 'full'
+                             else f'descriptive only (G={result["G"]})'))
     return pd.DataFrame(rows)

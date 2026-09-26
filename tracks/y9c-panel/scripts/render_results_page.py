@@ -14,12 +14,39 @@ LABELS = {'naive': 'Naive', 'seasonal_naive': 'Seasonal naive', 'pooled_ar': 'Po
 def table(frame):
     frame = frame.copy()
     frame['method'] = frame.method.map(LABELS)
+    for column in ['mae', 'rmse']:
+        frame[column] = frame[column].map(lambda value: f'{value:,.0f}')
     columns = ['target_year'] if 'target_year' in frame else []
     columns += ['method', 'n_forecasts', 'mae', 'rmse', 'mape', 'n_mape', 'mdape']
     frame = frame[columns].rename(columns={'target_year': 'Target year', 'method': 'Method',
         'n_forecasts': 'Forecasts (count)', 'mae': 'MAE (thousands USD)',
         'rmse': 'RMSE (thousands USD)', 'mape': 'MAPE (%)', 'n_mape': 'Percentage-error cases (count)', 'mdape': 'MdAPE (%, supplementary)' })
     return frame.to_html(index=False, border=0, float_format=lambda v: f'{v:,.3f}', escape=True)
+
+
+def dm_table(frame):
+    frame = frame.copy()
+    frame['loss'] = frame.loss.map({'abs': 'Absolute error (thousands USD)',
+                                  'squared': 'Squared error ((thousands USD)²)'})
+    for column in ['mean_diff', 'se']:
+        frame[column] = frame[column].map(lambda value: f'{value:,.0f}')
+    frame['favored'] = frame.favored.map({**LABELS, 'tie': 'Tie'})
+    columns = ['scope', 'loss', 'n', 'G', 'mean_diff', 'se', 't_stat', 'df', 'p_value', 'favored', 'inference']
+    return frame[columns].rename(columns={'scope': 'Scope', 'loss': 'Loss / differential units',
+        'mean_diff': 'Mean loss differential', 'se': 'Cluster-robust SE',
+        't_stat': 'Cluster-robust t', 'p_value': 'Two-sided p', 'favored': 'Favored method',
+        'inference': 'Inference'}).to_html(index=False, border=0, float_format=lambda v: f'{v:.4f}')
+
+
+def dm_headline(frame):
+    clauses = []
+    for row in frame.itertuples():
+        loss = 'absolute-error' if row.loss == 'abs' else 'squared-error'
+        method = "naive's" if row.mean_diff < 0 else "pooled AR's" if row.mean_diff > 0 else 'neither method’s'
+        verdict = 'is' if row.p_value < 0.05 else 'is not'
+        clauses.append(f"{method} lower {loss} loss {verdict} statistically distinguishable from zero "
+                       f"(t = {row.t_stat:.3f}, df = {row.df}, p = {row.p_value:.4f})")
+    return 'At the 5% level, ' + '; '.join(clauses) + '.'
 
 
 def winners(values):
@@ -30,6 +57,8 @@ def winners(values):
 def main():
     overall = pd.read_csv(TABLES / 'overall_errors.csv')
     annual = pd.read_csv(TABLES / 'by_year_errors.csv')
+    dm = pd.read_csv(TABLES / 'dm_tests.csv', dtype={'scope': str})
+    dm_full = dm[dm.scope.eq('full')]
     design = json.loads((TABLES / 'test_design.json').read_text())
     vintage = json.loads((TABLES / 'vintage.json').read_text())
     download_rows = ''.join(f'<tr><td>{escape(info["quarter"])}</td><td>{escape(info["downloaded_at_utc"])}</td></tr>'
@@ -125,12 +154,25 @@ def main():
   {design['n_forecasts_per_method']} evaluated cases. BNP Paribas USA's 2022Q1 naive absolute percentage error
   is about 3,350%. The notebook shows the ten largest naive percentage errors; no cases are removed.</p>
   {table(overall)}
+  <h3>Is naive's edge over pooled AR distinguishable from noise?</h3>
+  <p>{dm_headline(dm_full)}</p>
+  <p>Paired Diebold–Mariano loss differential: L(naive) − L(pooled AR), with error = forecast − actual.
+  Negative values favor naive. All {design['n_forecasts_per_method']} matched cases are included.
+  Standard errors cluster by target quarter to absorb cross-sectional correlation within a quarter,
+  using the CR1 correction G/(G−1) and a Student t(G−1) reference distribution.
+  One-step forecasts are assumed to have no serial dependence across quarters beyond what is captured;
+  this test does not adjust for correlation between quarters. The stated significance threshold is 5%.</p>
+  {dm_table(dm_full)}
   <h3>By target year</h3>
-  <p>The final year may be partial.</p>
+  <p>The final year may be partial. <strong>Per-year results (including pooled AR's 2025 and 2026 wins)
+  are descriptive only: 4 clusters per year (2 in 2026), so clustered inference is weak (df=3)
+  or essentially undefined (df=1).</strong></p>
   {table(annual)}
   <ul>{year_winners}</ul>
   <p>Supplementary MdAPE winners by target year:</p>
   <ul>{supplementary_year_winners}</ul>
+  <h3>Per-year DM comparisons — descriptive only</h3>
+  {dm_table(dm[dm.scope.ne('full')])}
   <h2>Figures</h2>
   {figure_html}
   <h2>Data vintage</h2>
@@ -144,7 +186,8 @@ def main():
   <p><a href="tables/vintage.json">Vintage and SHA-256 metadata</a> ·
   <a href="tables/test_design.json">Test design and origin-level counts</a> ·
   <a href="tables/overall_errors.csv">Overall errors CSV</a> ·
-  <a href="tables/by_year_errors.csv">By-year errors CSV</a></p>
+  <a href="tables/by_year_errors.csv">By-year errors CSV</a> ·
+  <a href="tables/dm_tests.csv">DM tests CSV</a> · <a href="tables/dm_tests.json">DM tests JSON</a></p>
   <h2>Reproduce</h2>
   <pre><code>git clone https://github.com/jgridifier/research-lab &amp;&amp; cd research-lab &amp;&amp; make y9c</code></pre>
   <p>Requires Python 3.13, venv/pip, make, and network access to NIC and the package index.

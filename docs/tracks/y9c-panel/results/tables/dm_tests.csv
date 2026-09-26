@@ -1,0 +1,13 @@
+scope,loss,n,G,df,mean_diff,se,t_stat,p_value,favored,note,inference
+full,abs,893,18,17,-16225.314055228662,6577.395745155882,-2.466829530088451,0.024556706048764074,naive,CR1; assumes independent target-quarter clusters,"cluster-robust t, df=G-1"
+full,squared,893,18,17,-15815555433.578777,7446160561.392085,-2.1239879671117388,0.04864321847477837,naive,CR1; assumes independent target-quarter clusters,"cluster-robust t, df=G-1"
+2022,abs,198,4,3,-27190.31879657748,9697.641545672119,-2.8038073657931837,0.06763895443208524,naive,CR1; assumes independent target-quarter clusters,descriptive only (G=4)
+2022,squared,198,4,3,-46786174302.40449,24291046626.133846,-1.9260666295073905,0.1497430176059379,naive,CR1; assumes independent target-quarter clusters,descriptive only (G=4)
+2023,abs,199,4,3,-39153.787872740366,7999.9509601965165,-4.894253485746188,0.016319567329054648,naive,CR1; assumes independent target-quarter clusters,descriptive only (G=4)
+2023,squared,199,4,3,-14074632510.688084,6712706828.79949,-2.096714912426052,0.12696176493725206,naive,CR1; assumes independent target-quarter clusters,descriptive only (G=4)
+2024,abs,200,4,3,-15081.169187525244,15571.36111510757,-0.9685196480925015,0.4042251788641756,naive,CR1; assumes independent target-quarter clusters,descriptive only (G=4)
+2024,squared,200,4,3,-15568122459.058962,12291160795.146156,-1.2666112435211891,0.29469785038411545,naive,CR1; assumes independent target-quarter clusters,descriptive only (G=4)
+2025,abs,198,4,3,8256.51227134157,14214.121976864455,0.5808668509233451,0.6020899598211382,pooled_ar,CR1; assumes independent target-quarter clusters,descriptive only (G=4)
+2025,squared,198,4,3,3923959968.0524793,9942936640.668774,0.3946479908161769,0.7194859105348054,pooled_ar,CR1; assumes independent target-quarter clusters,descriptive only (G=4)
+2026,abs,98,2,1,689.0394373254729,14699.283390303624,0.04687571625294315,0.9701798210248439,pooled_ar,CR1; assumes independent target-quarter clusters,descriptive only (G=2)
+2026,squared,98,2,1,2835753035.2507305,10393793412.350447,0.27283138337934837,0.8304369923472235,pooled_ar,CR1; assumes independent target-quarter clusters,descriptive only (G=2)
