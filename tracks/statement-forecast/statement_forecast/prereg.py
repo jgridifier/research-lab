@@ -55,3 +55,21 @@ def verify_preregistration(root=ROOT, design_path=DESIGN_PATH, commit=PREREG_COM
         raise PreregistrationError(f'{relative} in {commit} does not hash to the pinned {sha256}')
     return dict(prereg_commit=commit, prereg_commit_time=commit_time, test_design_sha256=sha256,
                 prereg_commit_available=commit_available)
+
+
+# ── Statement Forecast v2 (naive / pooled-AR combination) ──────────────────
+# Extension only: the v1 constants and verify_preregistration above are
+# unchanged. The combination pre-registration is test_design_combo.json as
+# committed on its own in COMBO_PREREG_COMMIT, before its single real run.
+COMBO_DESIGN_PATH = DESIGN_PATH.parent / 'test_design_combo.json'
+COMBO_PREREG_COMMIT = '288d4b85af9526666715ac265aa715aaab059194'
+COMBO_PREREG_COMMIT_TIME = '2026-10-03T08:01:24-04:00'
+# sha256 of `git show 288d4b8:tracks/statement-forecast/test_design_combo.json`
+COMBO_PREREG_SHA256 = 'b16c1a129cc7b9320c40716694c6d39b5a3c6277eaf1511dea7eeeebc70d49e6'
+
+
+def verify_combo_preregistration(root=ROOT, design_path=COMBO_DESIGN_PATH, commit=COMBO_PREREG_COMMIT,
+                                 sha256=COMBO_PREREG_SHA256, commit_time=COMBO_PREREG_COMMIT_TIME):
+    """Same checks as verify_preregistration, pinned to the combination design."""
+    return verify_preregistration(root=root, design_path=design_path, commit=commit,
+                                  sha256=sha256, commit_time=commit_time)

@@ -1,0 +1,306 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Teaching: Naive / Pooled-AR Forecast Combination — Research Lab</title>
+<meta name="description" content="Teaching note for Statement Forecast v2: a walk-forward combination of the naive and pooled growth-AR forecasts, with one pooled weight per line, on the top-50 FR Y-9C panel." />
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500&display=swap');
+:root{--nav-bg:#0a2540;--nav-text:#fff;--nav-muted:#8daabe;--nav-hover:#e8f0f7;--nav-active:#c8ddf0;--body-bg:#f7f8fb;--surface:#fff;--surface-alt:#eef0f4;--text-primary:#0c1a27;--text-secondary:#3a4f63;--text-muted:#657889;--border:#d2d8e0;--border-dark:#b0bbc7;--rule:#e2e6ea;--link:#0a4080;--link-hover:#0a2540;--accent:#0a4080;--accent-light:#dde9f5;--footer-bg:#0a2540;--footer-text:#8daabe;--footer-rule:#1e3a56;--font-sans:'Inter',system-ui,-apple-system,'Segoe UI',sans-serif;--font-mono:'IBM Plex Mono','Cascadia Code',ui-monospace,monospace;--max-w:960px;--max-w-narrow:720px}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+html{font-size:16px;-webkit-text-size-adjust:100%}
+body{font-family:var(--font-sans);font-size:1rem;line-height:1.6;color:var(--text-primary);background:var(--body-bg)}
+.site-nav{background:var(--nav-bg);border-bottom:1px solid #1e3a56}
+.site-nav__inner{max-width:var(--max-w);margin:0 auto;padding:0 1.25rem;display:flex;align-items:center;flex-wrap:wrap;min-height:52px}
+.site-nav__logo{font-weight:700;font-size:.95rem;color:var(--nav-text);text-decoration:none;white-space:nowrap;padding:.75rem 0;margin-right:2rem}
+.site-nav__links{display:flex;flex-wrap:wrap;list-style:none;flex:1}
+.site-nav__links a{display:block;color:var(--nav-muted);text-decoration:none;font-size:.875rem;font-weight:500;padding:.75rem .85rem;white-space:nowrap}
+.site-nav__links a:hover{color:var(--nav-hover)}
+.site-nav__links a.active{color:var(--nav-active);border-bottom:2px solid var(--nav-active)}
+.page-header{background:var(--surface);border-bottom:1px solid var(--border);padding:2.5rem 1.25rem 2rem}
+.page-header__inner{max-width:var(--max-w);margin:0 auto}
+.page-header__eyebrow{font-size:.75rem;font-weight:600;letter-spacing:.08em;text-transform:uppercase;color:var(--text-muted);margin-bottom:.5rem}
+.page-header h1{font-size:1.875rem;font-weight:700;line-height:1.2;margin-bottom:.6rem}
+.page-header__sub{color:var(--text-secondary);max-width:60ch;line-height:1.5}
+.page-content{max-width:var(--max-w-narrow);margin:0 auto;padding:2.5rem 1.25rem 4rem}
+.breadcrumb{font-size:.8rem;color:var(--text-muted);margin-bottom:1.5rem}
+.breadcrumb a{color:var(--link);text-decoration:none}
+.breadcrumb span{margin:0 .4rem;color:var(--border-dark)}
+.prose{font-size:.975rem;line-height:1.65}
+.prose h2{font-size:1.2rem;font-weight:700;margin:2.5rem 0 .75rem;padding-bottom:.35rem;border-bottom:1px solid var(--rule)}
+.prose h3{font-size:1rem;font-weight:600;margin:1.5rem 0 .4rem}
+.prose p{margin:.75rem 0}
+.prose ul,.prose ol{padding-left:1.4rem;margin:.6rem 0}
+.prose li{margin:.35rem 0}
+.prose strong{font-weight:600}
+.prose a{color:var(--link);text-decoration:underline;text-underline-offset:2px}
+.prose code{font-family:var(--font-mono);font-size:.875em;background:var(--surface-alt);border:1px solid var(--border);padding:.1em .35em;border-radius:2px}
+.prose table{width:100%;border-collapse:collapse;font-size:.88rem;margin:1.25rem 0;display:block;overflow-x:auto}
+.prose th{background:var(--surface-alt);font-weight:600;font-size:.78rem;letter-spacing:.03em;text-transform:uppercase;color:var(--text-secondary);padding:.5rem .7rem;border:1px solid var(--border);text-align:left;vertical-align:top}
+.prose td{padding:.5rem .7rem;border:1px solid var(--border);vertical-align:top}
+.prose td.num{text-align:right;font-variant-numeric:tabular-nums;white-space:nowrap}
+.t-card{background:var(--surface);border:1px solid var(--border);padding:1rem 1.2rem;margin:1rem 0}
+.math-block{font-family:var(--font-mono);font-size:.88rem;background:var(--surface-alt);border:1px solid var(--border);padding:.75rem 1rem;margin:.75rem 0;overflow-x:auto;white-space:pre}
+.callout{border:1px solid var(--border);border-left:3px solid var(--accent);background:var(--accent-light);padding:.85rem 1rem;margin:1.25rem 0;font-size:.9rem;color:var(--text-secondary)}
+.callout strong{color:var(--text-primary)}
+.badge{display:inline-block;font-size:.7rem;font-weight:600;letter-spacing:.07em;text-transform:uppercase;background:var(--surface-alt);border:1px solid var(--border);color:var(--text-muted);padding:.15rem .5rem;margin-right:.35rem;vertical-align:middle}
+.site-footer{background:var(--footer-bg);color:var(--footer-text);border-top:1px solid var(--footer-rule);padding:2rem 1.25rem}
+.site-footer__inner{max-width:var(--max-w);margin:0 auto;display:flex;flex-direction:column;gap:.5rem}
+.site-footer__disclaimer{font-size:.85rem;line-height:1.5}
+.site-footer__disclaimer strong{color:#c8d8e8;font-weight:600}
+.site-footer__links{display:flex;gap:1.5rem;flex-wrap:wrap;font-size:.8rem}
+.site-footer__links a{color:var(--nav-muted);text-decoration:none}
+@media (max-width:640px){.page-header h1{font-size:1.45rem}.site-nav__links a{padding:.65rem .55rem;font-size:.8rem}.site-nav__logo{margin-right:1rem}}
+</style>
+</head>
+<body>
+
+<nav class="site-nav" aria-label="Site navigation">
+  <div class="site-nav__inner">
+    <a class="site-nav__logo" href="../../index.html">Research Lab</a>
+    <ul class="site-nav__links">
+      <li><a href="../../index.html">Home</a></li>
+      <li><a href="index.html" class="active">Statement Forecast</a></li>
+      <li><a href="../y9c-panel/index.html">Y-9C Panel</a></li>
+      <li><a href="../dfm-sinkhorn/index.html">DFM × Sinkhorn</a></li>
+    </ul>
+  </div>
+</nav>
+
+<header class="page-header">
+  <div class="page-header__inner">
+    <div class="page-header__eyebrow">Track 1 · Teaching Note · Method v2</div>
+    <h1>Naive / Pooled-AR Forecast Combination</h1>
+    <p class="page-header__sub">
+      One walk-forward combination weight per line, learned only from forecasts whose outcomes
+      were already known. Top-50 FR Y-9C panel; NII, noninterest income and noninterest expense,
+      one quarter ahead. Research only; not investment advice.
+    </p>
+  </div>
+</header>
+
+<main class="page-content">
+
+  <nav class="breadcrumb" aria-label="Breadcrumb">
+    <a href="../../index.html">Home</a><span aria-hidden="true">›</span>
+    <a href="index.html">Statement Forecast</a><span aria-hidden="true">›</span>
+    Combination teaching note
+  </nav>
+
+  <div class="callout">
+    <strong>Status: pre-registration draft.</strong> The pass bar in Section 5 is fixed here, before
+    any real-data run of this method. Engineering will commit it on its own as
+    <code>test_design_combo.json</code>, pin its hash, run the real data once, and publish the
+    result whatever it shows. Every number on this page comes from the published v1 outputs
+    (PR&nbsp;#4, merge <code>d1fd375</code>). No v2 result exists yet.
+  </div>
+
+  <div class="prose">
+
+    <h2>1. Why this method, and why now</h2>
+    <div class="t-card">
+      <p>
+        The first method (Liu, Moon &amp; Schorfheide empirical-Bayes panel) beat naive on
+        <strong>0 of 3 lines</strong>. The diagnosis below says the failure came from the model's
+        <em>structure</em> (mean-reverting asset ratios in levels) rather than from the empirical-Bayes
+        step. Naive is hard to beat because bank income lines are very persistent over one quarter.
+      </p>
+      <p>
+        One cheap, transparent forecaster in the repo already does better than naive on two lines by
+        MAE: the shared <strong>pooled AR on log growth</strong> baseline. It does worse on NII. That is
+        exactly the setting forecast-combination theory covers. When two forecasts each have useful
+        information and their errors are not perfectly correlated, a convex combination with a
+        well-estimated weight can beat both. A weight learned on past data also shrinks toward
+        whichever component has actually done better.
+      </p>
+      <p>
+        Pesaran, Pick &amp; Timmermann (2022 working paper; <em>Quantitative Economics</em> 2026) is the
+        recent anchor paper for panel data. It compares individual, pooled, fixed-effects and
+        empirical-Bayes panel forecasts, proposes optimal combination weights, and finds that
+        empirical-Bayes and combination methods do best overall and rarely give the worst forecast for
+        any single series. Our v1 already tested the empirical-Bayes branch. This v2 tests the
+        combination branch.
+      </p>
+    </div>
+
+    <h3>Diagnosis of v1 (from the published tables)</h3>
+    <table>
+      <thead><tr><th>Line</th><th>Naive MAE</th><th>Pooled AR MAE</th><th>EB panel MAE</th><th>EB vs naive DM p (abs)</th></tr></thead>
+      <tbody>
+        <tr><td>NII (BHCK4074)</td><td class="num">117,823</td><td class="num">134,049</td><td class="num">150,011</td><td class="num">0.0026</td></tr>
+        <tr><td>Noninterest income (BHCK4079)</td><td class="num">294,201</td><td class="num">262,576</td><td class="num">394,099</td><td class="num">0.0002</td></tr>
+        <tr><td>Noninterest expense (BHCK4093)</td><td class="num">230,601</td><td class="num">222,663</td><td class="num">277,329</td><td class="num">0.0158</td></tr>
+      </tbody>
+    </table>
+    <p style="font-size:.85rem;color:var(--text-muted)">Thousands USD, 893 matched BHC-quarters per line, targets 2022Q1–2026Q2. Source: <code>results/tables/overall_errors.csv</code>, <code>verdicts.json</code>.</p>
+    <ul>
+      <li><strong>Mean reversion in the wrong place.</strong> EB models <code>400·X/A(t−1)</code> in levels over a
+        12-quarter window. Its estimated persistence was low (NII median ρ ≈ 0.63; noninterest-income
+        ρ fell to about 0.15 or lower while 2023Q1 was in the window), so forecasts were pulled toward each bank's
+        window mean while flows trended through the 2022–2024 rate cycle. Naive never mean-reverts.</li>
+      <li><strong>Acquisition spikes.</strong> First Citizens' 2023Q1 bargain-purchase gain alone accounts for
+        24.4M of the 99.9M noninterest-income gap, because it inflated σ² and pushed ρ down.</li>
+      <li><strong>Merger quarters were hit twice</strong> by lagged-asset scaling: 8.4M / 25.6M / 34.8M of the gaps.</li>
+      <li><strong>The Tweedie shrinkage itself cost little</strong>: about 1M / 17M / 6M. EB was not the problem.</li>
+      <li><strong>Growth-space forecasting with a seasonal lag already helps on two lines.</strong> Pooled AR
+        has lower MAE than naive on noninterest income and expense. On NII it is worse, and Y-9C's
+        published DM for pooled AR vs naive on NII favors naive (p = 0.025). No naive-vs-pooled-AR DM is
+        published for the two noninterest lines, so those two MAE gaps are descriptive only.</li>
+    </ul>
+
+    <h2>2. What the papers found</h2>
+    <div class="t-card">
+      <h3>Pesaran, Pick &amp; Timmermann (anchor)</h3>
+      <ul>
+        <li><strong>Setup:</strong> linear dynamic panels with heterogeneous slopes, weakly exogenous regressors and
+          possibly correlated heterogeneity. They compare forecasts from individual, pooled, fixed-effects and
+          empirical-Bayes estimates, and combinations of individual and pooled forecasts.</li>
+        <li><strong>Key claim:</strong> whether pooling helps depends on a trade-off. Pooling removes estimation noise
+          but adds bias from heterogeneity. The balance depends on how heterogeneous the parameters are, whether
+          that heterogeneity is correlated with the regressors, the model's fit, and N and T. With short T (ours is
+          short), estimation noise dominates and pooled or shrunk forecasts tend to win.</li>
+        <li><strong>Result:</strong> in simulations and in applications to house prices and CPI inflation,
+          empirical-Bayes and forecast-combination methods perform best overall and rarely produce the least
+          accurate forecast for any individual series.</li>
+        <li><strong>Limitations for us:</strong> their optimal weights target squared error under their model. We score
+          absolute error, and our components include a model-free random walk. So we borrow the principle (estimate
+          a combination weight, pool it across units because T is short) rather than their closed-form weight.</li>
+      </ul>
+      <h3>Wang, Hyndman, Li &amp; Kang (supporting review)</h3>
+      <ul>
+        <li>This 50-year review of forecast combination documents the long-standing finding that combinations often beat
+          the best single component, and that simple or heavily regularized weights are hard to beat. Elaborate
+          estimated weights often lose to equal weights because the weights are estimated with error (the
+          "forecast combination puzzle").</li>
+        <li><strong>Our takeaway:</strong> use one scalar weight per line, on a coarse grid, estimated on all banks
+          pooled. Do not use bank-specific or time-varying weights.</li>
+      </ul>
+    </div>
+
+    <h2>3. The math</h2>
+    <div class="t-card">
+      <p>For line ℓ, bank i, origin t (all inputs dated ≤ t):</p>
+      <div class="math-block">N_i,t+1 = X_i,t                                   (naive)
+P_i,t+1 = X_i,t · exp( a + b1·g_i,t + b4·g_i,t−3 )  (pooled AR on log growth,
+                                                    y9c.forecast, unchanged)
+C_i,t+1 = N_i,t+1 + w_ℓ,t · (P_i,t+1 − N_i,t+1),   w_ℓ,t ∈ {0, 0.05, …, 1}</div>
+      <p>
+        The weight is fit only on <em>pseudo-out-of-sample</em> cases whose targets are already observed at t.
+        For every earlier origin s with s+1 ≤ t, we rebuild N and P exactly as they would have been produced at s,
+        using data ≤ s, the top-50 design at s and the same case rule. Then:
+      </p>
+      <div class="math-block">w_ℓ,t = argmin_w  Σ_(i,s : s+1 ≤ t)  | N_i,s+1 + w·(P_i,s+1 − N_i,s+1) − X_i,s+1 |
+ties → the smallest w (toward naive)
+if the pseudo-OOS set spans &lt; 8 distinct target quarters → w = 0.5</div>
+      <p><strong>Intuition.</strong> At w = 0 the method is naive and at w = 1 it is pooled AR. Because absolute
+        error is convex, the combined MAE at any w is at most the weighted average of the two component MAEs, and
+        it is strictly lower when the two error sets often have opposite signs. The weight is fit on the same loss
+        that is scored (MAE), is shared by all ~50 banks because 12-quarter bank histories are too short, and is
+        refit as each quarter's outcome arrives.</p>
+      <p><strong>What this fixes structurally.</strong> Nothing is scaled by assets, so merger quarters are not
+        hit twice. Nothing reverts to a 12-quarter level mean. The seasonal lag in P handles quarter-of-year
+        patterns that naive ignores. Spikes are not trimmed. If they make P unreliable, the learned weight
+        moves toward naive.</p>
+    </div>
+
+    <h2>4. What we will do on this data</h2>
+    <div class="t-card">
+      <ul>
+        <li><strong>Panel, lines, universe and cases are identical to v1:</strong> top 50 BHCs by BHCK2170 at each origin
+          (RSSD tie-break), BHCK4074 / 4079 / 4093 de-cumulated by <code>y9c.panel</code>, targets 2022Q1–2026Q2
+          (origins 2021Q4–2026Q1, 18 target quarters), the shared case rule, and the same 893 matched cases per line.</li>
+        <li><strong>Components are imported, not re-implemented:</strong> naive and pooled AR come from
+          <code>y9c.forecast.baseline_forecasts</code>, including pooled AR's naive fallback when log inputs are
+          missing or non-positive. A fallback case has P = N, so C = N.</li>
+        <li><strong>Pseudo-OOS history:</strong> pooled-AR forecasts are generated at every origin from the earliest one
+          where <code>y9c.forecast</code> can fit it (the data start in 2018Q1) up to t−1. This uses only the shared code
+          path and expanding pooled OLS on rows with s+1 ≤ origin. Pre-2022 history includes 2020; it is not dropped.</li>
+        <li><strong>Leakage rules:</strong> the panel is hard-truncated to quarters ≤ t before anything is computed.
+          The weight set includes only cases with target ≤ t. Selection never looks at t+1. No step uses the
+          2022–2026 evaluation outcomes except through this expanding, pre-origin rule.</li>
+        <li><strong>No tuning:</strong> the grid, tie rule, minimum-history rule, loss and components are fixed here.
+          There is no trimming, winsorizing or case removal. Nonfinite forecasts raise an error.</li>
+        <li><strong>Reported descriptively:</strong> the w path by origin and line, by-year errors, RMSE, squared-error DM,
+          the comparison against pooled AR and seasonal naive, and the fallback counts.</li>
+      </ul>
+      <p><strong>Honest caveat on selection.</strong> We picked pooled AR as the second component after seeing
+        v1's descriptive tables, which cover the same 2022–2026 window. The weight itself is learned walk-forward, but
+        choosing the component was informed by the test window. This is the second method scored on this window, so a
+        pass here is weaker evidence than a pass on fresh data. The results page must state this. A frozen-spec
+        confirmation on quarters after 2026Q2, once filed, is the clean follow-up. It is not part of this run.</p>
+    </div>
+
+    <h2>5. Pass bar (fixed before the run)</h2>
+    <div class="t-card">
+      <p>This is the v1 bar unchanged, so the two methods can be compared directly.</p>
+      <ul>
+        <li><strong>Per line, the combination PASSES iff</strong> MAE(combo) &lt; MAE(naive) strictly, on unrounded values,
+          <strong>and</strong> the full-sample clustered Diebold–Mariano test on absolute error (naive vs combo;
+          d = |e_naive| − |e_combo|; CR1 by target quarter; Student t(G−1), G = 18) gives a two-sided p ≤ 0.05.</li>
+        <li>An undefined p is a FAIL. There is no multiplicity adjustment, matching v1. The headline is "k of 3 lines pass."</li>
+        <li><strong>Descriptive only, never a gate:</strong> combo vs pooled AR (MAE and DM), combo vs seasonal naive,
+          RMSE, squared-error DM, per-year results and the weight path.</li>
+        <li>The real data are run once and the result is published whatever it is, including 0 of 3.</li>
+      </ul>
+      <p><strong>Prior expectation (not a prediction):</strong> the best chance is noninterest income, where pooled AR
+        beat naive by the largest margin. Expense is possible. NII is unlikely, because pooled AR lost to naive there
+        and the learned weight should stay near 0.</p>
+    </div>
+
+    <h2>6. How we will know it worked</h2>
+    <div class="t-card">
+      <ul>
+        <li>The pass bar above, per line.</li>
+        <li>Sanity checks: the combo at w = 0 reproduces naive and at w = 1 reproduces pooled AR exactly. The weight path
+          is finite and on the grid. The v1 and Y-9C published files are byte-identical to <code>main</code>.</li>
+        <li>Leakage tests: perturbing or deleting all data dated ≥ t leaves w<sub>ℓ,t</sub> and every forecast for targets
+          ≤ t unchanged, while target t+1 does move (a non-vacuity check).</li>
+      </ul>
+    </div>
+
+    <h2>7. Citations</h2>
+    <div class="t-card">
+      <ol>
+        <li>Pesaran, M. H., Pick, A., &amp; Timmermann, A. (2026). Forecasting with panel data: Estimation uncertainty
+          versus parameter heterogeneity. <em>Quantitative Economics</em>, 17(2), 342–393.
+          <a href="https://doi.org/10.3982/QE2589">doi:10.3982/QE2589</a>. Working paper: CEPR Discussion Paper
+          DP17123 (2022), <a href="https://cepr.org/publications/dp17123">cepr.org/publications/dp17123</a>.</li>
+        <li>Wang, X., Hyndman, R. J., Li, F., &amp; Kang, Y. (2023). Forecast combinations: An over 50-year review.
+          <em>International Journal of Forecasting</em>, 39(4), 1518–1547.
+          <a href="https://doi.org/10.1016/j.ijforecast.2022.11.005">doi:10.1016/j.ijforecast.2022.11.005</a>;
+          preprint <a href="https://arxiv.org/abs/2205.04216">arXiv:2205.04216</a>.</li>
+        <li>Context (v1 method): Liu, L., Moon, H. R., &amp; Schorfheide, F. (2020). Forecasting with dynamic panel data
+          models. <em>Econometrica</em>, 88(1), 171–201. <a href="https://www.nber.org/papers/w25102">NBER w25102</a>.</li>
+      </ol>
+    </div>
+
+  </div>
+
+  <div style="margin-top:2rem;padding-top:1rem;border-top:1px solid var(--rule);font-size:.85rem;color:var(--text-muted)">
+    Drafted 2026-10-03 ET. See also:
+    <a href="results-combination/index.html">v2 results (combination)</a> ·
+    <a href="results/index.html">v1 results (EB panel)</a> ·
+    <a href="teaching.html">Track teaching note</a> ·
+    <a href="index.html">Track overview</a>
+  </div>
+
+</main>
+
+<footer class="site-footer">
+  <div class="site-footer__inner">
+    <p class="site-footer__disclaimer">
+      <strong>Independent research lab</strong> ·
+      Not affiliated with any employer or financial institution ·
+      Not investment advice.
+    </p>
+    <div class="site-footer__links">
+      <a href="../../index.html">Home</a>
+      <a href="index.html">Statement Forecast</a>
+      <a href="https://github.com/jgridifier/research-lab">GitHub</a>
+    </div>
+  </div>
+</footer>
+
+</body>
+</html>

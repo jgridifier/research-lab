@@ -50,3 +50,21 @@ statement-forecast:
 	$(MAKE) y9c-data
 	$(MAKE) statement-forecast-notebook
 	$(MAKE) statement-forecast-page
+
+.PHONY: statement-forecast-combo-test statement-forecast-combo-notebook statement-forecast-combo-page statement-forecast-combo
+
+statement-forecast-combo-test: $(VENV_STAMP)
+	PYTHONPATH=$(TRACK):$(SF_TRACK) $(PYTHON) -m pytest $(SF_TRACK)/tests/test_combo_*.py $(SF_TRACK)/tests/test_published_v1_outputs.py -q
+
+statement-forecast-combo-notebook: $(VENV_STAMP)
+	$(PYTHON) -m ipykernel install --prefix .venv --name y9c-venv --display-name 'Y-9C (.venv)'
+	.venv/bin/jupyter nbconvert --to notebook --execute --inplace --ExecutePreprocessor.kernel_name=y9c-venv --ExecutePreprocessor.timeout=1800 $(SF_TRACK)/notebooks/statement_forecast_combo.ipynb
+
+statement-forecast-combo-page: $(VENV_STAMP)
+	$(PYTHON) $(SF_TRACK)/scripts/render_combo_results_page.py
+
+statement-forecast-combo:
+	$(MAKE) y9c-venv
+	$(MAKE) y9c-data
+	$(MAKE) statement-forecast-combo-notebook
+	$(MAKE) statement-forecast-combo-page
