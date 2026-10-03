@@ -1,0 +1,122 @@
+[
+  {
+    "method": "naive",
+    "n_forecasts": 893,
+    "mae": 117823.27659574468,
+    "rmse": 275791.1866553213,
+    "mape": 13.081779187512774,
+    "n_mape": 893,
+    "mdape": 3.453210967396731,
+    "line": "nii"
+  },
+  {
+    "method": "seasonal_naive",
+    "n_forecasts": 893,
+    "mae": 345028.73236282193,
+    "rmse": 767683.5691772891,
+    "mape": 33.80196525312636,
+    "n_mape": 893,
+    "mdape": 10.740387920967203,
+    "line": "nii"
+  },
+  {
+    "method": "pooled_ar",
+    "n_forecasts": 893,
+    "mae": 134048.59065097335,
+    "rmse": 303111.0919618895,
+    "mape": 14.020305371183007,
+    "n_mape": 893,
+    "mdape": 4.266864200641024,
+    "line": "nii"
+  },
+  {
+    "method": "combo",
+    "n_forecasts": 893,
+    "mae": 118234.84852215908,
+    "rmse": 277048.2518340567,
+    "mape": 13.10741713101824,
+    "n_mape": 893,
+    "mdape": 3.4537812836160593,
+    "line": "nii"
+  },
+  {
+    "method": "naive",
+    "n_forecasts": 893,
+    "mae": 294201.3617021277,
+    "rmse": 844418.4169372907,
+    "mape": 17.654297084940637,
+    "n_mape": 893,
+    "mdape": 5.51675881844499,
+    "line": "noninterest_income"
+  },
+  {
+    "method": "seasonal_naive",
+    "n_forecasts": 893,
+    "mae": 399874.3516237402,
+    "rmse": 953525.2288756969,
+    "mape": 23.38664602181007,
+    "n_mape": 893,
+    "mdape": 10.187245570034754,
+    "line": "noninterest_income"
+  },
+  {
+    "method": "pooled_ar",
+    "n_forecasts": 893,
+    "mae": 262575.8077199583,
+    "rmse": 709227.1872827107,
+    "mape": 15.030459048007868,
+    "n_mape": 893,
+    "mdape": 5.89673783419453,
+    "line": "noninterest_income"
+  },
+  {
+    "method": "combo",
+    "n_forecasts": 893,
+    "mae": 266053.6219316693,
+    "rmse": 733114.0779125089,
+    "mape": 15.57910390158162,
+    "n_mape": 893,
+    "mdape": 5.574372310147037,
+    "line": "noninterest_income"
+  },
+  {
+    "method": "naive",
+    "n_forecasts": 893,
+    "mae": 230601.00223964165,
+    "rmse": 561540.1637322662,
+    "mape": 7.966198444104852,
+    "n_mape": 893,
+    "mdape": 4.132952081492128,
+    "line": "noninterest_expense"
+  },
+  {
+    "method": "seasonal_naive",
+    "n_forecasts": 893,
+    "mae": 359409.4176931691,
+    "rmse": 743120.9580917937,
+    "mape": 12.87611623697496,
+    "n_mape": 893,
+    "mdape": 7.5122978693741125,
+    "line": "noninterest_expense"
+  },
+  {
+    "method": "pooled_ar",
+    "n_forecasts": 893,
+    "mae": 222663.06019381213,
+    "rmse": 509360.67645101616,
+    "mape": 7.870559689819137,
+    "n_mape": 893,
+    "mdape": 4.347191247323971,
+    "line": "noninterest_expense"
+  },
+  {
+    "method": "combo",
+    "n_forecasts": 893,
+    "mae": 223757.59396866758,
+    "rmse": 517274.2759851739,
+    "mape": 7.848342058229167,
+    "n_mape": 893,
+    "mdape": 4.141100816247505,
+    "line": "noninterest_expense"
+  }
+]
