@@ -162,6 +162,19 @@ Of {audit['selected']:,} selected origin–BHC pairs, {audit['dropped_target_mis
   <title>Statement Forecast v2 Results: Naive / Pooled-AR Combination — Research Lab</title>
   <meta name="description" content="Pre-registered walk-forward combination of naive and pooled-AR forecasts of three quarterly Y-9C income-statement lines." />
   <link rel="stylesheet" href="../../../assets/site.css" />
+  <style>
+    /* Page-scoped narrow-screen fixes; the shared site.css is unchanged. */
+    .prose code, .prose a, .prose p, .prose li, .prose blockquote, .prose figcaption,
+    .prose summary, .callout {{ overflow-wrap: anywhere; word-break: break-word; }}
+    .prose img {{ max-width: 100%; height: auto; }}
+    .table-scroll {{ max-width: 100%; }}
+    @media (max-width: 640px) {{
+      .site-nav__inner {{ flex-wrap: wrap; }}
+      .site-nav__logo {{ margin-right: 1rem; }}
+      .site-nav__links {{ flex-wrap: wrap; }}
+      .site-nav__links a {{ padding: .5rem .55rem; }}
+    }}
+  </style>
 </head>
 <body>
 <nav class="site-nav" aria-label="Site navigation">

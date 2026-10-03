@@ -65,6 +65,7 @@ def test_aggregate_outputs_and_rendered_page(panel, combo_spec, tmp_path):
     assert '&lt;script&gt;' in rendered and '<script>' not in rendered
     assert 'href="../../../assets/site.css"' in rendered
     assert 'name="viewport"' in rendered and 'overflow-x:auto' in rendered
+    assert 'overflow-wrap: anywhere' in rendered and '.site-nav__links { flex-wrap: wrap; }' in rendered
     assert 'class="active">Statement Forecast</a>' in rendered
     assert 'href="../combination-teaching.html"' in rendered
     assert '2026-10-03 12:00:00 ET' in rendered  # run start converted to ET
