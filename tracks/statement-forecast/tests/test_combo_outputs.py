@@ -75,3 +75,10 @@ def test_aggregate_outputs_and_rendered_page(panel, combo_spec, tmp_path):
         assert banned not in lowered
     for v in results['verdicts'].values():
         assert f"{v['combo_mae']:,.0f}" in rendered and f"{v['naive_mae']:,.0f}" in rendered
+
+
+def test_exports_are_strict_json(tmp_path):
+    assert combo.json_safe({'p': float('nan'), 'x': [1.0, float('inf')], 'n': 2}) == {'p': None, 'x': [1.0, None], 'n': 2}
+    published = ROOT / 'docs/tracks/statement-forecast/results-combination/tables'
+    for path in published.glob('*.json'):
+        json.loads(path.read_text(encoding='utf-8'), parse_constant=lambda token: pytest.fail(f'{path.name}: {token}'))

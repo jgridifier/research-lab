@@ -202,6 +202,21 @@ def run_all(panel, design_json, expected_cases=None):
             'headline': f'{count} of {len(design_json["lines"])} lines pass'}
 
 
+def json_safe(value):
+    """Replace nonfinite floats (undefined DM statistics) with None so exports are strict JSON."""
+    if isinstance(value, dict):
+        return {key: json_safe(item) for key, item in value.items()}
+    if isinstance(value, (list, tuple)):
+        return [json_safe(item) for item in value]
+    if isinstance(value, (float, np.floating)) and not np.isfinite(value):
+        return None
+    return value
+
+
+def dump_json(value):
+    return json.dumps(json_safe(value), indent=2, allow_nan=False) + '\n'
+
+
 def write_outputs(results, out_dir, vintage_path, run_meta):
     """Write an explicit allowlist of aggregate tables plus caller-supplied provenance."""
     if results['test_design'] != load_combo_design():
@@ -216,7 +231,7 @@ def write_outputs(results, out_dir, vintage_path, run_meta):
         if any(c in frame for c in ['rssd_id', 'report_date', 'actual', COMBO]):
             raise ValueError('Aggregate exports must not contain per-bank rows')
         frame.to_csv(tables / f'{name}.csv', index=False)
-        (tables / f'{name}.json').write_text(json.dumps(frame.to_dict(orient='records'), indent=2) + '\n')
+        (tables / f'{name}.json').write_text(dump_json(frame.to_dict(orient='records')))
     metadata = dict(run_meta)
     metadata.update(test_design_sha256=hashlib.sha256(COMBO_DESIGN_PATH.read_bytes()).hexdigest(),
                     fallback_counts={key: {name: audit[name] for name in
@@ -225,6 +240,6 @@ def write_outputs(results, out_dir, vintage_path, run_meta):
                     n_cases={key: audit['n_forecasts_per_method'] for key, audit in results['audits'].items()},
                     audits=results['audits'], headline=results['headline'])
     for name, value in [('verdicts', results['verdicts']), ('run_metadata', metadata)]:
-        (tables / f'{name}.json').write_text(json.dumps(value, indent=2) + '\n')
+        (tables / f'{name}.json').write_text(dump_json(value))
     shutil.copyfile(COMBO_DESIGN_PATH, tables / 'test_design_combo.json')
     shutil.copyfile(vintage_path, tables / 'vintage.json')
