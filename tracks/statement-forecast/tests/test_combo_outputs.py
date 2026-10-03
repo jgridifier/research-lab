@@ -82,3 +82,18 @@ def test_exports_are_strict_json(tmp_path):
     published = ROOT / 'docs/tracks/statement-forecast/results-combination/tables'
     for path in published.glob('*.json'):
         json.loads(path.read_text(encoding='utf-8'), parse_constant=lambda token: pytest.fail(f'{path.name}: {token}'))
+
+
+def test_renderer_handles_undefined_full_sample_dm(panel, combo_spec, tmp_path):
+    results = combo.run_all(panel, combo_spec)
+    for v in results['verdicts'].values():  # e.g. w = 0 at every origin: d is identically zero
+        v.update(verdict='FAIL', passed=False, p_value=float('nan'), t_stat=float('nan'))
+    vintage = tmp_path / 'vintage.json'
+    vintage.write_text(json.dumps(dict(first_quarter='2018Q1', last_quarter='2026Q2', n_quarters=34,
+                                       build_time_utc='synthetic', downloads={})) + '\n')
+    combo.write_outputs(results, tmp_path / 'out', vintage, {'run_start_time_utc': 'x', 'git_head': '0' * 40,
+                                                              'prereg_commit': 'p', 'prereg_commit_time': 'x'})
+    saved = json.loads((tmp_path / 'out/tables/verdicts.json').read_text())
+    assert all(v['p_value'] is None and v['t_stat'] is None for v in saved.values())
+    rendered = load_renderer().render(tmp_path / 'out').read_text(encoding='utf-8')
+    assert 'two-sided p = undefined' in rendered and '0 of 3 lines pass' in rendered

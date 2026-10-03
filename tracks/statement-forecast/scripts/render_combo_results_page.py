@@ -28,6 +28,13 @@ def scroll(table_html):
     return f'<div class="table-scroll" style="overflow-x:auto;-webkit-overflow-scrolling:touch">{table_html}</div>'
 
 
+def num(value, spec):
+    """Format a statistic; undefined (null/NaN) DM statistics render as 'undefined'."""
+    if value is None or pd.isna(value):
+        return 'undefined'
+    return format(float(value), spec)
+
+
 def to_et(timestamp):
     try:
         parsed = datetime.fromisoformat(str(timestamp))
@@ -49,8 +56,8 @@ def error_table(frame, dm=None):
         if dm is not None:
             for loss, label in [('abs', 'absolute error'), ('squared', 'squared error')]:
                 match = dm.loc[dm.baseline.eq(row.method) & dm.loss.eq(loss)]
-                record[f'DM t vs combination · {label}'] = f'{match.iloc[0].t_stat:.3f}' if len(match) else '—'
-                record[f'DM p vs combination · {label}'] = f'{match.iloc[0].p_value:.4f}' if len(match) else '—'
+                record[f'DM t vs combination · {label}'] = num(match.iloc[0].t_stat, '.3f') if len(match) else '—'
+                record[f'DM p vs combination · {label}'] = num(match.iloc[0].p_value, '.4f') if len(match) else '—'
         rows.append(record)
     return scroll(pd.DataFrame(rows).to_html(index=False, border=0, escape=True))
 
@@ -59,8 +66,8 @@ def dm_table(frame):
     frame = frame.copy()
     frame['baseline'] = frame.baseline.map(LABELS)
     frame['loss'] = frame.loss.map({'abs': 'Absolute error', 'squared': 'Squared error'})
-    frame['t_stat'] = frame.t_stat.map(lambda v: f'{v:.3f}')
-    frame['p_value'] = frame.p_value.map(lambda v: f'{v:.4f}')
+    frame['t_stat'] = frame.t_stat.map(lambda v: num(v, '.3f'))
+    frame['p_value'] = frame.p_value.map(lambda v: num(v, '.4f'))
     columns = ['scope', 'baseline', 'loss', 'n', 'G', 't_stat', 'p_value', 'inference']
     return scroll(frame[columns].rename(columns={
         'scope': 'Target year', 'baseline': 'Baseline', 'loss': 'Loss', 'n': 'Forecasts (count)',
@@ -115,10 +122,9 @@ def render(results_dir):
         audit = metadata['audits'][key]
         fallback = metadata['fallback_counts'][key]
         comparison = '<' if v['combo_mae'] < v['naive_mae'] else '≥'
-        p_text = f"{v['p_value']:.4f}" if v['p_value'] == v['p_value'] else 'undefined'
         verdict_text = (f"{v['verdict']}: combination MAE {v['combo_mae']:,.0f} {comparison} naive MAE "
-                        f"{v['naive_mae']:,.0f} thousands USD; absolute-error DM t = {v['t_stat']:.3f}, "
-                        f"two-sided p = {p_text} (bar ≤ {v['alpha']:.2f}).")
+                        f"{v['naive_mae']:,.0f} thousands USD; absolute-error DM t = {num(v['t_stat'], '.3f')}, "
+                        f"two-sided p = {num(v['p_value'], '.4f')} (bar ≤ {v['alpha']:.2f}).")
         sections.append(f'''<h3>{text(line['label'])} ({text(line['mdrm'])})</h3>
 {error_table(scores, full)}
 <p><strong>{text(verdict_text)}</strong> The verdict uses unrounded values.</p>
