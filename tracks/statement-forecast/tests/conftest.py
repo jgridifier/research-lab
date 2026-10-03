@@ -31,3 +31,9 @@ def panel():
 @pytest.fixture(scope='session')
 def spec():
     return load_design()
+
+
+@pytest.fixture(scope='session')
+def combo_spec():
+    from statement_forecast.combo import load_combo_design
+    return load_combo_design()

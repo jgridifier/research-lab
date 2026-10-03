@@ -1,0 +1,1917 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Statement Forecast v2 Results: Naive / Pooled-AR Combination — Research Lab</title>
+  <meta name="description" content="Pre-registered walk-forward combination of naive and pooled-AR forecasts of three quarterly Y-9C income-statement lines." />
+  <link rel="stylesheet" href="../../../assets/site.css" />
+  <style>
+    /* Page-scoped narrow-screen fixes; the shared site.css is unchanged. */
+    .prose code, .prose a, .prose p, .prose li, .prose blockquote, .prose figcaption,
+    .prose summary, .callout { overflow-wrap: anywhere; word-break: break-word; }
+    .prose img { max-width: 100%; height: auto; }
+    .table-scroll { max-width: 100%; }
+    @media (max-width: 640px) {
+      .site-nav__inner { flex-wrap: wrap; }
+      .site-nav__logo { margin-right: 1rem; }
+      .site-nav__links { flex-wrap: wrap; }
+      .site-nav__links a { padding: .5rem .55rem; }
+    }
+  </style>
+</head>
+<body>
+<nav class="site-nav" aria-label="Site navigation">
+  <div class="site-nav__inner">
+    <a class="site-nav__logo" href="../../../index.html">Research Lab</a>
+    <ul class="site-nav__links">
+      <li><a href="../../../index.html">Home</a></li>
+      <li><a href="../index.html" class="active">Statement Forecast</a></li>
+      <li><a href="../../y9c-panel/index.html">Y-9C Panel</a></li>
+      <li><a href="../../dfm-sinkhorn/index.html">DFM × Sinkhorn</a></li>
+    </ul>
+  </div>
+</nav>
+<header class="page-header">
+  <div class="page-header__inner">
+    <div class="page-header__eyebrow">Track 1 · Results · Method v2</div>
+    <h1>Naive / pooled-AR forecast combination</h1>
+    <p class="page-header__sub">Next-quarter NII, noninterest income and expense on the top-50 FR Y-9C panel, one walk-forward weight per line. Research only.</p>
+  </div>
+</header>
+<main class="page-content prose">
+  <nav class="breadcrumb" aria-label="Breadcrumb">
+    <a href="../../../index.html">Home</a><span aria-hidden="true"> › </span>
+    <a href="../index.html">Statement Forecast</a><span aria-hidden="true"> › </span>Results: combination
+  </nav>
+  <div class="callout"><strong>Selection disclosure.</strong><ul><li>Pooled AR was chosen as the second component after seeing v1&#x27;s descriptive tables on this same 2022Q1–2026Q2 window.</li><li>This is the second method scored on the 2022–2026 window.</li></ul>
+  A pass here is weaker evidence than a pass on fresh data. See the <a href="../combination-teaching.html">teaching note</a>
+  and the <a href="../results/index.html">v1 results</a>.</div>
+  <h2>1 of 3 lines pass the pre-registered bar</h2>
+  <p>No multiplicity adjustment across lines or losses; each line has its own pre-registered verdict. Comparisons with pooled AR and seasonal naive, RMSE, squared-error DM,
+  by-year results, the weight path and fallback counts are descriptive only.</p>
+  <p>DM differential = L(baseline) − L(combination), error = forecast − actual.
+  Positive t favors the combination. CR1 standard errors cluster by target quarter; two-sided p uses Student t(G−1).
+  There is no correction for dependence between quarters. An undefined p is a FAIL.</p>
+  <h3>Net interest income (BHCK4074)</h3>
+<div class="table-scroll" style="overflow-x:auto;-webkit-overflow-scrolling:touch"><table class="dataframe">
+  <thead>
+    <tr style="text-align: right;">
+      <th>Method</th>
+      <th>Forecasts (count)</th>
+      <th>MAE (thousands USD)</th>
+      <th>RMSE (thousands USD)</th>
+      <th>DM t vs combination · absolute error</th>
+      <th>DM p vs combination · absolute error</th>
+      <th>DM t vs combination · squared error</th>
+      <th>DM p vs combination · squared error</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>Combination</td>
+      <td>893</td>
+      <td>118,235</td>
+      <td>277,048</td>
+      <td>—</td>
+      <td>—</td>
+      <td>—</td>
+      <td>—</td>
+    </tr>
+    <tr>
+      <td>Naive</td>
+      <td>893</td>
+      <td>117,823</td>
+      <td>275,791</td>
+      <td>-1.545</td>
+      <td>0.1408</td>
+      <td>-1.432</td>
+      <td>0.1702</td>
+    </tr>
+    <tr>
+      <td>Seasonal naive</td>
+      <td>893</td>
+      <td>345,029</td>
+      <td>767,684</td>
+      <td>7.292</td>
+      <td>0.0000</td>
+      <td>4.149</td>
+      <td>0.0007</td>
+    </tr>
+    <tr>
+      <td>Pooled panel AR</td>
+      <td>893</td>
+      <td>134,049</td>
+      <td>303,111</td>
+      <td>2.436</td>
+      <td>0.0262</td>
+      <td>2.139</td>
+      <td>0.0473</td>
+    </tr>
+  </tbody>
+</table></div>
+<p><strong>FAIL: combination MAE 118,235 ≥ naive MAE 117,823 thousands USD; absolute-error DM t = -1.545, two-sided p = 0.1408 (bar ≤ 0.05).</strong> The verdict uses unrounded values.</p>
+<p>Pooled AR naive fallbacks among evaluated cases: 21 (for these, the combination equals naive).
+Origins using the fewer-than-minimum-quarters weight: 0.
+Of 900 selected origin–BHC pairs, 6 lack targets and
+1 more lack current or seasonal history; 893 cases are scored.</p><h3>Noninterest income (BHCK4079)</h3>
+<div class="table-scroll" style="overflow-x:auto;-webkit-overflow-scrolling:touch"><table class="dataframe">
+  <thead>
+    <tr style="text-align: right;">
+      <th>Method</th>
+      <th>Forecasts (count)</th>
+      <th>MAE (thousands USD)</th>
+      <th>RMSE (thousands USD)</th>
+      <th>DM t vs combination · absolute error</th>
+      <th>DM p vs combination · absolute error</th>
+      <th>DM t vs combination · squared error</th>
+      <th>DM p vs combination · squared error</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>Combination</td>
+      <td>893</td>
+      <td>266,054</td>
+      <td>733,114</td>
+      <td>—</td>
+      <td>—</td>
+      <td>—</td>
+      <td>—</td>
+    </tr>
+    <tr>
+      <td>Naive</td>
+      <td>893</td>
+      <td>294,201</td>
+      <td>844,418</td>
+      <td>2.216</td>
+      <td>0.0406</td>
+      <td>1.850</td>
+      <td>0.0818</td>
+    </tr>
+    <tr>
+      <td>Seasonal naive</td>
+      <td>893</td>
+      <td>399,874</td>
+      <td>953,525</td>
+      <td>5.015</td>
+      <td>0.0001</td>
+      <td>2.999</td>
+      <td>0.0081</td>
+    </tr>
+    <tr>
+      <td>Pooled panel AR</td>
+      <td>893</td>
+      <td>262,576</td>
+      <td>709,227</td>
+      <td>-0.588</td>
+      <td>0.5640</td>
+      <td>-1.220</td>
+      <td>0.2391</td>
+    </tr>
+  </tbody>
+</table></div>
+<p><strong>PASS: combination MAE 266,054 &lt; naive MAE 294,201 thousands USD; absolute-error DM t = 2.216, two-sided p = 0.0406 (bar ≤ 0.05).</strong> The verdict uses unrounded values.</p>
+<p>Pooled AR naive fallbacks among evaluated cases: 4 (for these, the combination equals naive).
+Origins using the fewer-than-minimum-quarters weight: 0.
+Of 900 selected origin–BHC pairs, 6 lack targets and
+1 more lack current or seasonal history; 893 cases are scored.</p><h3>Noninterest expense (BHCK4093)</h3>
+<div class="table-scroll" style="overflow-x:auto;-webkit-overflow-scrolling:touch"><table class="dataframe">
+  <thead>
+    <tr style="text-align: right;">
+      <th>Method</th>
+      <th>Forecasts (count)</th>
+      <th>MAE (thousands USD)</th>
+      <th>RMSE (thousands USD)</th>
+      <th>DM t vs combination · absolute error</th>
+      <th>DM p vs combination · absolute error</th>
+      <th>DM t vs combination · squared error</th>
+      <th>DM p vs combination · squared error</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>Combination</td>
+      <td>893</td>
+      <td>223,758</td>
+      <td>517,274</td>
+      <td>—</td>
+      <td>—</td>
+      <td>—</td>
+      <td>—</td>
+    </tr>
+    <tr>
+      <td>Naive</td>
+      <td>893</td>
+      <td>230,601</td>
+      <td>561,540</td>
+      <td>0.527</td>
+      <td>0.6047</td>
+      <td>1.134</td>
+      <td>0.2727</td>
+    </tr>
+    <tr>
+      <td>Seasonal naive</td>
+      <td>893</td>
+      <td>359,409</td>
+      <td>743,121</td>
+      <td>4.470</td>
+      <td>0.0003</td>
+      <td>3.077</td>
+      <td>0.0068</td>
+    </tr>
+    <tr>
+      <td>Pooled panel AR</td>
+      <td>893</td>
+      <td>222,663</td>
+      <td>509,361</td>
+      <td>-0.561</td>
+      <td>0.5824</td>
+      <td>-1.397</td>
+      <td>0.1802</td>
+    </tr>
+  </tbody>
+</table></div>
+<p><strong>FAIL: combination MAE 223,758 &lt; naive MAE 230,601 thousands USD; absolute-error DM t = 0.527, two-sided p = 0.6047 (bar ≤ 0.05).</strong> The verdict uses unrounded values.</p>
+<p>Pooled AR naive fallbacks among evaluated cases: 7 (for these, the combination equals naive).
+Origins using the fewer-than-minimum-quarters weight: 0.
+Of 900 selected origin–BHC pairs, 6 lack targets and
+1 more lack current or seasonal history; 893 cases are scored.</p>
+  <h2>The pre-registered bar</h2>
+  <blockquote>For each line, combo PASSES iff MAE(combo) &lt; MAE(naive) strictly, on unrounded values, AND the full-sample clustered DM (y9c.forecast.clustered_dm; d = |e_naive| − |e_combo|; CR1 by target quarter; t(G−1), G=18) gives a two-sided p ≤ 0.05. An undefined p is a FAIL. There is no multiplicity adjustment. The headline is &quot;k of 3 lines pass&quot;. Descriptive only: comparisons vs pooled AR and seasonal naive (MAE + DM), RMSE, squared-error DM, by-year results, the w path by origin and fallback counts. The results page must disclose that (a) pooled AR was chosen as the second component after seeing v1&#x27;s descriptive tables on this same window, and (b) this is the second method scored on the 2022–2026 window.</blockquote>
+  <p><a href="tables/test_design_combo.json">Fixed pre-registration</a> ·
+  Commit <a href="https://github.com/jgridifier/research-lab/commit/288d4b85af9526666715ac265aa715aaab059194"><code>288d4b85af9526666715ac265aa715aaab059194</code></a> ·
+  Commit time: 2026-10-03 08:01:24 ET.
+  SHA-256: <code>b16c1a129cc7b9320c40716694c6d39b5a3c6277eaf1511dea7eeeebc70d49e6</code>.
+  Run start: 2026-10-03 08:08:38 ET (recorded as 2026-10-03T12:08:38.522754+00:00 UTC)
+  at git HEAD <code>5df7998d2a25edc30de9f2e87732e7a040c037d3</code>.</p>
+  <h2>Question and design</h2>
+  <p>Does a walk-forward combination of the two existing Y-9C baselines, naive and pooled AR on log growth, beat naive one quarter ahead on three FR Y-9C income-statement lines for the top-50 BHC panel, on the same cases and window as v1?</p>
+  <p>Top 50 BHCs by reported BHCK2170 at each origin t, RSSD ID breaks ties; identical to Y-9C (y9c.forecast.design). Targets: 2022Q1–2026Q2;
+  origins: 2021Q4–2026Q1. Per line, the Y-9C case rule from y9c.forecast: bank selected at origin t, target X_t+1 observed, X_t and X_t-3 observed. Identical to v1 (PR #4): the same 893 matched cases per line; all methods are scored on exactly the same cases within a line.</p>
+  <p>thousands USD; quarterly flows de-cumulated from calendar-year YTD by the shared y9c panel code (y9c.panel.decumulate). Errors receive equal weight per BHC-quarter.</p>
+  <h3>Method (pre-registered text)</h3>
+  <ul><li>For line ℓ ∈ {BHCK4074 NII, BHCK4079 noninterest income, BHCK4093 noninterest expense}, bank i, origin t: N = X_i,t (naive); P = the pooled AR on log growth from y9c.forecast.baseline_forecasts, imported unchanged and including its naive fallback; C = N + w_ℓ,t·(P − N), with w on the grid {0, 0.05, …, 1.00}.</li><li>w_ℓ,t = argmin over the grid of the sum of |C − X| over pseudo-OOS cases (i, s) with target s+1 ≤ t. N and P for each such case are rebuilt as of origin s, using only data ≤ s, the y9c.forecast.design top-50 selection at s and the shared case rule. Use an expanding window from the earliest origin at which y9c.forecast&#x27;s pooled AR is defined. Ties go to the smallest w. If the pseudo-OOS set spans fewer than 8 distinct target quarters, w = 0.5. There is one weight per line per origin, shared across banks.</li><li>No tuning, trimming, winsorizing, clipping or case removal. Nonfinite values raise an error.</li><li>Evaluation is identical to v1: targets 2022Q1–2026Q2 (origins 2021Q4–2026Q1), with the same 893 matched cases per line.</li></ul>
+  <h3>Implementation notes (pre-registered)</h3>
+  <ul><li>C is computed as N + w·(P − N), except that at w = 1 it is set to P (algebraically identical). In floating point this makes w = 0 reproduce naive and w = 1 reproduce pooled AR exactly, and a case with P = N (including pooled AR&#x27;s naive fallback) has C = N at every w, so it adds the same loss at every grid point.</li><li>At origin t the panel is truncated to quarters ≤ t before the weight is fit. Pseudo-OOS N and P at each origin s come from y9c.forecast.baseline_forecasts(y9c.forecast.design(truncated panel), s): selection and pooled-AR coefficients at s use only rows dated ≤ s; the target X_s+1 ≤ t is used only as the actual for the shared case rule and the loss.</li><li>The earliest pseudo-OOS origin is the earliest quarter at which y9c.forecast.baseline_forecasts does not raise its pooled-AR burn-in or rank error; the window then expands to origin t − 1.</li><li>Evaluation-window N, P and seasonal naive are y9c.forecast.baseline_forecasts on the full panel at origins 2021Q4–2026Q1, exactly as in v1; combo is formed from those with the origin-t weight.</li></ul>
+  <p>Imported from y9c.forecast (not reimplemented): naive Xhat_t+1 = X_t; seasonal naive Xhat_t+1 = X_t-3; pooled AR on log growth g(s+1) = a + b1 g(s) + b4 g(s-3), expanding pooled OLS on historical top-50 rows with s+1 &lt;= t, naive fallback when log inputs are missing or non-positive.</p>
+  <h2>Weight path · Descriptive only</h2>
+  <p>w is the weight on pooled AR (w = 0 is naive, w = 1 is pooled AR). Each origin's weight is fit only on
+  pseudo-out-of-sample cases whose targets were already observed at that origin.</p>
+  <div class="table-scroll" style="overflow-x:auto;-webkit-overflow-scrolling:touch"><table class="dataframe">
+  <thead>
+    <tr style="text-align: right;">
+      <th>Line</th>
+      <th>Origins (count)</th>
+      <th>First origin w</th>
+      <th>Last origin w</th>
+      <th>Minimum w</th>
+      <th>Median w</th>
+      <th>Maximum w</th>
+      <th>Fewer-than-minimum-quarters fallbacks</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>Net interest income</td>
+      <td>18</td>
+      <td>0.10</td>
+      <td>0.00</td>
+      <td>0.00</td>
+      <td>0.00</td>
+      <td>0.10</td>
+      <td>0</td>
+    </tr>
+    <tr>
+      <td>Noninterest income</td>
+      <td>18</td>
+      <td>0.70</td>
+      <td>1.00</td>
+      <td>0.55</td>
+      <td>0.75</td>
+      <td>1.00</td>
+      <td>0</td>
+    </tr>
+    <tr>
+      <td>Noninterest expense</td>
+      <td>18</td>
+      <td>0.85</td>
+      <td>0.80</td>
+      <td>0.60</td>
+      <td>0.82</td>
+      <td>1.00</td>
+      <td>0</td>
+    </tr>
+  </tbody>
+</table></div>
+  <details><summary>Weight by origin and line</summary><div class="table-scroll" style="overflow-x:auto;-webkit-overflow-scrolling:touch"><table class="dataframe">
+  <thead>
+    <tr style="text-align: right;">
+      <th>line</th>
+      <th>Origin</th>
+      <th>Pseudo-OOS targets</th>
+      <th>Net interest income</th>
+      <th>Noninterest income</th>
+      <th>Noninterest expense</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th></th>
+      <td>2021Q4</td>
+      <td>2019Q3–2021Q4 (10 quarters)</td>
+      <td>0.10</td>
+      <td>0.70</td>
+      <td>0.85</td>
+    </tr>
+    <tr>
+      <th></th>
+      <td>2022Q1</td>
+      <td>2019Q3–2022Q1 (11 quarters)</td>
+      <td>0.10</td>
+      <td>0.65</td>
+      <td>0.85</td>
+    </tr>
+    <tr>
+      <th></th>
+      <td>2022Q2</td>
+      <td>2019Q3–2022Q2 (12 quarters)</td>
+      <td>0.10</td>
+      <td>0.60</td>
+      <td>0.85</td>
+    </tr>
+    <tr>
+      <th></th>
+      <td>2022Q3</td>
+      <td>2019Q3–2022Q3 (13 quarters)</td>
+      <td>0.05</td>
+      <td>0.55</td>
+      <td>0.85</td>
+    </tr>
+    <tr>
+      <th></th>
+      <td>2022Q4</td>
+      <td>2019Q3–2022Q4 (14 quarters)</td>
+      <td>0.00</td>
+      <td>0.55</td>
+      <td>0.85</td>
+    </tr>
+    <tr>
+      <th></th>
+      <td>2023Q1</td>
+      <td>2019Q3–2023Q1 (15 quarters)</td>
+      <td>0.00</td>
+      <td>0.60</td>
+      <td>0.90</td>
+    </tr>
+    <tr>
+      <th></th>
+      <td>2023Q2</td>
+      <td>2019Q3–2023Q2 (16 quarters)</td>
+      <td>0.00</td>
+      <td>0.80</td>
+      <td>0.85</td>
+    </tr>
+    <tr>
+      <th></th>
+      <td>2023Q3</td>
+      <td>2019Q3–2023Q3 (17 quarters)</td>
+      <td>0.00</td>
+      <td>0.75</td>
+      <td>0.80</td>
+    </tr>
+    <tr>
+      <th></th>
+      <td>2023Q4</td>
+      <td>2019Q3–2023Q4 (18 quarters)</td>
+      <td>0.00</td>
+      <td>0.70</td>
+      <td>0.85</td>
+    </tr>
+    <tr>
+      <th></th>
+      <td>2024Q1</td>
+      <td>2019Q3–2024Q1 (19 quarters)</td>
+      <td>0.00</td>
+      <td>0.80</td>
+      <td>1.00</td>
+    </tr>
+    <tr>
+      <th></th>
+      <td>2024Q2</td>
+      <td>2019Q3–2024Q2 (20 quarters)</td>
+      <td>0.00</td>
+      <td>0.75</td>
+      <td>0.75</td>
+    </tr>
+    <tr>
+      <th></th>
+      <td>2024Q3</td>
+      <td>2019Q3–2024Q3 (21 quarters)</td>
+      <td>0.00</td>
+      <td>0.75</td>
+      <td>0.65</td>
+    </tr>
+    <tr>
+      <th></th>
+      <td>2024Q4</td>
+      <td>2019Q3–2024Q4 (22 quarters)</td>
+      <td>0.00</td>
+      <td>0.75</td>
+      <td>0.60</td>
+    </tr>
+    <tr>
+      <th></th>
+      <td>2025Q1</td>
+      <td>2019Q3–2025Q1 (23 quarters)</td>
+      <td>0.00</td>
+      <td>0.80</td>
+      <td>0.70</td>
+    </tr>
+    <tr>
+      <th></th>
+      <td>2025Q2</td>
+      <td>2019Q3–2025Q2 (24 quarters)</td>
+      <td>0.00</td>
+      <td>1.00</td>
+      <td>0.70</td>
+    </tr>
+    <tr>
+      <th></th>
+      <td>2025Q3</td>
+      <td>2019Q3–2025Q3 (25 quarters)</td>
+      <td>0.00</td>
+      <td>1.00</td>
+      <td>0.70</td>
+    </tr>
+    <tr>
+      <th></th>
+      <td>2025Q4</td>
+      <td>2019Q3–2025Q4 (26 quarters)</td>
+      <td>0.00</td>
+      <td>1.00</td>
+      <td>0.70</td>
+    </tr>
+    <tr>
+      <th></th>
+      <td>2026Q1</td>
+      <td>2019Q3–2026Q1 (27 quarters)</td>
+      <td>0.00</td>
+      <td>1.00</td>
+      <td>0.80</td>
+    </tr>
+  </tbody>
+</table></div></details>
+  <h2>Per-year errors and DM · Descriptive only</h2>
+  <p>Per-year breakdowns have few target-quarter clusters each and do not change the full-sample verdicts.</p>
+  <h3>Net interest income · Descriptive only</h3>
+<div class="table-scroll" style="overflow-x:auto;-webkit-overflow-scrolling:touch"><table class="dataframe">
+  <thead>
+    <tr style="text-align: right;">
+      <th>Target year</th>
+      <th>Method</th>
+      <th>Forecasts (count)</th>
+      <th>MAE (thousands USD)</th>
+      <th>RMSE (thousands USD)</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>2022</td>
+      <td>Naive</td>
+      <td>198</td>
+      <td>192,430</td>
+      <td>414,746</td>
+    </tr>
+    <tr>
+      <td>2022</td>
+      <td>Seasonal naive</td>
+      <td>198</td>
+      <td>458,286</td>
+      <td>917,090</td>
+    </tr>
+    <tr>
+      <td>2022</td>
+      <td>Pooled panel AR</td>
+      <td>198</td>
+      <td>219,620</td>
+      <td>467,761</td>
+    </tr>
+    <tr>
+      <td>2022</td>
+      <td>Combination</td>
+      <td>198</td>
+      <td>194,286</td>
+      <td>418,507</td>
+    </tr>
+    <tr>
+      <td>2023</td>
+      <td>Naive</td>
+      <td>199</td>
+      <td>104,898</td>
+      <td>213,573</td>
+    </tr>
+    <tr>
+      <td>2023</td>
+      <td>Seasonal naive</td>
+      <td>199</td>
+      <td>462,896</td>
+      <td>1,027,732</td>
+    </tr>
+    <tr>
+      <td>2023</td>
+      <td>Pooled panel AR</td>
+      <td>199</td>
+      <td>144,051</td>
+      <td>244,311</td>
+    </tr>
+    <tr>
+      <td>2023</td>
+      <td>Combination</td>
+      <td>199</td>
+      <td>104,898</td>
+      <td>213,573</td>
+    </tr>
+    <tr>
+      <td>2024</td>
+      <td>Naive</td>
+      <td>200</td>
+      <td>79,490</td>
+      <td>159,863</td>
+    </tr>
+    <tr>
+      <td>2024</td>
+      <td>Seasonal naive</td>
+      <td>200</td>
+      <td>198,306</td>
+      <td>359,477</td>
+    </tr>
+    <tr>
+      <td>2024</td>
+      <td>Pooled panel AR</td>
+      <td>200</td>
+      <td>94,571</td>
+      <td>202,791</td>
+    </tr>
+    <tr>
+      <td>2024</td>
+      <td>Combination</td>
+      <td>200</td>
+      <td>79,490</td>
+      <td>159,863</td>
+    </tr>
+    <tr>
+      <td>2025</td>
+      <td>Naive</td>
+      <td>198</td>
+      <td>110,835</td>
+      <td>294,096</td>
+    </tr>
+    <tr>
+      <td>2025</td>
+      <td>Seasonal naive</td>
+      <td>198</td>
+      <td>268,043</td>
+      <td>619,879</td>
+    </tr>
+    <tr>
+      <td>2025</td>
+      <td>Pooled panel AR</td>
+      <td>198</td>
+      <td>102,579</td>
+      <td>287,348</td>
+    </tr>
+    <tr>
+      <td>2025</td>
+      <td>Combination</td>
+      <td>198</td>
+      <td>110,835</td>
+      <td>294,096</td>
+    </tr>
+    <tr>
+      <td>2026</td>
+      <td>Naive</td>
+      <td>98</td>
+      <td>85,686</td>
+      <td>161,297</td>
+    </tr>
+    <tr>
+      <td>2026</td>
+      <td>Seasonal naive</td>
+      <td>98</td>
+      <td>331,839</td>
+      <td>697,178</td>
+    </tr>
+    <tr>
+      <td>2026</td>
+      <td>Pooled panel AR</td>
+      <td>98</td>
+      <td>84,997</td>
+      <td>152,253</td>
+    </tr>
+    <tr>
+      <td>2026</td>
+      <td>Combination</td>
+      <td>98</td>
+      <td>85,686</td>
+      <td>161,297</td>
+    </tr>
+  </tbody>
+</table></div>
+<h4>Per-year DM vs the combination · Descriptive only</h4>
+<div class="table-scroll" style="overflow-x:auto;-webkit-overflow-scrolling:touch"><table class="dataframe">
+  <thead>
+    <tr style="text-align: right;">
+      <th>Target year</th>
+      <th>Baseline</th>
+      <th>Loss</th>
+      <th>Forecasts (count)</th>
+      <th>G</th>
+      <th>DM t</th>
+      <th>Two-sided p</th>
+      <th>Inference</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>2022</td>
+      <td>Naive</td>
+      <td>Absolute error</td>
+      <td>198</td>
+      <td>4</td>
+      <td>-1.946</td>
+      <td>0.1469</td>
+      <td>descriptive only (G=4)</td>
+    </tr>
+    <tr>
+      <td>2022</td>
+      <td>Naive</td>
+      <td>Squared error</td>
+      <td>198</td>
+      <td>4</td>
+      <td>-1.692</td>
+      <td>0.1892</td>
+      <td>descriptive only (G=4)</td>
+    </tr>
+    <tr>
+      <td>2023</td>
+      <td>Naive</td>
+      <td>Absolute error</td>
+      <td>199</td>
+      <td>4</td>
+      <td>undefined</td>
+      <td>undefined</td>
+      <td>descriptive only (G=4)</td>
+    </tr>
+    <tr>
+      <td>2023</td>
+      <td>Naive</td>
+      <td>Squared error</td>
+      <td>199</td>
+      <td>4</td>
+      <td>undefined</td>
+      <td>undefined</td>
+      <td>descriptive only (G=4)</td>
+    </tr>
+    <tr>
+      <td>2024</td>
+      <td>Naive</td>
+      <td>Absolute error</td>
+      <td>200</td>
+      <td>4</td>
+      <td>undefined</td>
+      <td>undefined</td>
+      <td>descriptive only (G=4)</td>
+    </tr>
+    <tr>
+      <td>2024</td>
+      <td>Naive</td>
+      <td>Squared error</td>
+      <td>200</td>
+      <td>4</td>
+      <td>undefined</td>
+      <td>undefined</td>
+      <td>descriptive only (G=4)</td>
+    </tr>
+    <tr>
+      <td>2025</td>
+      <td>Naive</td>
+      <td>Absolute error</td>
+      <td>198</td>
+      <td>4</td>
+      <td>undefined</td>
+      <td>undefined</td>
+      <td>descriptive only (G=4)</td>
+    </tr>
+    <tr>
+      <td>2025</td>
+      <td>Naive</td>
+      <td>Squared error</td>
+      <td>198</td>
+      <td>4</td>
+      <td>undefined</td>
+      <td>undefined</td>
+      <td>descriptive only (G=4)</td>
+    </tr>
+    <tr>
+      <td>2026</td>
+      <td>Naive</td>
+      <td>Absolute error</td>
+      <td>98</td>
+      <td>2</td>
+      <td>undefined</td>
+      <td>undefined</td>
+      <td>descriptive only (G=2)</td>
+    </tr>
+    <tr>
+      <td>2026</td>
+      <td>Naive</td>
+      <td>Squared error</td>
+      <td>98</td>
+      <td>2</td>
+      <td>undefined</td>
+      <td>undefined</td>
+      <td>descriptive only (G=2)</td>
+    </tr>
+    <tr>
+      <td>2022</td>
+      <td>Seasonal naive</td>
+      <td>Absolute error</td>
+      <td>198</td>
+      <td>4</td>
+      <td>3.294</td>
+      <td>0.0459</td>
+      <td>descriptive only (G=4)</td>
+    </tr>
+    <tr>
+      <td>2022</td>
+      <td>Seasonal naive</td>
+      <td>Squared error</td>
+      <td>198</td>
+      <td>4</td>
+      <td>1.932</td>
+      <td>0.1489</td>
+      <td>descriptive only (G=4)</td>
+    </tr>
+    <tr>
+      <td>2023</td>
+      <td>Seasonal naive</td>
+      <td>Absolute error</td>
+      <td>199</td>
+      <td>4</td>
+      <td>5.049</td>
+      <td>0.0150</td>
+      <td>descriptive only (G=4)</td>
+    </tr>
+    <tr>
+      <td>2023</td>
+      <td>Seasonal naive</td>
+      <td>Squared error</td>
+      <td>199</td>
+      <td>4</td>
+      <td>3.335</td>
+      <td>0.0446</td>
+      <td>descriptive only (G=4)</td>
+    </tr>
+    <tr>
+      <td>2024</td>
+      <td>Seasonal naive</td>
+      <td>Absolute error</td>
+      <td>200</td>
+      <td>4</td>
+      <td>5.471</td>
+      <td>0.0120</td>
+      <td>descriptive only (G=4)</td>
+    </tr>
+    <tr>
+      <td>2024</td>
+      <td>Seasonal naive</td>
+      <td>Squared error</td>
+      <td>200</td>
+      <td>4</td>
+      <td>3.285</td>
+      <td>0.0463</td>
+      <td>descriptive only (G=4)</td>
+    </tr>
+    <tr>
+      <td>2025</td>
+      <td>Seasonal naive</td>
+      <td>Absolute error</td>
+      <td>198</td>
+      <td>4</td>
+      <td>5.364</td>
+      <td>0.0127</td>
+      <td>descriptive only (G=4)</td>
+    </tr>
+    <tr>
+      <td>2025</td>
+      <td>Seasonal naive</td>
+      <td>Squared error</td>
+      <td>198</td>
+      <td>4</td>
+      <td>2.602</td>
+      <td>0.0803</td>
+      <td>descriptive only (G=4)</td>
+    </tr>
+    <tr>
+      <td>2026</td>
+      <td>Seasonal naive</td>
+      <td>Absolute error</td>
+      <td>98</td>
+      <td>2</td>
+      <td>11.064</td>
+      <td>0.0574</td>
+      <td>descriptive only (G=2)</td>
+    </tr>
+    <tr>
+      <td>2026</td>
+      <td>Seasonal naive</td>
+      <td>Squared error</td>
+      <td>98</td>
+      <td>2</td>
+      <td>4.295</td>
+      <td>0.1456</td>
+      <td>descriptive only (G=2)</td>
+    </tr>
+    <tr>
+      <td>2022</td>
+      <td>Pooled panel AR</td>
+      <td>Absolute error</td>
+      <td>198</td>
+      <td>4</td>
+      <td>2.864</td>
+      <td>0.0643</td>
+      <td>descriptive only (G=4)</td>
+    </tr>
+    <tr>
+      <td>2022</td>
+      <td>Pooled panel AR</td>
+      <td>Squared error</td>
+      <td>198</td>
+      <td>4</td>
+      <td>1.927</td>
+      <td>0.1496</td>
+      <td>descriptive only (G=4)</td>
+    </tr>
+    <tr>
+      <td>2023</td>
+      <td>Pooled panel AR</td>
+      <td>Absolute error</td>
+      <td>199</td>
+      <td>4</td>
+      <td>4.894</td>
+      <td>0.0163</td>
+      <td>descriptive only (G=4)</td>
+    </tr>
+    <tr>
+      <td>2023</td>
+      <td>Pooled panel AR</td>
+      <td>Squared error</td>
+      <td>199</td>
+      <td>4</td>
+      <td>2.097</td>
+      <td>0.1270</td>
+      <td>descriptive only (G=4)</td>
+    </tr>
+    <tr>
+      <td>2024</td>
+      <td>Pooled panel AR</td>
+      <td>Absolute error</td>
+      <td>200</td>
+      <td>4</td>
+      <td>0.969</td>
+      <td>0.4042</td>
+      <td>descriptive only (G=4)</td>
+    </tr>
+    <tr>
+      <td>2024</td>
+      <td>Pooled panel AR</td>
+      <td>Squared error</td>
+      <td>200</td>
+      <td>4</td>
+      <td>1.267</td>
+      <td>0.2947</td>
+      <td>descriptive only (G=4)</td>
+    </tr>
+    <tr>
+      <td>2025</td>
+      <td>Pooled panel AR</td>
+      <td>Absolute error</td>
+      <td>198</td>
+      <td>4</td>
+      <td>-0.581</td>
+      <td>0.6021</td>
+      <td>descriptive only (G=4)</td>
+    </tr>
+    <tr>
+      <td>2025</td>
+      <td>Pooled panel AR</td>
+      <td>Squared error</td>
+      <td>198</td>
+      <td>4</td>
+      <td>-0.395</td>
+      <td>0.7195</td>
+      <td>descriptive only (G=4)</td>
+    </tr>
+    <tr>
+      <td>2026</td>
+      <td>Pooled panel AR</td>
+      <td>Absolute error</td>
+      <td>98</td>
+      <td>2</td>
+      <td>-0.047</td>
+      <td>0.9702</td>
+      <td>descriptive only (G=2)</td>
+    </tr>
+    <tr>
+      <td>2026</td>
+      <td>Pooled panel AR</td>
+      <td>Squared error</td>
+      <td>98</td>
+      <td>2</td>
+      <td>-0.273</td>
+      <td>0.8304</td>
+      <td>descriptive only (G=2)</td>
+    </tr>
+  </tbody>
+</table></div><h3>Noninterest income · Descriptive only</h3>
+<div class="table-scroll" style="overflow-x:auto;-webkit-overflow-scrolling:touch"><table class="dataframe">
+  <thead>
+    <tr style="text-align: right;">
+      <th>Target year</th>
+      <th>Method</th>
+      <th>Forecasts (count)</th>
+      <th>MAE (thousands USD)</th>
+      <th>RMSE (thousands USD)</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>2022</td>
+      <td>Naive</td>
+      <td>198</td>
+      <td>245,868</td>
+      <td>527,486</td>
+    </tr>
+    <tr>
+      <td>2022</td>
+      <td>Seasonal naive</td>
+      <td>198</td>
+      <td>447,734</td>
+      <td>940,296</td>
+    </tr>
+    <tr>
+      <td>2022</td>
+      <td>Pooled panel AR</td>
+      <td>198</td>
+      <td>264,554</td>
+      <td>553,428</td>
+    </tr>
+    <tr>
+      <td>2022</td>
+      <td>Combination</td>
+      <td>198</td>
+      <td>246,251</td>
+      <td>524,266</td>
+    </tr>
+    <tr>
+      <td>2023</td>
+      <td>Naive</td>
+      <td>199</td>
+      <td>379,810</td>
+      <td>1,197,077</td>
+    </tr>
+    <tr>
+      <td>2023</td>
+      <td>Seasonal naive</td>
+      <td>199</td>
+      <td>325,627</td>
+      <td>907,681</td>
+    </tr>
+    <tr>
+      <td>2023</td>
+      <td>Pooled panel AR</td>
+      <td>199</td>
+      <td>329,596</td>
+      <td>976,553</td>
+    </tr>
+    <tr>
+      <td>2023</td>
+      <td>Combination</td>
+      <td>199</td>
+      <td>347,258</td>
+      <td>1,039,110</td>
+    </tr>
+    <tr>
+      <td>2024</td>
+      <td>Naive</td>
+      <td>200</td>
+      <td>250,392</td>
+      <td>618,334</td>
+    </tr>
+    <tr>
+      <td>2024</td>
+      <td>Seasonal naive</td>
+      <td>200</td>
+      <td>417,835</td>
+      <td>970,129</td>
+    </tr>
+    <tr>
+      <td>2024</td>
+      <td>Pooled panel AR</td>
+      <td>200</td>
+      <td>216,449</td>
+      <td>489,342</td>
+    </tr>
+    <tr>
+      <td>2024</td>
+      <td>Combination</td>
+      <td>200</td>
+      <td>221,650</td>
+      <td>515,859</td>
+    </tr>
+    <tr>
+      <td>2025</td>
+      <td>Naive</td>
+      <td>198</td>
+      <td>274,056</td>
+      <td>861,661</td>
+    </tr>
+    <tr>
+      <td>2025</td>
+      <td>Seasonal naive</td>
+      <td>198</td>
+      <td>326,548</td>
+      <td>802,459</td>
+    </tr>
+    <tr>
+      <td>2025</td>
+      <td>Pooled panel AR</td>
+      <td>198</td>
+      <td>214,491</td>
+      <td>664,058</td>
+    </tr>
+    <tr>
+      <td>2025</td>
+      <td>Combination</td>
+      <td>198</td>
+      <td>225,475</td>
+      <td>688,574</td>
+    </tr>
+    <tr>
+      <td>2026</td>
+      <td>Naive</td>
+      <td>98</td>
+      <td>348,125</td>
+      <td>863,164</td>
+    </tr>
+    <tr>
+      <td>2026</td>
+      <td>Seasonal naive</td>
+      <td>98</td>
+      <td>565,441</td>
+      <td>1,266,438</td>
+    </tr>
+    <tr>
+      <td>2026</td>
+      <td>Pooled panel AR</td>
+      <td>98</td>
+      <td>313,774</td>
+      <td>805,318</td>
+    </tr>
+    <tr>
+      <td>2026</td>
+      <td>Combination</td>
+      <td>98</td>
+      <td>313,774</td>
+      <td>805,318</td>
+    </tr>
+  </tbody>
+</table></div>
+<h4>Per-year DM vs the combination · Descriptive only</h4>
+<div class="table-scroll" style="overflow-x:auto;-webkit-overflow-scrolling:touch"><table class="dataframe">
+  <thead>
+    <tr style="text-align: right;">
+      <th>Target year</th>
+      <th>Baseline</th>
+      <th>Loss</th>
+      <th>Forecasts (count)</th>
+      <th>G</th>
+      <th>DM t</th>
+      <th>Two-sided p</th>
+      <th>Inference</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>2022</td>
+      <td>Naive</td>
+      <td>Absolute error</td>
+      <td>198</td>
+      <td>4</td>
+      <td>-0.047</td>
+      <td>0.9656</td>
+      <td>descriptive only (G=4)</td>
+    </tr>
+    <tr>
+      <td>2022</td>
+      <td>Naive</td>
+      <td>Squared error</td>
+      <td>198</td>
+      <td>4</td>
+      <td>0.102</td>
+      <td>0.9254</td>
+      <td>descriptive only (G=4)</td>
+    </tr>
+    <tr>
+      <td>2023</td>
+      <td>Naive</td>
+      <td>Absolute error</td>
+      <td>199</td>
+      <td>4</td>
+      <td>0.847</td>
+      <td>0.4591</td>
+      <td>descriptive only (G=4)</td>
+    </tr>
+    <tr>
+      <td>2023</td>
+      <td>Naive</td>
+      <td>Squared error</td>
+      <td>199</td>
+      <td>4</td>
+      <td>1.034</td>
+      <td>0.3772</td>
+      <td>descriptive only (G=4)</td>
+    </tr>
+    <tr>
+      <td>2024</td>
+      <td>Naive</td>
+      <td>Absolute error</td>
+      <td>200</td>
+      <td>4</td>
+      <td>1.903</td>
+      <td>0.1532</td>
+      <td>descriptive only (G=4)</td>
+    </tr>
+    <tr>
+      <td>2024</td>
+      <td>Naive</td>
+      <td>Squared error</td>
+      <td>200</td>
+      <td>4</td>
+      <td>1.250</td>
+      <td>0.3000</td>
+      <td>descriptive only (G=4)</td>
+    </tr>
+    <tr>
+      <td>2025</td>
+      <td>Naive</td>
+      <td>Absolute error</td>
+      <td>198</td>
+      <td>4</td>
+      <td>1.620</td>
+      <td>0.2037</td>
+      <td>descriptive only (G=4)</td>
+    </tr>
+    <tr>
+      <td>2025</td>
+      <td>Naive</td>
+      <td>Squared error</td>
+      <td>198</td>
+      <td>4</td>
+      <td>1.267</td>
+      <td>0.2945</td>
+      <td>descriptive only (G=4)</td>
+    </tr>
+    <tr>
+      <td>2026</td>
+      <td>Naive</td>
+      <td>Absolute error</td>
+      <td>98</td>
+      <td>2</td>
+      <td>0.435</td>
+      <td>0.7387</td>
+      <td>descriptive only (G=2)</td>
+    </tr>
+    <tr>
+      <td>2026</td>
+      <td>Naive</td>
+      <td>Squared error</td>
+      <td>98</td>
+      <td>2</td>
+      <td>0.216</td>
+      <td>0.8645</td>
+      <td>descriptive only (G=2)</td>
+    </tr>
+    <tr>
+      <td>2022</td>
+      <td>Seasonal naive</td>
+      <td>Absolute error</td>
+      <td>198</td>
+      <td>4</td>
+      <td>21.101</td>
+      <td>0.0002</td>
+      <td>descriptive only (G=4)</td>
+    </tr>
+    <tr>
+      <td>2022</td>
+      <td>Seasonal naive</td>
+      <td>Squared error</td>
+      <td>198</td>
+      <td>4</td>
+      <td>6.558</td>
+      <td>0.0072</td>
+      <td>descriptive only (G=4)</td>
+    </tr>
+    <tr>
+      <td>2023</td>
+      <td>Seasonal naive</td>
+      <td>Absolute error</td>
+      <td>199</td>
+      <td>4</td>
+      <td>-0.566</td>
+      <td>0.6112</td>
+      <td>descriptive only (G=4)</td>
+    </tr>
+    <tr>
+      <td>2023</td>
+      <td>Seasonal naive</td>
+      <td>Squared error</td>
+      <td>199</td>
+      <td>4</td>
+      <td>-2.174</td>
+      <td>0.1180</td>
+      <td>descriptive only (G=4)</td>
+    </tr>
+    <tr>
+      <td>2024</td>
+      <td>Seasonal naive</td>
+      <td>Absolute error</td>
+      <td>200</td>
+      <td>4</td>
+      <td>4.126</td>
+      <td>0.0258</td>
+      <td>descriptive only (G=4)</td>
+    </tr>
+    <tr>
+      <td>2024</td>
+      <td>Seasonal naive</td>
+      <td>Squared error</td>
+      <td>200</td>
+      <td>4</td>
+      <td>2.049</td>
+      <td>0.1329</td>
+      <td>descriptive only (G=4)</td>
+    </tr>
+    <tr>
+      <td>2025</td>
+      <td>Seasonal naive</td>
+      <td>Absolute error</td>
+      <td>198</td>
+      <td>4</td>
+      <td>3.726</td>
+      <td>0.0337</td>
+      <td>descriptive only (G=4)</td>
+    </tr>
+    <tr>
+      <td>2025</td>
+      <td>Seasonal naive</td>
+      <td>Squared error</td>
+      <td>198</td>
+      <td>4</td>
+      <td>1.795</td>
+      <td>0.1706</td>
+      <td>descriptive only (G=4)</td>
+    </tr>
+    <tr>
+      <td>2026</td>
+      <td>Seasonal naive</td>
+      <td>Absolute error</td>
+      <td>98</td>
+      <td>2</td>
+      <td>12.707</td>
+      <td>0.0500</td>
+      <td>descriptive only (G=2)</td>
+    </tr>
+    <tr>
+      <td>2026</td>
+      <td>Seasonal naive</td>
+      <td>Squared error</td>
+      <td>98</td>
+      <td>2</td>
+      <td>31.577</td>
+      <td>0.0202</td>
+      <td>descriptive only (G=2)</td>
+    </tr>
+    <tr>
+      <td>2022</td>
+      <td>Pooled panel AR</td>
+      <td>Absolute error</td>
+      <td>198</td>
+      <td>4</td>
+      <td>2.678</td>
+      <td>0.0752</td>
+      <td>descriptive only (G=4)</td>
+    </tr>
+    <tr>
+      <td>2022</td>
+      <td>Pooled panel AR</td>
+      <td>Squared error</td>
+      <td>198</td>
+      <td>4</td>
+      <td>1.813</td>
+      <td>0.1674</td>
+      <td>descriptive only (G=4)</td>
+    </tr>
+    <tr>
+      <td>2023</td>
+      <td>Pooled panel AR</td>
+      <td>Absolute error</td>
+      <td>199</td>
+      <td>4</td>
+      <td>-0.808</td>
+      <td>0.4782</td>
+      <td>descriptive only (G=4)</td>
+    </tr>
+    <tr>
+      <td>2023</td>
+      <td>Pooled panel AR</td>
+      <td>Squared error</td>
+      <td>199</td>
+      <td>4</td>
+      <td>-1.079</td>
+      <td>0.3595</td>
+      <td>descriptive only (G=4)</td>
+    </tr>
+    <tr>
+      <td>2024</td>
+      <td>Pooled panel AR</td>
+      <td>Absolute error</td>
+      <td>200</td>
+      <td>4</td>
+      <td>-0.631</td>
+      <td>0.5729</td>
+      <td>descriptive only (G=4)</td>
+    </tr>
+    <tr>
+      <td>2024</td>
+      <td>Pooled panel AR</td>
+      <td>Squared error</td>
+      <td>200</td>
+      <td>4</td>
+      <td>-0.703</td>
+      <td>0.5329</td>
+      <td>descriptive only (G=4)</td>
+    </tr>
+    <tr>
+      <td>2025</td>
+      <td>Pooled panel AR</td>
+      <td>Absolute error</td>
+      <td>198</td>
+      <td>4</td>
+      <td>-1.569</td>
+      <td>0.2147</td>
+      <td>descriptive only (G=4)</td>
+    </tr>
+    <tr>
+      <td>2025</td>
+      <td>Pooled panel AR</td>
+      <td>Squared error</td>
+      <td>198</td>
+      <td>4</td>
+      <td>-1.705</td>
+      <td>0.1867</td>
+      <td>descriptive only (G=4)</td>
+    </tr>
+    <tr>
+      <td>2026</td>
+      <td>Pooled panel AR</td>
+      <td>Absolute error</td>
+      <td>98</td>
+      <td>2</td>
+      <td>undefined</td>
+      <td>undefined</td>
+      <td>descriptive only (G=2)</td>
+    </tr>
+    <tr>
+      <td>2026</td>
+      <td>Pooled panel AR</td>
+      <td>Squared error</td>
+      <td>98</td>
+      <td>2</td>
+      <td>undefined</td>
+      <td>undefined</td>
+      <td>descriptive only (G=2)</td>
+    </tr>
+  </tbody>
+</table></div><h3>Noninterest expense · Descriptive only</h3>
+<div class="table-scroll" style="overflow-x:auto;-webkit-overflow-scrolling:touch"><table class="dataframe">
+  <thead>
+    <tr style="text-align: right;">
+      <th>Target year</th>
+      <th>Method</th>
+      <th>Forecasts (count)</th>
+      <th>MAE (thousands USD)</th>
+      <th>RMSE (thousands USD)</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>2022</td>
+      <td>Naive</td>
+      <td>198</td>
+      <td>221,308</td>
+      <td>450,339</td>
+    </tr>
+    <tr>
+      <td>2022</td>
+      <td>Seasonal naive</td>
+      <td>198</td>
+      <td>350,794</td>
+      <td>613,868</td>
+    </tr>
+    <tr>
+      <td>2022</td>
+      <td>Pooled panel AR</td>
+      <td>198</td>
+      <td>199,114</td>
+      <td>418,333</td>
+    </tr>
+    <tr>
+      <td>2022</td>
+      <td>Combination</td>
+      <td>198</td>
+      <td>199,056</td>
+      <td>418,404</td>
+    </tr>
+    <tr>
+      <td>2023</td>
+      <td>Naive</td>
+      <td>199</td>
+      <td>269,787</td>
+      <td>703,104</td>
+    </tr>
+    <tr>
+      <td>2023</td>
+      <td>Seasonal naive</td>
+      <td>199</td>
+      <td>422,458</td>
+      <td>894,476</td>
+    </tr>
+    <tr>
+      <td>2023</td>
+      <td>Pooled panel AR</td>
+      <td>199</td>
+      <td>263,779</td>
+      <td>673,015</td>
+    </tr>
+    <tr>
+      <td>2023</td>
+      <td>Combination</td>
+      <td>199</td>
+      <td>264,371</td>
+      <td>677,481</td>
+    </tr>
+    <tr>
+      <td>2024</td>
+      <td>Naive</td>
+      <td>200</td>
+      <td>270,987</td>
+      <td>711,180</td>
+    </tr>
+    <tr>
+      <td>2024</td>
+      <td>Seasonal naive</td>
+      <td>200</td>
+      <td>342,805</td>
+      <td>794,679</td>
+    </tr>
+    <tr>
+      <td>2024</td>
+      <td>Pooled panel AR</td>
+      <td>200</td>
+      <td>292,610</td>
+      <td>610,378</td>
+    </tr>
+    <tr>
+      <td>2024</td>
+      <td>Combination</td>
+      <td>200</td>
+      <td>291,970</td>
+      <td>628,069</td>
+    </tr>
+    <tr>
+      <td>2025</td>
+      <td>Naive</td>
+      <td>198</td>
+      <td>154,829</td>
+      <td>310,859</td>
+    </tr>
+    <tr>
+      <td>2025</td>
+      <td>Seasonal naive</td>
+      <td>198</td>
+      <td>295,854</td>
+      <td>588,196</td>
+    </tr>
+    <tr>
+      <td>2025</td>
+      <td>Pooled panel AR</td>
+      <td>198</td>
+      <td>140,551</td>
+      <td>283,993</td>
+    </tr>
+    <tr>
+      <td>2025</td>
+      <td>Combination</td>
+      <td>198</td>
+      <td>142,534</td>
+      <td>286,387</td>
+    </tr>
+    <tr>
+      <td>2026</td>
+      <td>Naive</td>
+      <td>98</td>
+      <td>240,476</td>
+      <td>481,985</td>
+    </tr>
+    <tr>
+      <td>2026</td>
+      <td>Seasonal naive</td>
+      <td>98</td>
+      <td>411,082</td>
+      <td>811,297</td>
+    </tr>
+    <tr>
+      <td>2026</td>
+      <td>Pooled panel AR</td>
+      <td>98</td>
+      <td>209,902</td>
+      <td>409,311</td>
+    </tr>
+    <tr>
+      <td>2026</td>
+      <td>Combination</td>
+      <td>98</td>
+      <td>216,091</td>
+      <td>426,295</td>
+    </tr>
+  </tbody>
+</table></div>
+<h4>Per-year DM vs the combination · Descriptive only</h4>
+<div class="table-scroll" style="overflow-x:auto;-webkit-overflow-scrolling:touch"><table class="dataframe">
+  <thead>
+    <tr style="text-align: right;">
+      <th>Target year</th>
+      <th>Baseline</th>
+      <th>Loss</th>
+      <th>Forecasts (count)</th>
+      <th>G</th>
+      <th>DM t</th>
+      <th>Two-sided p</th>
+      <th>Inference</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>2022</td>
+      <td>Naive</td>
+      <td>Absolute error</td>
+      <td>198</td>
+      <td>4</td>
+      <td>4.683</td>
+      <td>0.0184</td>
+      <td>descriptive only (G=4)</td>
+    </tr>
+    <tr>
+      <td>2022</td>
+      <td>Naive</td>
+      <td>Squared error</td>
+      <td>198</td>
+      <td>4</td>
+      <td>2.706</td>
+      <td>0.0734</td>
+      <td>descriptive only (G=4)</td>
+    </tr>
+    <tr>
+      <td>2023</td>
+      <td>Naive</td>
+      <td>Absolute error</td>
+      <td>199</td>
+      <td>4</td>
+      <td>0.286</td>
+      <td>0.7935</td>
+      <td>descriptive only (G=4)</td>
+    </tr>
+    <tr>
+      <td>2023</td>
+      <td>Naive</td>
+      <td>Squared error</td>
+      <td>199</td>
+      <td>4</td>
+      <td>0.761</td>
+      <td>0.5021</td>
+      <td>descriptive only (G=4)</td>
+    </tr>
+    <tr>
+      <td>2024</td>
+      <td>Naive</td>
+      <td>Absolute error</td>
+      <td>200</td>
+      <td>4</td>
+      <td>-0.362</td>
+      <td>0.7410</td>
+      <td>descriptive only (G=4)</td>
+    </tr>
+    <tr>
+      <td>2024</td>
+      <td>Naive</td>
+      <td>Squared error</td>
+      <td>200</td>
+      <td>4</td>
+      <td>0.557</td>
+      <td>0.6164</td>
+      <td>descriptive only (G=4)</td>
+    </tr>
+    <tr>
+      <td>2025</td>
+      <td>Naive</td>
+      <td>Absolute error</td>
+      <td>198</td>
+      <td>4</td>
+      <td>1.877</td>
+      <td>0.1572</td>
+      <td>descriptive only (G=4)</td>
+    </tr>
+    <tr>
+      <td>2025</td>
+      <td>Naive</td>
+      <td>Squared error</td>
+      <td>198</td>
+      <td>4</td>
+      <td>1.885</td>
+      <td>0.1559</td>
+      <td>descriptive only (G=4)</td>
+    </tr>
+    <tr>
+      <td>2026</td>
+      <td>Naive</td>
+      <td>Absolute error</td>
+      <td>98</td>
+      <td>2</td>
+      <td>1.269</td>
+      <td>0.4249</td>
+      <td>descriptive only (G=2)</td>
+    </tr>
+    <tr>
+      <td>2026</td>
+      <td>Naive</td>
+      <td>Squared error</td>
+      <td>98</td>
+      <td>2</td>
+      <td>0.972</td>
+      <td>0.5092</td>
+      <td>descriptive only (G=2)</td>
+    </tr>
+    <tr>
+      <td>2022</td>
+      <td>Seasonal naive</td>
+      <td>Absolute error</td>
+      <td>198</td>
+      <td>4</td>
+      <td>3.830</td>
+      <td>0.0314</td>
+      <td>descriptive only (G=4)</td>
+    </tr>
+    <tr>
+      <td>2022</td>
+      <td>Seasonal naive</td>
+      <td>Squared error</td>
+      <td>198</td>
+      <td>4</td>
+      <td>4.860</td>
+      <td>0.0166</td>
+      <td>descriptive only (G=4)</td>
+    </tr>
+    <tr>
+      <td>2023</td>
+      <td>Seasonal naive</td>
+      <td>Absolute error</td>
+      <td>199</td>
+      <td>4</td>
+      <td>10.007</td>
+      <td>0.0021</td>
+      <td>descriptive only (G=4)</td>
+    </tr>
+    <tr>
+      <td>2023</td>
+      <td>Seasonal naive</td>
+      <td>Squared error</td>
+      <td>199</td>
+      <td>4</td>
+      <td>4.116</td>
+      <td>0.0260</td>
+      <td>descriptive only (G=4)</td>
+    </tr>
+    <tr>
+      <td>2024</td>
+      <td>Seasonal naive</td>
+      <td>Absolute error</td>
+      <td>200</td>
+      <td>4</td>
+      <td>0.399</td>
+      <td>0.7167</td>
+      <td>descriptive only (G=4)</td>
+    </tr>
+    <tr>
+      <td>2024</td>
+      <td>Seasonal naive</td>
+      <td>Squared error</td>
+      <td>200</td>
+      <td>4</td>
+      <td>0.547</td>
+      <td>0.6226</td>
+      <td>descriptive only (G=4)</td>
+    </tr>
+    <tr>
+      <td>2025</td>
+      <td>Seasonal naive</td>
+      <td>Absolute error</td>
+      <td>198</td>
+      <td>4</td>
+      <td>4.222</td>
+      <td>0.0243</td>
+      <td>descriptive only (G=4)</td>
+    </tr>
+    <tr>
+      <td>2025</td>
+      <td>Seasonal naive</td>
+      <td>Squared error</td>
+      <td>198</td>
+      <td>4</td>
+      <td>3.709</td>
+      <td>0.0341</td>
+      <td>descriptive only (G=4)</td>
+    </tr>
+    <tr>
+      <td>2026</td>
+      <td>Seasonal naive</td>
+      <td>Absolute error</td>
+      <td>98</td>
+      <td>2</td>
+      <td>3.551</td>
+      <td>0.1747</td>
+      <td>descriptive only (G=2)</td>
+    </tr>
+    <tr>
+      <td>2026</td>
+      <td>Seasonal naive</td>
+      <td>Squared error</td>
+      <td>98</td>
+      <td>2</td>
+      <td>3.330</td>
+      <td>0.1857</td>
+      <td>descriptive only (G=2)</td>
+    </tr>
+    <tr>
+      <td>2022</td>
+      <td>Pooled panel AR</td>
+      <td>Absolute error</td>
+      <td>198</td>
+      <td>4</td>
+      <td>0.058</td>
+      <td>0.9577</td>
+      <td>descriptive only (G=4)</td>
+    </tr>
+    <tr>
+      <td>2022</td>
+      <td>Pooled panel AR</td>
+      <td>Squared error</td>
+      <td>198</td>
+      <td>4</td>
+      <td>-0.137</td>
+      <td>0.9000</td>
+      <td>descriptive only (G=4)</td>
+    </tr>
+    <tr>
+      <td>2023</td>
+      <td>Pooled panel AR</td>
+      <td>Absolute error</td>
+      <td>199</td>
+      <td>4</td>
+      <td>-0.132</td>
+      <td>0.9033</td>
+      <td>descriptive only (G=4)</td>
+    </tr>
+    <tr>
+      <td>2023</td>
+      <td>Pooled panel AR</td>
+      <td>Squared error</td>
+      <td>199</td>
+      <td>4</td>
+      <td>-0.596</td>
+      <td>0.5933</td>
+      <td>descriptive only (G=4)</td>
+    </tr>
+    <tr>
+      <td>2024</td>
+      <td>Pooled panel AR</td>
+      <td>Absolute error</td>
+      <td>200</td>
+      <td>4</td>
+      <td>0.104</td>
+      <td>0.9235</td>
+      <td>descriptive only (G=4)</td>
+    </tr>
+    <tr>
+      <td>2024</td>
+      <td>Pooled panel AR</td>
+      <td>Squared error</td>
+      <td>200</td>
+      <td>4</td>
+      <td>-0.927</td>
+      <td>0.4224</td>
+      <td>descriptive only (G=4)</td>
+    </tr>
+    <tr>
+      <td>2025</td>
+      <td>Pooled panel AR</td>
+      <td>Absolute error</td>
+      <td>198</td>
+      <td>4</td>
+      <td>-0.523</td>
+      <td>0.6370</td>
+      <td>descriptive only (G=4)</td>
+    </tr>
+    <tr>
+      <td>2025</td>
+      <td>Pooled panel AR</td>
+      <td>Squared error</td>
+      <td>198</td>
+      <td>4</td>
+      <td>-0.379</td>
+      <td>0.7297</td>
+      <td>descriptive only (G=4)</td>
+    </tr>
+    <tr>
+      <td>2026</td>
+      <td>Pooled panel AR</td>
+      <td>Absolute error</td>
+      <td>98</td>
+      <td>2</td>
+      <td>-0.599</td>
+      <td>0.6566</td>
+      <td>descriptive only (G=2)</td>
+    </tr>
+    <tr>
+      <td>2026</td>
+      <td>Pooled panel AR</td>
+      <td>Squared error</td>
+      <td>98</td>
+      <td>2</td>
+      <td>-0.686</td>
+      <td>0.6174</td>
+      <td>descriptive only (G=2)</td>
+    </tr>
+  </tbody>
+</table></div>
+  <h2>Figures</h2>
+  <figure><img src="figures/mae_by_line.png" alt="MAE by method and statement line" style="max-width:100%;height:auto" />
+    <figcaption>Equal-weight BHC-quarter MAE, thousands USD; matched cases within each line.</figcaption></figure>
+  <figure><img src="figures/weight_path.png" alt="Combination weight on pooled AR by origin and line" style="max-width:100%;height:auto" />
+    <figcaption>Walk-forward weight on pooled AR by origin; descriptive only.</figcaption></figure>
+  <h2>Data vintage</h2>
+  <p>Coverage: <strong>2018Q1–2026Q2</strong>,
+  34 quarters. Build time (UTC): 2026-09-26T21:15:19.490629+00:00.
+  Source: <a href="https://www.ffiec.gov/npw/FinancialReport/FinancialDataDownload">FFIEC NIC Financial Data Download</a>.</p>
+  <details><summary>NIC download dates and cache provenance (UTC)</summary>
+    <div class="table-scroll" style="overflow-x:auto;-webkit-overflow-scrolling:touch"><table><thead><tr><th>Quarter</th><th>Downloaded / first seen (UTC)</th></tr></thead><tbody><tr><td>2018Q1</td><td>2026-09-26T03:35:21.592924+00:00</td></tr><tr><td>2018Q2</td><td>2026-09-26T03:35:22.829567+00:00</td></tr><tr><td>2018Q3</td><td>2026-09-26T03:35:24.017568+00:00</td></tr><tr><td>2018Q4</td><td>2026-09-26T03:35:25.264072+00:00</td></tr><tr><td>2019Q1</td><td>2026-09-26T03:35:26.389697+00:00</td></tr><tr><td>2019Q2</td><td>2026-09-26T03:35:27.576250+00:00</td></tr><tr><td>2019Q3</td><td>2026-09-26T03:35:28.865786+00:00</td></tr><tr><td>2019Q4</td><td>2026-09-26T03:35:30.118481+00:00</td></tr><tr><td>2020Q1</td><td>2026-09-26T03:35:31.266314+00:00</td></tr><tr><td>2020Q2</td><td>2026-09-26T03:35:32.472669+00:00</td></tr><tr><td>2020Q3</td><td>2026-09-26T03:35:33.610023+00:00</td></tr><tr><td>2020Q4</td><td>2026-09-26T03:35:34.811950+00:00</td></tr><tr><td>2021Q1</td><td>2026-09-26T03:35:35.926911+00:00</td></tr><tr><td>2021Q2</td><td>2026-09-26T03:35:37.131801+00:00</td></tr><tr><td>2021Q3</td><td>2026-09-26T03:35:38.252124+00:00</td></tr><tr><td>2021Q4</td><td>2026-09-26T03:35:39.440905+00:00</td></tr><tr><td>2022Q1</td><td>2026-09-26T03:35:40.570573+00:00</td></tr><tr><td>2022Q2</td><td>2026-09-26T03:35:41.782064+00:00</td></tr><tr><td>2022Q3</td><td>2026-09-26T03:35:42.886568+00:00</td></tr><tr><td>2022Q4</td><td>2026-09-26T03:35:44.064858+00:00</td></tr><tr><td>2023Q1</td><td>2026-09-26T03:35:45.236208+00:00</td></tr><tr><td>2023Q2</td><td>2026-09-26T03:35:46.451469+00:00</td></tr><tr><td>2023Q3</td><td>2026-09-26T03:35:47.607440+00:00</td></tr><tr><td>2023Q4</td><td>2026-09-26T03:35:48.846202+00:00</td></tr><tr><td>2024Q1</td><td>2026-09-26T03:35:49.981232+00:00</td></tr><tr><td>2024Q2</td><td>2026-09-26T03:35:51.184648+00:00</td></tr><tr><td>2024Q3</td><td>2026-09-26T03:35:52.316133+00:00</td></tr><tr><td>2024Q4</td><td>2026-09-26T03:35:53.546359+00:00</td></tr><tr><td>2025Q1</td><td>2026-09-26T03:35:54.724380+00:00</td></tr><tr><td>2025Q2</td><td>2026-09-26T03:35:55.899594+00:00</td></tr><tr><td>2025Q3</td><td>2026-09-26T03:35:57.068819+00:00</td></tr><tr><td>2025Q4</td><td>2026-09-26T03:35:58.312856+00:00</td></tr><tr><td>2026Q1</td><td>2026-09-26T03:35:59.488062+00:00</td></tr><tr><td>2026Q2</td><td>2026-09-26T03:36:00.652232+00:00</td></tr></tbody></table></div>
+  </details>
+  <h2>Tables and reproduction</h2>
+  <p><a href="tables/overall_errors.csv">overall_errors CSV</a> · <a href="tables/overall_errors.json">overall_errors JSON</a> · <a href="tables/by_year_errors.csv">by_year_errors CSV</a> · <a href="tables/by_year_errors.json">by_year_errors JSON</a> · <a href="tables/dm_tests.csv">dm_tests CSV</a> · <a href="tables/dm_tests.json">dm_tests JSON</a> · <a href="tables/weights.csv">weights CSV</a> · <a href="tables/weights.json">weights JSON</a> · <a href="tables/verdicts.json">verdicts JSON</a> · <a href="tables/run_metadata.json">run_metadata JSON</a> · <a href="tables/test_design_combo.json">test_design_combo JSON</a> · <a href="tables/vintage.json">vintage JSON</a></p>
+  <pre><code>make statement-forecast-combo-test
+make statement-forecast-combo</code></pre>
+  <p>The shared y9c package supplies de-cumulation, the naive, seasonal-naive and pooled-AR baselines, metrics and
+  the clustered DM test; the combination imports them unchanged. Only aggregate tables and figures are exported.</p>
+  <h2>Limitations</h2>
+  <p>Report-quarter backtest on currently downloaded NIC filings, as in Y-9C and v1: period-t filings are treated as available at t; filing lags and later revisions are not modeled.</p>
+  <p>RSSD identities are used as reported, without pro-forma merger adjustments; acquisition jumps remain.
+  Missing predecessor quarters are never bridged or imputed. Dollar losses emphasize large institutions.
+  The weight is a single scalar per line shared across banks. Research only.</p>
+  <h2>Citations</h2>
+  <ul><li>Pesaran, M. H., Pick, A., &amp; Timmermann, A. (2026). Forecasting with panel data: Estimation uncertainty versus parameter heterogeneity. Quantitative Economics, 17(2), 342–393. doi:10.3982/QE2589. Working paper: CEPR Discussion Paper DP17123 (2022). <a href="https://doi.org/10.3982/QE2589">https://doi.org/10.3982/QE2589</a></li><li>Wang, X., Hyndman, R. J., Li, F., &amp; Kang, Y. (2023). Forecast combinations: An over 50-year review. International Journal of Forecasting, 39(4), 1518–1547. doi:10.1016/j.ijforecast.2022.11.005. <a href="https://doi.org/10.1016/j.ijforecast.2022.11.005">https://doi.org/10.1016/j.ijforecast.2022.11.005</a></li></ul>
+</main>
+<footer class="site-footer">
+  <div class="site-footer__inner">
+    <p class="site-footer__disclaimer"><strong>Independent research lab</strong> ·
+      Not affiliated with any employer or financial institution · Not investment advice.</p>
+    <div class="site-footer__links">
+      <a href="../../../index.html">Home</a>
+      <a href="../index.html">Statement Forecast</a>
+      <a href="../combination-teaching.html">Teaching note</a>
+      <a href="https://github.com/jgridifier/research-lab">GitHub</a>
+    </div>
+  </div>
+</footer>
+</body>
+</html>

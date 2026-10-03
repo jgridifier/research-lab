@@ -1,0 +1,118 @@
+{
+  "track": "statement-forecast",
+  "version": "v2-combination",
+  "status": "PRE-REGISTERED: committed on its own before the single real-data run of this method; not edited after that run",
+  "research_only": "Independent research lab. Not affiliated with any employer or financial institution. Not investment advice.",
+  "question": "Does a walk-forward combination of the two existing Y-9C baselines, naive and pooled AR on log growth, beat naive one quarter ahead on three FR Y-9C income-statement lines for the top-50 BHC panel, on the same cases and window as v1?",
+  "citations": [
+    {
+      "role": "anchor",
+      "text": "Pesaran, M. H., Pick, A., & Timmermann, A. (2026). Forecasting with panel data: Estimation uncertainty versus parameter heterogeneity. Quantitative Economics, 17(2), 342–393. doi:10.3982/QE2589. Working paper: CEPR Discussion Paper DP17123 (2022).",
+      "url": "https://doi.org/10.3982/QE2589",
+      "working_paper_url": "https://cepr.org/publications/dp17123"
+    },
+    {
+      "role": "supporting",
+      "text": "Wang, X., Hyndman, R. J., Li, F., & Kang, Y. (2023). Forecast combinations: An over 50-year review. International Journal of Forecasting, 39(4), 1518–1547. doi:10.1016/j.ijforecast.2022.11.005.",
+      "url": "https://doi.org/10.1016/j.ijforecast.2022.11.005",
+      "preprint_url": "https://arxiv.org/abs/2205.04216"
+    }
+  ],
+  "method_verbatim": [
+    "For line ℓ ∈ {BHCK4074 NII, BHCK4079 noninterest income, BHCK4093 noninterest expense}, bank i, origin t: N = X_i,t (naive); P = the pooled AR on log growth from y9c.forecast.baseline_forecasts, imported unchanged and including its naive fallback; C = N + w_ℓ,t·(P − N), with w on the grid {0, 0.05, …, 1.00}.",
+    "w_ℓ,t = argmin over the grid of the sum of |C − X| over pseudo-OOS cases (i, s) with target s+1 ≤ t. N and P for each such case are rebuilt as of origin s, using only data ≤ s, the y9c.forecast.design top-50 selection at s and the shared case rule. Use an expanding window from the earliest origin at which y9c.forecast's pooled AR is defined. Ties go to the smallest w. If the pseudo-OOS set spans fewer than 8 distinct target quarters, w = 0.5. There is one weight per line per origin, shared across banks.",
+    "No tuning, trimming, winsorizing, clipping or case removal. Nonfinite values raise an error.",
+    "Evaluation is identical to v1: targets 2022Q1–2026Q2 (origins 2021Q4–2026Q1), with the same 893 matched cases per line."
+  ],
+  "method": {
+    "key": "combo",
+    "label": "Walk-forward naive / pooled-AR combination",
+    "components": {
+      "N": "naive",
+      "P": "pooled_ar"
+    },
+    "combination": "C = N + w_ℓ,t·(P − N)",
+    "weight_grid": {
+      "start": 0.0,
+      "stop": 1.0,
+      "step": 0.05,
+      "n_points": 21
+    },
+    "loss": "sum of absolute errors |C − X| over pseudo-OOS cases (i, s) with target s+1 ≤ t",
+    "tie_rule": "smallest w",
+    "min_distinct_target_quarters": 8,
+    "fallback_weight": 0.5,
+    "weight_sharing": "one weight per line per origin, shared across banks",
+    "implementation_notes": [
+      "C is computed as N + w·(P − N), except that at w = 1 it is set to P (algebraically identical). In floating point this makes w = 0 reproduce naive and w = 1 reproduce pooled AR exactly, and a case with P = N (including pooled AR's naive fallback) has C = N at every w, so it adds the same loss at every grid point.",
+      "At origin t the panel is truncated to quarters ≤ t before the weight is fit. Pseudo-OOS N and P at each origin s come from y9c.forecast.baseline_forecasts(y9c.forecast.design(truncated panel), s): selection and pooled-AR coefficients at s use only rows dated ≤ s; the target X_s+1 ≤ t is used only as the actual for the shared case rule and the loss.",
+      "The earliest pseudo-OOS origin is the earliest quarter at which y9c.forecast.baseline_forecasts does not raise its pooled-AR burn-in or rank error; the window then expands to origin t − 1.",
+      "Evaluation-window N, P and seasonal naive are y9c.forecast.baseline_forecasts on the full panel at origins 2021Q4–2026Q1, exactly as in v1; combo is formed from those with the origin-t weight."
+    ]
+  },
+  "lines": [
+    {
+      "key": "nii",
+      "column": "nii_q",
+      "mdrm": "BHCK4074",
+      "label": "Net interest income"
+    },
+    {
+      "key": "noninterest_income",
+      "column": "noninterest_income_q",
+      "mdrm": "BHCK4079",
+      "label": "Noninterest income"
+    },
+    {
+      "key": "noninterest_expense",
+      "column": "noninterest_expense_q",
+      "mdrm": "BHCK4093",
+      "label": "Noninterest expense"
+    }
+  ],
+  "units": "thousands USD; quarterly flows de-cumulated from calendar-year YTD by the shared y9c panel code (y9c.panel.decumulate)",
+  "horizon_quarters": 1,
+  "universe": "Top 50 BHCs by reported BHCK2170 at each origin t, RSSD ID breaks ties; identical to Y-9C (y9c.forecast.design).",
+  "test_window": {
+    "first_target": "2022Q1",
+    "last_target": "2026Q2",
+    "first_origin": "2021Q4",
+    "last_origin": "2026Q1",
+    "n_target_quarters": 18,
+    "expected_cases_per_line": 893
+  },
+  "evaluation_cases": "Per line, the Y-9C case rule from y9c.forecast: bank selected at origin t, target X_t+1 observed, X_t and X_t-3 observed. Identical to v1 (PR #4): the same 893 matched cases per line; all methods are scored on exactly the same cases within a line.",
+  "baselines": {
+    "source": "Imported from y9c.forecast (not reimplemented): naive Xhat_t+1 = X_t; seasonal naive Xhat_t+1 = X_t-3; pooled AR on log growth g(s+1) = a + b1 g(s) + b4 g(s-3), expanding pooled OLS on historical top-50 rows with s+1 <= t, naive fallback when log inputs are missing or non-positive.",
+    "methods": [
+      "naive",
+      "seasonal_naive",
+      "pooled_ar"
+    ]
+  },
+  "metrics": "MAE and RMSE in thousands USD, equal weight per BHC-quarter (y9c.forecast.metrics). Displayed in whole thousands.",
+  "dm_test": "y9c.forecast.clustered_dm via y9c.forecast.dm_tests: d = L(baseline) - L(combo) for absolute and squared error (error = forecast - actual), CR1 standard error clustered by target quarter, two-sided p from Student t(G-1). Positive mean favors combo. Computed per line against each of the three baselines on the full sample; per-year versions are descriptive only.",
+  "pass_bar_verbatim": "For each line, combo PASSES iff MAE(combo) < MAE(naive) strictly, on unrounded values, AND the full-sample clustered DM (y9c.forecast.clustered_dm; d = |e_naive| − |e_combo|; CR1 by target quarter; t(G−1), G=18) gives a two-sided p ≤ 0.05. An undefined p is a FAIL. There is no multiplicity adjustment. The headline is \"k of 3 lines pass\". Descriptive only: comparisons vs pooled AR and seasonal naive (MAE + DM), RMSE, squared-error DM, by-year results, the w path by origin and fallback counts. The results page must disclose that (a) pooled AR was chosen as the second component after seeing v1's descriptive tables on this same window, and (b) this is the second method scored on the 2022–2026 window.",
+  "pass_bar": {
+    "rule": "For a given line, combo PASSES iff MAE(combo) < MAE(naive) strictly, on unrounded values, AND the full-sample clustered DM two-sided p-value on absolute error (d = |e_naive| − |e_combo|) <= 0.05. An undefined p-value is a FAIL.",
+    "alpha": 0.05,
+    "comparator": "naive",
+    "loss": "absolute error"
+  },
+  "headline": "k of 3 lines pass",
+  "descriptive_only": [
+    "Comparisons vs pooled AR and seasonal naive (MAE + DM)",
+    "RMSE",
+    "Squared-error DM",
+    "By-year results",
+    "The w path by origin",
+    "Fallback counts"
+  ],
+  "multiple_testing": "No multiplicity adjustment across lines or losses; each line has its own pre-registered verdict.",
+  "required_disclosures": [
+    "Pooled AR was chosen as the second component after seeing v1's descriptive tables on this same 2022Q1–2026Q2 window.",
+    "This is the second method scored on the 2022–2026 window."
+  ],
+  "timing_limitation": "Report-quarter backtest on currently downloaded NIC filings, as in Y-9C and v1: period-t filings are treated as available at t; filing lags and later revisions are not modeled.",
+  "runs": "Synthetic and unit tests first; then the real-data evaluation is run once and published whatever the result."
+}
