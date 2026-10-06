@@ -86,26 +86,53 @@ def verify_pins(design):
     return prov
 
 
+class ProvenanceError(RuntimeError):
+    pass
+
+
+def design_sha_check(which=('v1_1',)):
+    """sha256 of each named design file vs the pinned value in statement_forecast.prereg; raises on mismatch."""
+    from statement_forecast.prereg import TRADING_OT_PREREG_SHA256, TRADING_OT_V1_1_PREREG_SHA256
+    pins = dict(v1_1=(DESIGN_PATH_V1_1, TRADING_OT_V1_1_PREREG_SHA256), v1_0=(DESIGN_PATH, TRADING_OT_PREREG_SHA256))
+    out = {}
+    for k in which:
+        path, want = pins[k]
+        got = _sha(path)
+        if got != want:
+            raise ProvenanceError(f'design {k} at {path}: sha256 {got} != pinned {want}. Nothing was logged or scored.')
+        out[k] = dict(design=str(path.relative_to(ROOT)), design_sha256=got)
+    return out
+
+
+def preflight(design, which=('v1_1',)):
+    """Every OOS entry point calls this first: authorization, then design pin(s), then errata hash.
+
+    Runs before log_trial and before any data is touched; the returned provenance is reused when writing
+    gate.json / r1.json / companion JSONs, so nothing is recomputed after scoring."""
+    assert_oos_authorized(design)
+    designs = design_sha_check(which)
+    return dict(designs=designs, errata=errata_provenance())
+
+
 def errata_provenance():
     """Path + sha256 of the v1.1 errata; raises if the committed copy does not match the recorded hash."""
     got = _sha(ERRATA_PATH)
     if got != ERRATA_SHA256:
-        raise RuntimeError(f'{ERRATA_PATH} sha256 {got} != recorded {ERRATA_SHA256}')
+        raise ProvenanceError(f'{ERRATA_PATH} sha256 {got} != recorded {ERRATA_SHA256}. Nothing was logged or scored.')
     return dict(path=str(ERRATA_PATH.relative_to(ROOT)), sha256=got,
                 precedence='where a stated value conflicts with an operative rule of the pinned design, the rule governs')
 
 
 def run_oos_v1_1(panel, macro, design, out_dir, trials_path=TRIALS_PATH, **engine_kw):
     """Primary v1.1 run. The authorization check is the first statement; the trial is logged before scoring."""
-    assert_oos_authorized(design)
+    pre = preflight(design, ('v1_1',))
     from . import gate, walkforward_v1_1 as V
-    config = dict(design='v1_1', design_sha256=_sha(DESIGN_PATH_V1_1), run='primary H1+H2', **{
+    config = dict(design='v1_1', design_sha256=pre['designs']['v1_1']['design_sha256'], run='primary H1+H2', **{
         k: [str(x) for x in v] for k, v in engine_kw.items()})
     log_trial(config, 'v1.1 primary', path=trials_path)
     res = V.primary(panel, macro, **engine_kw)
     ev = gate.evaluate_primary_v1_1(res['h1'], res['h2'])
-    provenance = dict(design=str(DESIGN_PATH_V1_1.relative_to(ROOT)), design_sha256=_sha(DESIGN_PATH_V1_1),
-                      errata=errata_provenance())
+    provenance = dict(**pre['designs']['v1_1'], errata=pre['errata'])
     return _write(out_dir, 'gate.json', dict(design='v1_1', provenance=provenance,
                                              config_hash=config_hash(config), git_head=git_head(),
                                              hypotheses=ev, selection_log=res['selection_log'],
@@ -114,9 +141,9 @@ def run_oos_v1_1(panel, macro, design, out_dir, trials_path=TRIALS_PATH, **engin
 
 def run_oos_v1_0(panel, macro, design_v1_1, out_dir, trials_path=TRIALS_PATH):
     """R1: the v1.0 design (B6 excluded from M0/B*, reported), non-gating; authorized via the v1.1 design."""
-    assert_oos_authorized(design_v1_1)
+    pre = preflight(design_v1_1, ('v1_1', 'v1_0'))
     from . import gate, walkforward as W10
-    config = dict(design='v1_0 (R1)', design_sha256=_sha(DESIGN_PATH), policy='exclude_b6', ytd_reset_guard=True)
+    config = dict(design='v1_0 (R1)', design_sha256=pre['designs']['v1_0']['design_sha256'], policy='exclude_b6', ytd_reset_guard=True)
     log_trial(config, 'R1 (v1.0 design, non-gating)', path=trials_path)
     frozen = W10.freeze_decisions(panel, macro, 'exclude_b6')
     h1 = W10.h1_oos(panel, macro, frozen)
@@ -133,8 +160,8 @@ def run_oos_v1_0(panel, macro, design_v1_1, out_dir, trials_path=TRIALS_PATH):
         v['p_holm'] = adj[k]
         v['verdict_descriptive'] = gate.verdict(adj[k], v['G'], v['test_A']['G_upper'], v['coverage90'], v['lobo'],
                                                 v['n_targets'])
-    provenance = dict(design=str(DESIGN_PATH.relative_to(ROOT)), design_sha256=_sha(DESIGN_PATH),
-                      authorized_by=str(DESIGN_PATH_V1_1.relative_to(ROOT)), errata=errata_provenance())
+    provenance = dict(**pre['designs']['v1_0'], authorized_by=pre['designs']['v1_1']['design'],
+                      authorized_by_sha256=pre['designs']['v1_1']['design_sha256'], errata=pre['errata'])
     return _write(out_dir, 'r1.json', dict(design='v1_0 (R1, non-gating)', provenance=provenance,
                                            config_hash=config_hash(config),
                                            frozen=frozen, hypotheses=out, war_params=params.to_dict(orient='list')))
