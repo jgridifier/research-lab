@@ -30,7 +30,11 @@ def mad(x):
 
 
 class Wide:
-    """Bank x quarter arrays from a (truncated) panel. Quarters run 2018Q1..last quarter in the panel."""
+    """Bank x quarter arrays from a (truncated) panel. Quarters run `first`..last quarter in the panel.
+
+    v1.0/R1: first = 2018Q1 (no 2017Q4 rows exist, so the 2018Q1 lag is NaN as before).
+    v1.1: first = 2009Q1; Dlag[:, 0] is TA(2008Q4), the only pre-sample value that is ever used.
+    """
 
     def __init__(self, panel, banks, denom='trading_assets', first='2018Q1', target='trading_revenue_q'):
         self.banks = list(banks)
@@ -40,11 +44,14 @@ class Wide:
         keys = pd.MultiIndex.from_product([self.banks, self.quarters])
         shape = (len(self.banks), len(self.quarters))
         self.Y = sub[target].reindex(keys).to_numpy(float).reshape(shape)
-        self.D = sub[denom].reindex(keys).to_numpy(float).reshape(shape)
         self.A = sub['total_assets'].reindex(keys).to_numpy(float).reshape(shape)
-        Dl = np.full(shape, np.nan)
-        Dl[:, 1:] = self.D[:, :-1]
-        self.Dlag = Dl
+        # denominator on first-1..last so the first quarter's lag is a calendar lag (v1.1: TA 2008Q4 -> 2009Q1 r)
+        ext = pd.period_range(pd.Period(first, freq='Q') - 1, last, freq='Q')
+        Dext = sub[denom].reindex(pd.MultiIndex.from_product([self.banks, ext])).to_numpy(float)
+        Dext = Dext.reshape(len(self.banks), len(ext))
+        self.D = Dext[:, 1:]
+        self.Dlag = Dext[:, :-1]
+        Dl = self.Dlag
         self.R = 1e4 * self.Y / np.where(Dl > 0, Dl, np.nan)
         self.denom = denom
         self.panel = panel

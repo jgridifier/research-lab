@@ -74,14 +74,15 @@ def cs_membership(W, lag_ta_min=CS_LAG_TA_MIN):
     return (W.Dlag >= lag_ta_min) & np.isfinite(W.Y)
 
 
-def cs_member_forecasts(panel, origin, macro, members=B.MEMBERS, lag_ta_min=CS_LAG_TA_MIN):
-    """Ratio-space baselines for the cross-section population at origin (h = 1)."""
+def cs_member_forecasts(panel, origin, macro, members=B.MEMBERS, lag_ta_min=CS_LAG_TA_MIN, first='2018Q1'):
+    """Ratio-space baselines for the cross-section population at origin (h = 1). v1.1 passes first='2009Q1'."""
     origin = pd.Period(origin, freq='Q')
     trunc = truncate(panel, origin)
+    trunc = trunc[trunc.quarter.ge(pd.Period(first, freq='Q') - 1)]
     pop = cs_population(trunc, origin, lag_ta_min)
     pr = sets.add_ratio(trunc)
     ever = sorted(set(pr.loc[pr.trading_assets_lag.ge(lag_ta_min) & pr.trading_revenue_q.notna(), 'rssd_id']) | set(pop))
-    W = B.Wide(trunc, ever)
+    W = B.Wide(trunc, ever, first=first)
     t = W.idx(origin)
     pos = [W.banks.index(i) for i in pop]
     scale, _ = cs_scales(W, t, pos)
@@ -93,7 +94,7 @@ def cs_member_forecasts(panel, origin, macro, members=B.MEMBERS, lag_ta_min=CS_L
         if m == 'B5':
             Q, info = B.b5_panel_qr(W, t, 1, 'ratio', pool, macro, train_mask=np.pad(mask, ((0, 0), (0, 1))))
         elif m == 'B6':
-            Wp = B.Wide(trunc, pop)
+            Wp = B.Wide(trunc, pop, first=first)
             Q, info = B.b6_eb(Wp, Wp.idx(origin), 1, 'ratio', scale)
             out[m] = (Q, info)
             continue
@@ -115,12 +116,14 @@ def _subset(W, pos):
     return S
 
 
-def war_rm(panel, origin, pop, lag_ta_min=CS_LAG_TA_MIN, h=1):
-    """H2 WAR-RM ratio quantiles for `pop` at origin; NaN rows for banks without a rank at the origin."""
+def war_rm(panel, origin, pop, lag_ta_min=CS_LAG_TA_MIN, h=1, first_r='2018Q2'):
+    """H2 WAR-RM ratio quantiles for `pop` at origin; NaN rows for banks without a rank at the origin.
+
+    first_r: first cross-section quarter (v1.0: 2018Q2, the first quarter with a lagged TA; v1.1: 2009Q1)."""
     origin = pd.Period(origin, freq='Q')
     trunc = truncate(panel, origin)
     pr = sets.add_ratio(trunc)
-    quarters = pd.period_range('2018Q2', origin, freq='Q')
+    quarters = pd.period_range(first_r, origin, freq='Q')
     css = {s: sets.cross_section(pr, s, lag_ta_min) for s in quarters}
     Qs = np.stack([ot_war.cs_quantiles(css[s].r) for s in quarters])
     Qbar = ot_war.frechet_mean(Qs)
@@ -222,7 +225,8 @@ def freeze_decisions(panel, macro, policy, members=B.MEMBERS, lag_ta_min=CS_LAG_
     cs_scores, cs_n = _pooled(S3, members, policy)
     b_star = min(t2_scores, key=t2_scores.get)
     b_star_cs = min(cs_scores, key=cs_scores.get)
-    return dict(freeze_origin=str(FREEZE_ORIGIN), policy=policy, members=members, bank_set=[int(b) for b in banks],
+    return dict(freeze_origin=str(FREEZE_ORIGIN), policy=policy, members=members,
+                report_members=list(B.MEMBERS), bank_set=[int(b) for b in banks],
                 bank_scales={int(b): float(v) for b, v in zip(banks, s_i)},
                 t2_burnin_scores=t2_scores, t2_burnin_n=t2_n, trimmed_members=kept,
                 bary_burnin_cases=int(ok.sum()), s=float(s_best), s_scores={str(k): v for k, v in s_scores.items()},
@@ -236,13 +240,14 @@ def h1_oos(panel, macro, frozen, origins=OOS_ORIGINS):
     banks, s_i = frozen['bank_set'], np.array([frozen['bank_scales'][b] for b in frozen['bank_set']])
     rows = []
     for o in origins:
-        fc = t2_member_forecasts(panel, banks, o, 1, macro, frozen['members'])
+        report = frozen.get('report_members', frozen['members'])   # R1: B6 reported, not eligible
+        fc = t2_member_forecasts(panel, banks, o, 1, macro, report)
         y = actual(panel, banks, o + 1)
         kept = frozen['trimmed_members']
         Qk = [fc[m][0] for m in kept]
         Qbar = ot_bary.widen(ot_bary.barycenter_1d(Qk), frozen['s'])
         Qpool = None
-        res = {'BARY': Qbar, **{m: fc[m][0] for m in frozen['members']}}
+        res = {'BARY': Qbar, **{m: fc[m][0] for m in report}}
         for name, Q in res.items():
             S, cov = score_rows(Q, y, s_i)
             for k, b in enumerate(banks):
@@ -256,7 +261,8 @@ def h2_oos(panel, macro, frozen, origins=OOS_ORIGINS, lag_ta_min=CS_LAG_TA_MIN):
     """Cross-section cases for H2: WAR-RM and every ratio-space member, scaled by s_i^r."""
     rows, params = [], []
     for o in origins:
-        pop, scale, cfc = cs_member_forecasts(panel, o, macro, frozen['members'], lag_ta_min)
+        report = frozen.get('report_members', frozen['members'])
+        pop, scale, cfc = cs_member_forecasts(panel, o, macro, report, lag_ta_min)
         Qw, info = war_rm(panel, o, pop, lag_ta_min)
         pr = sets.add_ratio(panel)
         tgt = pr[pr.quarter.eq(o + 1) & pr.trading_assets_lag.ge(lag_ta_min) & pr.trading_revenue_q.notna()]
@@ -264,7 +270,7 @@ def h2_oos(panel, macro, frozen, origins=OOS_ORIGINS, lag_ta_min=CS_LAG_TA_MIN):
         params.append(dict(origin=str(o), beta=info['beta'], beta_raw=info['beta_raw'], beta_pairs=info['beta_pairs'],
                            rho=info['rho'], rho_raw=info['rho_raw'], rho_transitions=info['rho_transitions'],
                            n_population=len(pop)))
-        for name, Q in {'WAR': Qw, **{m: cfc[m][0] for m in frozen['members']}}.items():
+        for name, Q in {'WAR': Qw, **{m: cfc[m][0] for m in report}}.items():
             S, cov = score_rows(Q, y, scale)
             for k, b in enumerate(pop):
                 rows.append(dict(origin=o, target_quarter=o + 1, rssd_id=b, method=name, S=S[k], cov90=cov[k], y=y[k]))
