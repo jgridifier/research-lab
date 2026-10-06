@@ -15,6 +15,13 @@ per-bank probabilistic baselines B0–B6, plus two OT layers from the classical-
   byte-identical. It runs on 2018+ data with the YTD-reset guard, with B6 excluded from M0/B* but still reported.
 - The v1.1 JSON ships with `oos_authorized: false`, so `python -m trading_ot.run oos [--design v1_1|v1_0]` refuses
   before loading anything. Approval is a separate commit that flips that flag (which also re-pins, by construction).
+- **Errata:** `prereg/ERRATA_v1_1.md` is a verbatim copy of `/workspace/research/y9c_ot_prereg/ERRATA_v1_1.md`,
+  sha256 `68d5128fa3da40d269340afda3862ee89374bd6df59ad108c9e84d8698a17fe9`, recorded before any OOS score.
+  - E1: the set union is 31. E2: rule (b) T1 2016Q3 is 14.879. E3: fixed-b critical values at T=50 are
+    2.4101 / 1.9658. E4: burn-in β̂ is 0.199. E5: the point-in-time test scope. C1–C3 are clarifications.
+  - **Where a stated value conflicts with an operative rule of the pinned design, the rule wins.** No new design pin.
+  - The path and sha256 are written into the provenance block of `gate.json` / `r1.json`, and the run refuses if
+    the copy's hash changes.
 - `trials.jsonl` holds one `design_revision` entry (`counts_as_trial: false`). The OOS trial count is 0.
 
 ## Layout

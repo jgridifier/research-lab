@@ -103,3 +103,14 @@ def test_trial_count_rule(tmp_path):
     assert run.trial_count(p) == 0
     run.log_trial({'x': 1}, 'synthetic', path=p)
     assert run.trial_count(p) == 1
+
+
+def test_errata_verbatim_and_hash():
+    from trading_ot.paths import ERRATA_PATH, ERRATA_SHA256, ERRATA_SOURCE
+    assert ERRATA_SHA256 == '68d5128fa3da40d269340afda3862ee89374bd6df59ad108c9e84d8698a17fe9'
+    assert hashlib.sha256(ERRATA_PATH.read_bytes()).hexdigest() == ERRATA_SHA256
+    assert run.errata_provenance()['sha256'] == ERRATA_SHA256
+    try:
+        assert open(ERRATA_SOURCE, 'rb').read() == ERRATA_PATH.read_bytes()
+    except FileNotFoundError:
+        pass

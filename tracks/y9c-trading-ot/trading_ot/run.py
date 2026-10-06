@@ -20,7 +20,8 @@ import os
 import subprocess
 import sys
 
-from .paths import DATA, DESIGN_PATH, DESIGN_PATH_V1_1, RAW_DIR, RAW_DIRS_V1_1, ROOT, TRIALS_PATH, load_design
+from .paths import (DATA, DESIGN_PATH, DESIGN_PATH_V1_1, ERRATA_PATH, ERRATA_SHA256, RAW_DIR, RAW_DIRS_V1_1, ROOT,
+                    TRIALS_PATH, load_design)
 
 
 class OOSNotAuthorized(RuntimeError):
@@ -85,6 +86,15 @@ def verify_pins(design):
     return prov
 
 
+def errata_provenance():
+    """Path + sha256 of the v1.1 errata; raises if the committed copy does not match the recorded hash."""
+    got = _sha(ERRATA_PATH)
+    if got != ERRATA_SHA256:
+        raise RuntimeError(f'{ERRATA_PATH} sha256 {got} != recorded {ERRATA_SHA256}')
+    return dict(path=str(ERRATA_PATH.relative_to(ROOT)), sha256=got,
+                precedence='where a stated value conflicts with an operative rule of the pinned design, the rule governs')
+
+
 def run_oos_v1_1(panel, macro, design, out_dir, trials_path=TRIALS_PATH, **engine_kw):
     """Primary v1.1 run. The authorization check is the first statement; the trial is logged before scoring."""
     assert_oos_authorized(design)
@@ -94,7 +104,10 @@ def run_oos_v1_1(panel, macro, design, out_dir, trials_path=TRIALS_PATH, **engin
     log_trial(config, 'v1.1 primary', path=trials_path)
     res = V.primary(panel, macro, **engine_kw)
     ev = gate.evaluate_primary_v1_1(res['h1'], res['h2'])
-    return _write(out_dir, 'gate.json', dict(design='v1_1', config_hash=config_hash(config), git_head=git_head(),
+    provenance = dict(design=str(DESIGN_PATH_V1_1.relative_to(ROOT)), design_sha256=_sha(DESIGN_PATH_V1_1),
+                      errata=errata_provenance())
+    return _write(out_dir, 'gate.json', dict(design='v1_1', provenance=provenance,
+                                             config_hash=config_hash(config), git_head=git_head(),
                                              hypotheses=ev, selection_log=res['selection_log'],
                                              set_sizes={k: len(v) for k, v in res['sets'].items()}))
 
@@ -120,7 +133,10 @@ def run_oos_v1_0(panel, macro, design_v1_1, out_dir, trials_path=TRIALS_PATH):
         v['p_holm'] = adj[k]
         v['verdict_descriptive'] = gate.verdict(adj[k], v['G'], v['test_A']['G_upper'], v['coverage90'], v['lobo'],
                                                 v['n_targets'])
-    return _write(out_dir, 'r1.json', dict(design='v1_0 (R1, non-gating)', config_hash=config_hash(config),
+    provenance = dict(design=str(DESIGN_PATH.relative_to(ROOT)), design_sha256=_sha(DESIGN_PATH),
+                      authorized_by=str(DESIGN_PATH_V1_1.relative_to(ROOT)), errata=errata_provenance())
+    return _write(out_dir, 'r1.json', dict(design='v1_0 (R1, non-gating)', provenance=provenance,
+                                           config_hash=config_hash(config),
                                            frozen=frozen, hypotheses=out, war_params=params.to_dict(orient='list')))
 
 

@@ -31,6 +31,11 @@ def test_authorized_synthetic_run(tmp_path, panel11, macro11):
         assert h['verdict'] == 'INCOMPLETE'          # 8 synthetic targets < 40
         assert set(h['subperiods']) == {'P1', 'P2', 'P3'} and h['dm']['M'] == 2
     assert [e['epoch'] for e in g['selection_log']] == ['2013Q4', '2014Q4']
+    assert g['provenance']['errata'] == {
+        'path': 'tracks/y9c-trading-ot/prereg/ERRATA_v1_1.md',
+        'sha256': '68d5128fa3da40d269340afda3862ee89374bd6df59ad108c9e84d8698a17fe9',
+        'precedence': 'where a stated value conflicts with an operative rule of the pinned design, the rule governs'}
+    assert g['provenance']['design_sha256'] == '930353641c6af0b4846d6678648a7446a738a579a52b4863726c9edb5a6a9694'
 
 
 def test_authorized_synthetic_r1(tmp_path, panel, macro):
@@ -41,3 +46,5 @@ def test_authorized_synthetic_r1(tmp_path, panel, macro):
     assert 'B6' not in fr['members'] and 'B6' in fr['report_members'] and fr['b_star'] != 'B6'
     assert 'B6' not in fr['trimmed_members'] and fr['b_star_cs'] != 'B6'
     assert set(out['hypotheses']) == {'H1', 'H2'} and (tmp_path / 'r1.json').exists()
+    assert out['provenance']['errata']['sha256'] == '68d5128fa3da40d269340afda3862ee89374bd6df59ad108c9e84d8698a17fe9'
+    assert run.trial_count(tmp_path / 'trials.jsonl') == 1      # R1 counts as a trial (ERRATA C2)
