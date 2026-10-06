@@ -94,8 +94,48 @@
   <div class="placeholder"><strong>PENDING.</strong> BARY-EW on the industry total ($bn, secondary H1d) with 50%/90% bands against realised totals, 2014Q1–2026Q2.</div>
   <h3>Cross-section (T3): WAR-RM density fan</h3>
   <div class="placeholder"><strong>PENDING.</strong> One-step WAR-RM forecasts of the cross-sectional quantile function of revenue / lagged trading assets (bp), with the realised cross-section.</div>
-  <h3>Sensitivities S1–S16</h3>
-  <div class="placeholder"><strong>PENDING.</strong> Fixed first-freeze set, mid-year entrant rule (b), rolling windows, frozen settings, frozen scale, test A / WPE p-values, B5 without BAA10Y, training from 2010Q1.</div>
+  <h3>Secondary family (Holm within the family; cannot change the primary verdict)</h3>
+  <div class="table-scroll"><table class="dataframe">
+    <thead><tr><th>Test</th><th>Method</th><th>Comparator</th><th>G</th><th>p (raw, test C)</th><th>p (Holm, secondary)</th><th>Targets</th><th>Role</th></tr></thead>
+    <tbody>
+<tr><td>H1b</td><td>CRPS-shrunk barycenter weights (κ = n/(n+200))</td><td>B*</td><td>—</td><td>—</td><td>—</td><td>—</td><td><span class="verdict">PENDING</span></td></tr>
+<tr><td>H1c</td><td>Equal-weight linear pool (F1 comparator)</td><td>B*</td><td>—</td><td>—</td><td>—</td><td>—</td><td><span class="verdict">PENDING</span></td></tr>
+<tr><td>H1d</td><td>BARY-EW on the industry total (B0, B1, B3, B4 on the level)</td><td>B*<sub>T1</sub></td><td>—</td><td>—</td><td>—</td><td>—</td><td><span class="verdict">PENDING</span></td></tr>
+<tr><td>H1e_h2</td><td>BARY-EW at h = 2</td><td>B*<sub>h</sub></td><td>—</td><td>—</td><td>—</td><td>—</td><td><span class="verdict">PENDING</span></td></tr>
+<tr><td>H1e_h3</td><td>BARY-EW at h = 3</td><td>B*<sub>h</sub></td><td>—</td><td>—</td><td>—</td><td>—</td><td><span class="verdict">PENDING</span></td></tr>
+<tr><td>H1e_h4</td><td>BARY-EW at h = 4</td><td>B*<sub>h</sub></td><td>—</td><td>—</td><td>—</td><td>—</td><td><span class="verdict">PENDING</span></td></tr>
+<tr><td>H2b</td><td>WAR-RM mapped to the bank set ($)</td><td>B*</td><td>—</td><td>—</td><td>—</td><td>—</td><td><span class="verdict">PENDING</span></td></tr>
+<tr><td>H2c_persistence</td><td>Cross-section trimmed W₂² (U19)</td><td>persistence Q<sub>t</sub></td><td>—</td><td>—</td><td>—</td><td>—</td><td><span class="verdict">PENDING</span></td></tr>
+<tr><td>H2c_climatology</td><td>Cross-section trimmed W₂² (U19)</td><td>climatology Q̄<sub>t</sub></td><td>—</td><td>—</td><td>—</td><td>—</td><td><span class="verdict">PENDING</span></td></tr>
+<tr><td>H2d</td><td>Fréchet regression on VIX and rates volatility + rank map</td><td>B*<sub>CS</sub></td><td>—</td><td>—</td><td>—</td><td>—</td><td><span class="verdict">PENDING</span></td></tr>
+<tr><td>H2e</td><td>OT quantile-map recalibration of B* (≥ 100 PITs)</td><td>B*</td><td>—</td><td>—</td><td>—</td><td>—</td><td><span class="verdict">PENDING</span></td></tr>
+<tr><td>H2f</td><td>Autoregressive OT map (scalar) + rank map</td><td>B*<sub>CS</sub></td><td>—</td><td>—</td><td>—</td><td>—</td><td><span class="verdict">PENDING</span></td></tr>
+    </tbody>
+  </table></div>
+  <h3>Sensitivities S1–S16, S4b, FB4 (pre-registered; none can change a primary verdict)</h3>
+  <div class="table-scroll"><table class="dataframe">
+    <thead><tr><th>ID</th><th>Variation</th><th>H1 G</th><th>H2 G</th><th>H1d G</th><th>Role</th></tr></thead>
+    <tbody>
+<tr><td>S1</td><td>Bank set: full-sample balanced ($10m, $100m; look-ahead) and the fixed 2013Q4 set</td><td>—</td><td>—</td><td>—</td><td><span class="verdict">PENDING</span></td></tr>
+<tr><td>S2</td><td>Modelling scale: revenue / total assets; raw $</td><td>—</td><td>—</td><td>—</td><td><span class="verdict">PENDING</span></td></tr>
+<tr><td>S3</td><td>Cross-section threshold $10m / $50m / $1bn</td><td>—</td><td>—</td><td>—</td><td><span class="verdict">PENDING</span></td></tr>
+<tr><td>S4</td><td>Exclude 2020Q1–Q2 from training</td><td>—</td><td>—</td><td>—</td><td><span class="verdict">PENDING</span></td></tr>
+<tr><td>S4b</td><td>Training from 2010Q1</td><td>—</td><td>—</td><td>—</td><td><span class="verdict">PENDING</span></td></tr>
+<tr><td>S5</td><td>Drop targets at merger events and the quarter after</td><td>—</td><td>—</td><td>—</td><td><span class="verdict">PENDING</span></td></tr>
+<tr><td>S6</td><td>No Q1 dummy in B4/B5; WAR with a Q1 tangent shift</td><td>—</td><td>—</td><td>—</td><td><span class="verdict">PENDING</span></td></tr>
+<tr><td>S7</td><td>CRPS on 19 levels</td><td>—</td><td>—</td><td>—</td><td><span class="verdict">PENDING</span></td></tr>
+<tr><td>S8</td><td>Target ex-CVA/DVA for banks ≥ $100bn</td><td>—</td><td>—</td><td>—</td><td><span class="verdict">PENDING</span></td></tr>
+<tr><td>S9</td><td>Macro data through the availability date</td><td>—</td><td>—</td><td>—</td><td><span class="verdict">PENDING</span></td></tr>
+<tr><td>S10</td><td>Leave one OOS year out</td><td>—</td><td>—</td><td>—</td><td><span class="verdict">PENDING</span></td></tr>
+<tr><td>S11</td><td>Mid-year entrant rule (b), industry total</td><td>—</td><td>—</td><td>—</td><td><span class="verdict">PENDING</span></td></tr>
+<tr><td>S12</td><td>Rolling 16-quarter estimation windows</td><td>—</td><td>—</td><td>—</td><td><span class="verdict">PENDING</span></td></tr>
+<tr><td>S13</td><td>Settings frozen at 2013Q4</td><td>—</td><td>—</td><td>—</td><td><span class="verdict">PENDING</span></td></tr>
+<tr><td>S14</td><td>Frozen burn-in score scale (2010Q1–2013Q4)</td><td>—</td><td>—</td><td>—</td><td><span class="verdict">PENDING</span></td></tr>
+<tr><td>S15</td><td>Test A and WPE p-values</td><td>—</td><td>—</td><td>—</td><td><span class="verdict">PENDING</span></td></tr>
+<tr><td>S16</td><td>B5 without the Baa–10-year spread</td><td>—</td><td>—</td><td>—</td><td><span class="verdict">PENDING</span></td></tr>
+<tr><td>FB4</td><td>Exclude 2020Q1–Q2 targets</td><td>—</td><td>—</td><td>—</td><td><span class="verdict">PENDING</span></td></tr>
+    </tbody>
+  </table></div>
   <h2>Design (v1.1)</h2>
   <ul>
     <li><strong>Target.</strong> Quarterly BHCKA220, de-cumulated from year-to-date (Q1 as reported, no bridging over gaps), thousands of USD. Negative values kept; no logs.

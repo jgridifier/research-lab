@@ -89,11 +89,73 @@ SET_COUNTS = [('2013Q4', 12), ('2014Q4', 16), ('2015Q4', 17), ('2016Q4', 18), ('
               ('2025Q4', 21)]
 
 
+SECONDARY_ROWS = [
+    ('H1b', 'CRPS-shrunk barycenter weights (κ = n/(n+200))', 'B*'),
+    ('H1c', 'Equal-weight linear pool (F1 comparator)', 'B*'),
+    ('H1d', 'BARY-EW on the industry total (B0, B1, B3, B4 on the level)', 'B*<sub>T1</sub>'),
+    ('H1e_h2', 'BARY-EW at h = 2', 'B*<sub>h</sub>'),
+    ('H1e_h3', 'BARY-EW at h = 3', 'B*<sub>h</sub>'),
+    ('H1e_h4', 'BARY-EW at h = 4', 'B*<sub>h</sub>'),
+    ('H2b', 'WAR-RM mapped to the bank set ($)', 'B*'),
+    ('H2c_persistence', 'Cross-section trimmed W₂² (U19)', 'persistence Q<sub>t</sub>'),
+    ('H2c_climatology', 'Cross-section trimmed W₂² (U19)', 'climatology Q̄<sub>t</sub>'),
+    ('H2d', 'Fréchet regression on VIX and rates volatility + rank map', 'B*<sub>CS</sub>'),
+    ('H2e', 'OT quantile-map recalibration of B* (≥ 100 PITs)', 'B*'),
+    ('H2f', 'Autoregressive OT map (scalar) + rank map', 'B*<sub>CS</sub>'),
+]
+
+
+def secondary_rows(sec):
+    res = (sec or {}).get('results') or {}
+    rows = []
+    for key, what, ref in SECONDARY_ROWS:
+        r = res.get(key) or {}
+        status = 'PENDING' if not sec else ('N/A' if r.get('status') != 'ok' else 'secondary')
+        rows.append(f"<tr><td>{e(key)}</td><td>{e(what)}</td><td>{ref}</td><td>{_fmt(r.get('G'), '{:+.1%}')}</td>"
+                    f"<td>{_fmt(r.get('p'), '{:.3f}')}</td><td>{_fmt(r.get('p_holm_secondary'), '{:.3f}')}</td>"
+                    f"<td>{_fmt(r.get('n_targets'), '{:d}')}</td><td><span class=\"verdict\">{status}</span></td></tr>")
+    return '\n'.join(rows)
+
+
+SENS_LABELS = [('S1', 'Bank set: full-sample balanced ($10m, $100m; look-ahead) and the fixed 2013Q4 set'),
+               ('S2', 'Modelling scale: revenue / total assets; raw $'),
+               ('S3', 'Cross-section threshold $10m / $50m / $1bn'),
+               ('S4', 'Exclude 2020Q1–Q2 from training'), ('S4b', 'Training from 2010Q1'),
+               ('S5', 'Drop targets at merger events and the quarter after'),
+               ('S6', 'No Q1 dummy in B4/B5; WAR with a Q1 tangent shift'), ('S7', 'CRPS on 19 levels'),
+               ('S8', 'Target ex-CVA/DVA for banks ≥ $100bn'), ('S9', 'Macro data through the availability date'),
+               ('S10', 'Leave one OOS year out'), ('S11', 'Mid-year entrant rule (b), industry total'),
+               ('S12', 'Rolling 16-quarter estimation windows'), ('S13', 'Settings frozen at 2013Q4'),
+               ('S14', 'Frozen burn-in score scale (2010Q1–2013Q4)'), ('S15', 'Test A and WPE p-values'),
+               ('S16', 'B5 without the Baa–10-year spread'), ('FB4', 'Exclude 2020Q1–Q2 targets')]
+
+
+def sensitivity_rows(sens):
+    items = (sens or {}).get('sensitivities') or []
+    rows = []
+    for sid, label in SENS_LABELS:
+        mine = [x for x in items if x.get('id') == sid]
+        if not mine:
+            rows.append(f"<tr><td>{sid}</td><td>{e(label)}</td><td>—</td><td>—</td><td>—</td>"
+                        f"<td><span class=\"verdict\">PENDING</span></td></tr>")
+            continue
+        for x in mine:
+            res = x.get('results') or {}
+            g = lambda h: (res.get(h) or {}).get('G') if isinstance(res.get(h), dict) and 'G' in (res.get(h) or {}) else None
+            rows.append(f"<tr><td>{sid}</td><td>{e(x.get('variant', ''))}</td><td>{_fmt(g('H1'), '{:+.1%}')}</td>"
+                        f"<td>{_fmt(g('H2'), '{:+.1%}')}</td><td>{_fmt(g('H1d'), '{:+.1%}')}</td>"
+                        f"<td><span class=\"verdict\">{'non-gating' if x.get('status') == 'ok' else 'N/A'}</span></td></tr>")
+    return '\n'.join(rows)
+
+
 def render():
     design = json.loads(DESIGN_PATH_V1_1.read_text(encoding='utf-8'))
     gate_path, r1_path = RESULTS / 'tables/gate.json', RESULTS / 'tables/r1.json'
     gate = json.loads(gate_path.read_text()) if gate_path.exists() else None
     r1 = json.loads(r1_path.read_text()) if r1_path.exists() else None
+    sec_path, sens_path = RESULTS / 'tables/secondary.json', RESULTS / 'tables/sensitivities.json'
+    sec = json.loads(sec_path.read_text()) if sec_path.exists() else None
+    sens = json.loads(sens_path.read_text()) if sens_path.exists() else None
     pending = gate is None
     trials = trial_count(TRIALS_PATH)
     authorized = bool(design.get('oos_authorized'))
@@ -187,8 +249,20 @@ def render():
   {ph('BARY-EW on the industry total ($bn, secondary H1d) with 50%/90% bands against realised totals, 2014Q1–2026Q2.')}
   <h3>Cross-section (T3): WAR-RM density fan</h3>
   {ph('One-step WAR-RM forecasts of the cross-sectional quantile function of revenue / lagged trading assets (bp), with the realised cross-section.')}
-  <h3>Sensitivities S1–S16</h3>
-  {ph('Fixed first-freeze set, mid-year entrant rule (b), rolling windows, frozen settings, frozen scale, test A / WPE p-values, B5 without BAA10Y, training from 2010Q1.')}
+  <h3>Secondary family (Holm within the family; cannot change the primary verdict)</h3>
+  <div class="table-scroll"><table class="dataframe">
+    <thead><tr><th>Test</th><th>Method</th><th>Comparator</th><th>G</th><th>p (raw, test C)</th><th>p (Holm, secondary)</th><th>Targets</th><th>Role</th></tr></thead>
+    <tbody>
+{secondary_rows(sec)}
+    </tbody>
+  </table></div>
+  <h3>Sensitivities S1–S16, S4b, FB4 (pre-registered; none can change a primary verdict)</h3>
+  <div class="table-scroll"><table class="dataframe">
+    <thead><tr><th>ID</th><th>Variation</th><th>H1 G</th><th>H2 G</th><th>H1d G</th><th>Role</th></tr></thead>
+    <tbody>
+{sensitivity_rows(sens)}
+    </tbody>
+  </table></div>
   <h2>Design (v1.1)</h2>
   <ul>
     <li><strong>Target.</strong> Quarterly BHCKA220, de-cumulated from year-to-date (Q1 as reported, no bridging over gaps), thousands of USD. Negative values kept; no logs.
