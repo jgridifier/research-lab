@@ -78,10 +78,20 @@ def test_q1_dummy_off(panel11):
 def test_s8_panel(panel11):
     adj = SENS.s8_panel(panel11)
     big = panel11.total_assets.ge(SENS.S8_TA_MIN) & panel11.trading_revenue_q.notna()
+    pre = panel11.quarter.lt(pd.Period('2011Q1', freq='Q'))
     k = panel11.trd_cva_counterparty_q.fillna(0) + panel11.trd_dva_own_q.fillna(0)
-    assert np.allclose(adj.trading_revenue_q[big], (panel11.trading_revenue_q - k)[big])
-    assert np.allclose(adj.trading_revenue_q[~big], panel11.trading_revenue_q[~big], equal_nan=True)
-    assert big.any()
+    do = big & ~pre
+    assert np.allclose(adj.trading_revenue_q[do], (panel11.trading_revenue_q - k)[do])
+    assert np.allclose(adj.trading_revenue_q[~do], panel11.trading_revenue_q[~do], equal_nan=True)
+    assert (adj.s8_adjusted == do).all() and (adj.s8_unadjusted_pre2011 == (big & pre)).all()
+    assert do.any() and (big & pre).any()                       # pre-2011 big-bank rows exist and stay unadjusted
+
+
+def test_rescore_labels():
+    lab = {p['id']: p['config'].get('label') for p in SENS.PLAN}
+    assert lab['S7'] == lab['S14'] == 'rescore, no re-selection'
+    s8 = next(p for p in SENS.PLAN if p['id'] == 'S8')['config']
+    assert 'before 2011Q1 are unadjusted' in s8['label'] and 'March 2012' in s8['sign']
 
 
 def test_s14_frozen_scales(panel11):

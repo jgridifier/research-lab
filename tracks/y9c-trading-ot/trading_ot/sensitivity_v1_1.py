@@ -4,6 +4,8 @@ Each entry of PLAN is one registered execution (logged as its own trial by run.r
 kind = 'rerun'   : the full v1.1 walk-forward (annual re-selection, case scale) is repeated with one change;
        'rescore' : the primary's stored forecasts are re-aggregated / re-scored (no refit), because the variation
                    is defined on the evaluation, not the estimation (S5, S7, S10, S13, S14, S15, FB4).
+S7 and S14 are labelled 'rescore, no re-selection' (evaluation sensitivities; ERRATA_v1_1b B3). S13's rescoring is
+exactly a rerun because member forecasts do not depend on settings.
 Every result reports, per hypothesis, G, G_U, the raw fixed-b test-C p (M = floor(sqrt(T))), coverage, LOBO-min,
 targets and cases, and a descriptive verdict_v1_1 computed with the raw p (labelled descriptive; never gating).
 """
@@ -21,6 +23,8 @@ S4_EXCLUDE = ('2020Q1', '2020Q2')
 S3_THRESHOLDS = {'10m': 1e4, '50m': 5e4, '1bn': 1e6}
 S8_TA_MIN = 1e8                     # $100bn in $k
 S14_WINDOW = ('2010Q1', '2013Q4')
+S8_MEMO_FIRST = '2011Q1'            # HI Memo 9(f)/9(g) (K090/K094) first collected
+RESCORE_NO_RESELECTION = 'rescore, no re-selection'   # ERRATA_v1_1b B3: S7 and S14 are evaluation sensitivities
 
 
 def summarize(cases):
@@ -55,14 +59,20 @@ PLAN = [
     _p('S4b', 'training_from_2010Q1', 'rerun', ['H1', 'H2'], spec=dict(first='2010Q1')),
     _p('S5', 'drop_merger_targets', 'rescore', ['H1', 'H2']),
     _p('S6', 'no_q1_dummy_war_q1_shift', 'rerun', ['H1', 'H2'], spec=dict(use_q1=False, war_q1_shift=True)),
-    _p('S7', 'crps_u19', 'rescore', ['H1', 'H2']),
-    _p('S8', 'ex_cva_dva_100bn', 'rerun', ['H1', 'H2'], target='A220 - K090 - K094 if TA_t >= $100bn'),
+    _p('S7', 'crps_u19', 'rescore', ['H1', 'H2'], label=RESCORE_NO_RESELECTION,
+       note='19-level score on the primary forecasts; settings stay those selected under the U99 criterion'),
+    _p('S8', 'ex_cva_dva_100bn', 'rerun', ['H1', 'H2'], target='A220 - K090 - K094 if TA_t >= $100bn',
+       label='training rows before 2011Q1 are unadjusted (K090/K094 not collected before 2011Q1)',
+       sign='verified: FR Y-9C instructions (March 2012), Schedule HI Memo 9(f)/9(g), signed YTD amounts included in '
+            'trading revenue (ERRATA_v1_1b B2)'),
     _p('S9', 'macro_through_Dt', 'rerun', ['H1', 'H2'], macro='asof_rule=Dt'),
     _p('S10', 'leave_one_year_out', 'rescore', ['H1', 'H2']),
     _p('S11', 'entrant_rule_b_T1', 'rerun', ['H1d']),
     _p('S12', 'rolling_w16', 'rerun', ['H1', 'H2'], spec=dict(window=16)),
-    _p('S13', 'settings_frozen_2013Q4', 'rescore', ['H1', 'H2']),
-    _p('S14', 'frozen_burnin_scale', 'rescore', ['H1', 'H1d']),
+    _p('S13', 'settings_frozen_2013Q4', 'rescore', ['H1', 'H2'],
+       note='rescoring is exactly a rerun: member forecasts do not depend on settings (ERRATA_v1_1b B3)'),
+    _p('S14', 'frozen_burnin_scale', 'rescore', ['H1', 'H1d'], label=RESCORE_NO_RESELECTION,
+       note='frozen 2010Q1-2013Q4 scale in the score only; settings stay those selected under the case-scale criterion'),
     _p('S15', 'test_A_and_WPE', 'rescore', ['H1', 'H2']),
     _p('S16', 'b5_without_baa10y', 'rerun', ['H1', 'H2'], macro='drop baa'),
     _p('FB4', 'exclude_targets_2020Q1Q2', 'rescore', ['H1', 'H2']),
@@ -74,14 +84,25 @@ def plan_ids():
 
 
 # ── reruns ──────────────────────────────────────────────────────────────────
-def s8_panel(panel, ta_min=S8_TA_MIN):
-    """Target ex-CVA/DVA: A220_q - K090_q - K094_q where TA_t >= $100bn; missing K090/K094 count as 0 (memo
-    items are blank before 2011Q1 and when not applicable). Sign convention as written in the prereg (UNVERIFIED
-    against the form, per prereg §5.6)."""
+def s8_panel(panel, ta_min=S8_TA_MIN, memo_first=S8_MEMO_FIRST):
+    """Target ex-CVA/DVA: A220_q - K090_q - K094_q where TA_t >= $100bn.
+
+    Sign verified (ERRATA_v1_1b B2): the FR Y-9C instructions (March 2012) for Schedule HI Memo 9(f)/9(g) define both
+    items as the amount included in trading revenue that resulted from changes during the calendar year-to-date in
+    the BHC's credit / debit valuation adjustments, i.e. signed YTD components of A220; both are de-cumulated
+    (items.yaml flow_ytd), so quarterly A220 - K090 - K094 is the ex-CVA/DVA flow.
+    From 2011Q1 a missing K090/K094 counts as 0 (accepted: 173 of 2,008 rows, 12 banks with negligible trading).
+    Before 2011Q1 the items were not collected: those rows are left UNADJUSTED and flagged.
+    Adds columns s8_adjusted (row changed by the rule) and s8_unadjusted_pre2011 (TA_t >= $100bn, quarter < 2011Q1).
+    """
     out = panel.copy()
     big = out.total_assets.ge(ta_min) & out.trading_revenue_q.notna()
+    pre = out.quarter.lt(pd.Period(memo_first, freq='Q'))
     adj = out.trd_cva_counterparty_q.fillna(0) + out.trd_dva_own_q.fillna(0)
-    out.loc[big, 'trading_revenue_q'] = out.loc[big, 'trading_revenue_q'] - adj[big]
+    do = big & ~pre
+    out.loc[do, 'trading_revenue_q'] = out.loc[do, 'trading_revenue_q'] - adj[do]
+    out['s8_adjusted'] = do
+    out['s8_unadjusted_pre2011'] = big & pre
     return out
 
 
@@ -112,6 +133,8 @@ def run_rerun(item, ctx):
     if item['id'] == 'S8':
         run_panel = s8_panel(panel)
         set_by_epoch = ctx['primary']['sets_periods']             # population unchanged; only the target changes
+        s8_counts = dict(rows_adjusted=int(run_panel.s8_adjusted.sum()),
+                         rows_unadjusted_pre2011=int(run_panel.s8_unadjusted_pre2011.sum()))
     if spec.exclude_train or spec.first != V.Spec().first:
         truth = panel                                              # training restricted; scores on the full truth
     if item['id'] == 'S9':
@@ -125,6 +148,8 @@ def run_rerun(item, ctx):
                  selection=[{k: v for k, v in e.items() if k in ('epoch', 'set_size')} |
                             {h: {kk: e[h][kk] for kk in ('b_star', 'trimmed', 's', 'inherited')}
                              for h in ('t2', 'cs') if h in e and e[h]} for e in res['selection_log']])
+    if item['id'] == 'S8':
+        extra['s8'] = dict(s8_counts, label=item['config']['label'], sign=item['config']['sign'])
     if set_by_epoch is not None and item['id'] == 'S1':
         extra['set'] = [int(x) for x in next(iter(set_by_epoch.values()))]
     return out, extra

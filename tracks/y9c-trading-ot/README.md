@@ -114,17 +114,23 @@ forecasts re-aggregated, no refit; the descriptive verdict uses the raw p and ne
     including the v1.1 additions).
 19. **S6.** The Q1 term is removed from B4/B5 (T2 and T3). The WAR Q1 tangent shift is a joint least-squares fit of
     V_(s+h) = βV_s + δ·1[Q1(s+h)] (β on U19, clipped; δ on U99), with δ added for Q1 targets, then isotonic projection.
-20. **S7.** Rescore the primary forecasts with the 19-level score; settings are not re-selected.
-21. **S8.** A220 − K090 − K094 where TA_t ≥ $100bn, with missing memo values = 0. The sign is as written in the
-    prereg and is **UNVERIFIED** against the form. The primary's sets are kept (the population is unchanged). H1 and
-    H2 are rerun.
+20. **S7 — rescore, no re-selection.** The primary forecasts are re-scored with the 19-level score; settings stay those
+    selected under the primary U99 criterion (ERRATA_v1_1b B3: an evaluation sensitivity).
+21. **S8.** A220 − K090 − K094 where TA_t ≥ $100bn. **Sign verified** (ERRATA_v1_1b B2): the FR Y-9C instructions
+    (March 2012) for Schedule HI Memo 9(f)/9(g) define both items as signed YTD amounts included in trading revenue
+    (changes during the calendar year-to-date in the BHC's CVA / DVA), so the de-cumulated quarterly
+    A220 − K090 − K094 is correct. From 2011Q1 a missing memo value counts as 0 (accepted: 173 of 2,008 rows, 12 banks
+    with negligible trading). **Before 2011Q1 the items were not collected: S8's training rows before 2011Q1 are
+    unadjusted**, flagged in the code (`s8_unadjusted_pre2011`) and reported with S8 in sensitivities.json. The
+    primary's sets are kept (the population is unchanged). H1 and H2 are rerun.
 22. **S9.** v1.1 macro with `asof_rule='Dt'`.
 23. **S10.** LOYO over 2014..2026 on the primary cases (full summary per year).
 24. **S11.** H1d on the rule-(b) T1.
 25. **S12.** A rolling 16-quarter window for every estimator (members, B5, the B6 universe, WAR β/ρ/Q̄, the T3
     prior-r count), via the pre-sample mask at origin − 16.
-26. **S13.** Rescore with epoch-0 trim, s, B* and B*_CS for every target; populations are still refreshed.
-27. **S14.** Rescore H1 with s_i^F = 1.4826·MAD over 2010Q1–2013Q4 (≥ 12 values, p10 floor over S_2013Q4). Banks
+26. **S13.** Rescore with epoch-0 trim, s, B* and B*_CS for every target; populations are still refreshed. This
+    rescoring is exactly a rerun, because member forecasts do not depend on settings (ERRATA_v1_1b B3).
+27. **S14 — rescore, no re-selection.** Rescore H1 with s_i^F = 1.4826·MAD over 2010Q1–2013Q4 (≥ 12 values, p10 floor over S_2013Q4). Banks
     without 12 values use their case scale at their first scored origin, frozen from then on. H2 is unchanged (the
     addendum keeps the trailing-8 MAD of r). H1d uses T1's 2010Q1–2013Q4 MAD. The forecasts are unchanged.
 28. **S15.** Test A, WPE and `y9c.forecast.clustered_dm` (CR1, prereg "continuity").

@@ -38,6 +38,8 @@ def test_run_all_writes_everything(tmp_path, panel11, macro11, ytd11, panel, mac
     sens = json.loads((tmp_path / 'sensitivities.json').read_text())['sensitivities']
     assert [s['id'] for s in sens] == [p['id'] for p in SENS.PLAN if p['id'] in SENS_SUBSET]
     assert all(s['status'] == 'ok' for s in sens)
+    labels_out = {s['id']: s['label'] for s in sens}
+    assert labels_out['S7'] == labels_out['S14'] == 'rescore, no re-selection'
     labels = _labels(trials)
     n_sec = 11                                   # 12 family tests; H2c's two comparators are one execution
     assert run.trial_count(trials) == 1 + n_sec + 1 + len(sens) + 1

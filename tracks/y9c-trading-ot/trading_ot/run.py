@@ -299,7 +299,7 @@ def run_all_v1_1(panel, macro, design, out_dir, trials_path=TRIALS_PATH, inputs=
             continue
         trial(f'sensitivity {key}', sensitivity=item)
         out, extra = SENS.run_item(item, ctx)
-        sens.append(dict(item, status='ok', results=out, details=extra))
+        sens.append(dict(item, label=item['config'].get('label'), status='ok', results=out, details=extra))
     _write(out_dir, 'sensitivities.json', _jsonable(dict(
         design='v1_1', label='sensitivities (pre-registered; none can change a primary verdict)',
         provenance=provenance, primary_reference={k: dict(G=v['G'], p=v['dm']['p'], verdict=v['verdict'])

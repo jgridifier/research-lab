@@ -122,11 +122,11 @@ SENS_LABELS = [('S1', 'Bank set: full-sample balanced ($10m, $100m; look-ahead) 
                ('S3', 'Cross-section threshold $10m / $50m / $1bn'),
                ('S4', 'Exclude 2020Q1–Q2 from training'), ('S4b', 'Training from 2010Q1'),
                ('S5', 'Drop targets at merger events and the quarter after'),
-               ('S6', 'No Q1 dummy in B4/B5; WAR with a Q1 tangent shift'), ('S7', 'CRPS on 19 levels'),
-               ('S8', 'Target ex-CVA/DVA for banks ≥ $100bn'), ('S9', 'Macro data through the availability date'),
+               ('S6', 'No Q1 dummy in B4/B5; WAR with a Q1 tangent shift'), ('S7', 'CRPS on 19 levels (rescore, no re-selection)'),
+               ('S8', 'Target ex-CVA/DVA for banks ≥ $100bn (rows before 2011Q1 unadjusted)'), ('S9', 'Macro data through the availability date'),
                ('S10', 'Leave one OOS year out'), ('S11', 'Mid-year entrant rule (b), industry total'),
                ('S12', 'Rolling 16-quarter estimation windows'), ('S13', 'Settings frozen at 2013Q4'),
-               ('S14', 'Frozen burn-in score scale (2010Q1–2013Q4)'), ('S15', 'Test A and WPE p-values'),
+               ('S14', 'Frozen burn-in score scale, 2010Q1–2013Q4 (rescore, no re-selection)'), ('S15', 'Test A and WPE p-values'),
                ('S16', 'B5 without the Baa–10-year spread'), ('FB4', 'Exclude 2020Q1–Q2 targets')]
 
 
@@ -142,7 +142,8 @@ def sensitivity_rows(sens):
         for x in mine:
             res = x.get('results') or {}
             g = lambda h: (res.get(h) or {}).get('G') if isinstance(res.get(h), dict) and 'G' in (res.get(h) or {}) else None
-            rows.append(f"<tr><td>{sid}</td><td>{e(x.get('variant', ''))}</td><td>{_fmt(g('H1'), '{:+.1%}')}</td>"
+            lab = f" ({x['label']})" if x.get('label') == 'rescore, no re-selection' else ''
+            rows.append(f"<tr><td>{sid}</td><td>{e(x.get('variant', '') + lab)}</td><td>{_fmt(g('H1'), '{:+.1%}')}</td>"
                         f"<td>{_fmt(g('H2'), '{:+.1%}')}</td><td>{_fmt(g('H1d'), '{:+.1%}')}</td>"
                         f"<td><span class=\"verdict\">{'non-gating' if x.get('status') == 'ok' else 'N/A'}</span></td></tr>")
     return '\n'.join(rows)
