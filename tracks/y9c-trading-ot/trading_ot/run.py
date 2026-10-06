@@ -31,7 +31,7 @@ def assert_oos_authorized(design):
     """Stop-gate: no OOS scoring until the design authorizes it and has no unresolved questions."""
     if not design.get('oos_authorized', False):
         raise OOSNotAuthorized('OOS scoring is not authorized by the pinned design (oos_authorized=false; '
-                               'prereg addendum v1.1 pending). Nothing was scored.')
+                               'awaiting approval, recorded as a separate commit). Nothing was scored.')
     open_q = [q['id'] for q in design.get('open_questions', []) if q.get('resolution') in (None, '')]
     if open_q:
         raise OOSNotAuthorized(f'Unresolved pre-registration questions: {open_q}. Nothing was scored.')
