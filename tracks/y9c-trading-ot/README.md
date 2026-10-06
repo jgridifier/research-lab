@@ -22,6 +22,14 @@ per-bank probabilistic baselines B0–B6, plus two OT layers from the classical-
   - **Where a stated value conflicts with an operative rule of the pinned design, the rule wins.** No new design pin.
   - The path and sha256 are written into the provenance block of `gate.json` / `r1.json`, and the run refuses if
     the copy's hash changes.
+- **Errata 1b:** `prereg/ERRATA_v1_1b.md` is a verbatim copy of `/workspace/research/y9c_ot_prereg/ERRATA_v1_1b.md`
+  (Quant's review of ce9ce39), sha256 `2f134632acf4120ba410e7e2eacb352895eb41d9fbe9207cd0ddc6d22fef21bf`.
+  - §1 verification (pins, primary bit-identity, H1d epoch 0, 37-trial semantics). B1: the coverage base is kept as
+    coded (no change). B2: S8 sign verified; pre-2011Q1 S8 training rows unadjusted. B3: S13 rescore = rerun; S7/S14
+    labelled "rescore, no re-selection". §4: the not-implemented secondary items (see below).
+  - Handled exactly like ERRATA_v1_1: `run.preflight` checks its hash right after authorization and before any trial
+    is logged, and `provenance.errata_v1_1b` (path, sha256) is written into `gate.json`, `r1.json`, `secondary.json`
+    and `sensitivities.json`.
 - `trials.jsonl` holds one `design_revision` entry (`counts_as_trial: false`). The OOS trial count is 0.
 - **Preflight order.** Every OOS entry point (`run_oos_v1_1`, `run_oos_v1_0`, `run_all_v1_1`, `stage_oos`) calls
   `run.preflight` first: authorization → design sha256 vs the pin(s) in `statement_forecast.prereg` → errata sha256.

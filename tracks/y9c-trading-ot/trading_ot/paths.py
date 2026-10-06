@@ -22,6 +22,9 @@ DESIGN_PATH_V1_1 = TRACK / 'test_design_trading_ot_v1_1.json'
 ERRATA_PATH = TRACK / 'prereg' / 'ERRATA_v1_1.md'
 ERRATA_SOURCE = '/workspace/research/y9c_ot_prereg/ERRATA_v1_1.md'
 ERRATA_SHA256 = '68d5128fa3da40d269340afda3862ee89374bd6df59ad108c9e84d8698a17fe9'
+ERRATA_1B_PATH = TRACK / 'prereg' / 'ERRATA_v1_1b.md'
+ERRATA_1B_SOURCE = '/workspace/research/y9c_ot_prereg/ERRATA_v1_1b.md'
+ERRATA_1B_SHA256 = '2f134632acf4120ba410e7e2eacb352895eb41d9fbe9207cd0ddc6d22fef21bf'
 
 
 def load_design(path=DESIGN_PATH):

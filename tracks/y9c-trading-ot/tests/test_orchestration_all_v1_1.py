@@ -20,6 +20,9 @@ def _labels(path):
     return [json.loads(l)['label'] for l in path.read_text().splitlines() if l.strip()]
 
 
+ERRATA_1B = '2f134632acf4120ba410e7e2eacb352895eb41d9fbe9207cd0ddc6d22fef21bf'
+
+
 def test_run_all_writes_everything(tmp_path, panel11, macro11, ytd11, panel, macro):
     trials = tmp_path / 'trials.jsonl'
     inputs = dict(macro_dt=macro11.assign(vix=macro11.vix[::-1].to_numpy()),
@@ -35,7 +38,11 @@ def test_run_all_writes_everything(tmp_path, panel11, macro11, ytd11, panel, mac
                                         'H2c_climatology', 'H2d', 'H2e', 'H2f'])
     assert set(sec['falsification']) == {'F1', 'F2', 'F3', 'F4', 'F5'}
     assert sec['provenance']['errata']['sha256'].startswith('68d5128f')
-    sens = json.loads((tmp_path / 'sensitivities.json').read_text())['sensitivities']
+    sens_doc = json.loads((tmp_path / 'sensitivities.json').read_text())
+    r1 = json.loads((tmp_path / 'r1.json').read_text())
+    for doc in (g, sec, sens_doc, r1):
+        assert doc['provenance']['errata_v1_1b']['sha256'] == ERRATA_1B
+    sens = sens_doc['sensitivities']
     assert [s['id'] for s in sens] == [p['id'] for p in SENS.PLAN if p['id'] in SENS_SUBSET]
     assert all(s['status'] == 'ok' for s in sens)
     labels_out = {s['id']: s['label'] for s in sens}

@@ -20,7 +20,7 @@ import os
 import subprocess
 import sys
 
-from .paths import (DATA, DESIGN_PATH, DESIGN_PATH_V1_1, ERRATA_PATH, ERRATA_SHA256, RAW_DIR, RAW_DIRS_V1_1, ROOT,
+from .paths import (DATA, DESIGN_PATH, DESIGN_PATH_V1_1, ERRATA_1B_PATH, ERRATA_1B_SHA256, ERRATA_PATH, ERRATA_SHA256, RAW_DIR, RAW_DIRS_V1_1, ROOT,
                     TRIALS_PATH, load_design)
 
 
@@ -111,7 +111,7 @@ def preflight(design, which=('v1_1',)):
     gate.json / r1.json / companion JSONs, so nothing is recomputed after scoring."""
     assert_oos_authorized(design)
     designs = design_sha_check(which)
-    return dict(designs=designs, errata=errata_provenance())
+    return dict(designs=designs, errata=errata_provenance(), errata_v1_1b=errata_provenance_1b())
 
 
 def errata_provenance():
@@ -120,6 +120,16 @@ def errata_provenance():
     if got != ERRATA_SHA256:
         raise ProvenanceError(f'{ERRATA_PATH} sha256 {got} != recorded {ERRATA_SHA256}. Nothing was logged or scored.')
     return dict(path=str(ERRATA_PATH.relative_to(ROOT)), sha256=got,
+                precedence='where a stated value conflicts with an operative rule of the pinned design, the rule governs')
+
+
+def errata_provenance_1b():
+    """Path + sha256 of ERRATA_v1_1b (Quant's PR #10 review of ce9ce39); raises if the committed copy does not match."""
+    got = _sha(ERRATA_1B_PATH)
+    if got != ERRATA_1B_SHA256:
+        raise ProvenanceError(f'{ERRATA_1B_PATH} sha256 {got} != recorded {ERRATA_1B_SHA256}. '
+                              'Nothing was logged or scored.')
+    return dict(path=str(ERRATA_1B_PATH.relative_to(ROOT)), sha256=got,
                 precedence='where a stated value conflicts with an operative rule of the pinned design, the rule governs')
 
 
@@ -134,7 +144,7 @@ def _primary(panel, macro, pre, out_dir, trials_path, store=False, companions=()
     log_trial(config, 'v1.1 primary', path=trials_path)
     res = V.primary(panel, macro, store=store, **engine_kw)
     ev = gate.evaluate_primary_v1_1(res['h1'], res['h2'])
-    provenance = dict(**pre['designs']['v1_1'], errata=pre['errata'])
+    provenance = dict(**pre['designs']['v1_1'], errata=pre['errata'], errata_v1_1b=pre['errata_v1_1b'])
     gate_json = _write(out_dir, 'gate.json', dict(design='v1_1', provenance=provenance,
                                                   config_hash=config_hash(config), git_head=git_head(),
                                                   hypotheses=ev, selection_log=res['selection_log'],
@@ -170,7 +180,8 @@ def _r1(panel, macro, pre, out_dir, trials_path):
         v['verdict_descriptive'] = gate.verdict(adj[k], v['G'], v['test_A']['G_upper'], v['coverage90'], v['lobo'],
                                                 v['n_targets'])
     provenance = dict(**pre['designs']['v1_0'], authorized_by=pre['designs']['v1_1']['design'],
-                      authorized_by_sha256=pre['designs']['v1_1']['design_sha256'], errata=pre['errata'])
+                      authorized_by_sha256=pre['designs']['v1_1']['design_sha256'], errata=pre['errata'],
+                      errata_v1_1b=pre['errata_v1_1b'])
     return _write(out_dir, 'r1.json', dict(design='v1_0 (R1, non-gating)', provenance=provenance,
                                            config_hash=config_hash(config),
                                            frozen=frozen, hypotheses=out, war_params=params.to_dict(orient='list')))
@@ -229,7 +240,7 @@ def run_all_v1_1(panel, macro, design, out_dir, trials_path=TRIALS_PATH, inputs=
     store = res['store']
     epochs = list(engine_kw.get('epochs', V.select.EPOCH_ORIGINS))
     targets = engine_kw.get('targets', V.TARGETS_H1)
-    provenance = dict(**pre['designs']['v1_1'], errata=pre['errata'])
+    provenance = dict(**pre['designs']['v1_1'], errata=pre['errata'], errata_v1_1b=pre['errata_v1_1b'])
 
     # ── secondary family ──
     names = SEC.FAMILY if secondary is None else [n for n in SEC.FAMILY if n in secondary]

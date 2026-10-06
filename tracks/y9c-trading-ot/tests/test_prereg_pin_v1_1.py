@@ -114,3 +114,14 @@ def test_errata_verbatim_and_hash():
         assert open(ERRATA_SOURCE, 'rb').read() == ERRATA_PATH.read_bytes()
     except FileNotFoundError:
         pass
+
+
+def test_errata_1b_verbatim_and_hash():
+    from trading_ot.paths import ERRATA_1B_PATH, ERRATA_1B_SHA256, ERRATA_1B_SOURCE
+    assert ERRATA_1B_SHA256 == '2f134632acf4120ba410e7e2eacb352895eb41d9fbe9207cd0ddc6d22fef21bf'
+    assert hashlib.sha256(ERRATA_1B_PATH.read_bytes()).hexdigest() == ERRATA_1B_SHA256
+    assert run.errata_provenance_1b()['sha256'] == ERRATA_1B_SHA256
+    try:
+        assert open(ERRATA_1B_SOURCE, 'rb').read() == ERRATA_1B_PATH.read_bytes()
+    except FileNotFoundError:
+        pass

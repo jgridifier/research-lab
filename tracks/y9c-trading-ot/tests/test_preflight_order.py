@@ -6,7 +6,7 @@ Authorization is mocked in memory; the pinned files are never modified (corrupte
 """
 import pytest
 from trading_ot import run, walkforward as W10, walkforward_v1_1 as V
-from trading_ot.paths import DESIGN_PATH, DESIGN_PATH_V1_1, ERRATA_PATH, load_design
+from trading_ot.paths import DESIGN_PATH, DESIGN_PATH_V1_1, ERRATA_1B_PATH, ERRATA_PATH, load_design
 
 PRIOR = '{"type": "design_revision", "counts_as_trial": false}\n'
 
@@ -43,13 +43,15 @@ def _entry_points(tmp_path, trials):
         yield 'all', lambda: run.run_all_v1_1(empty, empty, _fake(), tmp_path, trials_path=trials)
 
 
-@pytest.mark.parametrize('target', ['errata', 'design_v1_1', 'design_v1_0'])
+@pytest.mark.parametrize('target', ['errata', 'errata_1b', 'design_v1_1', 'design_v1_0'])
 def test_mismatch_raises_before_trial_log(tmp_path, monkeypatch, target):
     called = _no_scoring(monkeypatch)
     trials = tmp_path / 'trials.jsonl'
     trials.write_text(PRIOR)
     if target == 'errata':
         monkeypatch.setattr(run, 'ERRATA_PATH', _corrupt_copy(ERRATA_PATH, tmp_path / 'ERRATA_v1_1.md'))
+    elif target == 'errata_1b':
+        monkeypatch.setattr(run, 'ERRATA_1B_PATH', _corrupt_copy(ERRATA_1B_PATH, tmp_path / 'ERRATA_v1_1b.md'))
     elif target == 'design_v1_1':
         monkeypatch.setattr(run, 'DESIGN_PATH_V1_1', _corrupt_copy(DESIGN_PATH_V1_1, tmp_path / 'd11.json'))
     else:
@@ -73,6 +75,7 @@ def test_pinned_files_verify_in_preflight():
     assert pre['designs']['v1_1']['design_sha256'].startswith('93035364')
     assert pre['designs']['v1_0']['design_sha256'].startswith('dffd1323')
     assert pre['errata']['sha256'].startswith('68d5128f')
+    assert pre['errata_v1_1b']['sha256'] == '2f134632acf4120ba410e7e2eacb352895eb41d9fbe9207cd0ddc6d22fef21bf'
 
 
 def test_unauthorized_beats_provenance(tmp_path, monkeypatch):
