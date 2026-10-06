@@ -1,0 +1,1 @@
+{"type": "design_revision", "from": "v1.0 dffd1323883cb04e198853d95d4078fb67b4e0c8af4c8d19ef17d7f8f6234e30", "to": "v1.1 930353641c6af0b4846d6678648a7446a738a579a52b4863726c9edb5a6a9694", "oos_seen": false, "counts_as_trial": false, "reason": "backfill 2008-2017; primary gate moved to 2014Q1-2026Q2 before any OOS score; see ADDENDUM_v1_1"}

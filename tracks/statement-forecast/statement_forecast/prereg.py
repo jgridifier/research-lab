@@ -91,3 +91,21 @@ def verify_trading_ot_preregistration(root=ROOT, design_path=TRADING_OT_DESIGN_P
     """Same checks as verify_preregistration, pinned to the trading-OT design."""
     return verify_preregistration(root=root, design_path=design_path, commit=commit,
                                   sha256=sha256, commit_time=commit_time)
+
+
+# ── Y-9C trading revenue + OT, design v1.1 (prereg addendum: extended history) ──
+# Extension only: the v1.0 trading-OT pin above is unchanged and still verifies (R1).
+TRADING_OT_V1_1_DESIGN_PATH = ROOT / 'tracks/y9c-trading-ot/test_design_trading_ot_v1_1.json'
+TRADING_OT_V1_1_PREREG_COMMIT = '06dbc28bed1609684efc664048e33178d0875af1'
+TRADING_OT_V1_1_PREREG_COMMIT_TIME = '2026-10-06T06:17:43-04:00'
+# sha256 of `git show 06dbc28:tracks/y9c-trading-ot/test_design_trading_ot_v1_1.json`
+TRADING_OT_V1_1_PREREG_SHA256 = '930353641c6af0b4846d6678648a7446a738a579a52b4863726c9edb5a6a9694'
+
+
+def verify_trading_ot_v1_1_preregistration(root=ROOT, design_path=TRADING_OT_V1_1_DESIGN_PATH,
+                                           commit=TRADING_OT_V1_1_PREREG_COMMIT,
+                                           sha256=TRADING_OT_V1_1_PREREG_SHA256,
+                                           commit_time=TRADING_OT_V1_1_PREREG_COMMIT_TIME):
+    """Same checks as verify_preregistration, pinned to the trading-OT v1.1 design."""
+    return verify_preregistration(root=root, design_path=design_path, commit=commit,
+                                  sha256=sha256, commit_time=commit_time)
