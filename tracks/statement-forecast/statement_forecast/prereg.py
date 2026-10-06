@@ -73,3 +73,21 @@ def verify_combo_preregistration(root=ROOT, design_path=COMBO_DESIGN_PATH, commi
     """Same checks as verify_preregistration, pinned to the combination design."""
     return verify_preregistration(root=root, design_path=design_path, commit=commit,
                                   sha256=sha256, commit_time=commit_time)
+
+
+# ── Y-9C trading revenue + OT layers (tracks/y9c-trading-ot) ───────────────
+# Extension only: earlier constants are unchanged. The trading-OT design is
+# test_design_trading_ot.json as committed on its own in TRADING_OT_PREREG_COMMIT.
+TRADING_OT_DESIGN_PATH = ROOT / 'tracks/y9c-trading-ot/test_design_trading_ot.json'
+TRADING_OT_PREREG_COMMIT = '4e331390f6230970531203fcf73ba369703a328c'
+TRADING_OT_PREREG_COMMIT_TIME = '2026-10-06T06:01:04-04:00'
+# sha256 of `git show 4e33139:tracks/y9c-trading-ot/test_design_trading_ot.json`
+TRADING_OT_PREREG_SHA256 = 'dffd1323883cb04e198853d95d4078fb67b4e0c8af4c8d19ef17d7f8f6234e30'
+
+
+def verify_trading_ot_preregistration(root=ROOT, design_path=TRADING_OT_DESIGN_PATH,
+                                      commit=TRADING_OT_PREREG_COMMIT, sha256=TRADING_OT_PREREG_SHA256,
+                                      commit_time=TRADING_OT_PREREG_COMMIT_TIME):
+    """Same checks as verify_preregistration, pinned to the trading-OT design."""
+    return verify_preregistration(root=root, design_path=design_path, commit=commit,
+                                  sha256=sha256, commit_time=commit_time)

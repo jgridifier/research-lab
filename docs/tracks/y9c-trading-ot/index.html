@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Y-9C Trading Revenue × OT — Research Lab</title>
+  <meta name="description" content="Pre-registered forecasts of FR Y-9C trading revenue (BHCKA220): per-bank baselines with optimal-transport layers (W2 barycenters, Wasserstein autoregression)." />
+  <link rel="stylesheet" href="../../assets/site.css" />
+  <style>
+    .prose code, .prose a, .prose p, .prose li, .prose td, .callout { overflow-wrap: anywhere; word-break: break-word; }
+    .table-scroll { max-width: 100%; overflow-x: auto; -webkit-overflow-scrolling: touch; }
+    .verdict { display: inline-block; padding: .15rem .55rem; border: 2px solid #0b1f3a; color: #0b1f3a; font-weight: 700; letter-spacing: .04em; }
+    .placeholder { border: 1px dashed #0b1f3a; padding: .9rem 1rem; color: #111; background: #fff; margin: .8rem 0 1.2rem; }
+    @media (max-width: 640px) {
+      .site-nav__inner { flex-wrap: wrap; }
+      .site-nav__links { flex-wrap: wrap; }
+      .site-nav__links a { padding: .5rem .55rem; }
+    }
+  </style>
+</head>
+<body>
+<nav class="site-nav" aria-label="Site navigation">
+  <div class="site-nav__inner">
+    <a class="site-nav__logo" href="../../index.html">Research Lab</a>
+    <ul class="site-nav__links">
+      <li><a href="../../index.html">Home</a></li>
+      <li><a href="index.html" class="active">Trading × OT</a></li>
+      <li><a href="../y9c-panel/index.html">Y-9C Panel</a></li>
+      <li><a href="../../notes/ot_classical_learning.html">Classical OT guide</a></li>
+    </ul>
+  </div>
+</nav>
+<header class="page-header">
+  <div class="page-header__inner">
+    <div class="page-header__eyebrow">Track · Overview</div>
+    <h1>Y-9C trading revenue × optimal transport</h1>
+    <p class="page-header__sub">Pre-registered forecasts of FR Y-9C trading revenue (BHCKA220) with simple per-bank baselines and OT layers from the classical-OT guide. Research only.</p>
+  </div>
+</header>
+<main class="page-content prose">
+  <nav class="breadcrumb" aria-label="Breadcrumb">
+    <a href="../../index.html">Home</a><span aria-hidden="true"> › </span>Trading × OT
+  </nav>
+  <ul>
+    <li><a href="results/index.html">Results</a> (verdict PENDING: out-of-sample scoring not run yet)</li>
+    <li>Methods: <a href="../../notes/ot_classical_learning.html#family-4">§4 W₂ barycenters for forecast combination</a> and <a href="../../notes/ot_classical_learning.html#family-3">§3 Wasserstein autoregression of a cross-sectional density</a>, in the small-sample regime (<a href="../../notes/ot_classical_learning.html#small-n">Small-N toolkit</a>).</li>
+    <li>Pipeline: <code>tracks/y9c-trading-ot/</code> (pinned design <code>test_design_trading_ot.json</code>, trial log <code>trials.jsonl</code>).</li>
+  </ul>
+</main>
+<footer class="site-footer">
+  <div class="site-footer__inner">
+    <p class="site-footer__disclaimer"><strong>Independent research lab</strong> ·
+      Not affiliated with any employer or financial institution · Not investment advice.</p>
+    <div class="site-footer__links">
+      <a href="../../index.html">Home</a>
+      <a href="index.html">Trading × OT</a>
+      <a href="../../notes/ot_classical_learning.html">Classical OT guide</a>
+      <a href="https://github.com/jgridifier/research-lab">GitHub</a>
+    </div>
+  </div>
+</footer>
+</body>
+</html>
