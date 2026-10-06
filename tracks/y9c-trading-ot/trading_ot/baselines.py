@@ -331,9 +331,116 @@ def b6_eb(W, t, h, space, pool_scale, residual_rule='in_sample'):
     return Q, dict(used_pool=used, undefined=False, eb_params=params)
 
 
+RIDGE_LAMBDA_GRID = 10.0 ** np.round(np.arange(-4.0, 4.0 + 1e-9, 0.05), 2)   # log10 lambda in -4..4, step 0.05
+
+
+def _ridge_design(W, t, h, macro):
+    """B5's T2 regressors (r_s, r_(s+h-4) unless h = 4, Q1 of the target if W.use_q1, the macro columns at s) plus a
+    one-hot bank intercept for every bank in W.banks. Training pairs: banks in W.banks, targets s + h <= t, all
+    entries finite (exactly B5's row rule, train_mask=None). Returns (X, y, bank_index, xrow) where xrow(i) is the
+    origin regressor row of bank i (NaN entries if undefined)."""
+    pad = _with_horizon(W, t, h)
+    R = pad(W.R[:, :t + 1])
+    nT = R.shape[1]
+    q1 = np.array([(W.quarters[0] + k).quarter == 1 for k in range(nT)], float)
+    cols = list(macro.columns)
+    Xm = np.full((nT, len(cols)), np.nan)
+    for k in range(nT):
+        q = W.quarters[0] + k
+        if q in macro.index and k <= t:
+            Xm[k] = macro.loc[q, cols].to_numpy(float)
+    lag4, use_season = h - 4, h != 4
+    n = len(W.banks)
+
+    def feats(i, s, tgt):
+        return [R[i, s]] + ([R[i, s + lag4]] if use_season else []) + ([q1[tgt]] if _use_q1(W) else []) + list(Xm[s])
+
+    rows, ys, bank = [], [], []
+    for i in range(n):
+        for s in range(0, t - h + 1):
+            if use_season and s + lag4 < 0:
+                continue
+            row, y = feats(i, s, s + h), R[i, s + h]
+            if np.isfinite(y) and np.all(np.isfinite(row)):
+                rows.append(row)
+                ys.append(y)
+                bank.append(i)
+    k = len(rows[0]) if rows else 0
+    X = np.zeros((len(rows), k + n))
+    if rows:
+        X[:, :k] = np.asarray(rows, float)
+        X[np.arange(len(rows)), k + np.asarray(bank)] = 1.0
+
+    def xrow(i):
+        x = np.zeros(k + n)
+        x[:k] = feats(i, t, t + h)
+        x[k + i] = 1.0
+        return x
+    return X, np.asarray(ys, float), np.asarray(bank, int), xrow
+
+
+def _ridge_prep(X):
+    """glmnet convention: every non-intercept column standardised on the training rows (mean, population sd);
+    zero-variance columns (e.g. a bank without training rows) are dropped."""
+    mu, sd = X.mean(axis=0), X.std(axis=0)
+    keep = sd > 0
+    return mu, sd, keep
+
+
+def _ridge_svd(X, y):
+    mu, sd, keep = _ridge_prep(X)
+    Z = (X[:, keep] - mu[keep]) / sd[keep]
+    ybar = float(y.mean())
+    U, d, Vt = np.linalg.svd(Z, full_matrices=False)
+    return dict(mu=mu, sd=sd, keep=keep, ybar=ybar, U=U, d=d, Vt=Vt, uty=U.T @ (y - ybar))
+
+
+def ridge_gcv(X, y, grid=RIDGE_LAMBDA_GRID):
+    """Objective (1/n) RSS + lambda ||beta||^2 on standardised columns, unpenalised global intercept.
+    GCV(lambda) = n RSS / (n - df)^2 with df = 1 + sum d_j^2 / (d_j^2 + n lambda). Returns (lambda*, table)."""
+    n = len(y)
+    f = _ridge_svd(X, y)
+    yc = y - f['ybar']
+    out = []
+    for lam in grid:
+        shrink = f['d'] ** 2 / (f['d'] ** 2 + n * lam)
+        fitted = f['U'] @ (shrink * f['uty'])
+        rss = float(np.sum((yc - fitted) ** 2))
+        df = 1.0 + float(shrink.sum())
+        out.append((float(lam), rss, df, n * rss / (n - df) ** 2))
+    tab = np.array(out)
+    k = int(np.argmin(tab[:, 3]))
+    return float(tab[k, 0]), dict(gcv_min=float(tab[k, 3]), df=float(tab[k, 2]), n_train=int(n),
+                                  n_columns=int(f['keep'].sum()), grid_min=float(grid[0]), grid_max=float(grid[-1]),
+                                  at_grid_boundary=bool(k in (0, len(grid) - 1)))
+
+
+def ridge_gcv_lambda(W, t, h, macro, grid=RIDGE_LAMBDA_GRID):
+    """lambda by GCV on the pairs available at origin index t (prereg §3: once, on burn-in; the caller freezes it)."""
+    X, y, _, _ = _ridge_design(W, t, h, macro)
+    if len(y) < 3 * (X.shape[1] + 1):
+        raise ValueError(f'ridge GCV: {len(y)} training rows for {X.shape[1]} columns')
+    return ridge_gcv(X, y, grid)
+
+
 def ridge_point(W, t, h, macro, lam):
-    """Pooled ridge point forecast (secondary MAE): B5 regressors plus bank intercepts; returns ratio centres."""
-    raise NotImplementedError
+    """Pooled ridge point forecast (secondary MAE; prereg §3 '(pt)'): B5 regressors plus bank intercepts, fitted on
+    the pairs available at origin index t with the frozen lambda. Returns (centres in ratio space, info); $ centre
+    = ratio x D_(i,t) / 1e4 (as B5). Banks without a finite origin regressor row get NaN."""
+    n = len(W.banks)
+    out = np.full(n, np.nan)
+    X, y, bank, xrow = _ridge_design(W, t, h, macro)
+    if len(y) < 3 * (X.shape[1] + 1):
+        return out, dict(n_train=int(len(y)), undefined=True)
+    f = _ridge_svd(X, y)
+    m = len(y)
+    beta = f['Vt'].T @ (f['d'] / (f['d'] ** 2 + m * lam) * f['uty'])
+    keep = f['keep']
+    for i in range(n):
+        x = xrow(i)
+        if np.all(np.isfinite(x)):
+            out[i] = f['ybar'] + ((x[keep] - f['mu'][keep]) / f['sd'][keep]) @ beta
+    return out, dict(n_train=int(m), undefined=False, banks_with_training_rows=int(len(np.unique(bank))))
 
 
 def run_members(W, t, h, space, pool_scale, macro, train_mask=None, members=MEMBERS):

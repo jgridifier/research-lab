@@ -2,10 +2,11 @@
 secondary.json, sensitivities.json and r1.json, and every execution is a trial logged before it runs."""
 import json
 
+import numpy as np
 import pandas as pd
 import pytest
 from conftest import to_panel
-from trading_ot import panel as P, run, select, sensitivity_v1_1 as SENS
+from trading_ot import baselines as B, panel as P, run, secondary_v1_1 as SEC, select, sensitivity_v1_1 as SENS
 from trading_ot.paths import DESIGN_PATH_V1_1, load_design
 
 KW = dict(epochs=select.EPOCH_ORIGINS[:2], targets=pd.period_range('2014Q1', '2015Q4', freq='Q'))
@@ -49,7 +50,12 @@ def test_run_all_writes_everything(tmp_path, panel11, macro11, ytd11, panel, mac
     assert labels_out['S7'] == labels_out['S14'] == 'rescore, no re-selection'
     labels = _labels(trials)
     n_sec = 11                                   # 12 family tests; H2c's two comparators are one execution
-    assert run.trial_count(trials) == 1 + n_sec + 1 + len(sens) + 1
+    n_out = 2                                    # FPCA K=2 WAR and ridge point (outside the family)
+    assert run.trial_count(trials) == 1 + n_sec + n_out + 1 + len(sens) + 1
+    assert set(sec['outside_family']) == {'H2_fpca_k2', 'ridge_point'}
+    assert sec['outside_family']['ridge_point']['lam'] in B.RIDGE_LAMBDA_GRID
+    assert np.isfinite(sec['outside_family']['H2_fpca_k2']['G']) and '4B_scenarios' in sec['deferred']
+    assert any('FPCA' in l for l in labels) and any('ridge' in l for l in labels)
     assert labels[0] == 'v1.1 primary' and labels[-1].startswith('R1')
     hashes = [json.loads(l)['config_hash'] for l in trials.read_text().splitlines()]
     assert len(set(hashes)) == len(hashes)
@@ -67,6 +73,20 @@ def test_trial_is_logged_before_execution(tmp_path, panel11, macro11, monkeypatc
     labels = _labels(trials)
     assert labels[-1] == 'v1.1 sensitivity S13:settings_frozen_2013Q4'
     assert not (tmp_path / 'sensitivities.json').exists()
+
+
+@pytest.mark.parametrize('member,fn', [('ridge_point', 'ridge_lambda'), ('H2_fpca_k2', 'h2_fpca')])
+def test_outside_family_trial_logged_before_execution(tmp_path, panel11, macro11, monkeypatch, member, fn):
+    trials = tmp_path / 'trials.jsonl'
+
+    def boom(*a, **k):
+        raise RuntimeError('stop')
+    monkeypatch.setattr(SEC, fn, boom)
+    with pytest.raises(RuntimeError):
+        run.run_all_v1_1(panel11, macro11, _fake(), tmp_path, trials_path=trials, run_r1=False,
+                         secondary=[member], sensitivities=[], **KW)
+    last = json.loads(trials.read_text().splitlines()[-1])
+    assert last['config']['member'] == member
 
 
 def test_run_all_unauthorized(tmp_path, panel11, macro11):

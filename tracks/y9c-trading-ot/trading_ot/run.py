@@ -285,6 +285,22 @@ def run_all_v1_1(panel, macro, design, out_dir, trials_path=TRIALS_PATH, inputs=
             results[name] = SEC.evaluate(cases)
         details[name] = info
     holm = SEC.holm_family(results)
+
+    # ── outside the family (ERRATA_v1_1b §4): each its own trial, no Holm ──
+    outside = {}
+    if secondary is None or 'H2_fpca_k2' in secondary:
+        trial('secondary H2 FPCA K=2 functional WAR variant (outside family)', member='H2_fpca_k2', K=SEC.FPCA_K)
+        cases, info = SEC.h2_fpca(store)
+        outside['H2_fpca_k2'] = (dict(status='N/A', reason=info['reason'], p=np.nan) if info.get('status') == 'N/A'
+                                 else dict(SEC.evaluate(cases), holm='none (outside the family; raw p)'))
+        details['H2_fpca_k2'] = info
+    if secondary is None or 'ridge_point' in secondary:
+        trial('secondary ridge point forecast (secondary MAE; lambda by GCV once on burn-in, frozen)',
+              member='ridge_point', burnin_end=str(SEC.RIDGE_BURNIN_END), grid='10^(-4..4 step 0.05)')
+        set0 = V.rolling_set_by_epoch(panel, [V.FIRST_FREEZE])[V.FIRST_FREEZE]
+        lam, gcv = SEC.ridge_lambda(panel, macro, set0)
+        _, summ = SEC.ridge_point_mae(store, panel, macro, lam)
+        outside['ridge_point'] = dict(summ, gcv=gcv)
     trial('falsification F3 rank-permutation placebo', perms=SEC.F3_PERMS, seed=SEC.F3_SEED)
     f3 = SEC.f3_placebo(store)
     metrics = {h: SEC.secondary_metrics(store, h) for h in ('H1', 'H2')}
@@ -292,8 +308,10 @@ def run_all_v1_1(panel, macro, design, out_dir, trials_path=TRIALS_PATH, inputs=
                              metrics, f3)
     _write(out_dir, 'secondary.json', _jsonable(dict(
         design='v1_1', label='secondary (Holm within family; non-gating)', provenance=provenance,
-        family=SEC.FAMILY, holm=holm, results=results, details=details, falsification=fals,
-        secondary_metrics=metrics, h1d_raw=h1d_raw)))
+        family=SEC.FAMILY, holm=holm, results=results, outside_family=outside, details=details,
+        falsification=fals, secondary_metrics=metrics, h1d_raw=h1d_raw,
+        deferred={'4B_scenarios': 'deferred: underspecified as written (README IMPLEMENTATION_NOTES 34); '
+                                  'Quant to pin a dated deferral note'})))
 
     # ── sensitivities ──
     ctx = dict(panel=panel, macro=macro, engine_kw=engine_kw, macro_dt=inputs.get('macro_dt'),

@@ -62,3 +62,26 @@ def test_s8_memo_items_start_2011(burn):
     big = burn[burn.total_assets.ge(SENS.S8_TA_MIN)]
     by_year = big.groupby(big.quarter.dt.year).trd_cva_counterparty_q.count()
     assert by_year.get(2009, 0) == 0 and by_year.get(2010, 0) == 0 and by_year[2011] > 0
+
+
+def test_ridge_lambda_frozen_on_burnin(burn):
+    """prereg §3 '(pt)': lambda by GCV once on burn-in 2009-2013, then frozen. Fit only; no forecast is made."""
+    import trading_ot.macro as M
+    mac = M.quarter_features_v1_1(pd.period_range('2009Q1', '2013Q4', freq='Q'))
+    pop = V.rolling_set_by_epoch(burn, [END])[END]
+    lam, info = SEC.ridge_lambda(burn, mac, pop)
+    assert lam == pytest.approx(10 ** -1.6) and not info['at_grid_boundary']
+    assert info['n_train'] == 190 and info['n_columns'] == 19 and info['n_banks'] == 12
+
+
+def test_fpca_war_runs_on_burnin(burn):
+    """K = 2 FPCA WAR on the real burn-in cross-sections (origins <= 2013Q3; forecast only, nothing scored)."""
+    import trading_ot.macro as M
+    from trading_ot import ot_war, walkforward as W10
+    mac = M.quarter_features_v1_1(pd.period_range('2009Q1', '2013Q4', freq='Q'))
+    for o in [pd.Period('2012Q4', freq='Q'), END - 1]:
+        pop, _, _ = W10.cs_member_forecasts(burn, o, mac, first=V.FIRST_R)
+        _, info = W10.war_rm(burn, o, pop, first_r=V.FIRST_R)
+        Qhat, fit = ot_war.fpca_war_forecast(info['Qd'], info['Qbar'], o, K=2)
+        assert np.all(np.diff(Qhat) >= 0) and np.isfinite(Qhat).all()
+        assert 0 < fit['explained_share'] <= 1 and fit['n_pairs'] >= 10

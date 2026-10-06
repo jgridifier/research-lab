@@ -156,3 +156,41 @@ def ar_map_forecast(Qd, origin, h=1, grid_idx=U19_IDX):
     Qt = np.asarray(Qd[origin], float)
     Qhat = isotonic_regression(Qt + alpha * d_at(origin - 1, Qt)).x
     return Qhat, dict(alpha=alpha, alpha_raw=float(raw), n_pairs=n)
+
+
+def fpca_war_forecast(Qd, Qbar, origin, h=1, K=2, grid_idx=U19_IDX):
+    """Secondary variant of prereg §4.2 Step 3: K = 2 FPCA functional WAR, isotonic projection.
+
+    Tangent vectors V_s = Q_s - Qbar (the primary's Frechet mean and cross-sections, quarters <= origin). FPCA on
+    the U19 grid (the inner product of Step 2): SVD of the (quarters x 19) matrix V[:, U19] = U S W'; scores
+    xi_s = (U S)_(s, 1..K); eigenfunctions extended to U99 by phi_k = sum_s U_(s,k) V_s / S_k (equal to W_k on U19).
+    Score dynamics: xi_(s+h) = A xi_s, A (K x K) by least squares over pairs with s + h <= origin, no intercept,
+    unconstrained. Forecast Qhat = isotonic(Qbar + sum_k (A xi_origin)_k phi_k). Raises ValueError if fewer than
+    K + 1 quarters, fewer than K pairs, or a singular design.
+    Returns (Qhat, dict(A, spectral_radius, explained_share, n_pairs, n_quarters))."""
+    from scipy.optimize import isotonic_regression
+    origin = pd.Period(origin, freq='Q')
+    qs = sorted(s for s in Qd if s <= origin)
+    if origin not in Qd or len(qs) < K + 1:
+        raise ValueError(f'FPCA-WAR: {len(qs)} cross-sections at {origin}')
+    Qbar = np.asarray(Qbar, float)
+    V = np.stack([np.asarray(Qd[s], float) - Qbar for s in qs])
+    U, S, _ = np.linalg.svd(V[:, grid_idx], full_matrices=False)
+    if len(S) < K or not S[K - 1] > 0:
+        raise ValueError('FPCA-WAR: rank < K')
+    xi = U[:, :K] * S[:K]
+    phi = (U[:, :K] / S[:K]).T @ V                                   # (K, 99)
+    pos = {s: k for k, s in enumerate(qs)}
+    pairs = [(pos[s], pos[s + h]) for s in qs if s + h in pos and s + h <= origin]
+    if len(pairs) < K:
+        raise ValueError(f'FPCA-WAR: {len(pairs)} pairs < K')
+    X = np.stack([xi[a] for a, _ in pairs])
+    Y = np.stack([xi[b] for _, b in pairs])
+    if np.linalg.matrix_rank(X) < K:
+        raise ValueError('FPCA-WAR: singular score design')
+    A = np.linalg.lstsq(X, Y, rcond=None)[0].T                        # xi_(s+h) = A xi_s
+    xi_hat = A @ xi[pos[origin]]
+    Qhat = isotonic_regression(Qbar + xi_hat @ phi).x
+    return Qhat, dict(A=A.tolist(), spectral_radius=float(np.max(np.abs(np.linalg.eigvals(A)))),
+                      explained_share=float(np.sum(S[:K] ** 2) / np.sum(S ** 2)), n_pairs=len(pairs),
+                      n_quarters=len(qs))

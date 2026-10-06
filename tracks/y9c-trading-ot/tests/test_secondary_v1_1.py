@@ -212,3 +212,109 @@ def test_secondary_metrics_shapes(prim):
     m = SEC.secondary_metrics(prim['store'], 'H1')
     assert sum(m['ot']['pit_hist10']) == m['ot']['n_cases'] == m['ref']['n_cases']
     assert 0 <= m['ot']['cov50'] <= m['ot']['cov90'] <= 1
+
+
+# ── outside the family: K = 2 FPCA WAR and the ridge point forecast (ERRATA_v1_1b §4) ──
+def _rank2_qd(A, n=24, seed=3):
+    rng = np.random.default_rng(seed)
+    u = np.asarray(U99)
+    base = 50 * (u - 0.5) + 200 * (u - 0.5) ** 3
+    phi1, phi2 = np.ones_like(u), u - 0.5                 # shift and spread
+    xi = np.zeros((n, 2))
+    xi[0] = [1.0, -2.0]
+    for k in range(1, n):
+        xi[k] = A @ xi[k - 1] + (rng.normal(size=2) if k < n - 1 else 0)
+    qs = pd.period_range('2009Q1', periods=n, freq='Q')
+    Qd = {q: base + 5 * x[0] * phi1 + 40 * x[1] * phi2 for q, x in zip(qs, xi)}
+    return Qd, qs
+
+
+def test_fpca_war_recovers_rank2_dynamics():
+    A = np.array([[0.6, 0.1], [-0.2, 0.4]])
+    Qd, qs = _rank2_qd(A)
+    Qbar = np.mean([Qd[q] for q in qs], axis=0)
+    Qhat, fit = ot_war.fpca_war_forecast(Qd, Qbar, qs[-1], K=2)
+    assert fit['explained_share'] == pytest.approx(1.0, abs=1e-9)        # V has rank 2 exactly (after centring)
+    assert fit['n_pairs'] == len(qs) - 1 and np.all(np.diff(Qhat) >= -1e-12)
+    # exact rank-2 data: the forecast lies in Qbar + span(phi) and equals the OLS fit of the dynamics
+    V_ = np.stack([Qd[q] - Qbar for q in qs])
+    Ast = np.asarray(fit['A'])
+    assert np.isfinite(Ast).all() and fit['spectral_radius'] < 1.5
+    assert np.allclose(Qhat, np.maximum.accumulate(Qhat))
+    assert np.linalg.matrix_rank(np.vstack([V_, Qhat - Qbar]), tol=1e-6) == 2
+
+
+def test_fpca_war_raises_when_too_short():
+    Qd, qs = _rank2_qd(np.eye(2) * 0.5, n=2)
+    with pytest.raises(ValueError):
+        ot_war.fpca_war_forecast(Qd, np.mean(list(Qd.values()), axis=0), qs[-1])
+
+
+def test_h2_fpca_on_store(prim):
+    cases, info = SEC.h2_fpca(prim['store'])
+    assert info['status'] == 'ok' and info['K'] == 2
+    assert set(cases.target_quarter) <= set(TARGETS) and cases.S_ot.notna().any()
+    ev = SEC.evaluate(cases)
+    assert ev['status'] == 'ok' and np.isfinite(ev['G'])
+
+
+def _ridge_ref(X, y, lam):
+    """Brute force: standardise (population sd), drop constant columns, centre, solve the normal equations."""
+    mu, sd = X.mean(0), X.std(0)
+    k = sd > 0
+    Z = (X[:, k] - mu[k]) / sd[k]
+    n = len(y)
+    b = np.linalg.solve(Z.T @ Z + n * lam * np.eye(k.sum()), Z.T @ (y - y.mean()))
+    H = Z @ np.linalg.solve(Z.T @ Z + n * lam * np.eye(k.sum()), Z.T)
+    fitted = y.mean() + Z @ b
+    df = 1 + np.trace(H)
+    return b, fitted, n * np.sum((y - fitted) ** 2) / (n - df) ** 2
+
+
+def test_ridge_gcv_matches_brute_force():
+    rng = np.random.default_rng(5)
+    X = np.column_stack([rng.normal(size=(120, 4)), np.zeros(120)])
+    y = X[:, :4] @ [1.0, 0.0, -0.5, 0.2] + rng.normal(size=120)
+    grid = 10.0 ** np.arange(-3, 2.01, 0.25)
+    lam, info = B.ridge_gcv(X, y, grid)
+    ref = [_ridge_ref(X, y, g)[2] for g in grid]
+    assert lam == pytest.approx(grid[int(np.argmin(ref))]) and info['gcv_min'] == pytest.approx(min(ref))
+    assert info['n_columns'] == 4 and not info['at_grid_boundary']
+
+
+def test_ridge_point_matches_brute_force(panel11, macro11):
+    origin = pd.Period('2013Q4', freq='Q')
+    pop = V.rolling_set_by_epoch(panel11, [origin])[origin]
+    W, t = SEC._t2_wide(panel11, pop, origin)
+    X, y, bank, xrow = B._ridge_design(W, t, 1, macro11)
+    assert X.shape[1] == 3 + macro11.shape[1] + len(pop)               # r_t, r_(t-3), Q1, macro, bank dummies
+    lam = 0.37
+    r_hat, info = B.ridge_point(W, t, 1, macro11, lam)
+    b, _, _ = _ridge_ref(X, y, lam)
+    mu, sd = X.mean(0), X.std(0)
+    k = sd > 0
+    for i in range(len(pop)):
+        x = xrow(i)
+        if np.all(np.isfinite(x)):
+            assert r_hat[i] == pytest.approx(y.mean() + ((x[k] - mu[k]) / sd[k]) @ b, rel=1e-8, abs=1e-8)
+    assert not info['undefined'] and np.isfinite(r_hat).any()
+
+
+def test_ridge_lambda_uses_burnin_only(panel11, macro11):
+    origin = SEC.RIDGE_BURNIN_END
+    pop = V.rolling_set_by_epoch(panel11, [origin])[origin]
+    lam, info = SEC.ridge_lambda(panel11, macro11, pop)
+    shocked = panel11.copy()
+    later = shocked.quarter > origin
+    shocked.loc[later, 'trading_revenue_q'] *= -7.0                      # anything after 2013Q4 cannot matter
+    lam2, _ = SEC.ridge_lambda(shocked, macro11.assign(vix=np.where(macro11.index > origin, 1e3, macro11.vix)), pop)
+    assert lam == lam2 and lam in B.RIDGE_LAMBDA_GRID and info['burnin_end'] == '2013Q4'
+
+
+def test_ridge_point_mae_on_store(prim, panel11, macro11):
+    cases, summ = SEC.ridge_point_mae(prim['store'], panel11, macro11, lam=1.0)
+    assert summ['status'] == 'ok' and summ['n_targets'] == len(TARGETS)
+    for k in ('mae_ridge', 'mae_bary', 'mae_bstar', 'gain_bary_vs_ridge', 'gain_bstar_vs_ridge'):
+        assert np.isfinite(summ[k]), k
+    g = cases.groupby('target_quarter')[['mae_ridge', 'mae_bary']].mean().sum()
+    assert summ['gain_bary_vs_ridge'] == pytest.approx((g.mae_ridge - g.mae_bary) / g.mae_ridge)

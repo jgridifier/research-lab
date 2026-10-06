@@ -11,6 +11,11 @@ Family (Holm within family on the raw fixed-b test-C p-values; reported as "seco
   H2d  global Frechet regression of Q_(s+1) on (VIX, rates vol) + the WAR rank map vs B*_CS                  (T3)
   H2e  OT quantile-map recalibration of B* (PIT pool >= 100) vs B*                                          (T2)
   H2f  autoregressive OT map (scalar) + the WAR rank map vs B*_CS; N/A if it cannot run at the first origin (T3)
+Outside the family (no Holm; each logged as its own trial; ERRATA_v1_1b §4):
+  H2_fpca_k2   K = 2 FPCA functional WAR (prereg §4.2 Step 3 variant) + the WAR rank map vs B*_CS (raw p)       (T3)
+  ridge_point  pooled ridge point forecast, lambda by GCV once on burn-in and frozen; scaled MAE vs BARY-EW and
+               B* medians (prereg §3 '(pt)', secondary metric; no test)                                      (T2)
+§4-B scenarios (copula paths, W2 reduction, energy score) are deferred: see README IMPLEMENTATION_NOTES.
 Every forecast is causal (data <= its origin); the reused primary forecasts come from walkforward_v1_1.primary
 (store=True). Interpretations are listed in README "IMPLEMENTATION_NOTES (Phase B)".
 """
@@ -35,6 +40,8 @@ HORIZONS = (2, 3, 4)
 F3_PERMS = 200
 F3_SEED = 20261006
 FROZEN_SCALE_WINDOW = ('2010Q1', '2013Q4')
+FPCA_K = 2
+RIDGE_BURNIN_END = pd.Period('2013Q4', freq='Q')    # GCV once on burn-in 2009-2013 (pairs with target <= 2013Q4)
 
 
 # ── common evaluation ───────────────────────────────────────────────────────
@@ -263,6 +270,84 @@ def h2f(store):
         rows.append(_cs_mapped(store, tq, Qhat))
         log.append(dict(target=str(tq), status='ok', **fit))
     return _concat(rows), dict(status='ok', fits=log)
+
+
+def h2_fpca(store, K=FPCA_K):
+    """K = 2 FPCA functional WAR (ot_war.fpca_war_forecast) on the primary's cross-sections and Frechet mean,
+    rank-mapped with the primary's z and rho, scored vs B*_CS. N/A if it cannot run at the first origin."""
+    tqs = sorted(store['cs'])
+    if not tqs:
+        return pd.DataFrame(), dict(status='N/A', reason='no targets')
+    rows, log = [], []
+    for k, tq in enumerate(tqs):
+        info = store['cs'][tq]['info']
+        try:
+            Qhat, fit = ot_war.fpca_war_forecast(info['Qd'], info['Qbar'], tq - 1, K=K)
+        except (ValueError, np.linalg.LinAlgError) as err:
+            if k == 0:
+                return pd.DataFrame(), dict(status='N/A', reason=f'does not run at the first origin: {err}')
+            log.append(dict(target=str(tq), status='failed', reason=str(err)))
+            continue
+        rows.append(_cs_mapped(store, tq, Qhat))
+        log.append(dict(target=str(tq), status='ok', **fit))
+    return _concat(rows), dict(status='ok', K=K, fits=log)
+
+
+# ── ridge point forecast (secondary MAE) ────────────────────────────────────
+def _t2_wide(panel, population, origin):
+    fp = V.forecast_panel(panel, origin, V.PRIMARY)
+    W = B.Wide(fp, list(population), denom=V.PRIMARY.denom_col, first=str(V.PRIMARY.first_at(origin)))
+    W.use_q1 = V.PRIMARY.use_q1
+    return W, W.idx(origin)
+
+
+def ridge_lambda(panel, macro, population, end=RIDGE_BURNIN_END, grid=B.RIDGE_LAMBDA_GRID):
+    """The frozen lambda: GCV once on burn-in (rows <= 2013Q4; h = 1 pairs with target <= 2013Q4) for the
+    epoch-0 T2 bank set. Uses no data after 2013Q4 and produces no forecast."""
+    base = truncate(panel, end)
+    W, t = _t2_wide(base, population, end)
+    lam, info = B.ridge_gcv_lambda(W, t, 1, macro[macro.index <= end], grid)
+    return lam, dict(info, burnin_end=str(end), n_banks=len(list(population)), grid='10^(-4..4 step 0.05)')
+
+
+def ridge_point_mae(store, panel, macro, lam):
+    """Refit at every scored H1 origin with the frozen lambda (pairs with target <= origin, the T2 set in force);
+    $ point = ratio x TA_(i,t) / 1e4. Scaled MAE |y - yhat| / s_i(o) on the H1 matched cases (BARY-EW and B*
+    defined, y and scale finite, ridge defined) vs the BARY-EW and B* medians; equal weight per bank within a
+    quarter, then across quarters. Returns (cases, summary)."""
+    rows = []
+    for tq in sorted(store['t2']):
+        e = store['t2'][tq]
+        c = e['cases']
+        origin = tq - 1
+        W, t = _t2_wide(panel, c.rssd_id, origin)
+        r_hat, fit = B.ridge_point(W, t, 1, macro, lam)
+        yhat = r_hat * W.D[:, t] / 1e4
+        st = store['settings'][e['epoch']]['t2']
+        Qo, Qr = e['bary'], e['Q'][st['b_star']]
+        y, sc = c.y.to_numpy(float), c.scale.to_numpy(float)
+        ok = _rows_ok([Qo, Qr]) & np.isfinite(y) & np.isfinite(sc) & np.isfinite(yhat)
+        rows.append(pd.DataFrame(dict(target_quarter=tq, rssd_id=c.rssd_id.to_numpy()[ok],
+                                      mae_ridge=np.abs(y - yhat)[ok] / sc[ok],
+                                      mae_bary=np.abs(y - Qo[:, 49])[ok] / sc[ok],
+                                      mae_bstar=np.abs(y - Qr[:, 49])[ok] / sc[ok], n_train=fit['n_train'])))
+    d = _concat_mae(rows)
+    if d.empty:
+        return d, dict(status='N/A', reason='no matched cases', lam=lam)
+    g = d.groupby('target_quarter')[['mae_ridge', 'mae_bary', 'mae_bstar']].mean()
+    tot = g.sum()
+    return d, dict(status='ok', lam=lam, n_targets=int(len(g)), n_cases=int(len(d)),
+                   mae_ridge=float(g.mae_ridge.mean()), mae_bary=float(g.mae_bary.mean()),
+                   mae_bstar=float(g.mae_bstar.mean()),
+                   gain_bary_vs_ridge=float((tot.mae_ridge - tot.mae_bary) / tot.mae_ridge),
+                   gain_bstar_vs_ridge=float((tot.mae_ridge - tot.mae_bstar) / tot.mae_ridge),
+                   reading='secondary metric (MAE of the point / median, scaled); no test')
+
+
+def _concat_mae(rows):
+    rows = [r for r in rows if len(r)]
+    return pd.concat(rows, ignore_index=True) if rows else pd.DataFrame(
+        columns=['target_quarter', 'rssd_id', 'mae_ridge', 'mae_bary', 'mae_bstar'])
 
 
 # ── H1d: industry total T1 ──────────────────────────────────────────────────
