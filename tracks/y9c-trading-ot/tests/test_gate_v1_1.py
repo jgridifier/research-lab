@@ -10,6 +10,9 @@ def test_dm_fixedb_critical_values_T50():
     assert r['M'] == 7 and r['R'] == 200_000 and r['seed'] == 20261006
     assert abs(r['cv_975'] - 2.417) <= 0.03
     assert abs(r['cv_95'] - 1.976) <= 0.03
+    # ERRATA_v1_1 E3: authoritative values from a fresh default_rng(20261006), R = 200,000
+    assert round(r['cv_975'], 4) == 2.4101
+    assert round(r['cv_95'], 4) == 1.9658
 
 
 def test_dm_fixedb_hand_example():
