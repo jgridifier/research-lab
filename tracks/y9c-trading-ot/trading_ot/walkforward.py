@@ -74,8 +74,11 @@ def cs_membership(W, lag_ta_min=CS_LAG_TA_MIN):
     return (W.Dlag >= lag_ta_min) & np.isfinite(W.Y)
 
 
-def cs_member_forecasts(panel, origin, macro, members=B.MEMBERS, lag_ta_min=CS_LAG_TA_MIN, first='2018Q1'):
-    """Ratio-space baselines for the cross-section population at origin (h = 1). v1.1 passes first='2009Q1'."""
+def cs_member_forecasts(panel, origin, macro, members=B.MEMBERS, lag_ta_min=CS_LAG_TA_MIN, first='2018Q1',
+                        use_q1=True):
+    """Ratio-space baselines for the cross-section population at origin (h = 1). v1.1 passes first='2009Q1'.
+
+    use_q1=False drops the Q1 dummy from B4/B5 (v1.1 sensitivity S6)."""
     origin = pd.Period(origin, freq='Q')
     trunc = truncate(panel, origin)
     trunc = trunc[trunc.quarter.ge(pd.Period(first, freq='Q') - 1)]
@@ -83,6 +86,7 @@ def cs_member_forecasts(panel, origin, macro, members=B.MEMBERS, lag_ta_min=CS_L
     pr = sets.add_ratio(trunc)
     ever = sorted(set(pr.loc[pr.trading_assets_lag.ge(lag_ta_min) & pr.trading_revenue_q.notna(), 'rssd_id']) | set(pop))
     W = B.Wide(trunc, ever, first=first)
+    W.use_q1 = use_q1
     t = W.idx(origin)
     pos = [W.banks.index(i) for i in pop]
     scale, _ = cs_scales(W, t, pos)
@@ -95,6 +99,7 @@ def cs_member_forecasts(panel, origin, macro, members=B.MEMBERS, lag_ta_min=CS_L
             Q, info = B.b5_panel_qr(W, t, 1, 'ratio', pool, macro, train_mask=np.pad(mask, ((0, 0), (0, 1))))
         elif m == 'B6':
             Wp = B.Wide(trunc, pop, first=first)
+            Wp.use_q1 = use_q1
             Q, info = B.b6_eb(Wp, Wp.idx(origin), 1, 'ratio', scale)
             out[m] = (Q, info)
             continue
@@ -116,19 +121,35 @@ def _subset(W, pos):
     return S
 
 
-def war_rm(panel, origin, pop, lag_ta_min=CS_LAG_TA_MIN, h=1, first_r='2018Q2'):
+def war_rm(panel, origin, pop, lag_ta_min=CS_LAG_TA_MIN, h=1, first_r='2018Q2', q1_shift=False):
     """H2 WAR-RM ratio quantiles for `pop` at origin; NaN rows for banks without a rank at the origin.
 
-    first_r: first cross-section quarter (v1.0: 2018Q2, the first quarter with a lagged TA; v1.1: 2009Q1)."""
+    first_r: first cross-section quarter (v1.0: 2018Q2, the first quarter with a lagged TA; v1.1: 2009Q1).
+    Quarters with an empty cross-section (only possible when a sensitivity masks training quarters, S4) are
+    skipped: the Frechet mean averages the quarters present and beta uses only pairs (s, s+h) with both present.
+    q1_shift=True (S6): joint LS of V_(s+h) = beta V_s + delta 1[Q1(s+h)], delta added for a Q1 target,
+    then isotonic projection. With every quarter present and q1_shift=False the result is bit-identical to v1.0.
+    info also carries the origin ranks (z_all) and the cross-section quantile functions (Qd) for the secondary
+    family (H2b-H2f) and F3."""
     origin = pd.Period(origin, freq='Q')
     trunc = truncate(panel, origin)
     pr = sets.add_ratio(trunc)
     quarters = pd.period_range(first_r, origin, freq='Q')
     css = {s: sets.cross_section(pr, s, lag_ta_min) for s in quarters}
-    Qs = np.stack([ot_war.cs_quantiles(css[s].r) for s in quarters])
+    present = [s for s in quarters if len(css[s])]
+    Qd = {s: ot_war.cs_quantiles(css[s].r) for s in present}
+    Qs = np.stack([Qd[s] for s in present])
     Qbar = ot_war.frechet_mean(Qs)
-    beta, beta_raw, n_pairs = ot_war.war_beta(Qs, h)
-    Qhat = ot_war.war_forecast(Qbar, Qs[-1], beta)
+    delta = None
+    if len(present) == len(quarters) and not q1_shift:
+        beta, beta_raw, n_pairs = ot_war.war_beta(Qs, h)
+        Qhat = ot_war.war_forecast(Qbar, Qs[-1], beta)
+    else:
+        beta, beta_raw, n_pairs, delta = ot_war.war_beta_pairs(Qd, Qbar, h, q1_shift=q1_shift)
+        Qhat = ot_war.war_forecast(Qbar, Qd[origin], beta)
+        if q1_shift and (origin + h).quarter == 1 and delta is not None:
+            from scipy.optimize import isotonic_regression
+            Qhat = isotonic_regression(Qhat + delta).x
     zs = {s: pd.Series(ot_war.probit_ranks(css[s].r.to_numpy()), index=css[s].rssd_id.to_numpy()) for s in quarters}
     a, b = [], []
     for s in quarters:
@@ -143,7 +164,8 @@ def war_rm(panel, origin, pop, lag_ta_min=CS_LAG_TA_MIN, h=1, first_r='2018Q2'):
     ok = np.isfinite(z_now)
     Q[ok] = ot_war.rankmap_quantiles(Qhat, z_now[ok], rho)
     return Q, dict(beta=beta, beta_raw=beta_raw, beta_pairs=n_pairs, rho=rho, rho_raw=rho_raw,
-                   rho_transitions=n_tr, Qhat=Qhat, Qbar=Qbar, Qt=Qs[-1])
+                   rho_transitions=n_tr, Qhat=Qhat, Qbar=Qbar, Qt=Qd[origin], z_all=zs[origin], Qd=Qd,
+                   q1_delta=delta)
 
 
 # ── scoring helpers ────────────────────────────────────────────────────────

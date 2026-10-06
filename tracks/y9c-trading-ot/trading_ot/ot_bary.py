@@ -107,3 +107,41 @@ def shrunk_weights(Qs, y, scale, n0=200):
     kappa = n / (n + n0)
     lam_hat = crps_optimal_weights(Qs, y, scale) if n else np.full(K, 1 / K)
     return (1 - kappa) * np.full(K, 1 / K) + kappa * lam_hat, dict(kappa=kappa, lambda_hat=lam_hat.tolist(), n=n)
+
+
+def linear_pool_quantiles_fast(Qs, w=None, taus=U99):
+    """Exact quantiles of the linear pool sum_k w_k F_k, vectorised (same CDF convention as mixture_cdf).
+
+    Each F_k is 0 below Q_k(tau_1), jumps to tau_1 there, is linear between consecutive knots, reaches tau_L at
+    Q_k(tau_L) and jumps to 1. The mixture CDF is therefore piecewise linear between the union of all knots, so
+    evaluating it on the union grid (left and right limits) and inverting by interpolation is exact up to float
+    error. Agrees with linear_pool_quantiles (bisection) to its tolerance; used for H1c because the bisection is
+    O(n L iters K) Python calls. Qs: (K, n, L) -> (n, L)."""
+    Qs = np.asarray(Qs, float)
+    K, n, L = Qs.shape
+    taus = np.asarray(taus, float)
+    w = np.full(K, 1 / K) if w is None else np.asarray(w, float)
+    out = np.empty((n, L))
+    for i in range(n):
+        knots = np.unique(Qs[:, i, :])
+        Fr = np.zeros(len(knots))                       # right limits F(x)
+        Fl = np.zeros(len(knots))                       # left limits F(x-)
+        for k in range(K):
+            q = Qs[k, i, :]
+            qq, idx = np.unique(q, return_index=True)
+            r = l = np.interp(knots, qq, taus[idx])     # mixture_cdf's interior convention (continuous)
+            r = np.where(knots < q[0], 0.0, np.where(knots >= q[-1], 1.0, r))
+            l = np.where(knots <= q[0], 0.0, np.where(knots > q[-1], 1.0, l))
+            Fr += w[k] * r
+            Fl += w[k] * l
+        xs = np.repeat(knots, 2)
+        Fs = np.empty(2 * len(knots))
+        Fs[0::2], Fs[1::2] = Fl, Fr
+        Fs = np.maximum.accumulate(Fs)
+        # smallest x with F(x) >= tau
+        pos = np.searchsorted(Fs, taus, side='left')
+        pos = np.clip(pos, 1, len(Fs) - 1)
+        x0, x1, f0, f1 = xs[pos - 1], xs[pos], Fs[pos - 1], Fs[pos]
+        frac = np.where(f1 > f0, (taus - f0) / np.where(f1 > f0, f1 - f0, 1.0), 1.0)
+        out[i] = np.maximum.accumulate(x0 + np.clip(frac, 0, 1) * (x1 - x0))
+    return out

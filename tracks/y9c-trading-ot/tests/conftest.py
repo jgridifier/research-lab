@@ -47,7 +47,7 @@ def synthetic_ytd(seed=20261006, n_banks=26, quarters=None, entries=None):
 def to_panel(ytd):
     """Same columns the real pipeline produces (de-cumulation via y9c.panel.decumulate)."""
     frame = ytd.sort_values(['rssd_id', 'report_date']).reset_index(drop=True)
-    for name in ['trading_revenue', 'total_interest_income']:
+    for name in ['trading_revenue', 'total_interest_income', 'trd_cva_counterparty', 'trd_dva_own']:
         if f'{name}_ytd' in frame:
             q, missing = decumulate(frame, f'{name}_ytd')
             frame[f'{name}_q'] = q
@@ -60,7 +60,15 @@ V1_1_ENTRIES = {3: '2009Q1', 4: '2009Q1', 5: '2009Q3', 6: '2016Q3'}
 
 
 def synthetic_ytd_v1_1(seed=20261006, n_banks=22):
-    return synthetic_ytd(seed, n_banks, quarters=QUARTERS_V1_1, entries=V1_1_ENTRIES)
+    """v1.1 synthetic panel; adds small CVA/DVA memo YTDs (HI Memo 9.f/9.g, from 2011Q1) for S8."""
+    out = synthetic_ytd(seed, n_banks, quarters=QUARTERS_V1_1, entries=V1_1_ENTRIES)
+    rng = np.random.default_rng(seed + 1)
+    q = out.report_date.dt.to_period('Q')
+    flow = rng.normal(0, 1, (2, len(out))) * out.trading_assets.to_numpy() * 2e-4
+    for k, name in enumerate(['trd_cva_counterparty_ytd', 'trd_dva_own_ytd']):
+        f = pd.Series(np.where(q >= pd.Period('2011Q1', freq='Q'), flow[k], np.nan), index=out.index)
+        out[name] = f.groupby([out.rssd_id, q.dt.year]).cumsum()
+    return out
 
 
 def synthetic_macro_v1_1(seed=11):

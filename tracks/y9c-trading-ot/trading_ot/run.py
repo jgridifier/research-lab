@@ -123,27 +123,36 @@ def errata_provenance():
                 precedence='where a stated value conflicts with an operative rule of the pinned design, the rule governs')
 
 
-def run_oos_v1_1(panel, macro, design, out_dir, trials_path=TRIALS_PATH, **engine_kw):
-    """Primary v1.1 run. The authorization check is the first statement; the trial is logged before scoring."""
-    pre = preflight(design, ('v1_1',))
+def _cfg_kw(engine_kw):
+    return {k: [str(x) for x in v] for k, v in engine_kw.items()}
+
+
+def _primary(panel, macro, pre, out_dir, trials_path, store=False, companions=(), **engine_kw):
     from . import gate, walkforward_v1_1 as V
-    config = dict(design='v1_1', design_sha256=pre['designs']['v1_1']['design_sha256'], run='primary H1+H2', **{
-        k: [str(x) for x in v] for k, v in engine_kw.items()})
+    config = dict(design='v1_1', design_sha256=pre['designs']['v1_1']['design_sha256'], run='primary H1+H2',
+                  **_cfg_kw(engine_kw))
     log_trial(config, 'v1.1 primary', path=trials_path)
-    res = V.primary(panel, macro, **engine_kw)
+    res = V.primary(panel, macro, store=store, **engine_kw)
     ev = gate.evaluate_primary_v1_1(res['h1'], res['h2'])
     provenance = dict(**pre['designs']['v1_1'], errata=pre['errata'])
-    return _write(out_dir, 'gate.json', dict(design='v1_1', provenance=provenance,
-                                             config_hash=config_hash(config), git_head=git_head(),
-                                             hypotheses=ev, selection_log=res['selection_log'],
-                                             set_sizes={k: len(v) for k, v in res['sets'].items()}))
+    gate_json = _write(out_dir, 'gate.json', dict(design='v1_1', provenance=provenance,
+                                                  config_hash=config_hash(config), git_head=git_head(),
+                                                  hypotheses=ev, selection_log=res['selection_log'],
+                                                  set_sizes={k: len(v) for k, v in res['sets'].items()},
+                                                  companions=list(companions)))
+    return res, ev, gate_json
 
 
-def run_oos_v1_0(panel, macro, design_v1_1, out_dir, trials_path=TRIALS_PATH):
-    """R1: the v1.0 design (B6 excluded from M0/B*, reported), non-gating; authorized via the v1.1 design."""
-    pre = preflight(design_v1_1, ('v1_1', 'v1_0'))
+def run_oos_v1_1(panel, macro, design, out_dir, trials_path=TRIALS_PATH, **engine_kw):
+    """Primary v1.1 run only. preflight (authorization, design pin, errata) runs before the trial is logged."""
+    pre = preflight(design, ('v1_1',))
+    return _primary(panel, macro, pre, out_dir, trials_path, **engine_kw)[2]
+
+
+def _r1(panel, macro, pre, out_dir, trials_path):
     from . import gate, walkforward as W10
-    config = dict(design='v1_0 (R1)', design_sha256=pre['designs']['v1_0']['design_sha256'], policy='exclude_b6', ytd_reset_guard=True)
+    config = dict(design='v1_0 (R1)', design_sha256=pre['designs']['v1_0']['design_sha256'], policy='exclude_b6',
+                  ytd_reset_guard=True)
     log_trial(config, 'R1 (v1.0 design, non-gating)', path=trials_path)
     frozen = W10.freeze_decisions(panel, macro, 'exclude_b6')
     h1 = W10.h1_oos(panel, macro, frozen)
@@ -167,6 +176,143 @@ def run_oos_v1_0(panel, macro, design_v1_1, out_dir, trials_path=TRIALS_PATH):
                                            frozen=frozen, hypotheses=out, war_params=params.to_dict(orient='list')))
 
 
+def run_oos_v1_0(panel, macro, design_v1_1, out_dir, trials_path=TRIALS_PATH):
+    """R1: the v1.0 design (B6 excluded from M0/B*, reported), non-gating; authorized via the v1.1 design."""
+    pre = preflight(design_v1_1, ('v1_1', 'v1_0'))
+    return _r1(panel, macro, pre, out_dir, trials_path)
+
+
+def _jsonable(obj):
+    """Period keys/values -> str, DataFrames -> column lists, numpy scalars -> python (json default=str does
+    not cover dict keys)."""
+    import numpy as np
+    import pandas as pd
+    if isinstance(obj, dict):
+        return {(str(k) if not isinstance(k, (str, int, float, bool)) or k is None else k): _jsonable(v)
+                for k, v in obj.items()}
+    if isinstance(obj, (list, tuple)):
+        return [_jsonable(v) for v in obj]
+    if isinstance(obj, pd.DataFrame):
+        return _jsonable({c: [str(x) if isinstance(x, pd.Period) else x for x in obj[c].tolist()]
+                          for c in obj.columns})
+    if isinstance(obj, (np.floating,)):
+        return float(obj)
+    if isinstance(obj, (np.integer,)):
+        return int(obj)
+    if isinstance(obj, (np.bool_,)):
+        return bool(obj)
+    if isinstance(obj, pd.Period):
+        return str(obj)
+    return obj
+
+
+def run_all_v1_1(panel, macro, design, out_dir, trials_path=TRIALS_PATH, inputs=None, secondary=None,
+                 sensitivities=None, run_r1=True, **engine_kw):
+    """One authorized run: primary (gate.json), secondary family + F1-F5 + secondary metrics (secondary.json),
+    sensitivities S1-S16/S4b/FB4 (sensitivities.json) and R1 (r1.json).
+
+    preflight runs first (authorization, both design pins, errata hash) and its provenance is reused in every
+    JSON. Every execution is appended to trials.jsonl (config hash) immediately before it runs.
+    inputs: macro_dt (S9), panel_rule_b (S11), panel_v1_0 and macro_v1_0 (R1). secondary / sensitivities: optional
+    subsets (names / 'ID:variant' strings) for tests; None = all registered members.
+    """
+    pre = preflight(design, ('v1_1', 'v1_0') if run_r1 else ('v1_1',))
+    import numpy as np
+    import pandas as pd
+    from . import secondary_v1_1 as SEC, sensitivity_v1_1 as SENS, walkforward_v1_1 as V
+    inputs = inputs or {}
+    base = dict(design='v1_1', design_sha256=pre['designs']['v1_1']['design_sha256'],
+                errata_sha256=pre['errata']['sha256'], **_cfg_kw(engine_kw))
+    companions = ['secondary.json', 'sensitivities.json'] + (['r1.json'] if run_r1 else [])
+    res, ev, gate_json = _primary(panel, macro, pre, out_dir, trials_path, store=True, companions=companions,
+                                  **engine_kw)
+    store = res['store']
+    epochs = list(engine_kw.get('epochs', V.select.EPOCH_ORIGINS))
+    targets = engine_kw.get('targets', V.TARGETS_H1)
+    provenance = dict(**pre['designs']['v1_1'], errata=pre['errata'])
+
+    # ── secondary family ──
+    names = SEC.FAMILY if secondary is None else [n for n in SEC.FAMILY if n in secondary]
+    results, details, h1d_raw = {}, {}, None
+
+    def trial(label, **cfg):
+        log_trial(dict(base, run=label, **cfg), f'v1.1 {label}', path=trials_path)
+
+    for name in names:
+        if name == 'H2c_climatology' and 'H2c_persistence' in names:
+            continue                                            # computed with H2c_persistence (logged there)
+        if name.startswith('H2c'):
+            trial('secondary H2c (persistence and climatology comparators)', member='H2c')
+            h2c = SEC.h2c(store, panel)
+            for k in ('persistence', 'climatology'):
+                if f'H2c_{k}' in names:
+                    results[f'H2c_{k}'] = SEC.evaluate(h2c[k])
+            continue
+        trial(f'secondary {name}', member=name)
+        if name == 'H1b':
+            cases, info = SEC.h1b(store)
+        elif name == 'H1c':
+            cases, info = SEC.h1c(store)
+        elif name == 'H1d':
+            cases, info = SEC.h1d(panel, epochs=epochs, targets=targets)
+            h1d_raw = info['raw']
+        elif name.startswith('H1e'):
+            h = int(name[-1])
+            tq = [t for t in SEC.h1e_targets(h) if targets[0] <= t <= targets[-1]]
+            cases, info = SEC.h1e(panel, macro, h, epochs=epochs, targets=pd.PeriodIndex(tq, freq='Q'))
+        elif name == 'H2b':
+            cases, info = SEC.h2b(store, panel)
+        elif name == 'H2d':
+            cases, info = SEC.h2d(store, macro)
+        elif name == 'H2e':
+            cases, info = SEC.h2e(store)
+        elif name == 'H2f':
+            cases, info = SEC.h2f(store)
+        if name == 'H2f' and info.get('status') == 'N/A':
+            results[name] = dict(status='N/A', reason=info['reason'], p=np.nan)
+        else:
+            results[name] = SEC.evaluate(cases)
+        details[name] = info
+    holm = SEC.holm_family(results)
+    trial('falsification F3 rank-permutation placebo', perms=SEC.F3_PERMS, seed=SEC.F3_SEED)
+    f3 = SEC.f3_placebo(store)
+    metrics = {h: SEC.secondary_metrics(store, h) for h in ('H1', 'H2')}
+    fals = SEC.falsification(ev, results, store, res['h1'], res['h2_all'].dropna(subset=['S_ot', 'S_ref']),
+                             metrics, f3)
+    _write(out_dir, 'secondary.json', _jsonable(dict(
+        design='v1_1', label='secondary (Holm within family; non-gating)', provenance=provenance,
+        family=SEC.FAMILY, holm=holm, results=results, details=details, falsification=fals,
+        secondary_metrics=metrics, h1d_raw=h1d_raw)))
+
+    # ── sensitivities ──
+    ctx = dict(panel=panel, macro=macro, engine_kw=engine_kw, macro_dt=inputs.get('macro_dt'),
+               panel_rule_b=inputs.get('panel_rule_b'), h1d_raw=h1d_raw,
+               primary=dict(res, sets_periods=V.rolling_set_by_epoch(panel, epochs)))
+    sens = []
+    for item in SENS.PLAN:
+        key = f"{item['id']}:{item['variant']}"
+        if sensitivities is not None and key not in sensitivities and item['id'] not in sensitivities:
+            continue
+        need = {'S9': 'macro_dt', 'S11': 'panel_rule_b'}.get(item['id'])
+        if need and ctx.get(need) is None:
+            sens.append(dict(item, status='N/A', reason=f'input {need} not supplied'))
+            continue
+        trial(f'sensitivity {key}', sensitivity=item)
+        out, extra = SENS.run_item(item, ctx)
+        sens.append(dict(item, status='ok', results=out, details=extra))
+    _write(out_dir, 'sensitivities.json', _jsonable(dict(
+        design='v1_1', label='sensitivities (pre-registered; none can change a primary verdict)',
+        provenance=provenance, primary_reference={k: dict(G=v['G'], p=v['dm']['p'], verdict=v['verdict'])
+                                                  for k, v in ev.items()}, sensitivities=sens)))
+
+    r1 = None
+    if run_r1:
+        if inputs.get('panel_v1_0') is None or inputs.get('macro_v1_0') is None:
+            raise ValueError('run_r1=True needs inputs panel_v1_0 and macro_v1_0')
+        r1 = _r1(inputs['panel_v1_0'], inputs['macro_v1_0'], pre, out_dir, trials_path)
+    return dict(gate=gate_json, secondary=results, sensitivities=sens, r1=r1)
+
+
 def _sha(path):
     return hashlib.sha256(path.read_bytes()).hexdigest()
 
@@ -178,19 +324,25 @@ def _write(out_dir, name, obj):
 
 
 def stage_oos(design_name, as_of):
-    """Gate first (nothing is loaded or computed before it). R1 is authorized only through the v1.1 design."""
+    """Gate first (nothing is loaded or computed before it). R1 is authorized only through the v1.1 design.
+
+    --design v1_1 runs everything registered in one go (primary, secondary, sensitivities, R1);
+    --design v1_0 runs R1 alone."""
     governing = load_design(DESIGN_PATH_V1_1)
-    assert_oos_authorized(governing)
+    preflight(governing, ('v1_1', 'v1_0'))
     import pandas as pd
     from .paths import RESULTS
     from . import macro as M, panel as P
+    raw = pd.read_parquet(DATA / 'processed_v1_1' / 'trading_panel.parquet')
+    panel_v1_0 = P.prepare_v1_0(raw)
+    mac_v1_0 = M.quarter_features(pd.period_range('2018Q1', '2026Q2', freq='Q'))
     if design_name == 'v1_1':
-        panel = P.prepare_v1_1(pd.read_parquet(DATA / 'processed_v1_1' / 'trading_panel.parquet'))
-        mac = M.quarter_features_v1_1(pd.period_range('2009Q1', '2026Q2', freq='Q'))
-        return run_oos_v1_1(panel, mac, governing, RESULTS / 'tables')
-    panel = P.prepare_v1_0(pd.read_parquet(DATA / 'processed_v1_1' / 'trading_panel.parquet'))
-    mac = M.quarter_features(pd.period_range('2018Q1', '2026Q2', freq='Q'))
-    return run_oos_v1_0(panel, mac, governing, RESULTS / 'tables')
+        qs = pd.period_range('2009Q1', '2026Q2', freq='Q')
+        inputs = dict(macro_dt=M.quarter_features_v1_1(qs, asof_rule='Dt'), panel_rule_b=P.prepare_v1_1(raw, 'b'),
+                      panel_v1_0=panel_v1_0, macro_v1_0=mac_v1_0)
+        return run_all_v1_1(P.prepare_v1_1(raw), M.quarter_features_v1_1(qs), governing, RESULTS / 'tables',
+                            inputs=inputs)
+    return run_oos_v1_0(panel_v1_0, mac_v1_0, governing, RESULTS / 'tables')
 
 
 def main(argv=None):

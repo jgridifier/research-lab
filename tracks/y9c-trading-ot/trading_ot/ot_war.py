@@ -88,3 +88,71 @@ def ot_recalibrate(Q, pits, taus=U99):
     """Q_rec(tau) = Q(G^-1(tau)), G the empirical CDF of past PITs (1-D monotone transport of the PIT law to U(0,1))."""
     g_inv = np.quantile(np.asarray(pits, float), taus, method='linear')
     return np.array([np.interp(g_inv, taus, q) for q in np.atleast_2d(Q)])
+
+
+# ── v1.1 secondary / sensitivity helpers ────────────────────────────────────
+def war_beta_pairs(Qd, Qbar, h=1, grid_idx=U19_IDX, q1_shift=False):
+    """beta over pairs (s, s+h) both present in Qd {quarter: Q}; V_s = Q_s - Qbar, inner products on U19.
+
+    q1_shift=True: joint least squares of V_(s+h) = beta V_s + delta 1[Q1(s+h)] (Frisch-Waugh: Q1-target pairs
+    demeaned within the Q1 group), beta clipped to [0, 1], delta = mean_Q1(V_(s+h)) - beta mean_Q1(V_s) on U99.
+    Returns (beta, beta_raw, n_pairs, delta or None)."""
+    pairs = [(s, s + h) for s in Qd if (s + h) in Qd]
+    if not pairs:
+        return np.nan, np.nan, 0, None
+    V = {s: np.asarray(Qd[s], float) - Qbar for s in Qd}
+    Vx = np.stack([V[a] for a, _ in pairs])
+    Vy = np.stack([V[b] for _, b in pairs])
+    isq1 = np.array([b.quarter == 1 for _, b in pairs])
+    X, Y = Vx[:, grid_idx].copy(), Vy[:, grid_idx].copy()
+    if q1_shift and isq1.any():
+        X[isq1] -= X[isq1].mean(axis=0)
+        Y[isq1] -= Y[isq1].mean(axis=0)
+    den = float(np.sum(X * X))
+    raw = float(np.sum(X * Y)) / den if den > 0 else np.nan
+    beta = float(np.clip(raw, 0.0, 1.0)) if np.isfinite(raw) else np.nan
+    delta = None
+    if q1_shift and isq1.any() and np.isfinite(beta):
+        delta = Vy[isq1].mean(axis=0) - beta * Vx[isq1].mean(axis=0)
+    return beta, raw, len(pairs), delta
+
+
+def ar_map_forecast(Qd, origin, h=1, grid_idx=U19_IDX):
+    """H2f, autoregressive OT-map (Zhu & Muller 2023), 1-D, scalar coefficient.
+
+    T_s = Q_(s+1) o F_s is the optimal map from the quarter-s law to the quarter-(s+1) law; as a function of x its
+    displacement is d_s(x) = T_s(x) - x, known at the knots x = Q_s(u) (d_s(Q_s(u)) = Q_(s+1)(u) - Q_s(u)) and
+    interpolated linearly in x (held flat outside). Model: d_s(x) = alpha d_(s-1)(x), evaluated at x = Q_s(u),
+    u in U19; alpha by least squares over consecutive triples, clipped to [-1, 1]. Forecast:
+    Qhat_(t+1)(u) = Q_t(u) + alpha d_(t-1)(Q_t(u)), then isotonic projection. Requires h = 1 and >= 3 consecutive
+    quarters ending at the origin; raises ValueError otherwise (the caller logs N/A).
+    Returns (Qhat, dict(alpha, alpha_raw, n_pairs))."""
+    from scipy.optimize import isotonic_regression
+    if h != 1:
+        raise ValueError('H2f is defined for h = 1 only')
+    origin = pd.Period(origin, freq='Q')
+
+    def disp(s):
+        return np.asarray(Qd[s + 1], float) - np.asarray(Qd[s], float)
+
+    def d_at(s, x):
+        q = np.asarray(Qd[s], float)
+        qq, idx = np.unique(q, return_index=True)
+        return np.interp(x, qq, disp(s)[idx])
+
+    num = den = 0.0
+    n = 0
+    for s in Qd:
+        if s + 1 in Qd and s - 1 in Qd and s + 1 <= origin:
+            x = np.asarray(Qd[s], float)[grid_idx]
+            prev = d_at(s - 1, x)
+            num += float(np.sum(disp(s)[grid_idx] * prev))
+            den += float(np.sum(prev * prev))
+            n += 1
+    if origin not in Qd or origin - 1 not in Qd or n < 1 or not den > 0:
+        raise ValueError(f'H2f: not enough consecutive cross-sections at {origin} (pairs={n})')
+    raw = num / den
+    alpha = float(np.clip(raw, -1.0, 1.0))
+    Qt = np.asarray(Qd[origin], float)
+    Qhat = isotonic_regression(Qt + alpha * d_at(origin - 1, Qt)).x
+    return Qhat, dict(alpha=alpha, alpha_raw=float(raw), n_pairs=n)

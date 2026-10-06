@@ -116,6 +116,16 @@ def ses_levels(R, alpha=SES_ALPHA):
     return L
 
 
+def _min_own(W):
+    """Own-error minimum: 8 (default); H1d's single series sets W.min_own = 2 (addendum §6 Q6)."""
+    return getattr(W, 'min_own', MIN_OWN_ERRORS)
+
+
+def _use_q1(W):
+    """Q1 dummy in B4/B5: on by default; sensitivity S6 sets W.use_q1 = False (term dropped)."""
+    return getattr(W, 'use_q1', True)
+
+
 def _with_horizon(W, t, h):
     """f(M): keep columns 0..t (data <= origin) and NaN-pad so that index t+h exists."""
     def f(M):
@@ -139,7 +149,7 @@ def _rule_baseline(W, t, h, space, F_ratio_or_usd, pool_scale):
     Zt = pad(W.Z(space))
     F = np.asarray(F_ratio_or_usd, float)
     centres = F[:, t + h]
-    Q, used = error_quantiles(centres, _errs(Zt, F, t), pool_scale)
+    Q, used = error_quantiles(centres, _errs(Zt, F, t), pool_scale, min_own=_min_own(W))
     return Q, dict(used_pool=used)
 
 
@@ -184,17 +194,18 @@ def b4_ar1q1(W, t, h, space, pool_scale):
             fallback[i] = True
             errors.append(np.array([]))
             continue
-        X = np.column_stack([np.ones(ok.sum()), x[ok], q1[s[ok] + h]])
+        cols = [np.ones(ok.sum()), x[ok]] + ([q1[s[ok] + h]] if _use_q1(W) else [])
+        X = np.column_stack(cols)
         coef, *_ = np.linalg.lstsq(X, y[ok], rcond=None)
         fit = X @ coef
-        cen = coef[0] + coef[1] * R[i, t] + coef[2] * q1[t + h]
+        cen = coef[0] + coef[1] * R[i, t] + (coef[2] * q1[t + h] if _use_q1(W) else 0.0)
         if space == 'ratio':
             centres[i] = cen
             errors.append(y[ok] - fit)
         else:
             centres[i] = cen * D[i, t] / 1e4
             errors.append(Zt[i, s[ok] + h] - fit * D[i, s[ok]] / 1e4)
-    Q, used = error_quantiles(centres, errors, pool_scale)
+    Q, used = error_quantiles(centres, errors, pool_scale, min_own=_min_own(W))
     Q[fallback] = rw_Q[fallback]
     used = np.where(fallback, rw_info['used_pool'], used)
     return Q, dict(used_pool=used, fallback=fallback)
@@ -242,7 +253,7 @@ def b5_panel_qr(W, t, h, space, pool_scale, macro, train_mask=None):
                 continue
             feats = [R[i, s]] + ([R[i, s + lag4]] if use_season else [])
             y = R[i, tgt]
-            row = [*feats, q1[tgt], *Xm[s]]
+            row = [*feats, *([q1[tgt]] if _use_q1(W) else []), *Xm[s]]
             if np.isfinite(y) and np.all(np.isfinite(row)):
                 rows.append(row)
                 ys.append(y)
@@ -263,7 +274,7 @@ def b5_panel_qr(W, t, h, space, pool_scale, macro, train_mask=None):
     for i in range(n):
         feats = [R[i, t]] + ([R[i, t + lag4]] if use_season else [])
         xm = (Xm[t] - mu) / sd
-        x = np.array([1.0, *feats, q1[t + h], *xm])
+        x = np.array([1.0, *feats, *([q1[t + h]] if _use_q1(W) else []), *xm])
         if not np.all(np.isfinite(x)):
             continue
         q19 = np.sort(betas @ x)
