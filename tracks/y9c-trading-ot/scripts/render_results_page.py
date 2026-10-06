@@ -117,6 +117,28 @@ def secondary_rows(sec):
     return '\n'.join(rows)
 
 
+def outside_rows(sec):
+    """Pre-registered secondary items outside the Holm family (ERRATA_v1_1b §4): FPCA K=2 WAR, ridge point MAE,
+    and the deferred §4-B scenarios."""
+    out = (sec or {}).get('outside_family') or {}
+    pend = lambda: 'PENDING' if not sec else 'N/A'
+    f = out.get('H2_fpca_k2') or {}
+    r = out.get('ridge_point') or {}
+    rows = [
+        f"<tr><td>H2 FPCA</td><td>K = 2 FPCA functional WAR + rank map (raw p, no Holm)</td><td>B*<sub>CS</sub></td>"
+        f"<td>G {_fmt(f.get('G'), '{:+.1%}')}, p {_fmt(f.get('p'), '{:.3f}')}</td>"
+        f"<td><span class=\"verdict\">{'secondary' if f.get('status') == 'ok' else pend()}</span></td></tr>",
+        f"<tr><td>Ridge (pt)</td><td>Pooled ridge point forecast, λ by GCV once on burn-in (frozen"
+        f"{'' if r.get('lam') is None else ' = ' + _fmt(r.get('lam'), '{:.4g}')}); scaled MAE</td>"
+        f"<td>BARY-EW / B* medians</td><td>MAE gain {_fmt(r.get('gain_bary_vs_ridge'), '{:+.1%}')} / "
+        f"{_fmt(r.get('gain_bstar_vs_ridge'), '{:+.1%}')}</td>"
+        f"<td><span class=\"verdict\">{'secondary metric' if r.get('status') == 'ok' else pend()}</span></td></tr>",
+        "<tr><td>§4-B</td><td>Barycentric scenarios, W₂ scenario reduction, energy score</td><td>—</td><td>—</td>"
+        "<td><span class=\"verdict\">DEFERRED</span></td></tr>",
+    ]
+    return '\n'.join(rows)
+
+
 SENS_LABELS = [('S1', 'Bank set: full-sample balanced ($10m, $100m; look-ahead) and the fixed 2013Q4 set'),
                ('S2', 'Modelling scale: revenue / total assets; raw $'),
                ('S3', 'Cross-section threshold $10m / $50m / $1bn'),
@@ -255,6 +277,13 @@ def render():
     <thead><tr><th>Test</th><th>Method</th><th>Comparator</th><th>G</th><th>p (raw, test C)</th><th>p (Holm, secondary)</th><th>Targets</th><th>Role</th></tr></thead>
     <tbody>
 {secondary_rows(sec)}
+    </tbody>
+  </table></div>
+  <h3>Other pre-registered secondary items (outside the Holm family)</h3>
+  <div class="table-scroll"><table class="dataframe">
+    <thead><tr><th>Item</th><th>Method</th><th>Comparator</th><th>Result</th><th>Role</th></tr></thead>
+    <tbody>
+{outside_rows(sec)}
     </tbody>
   </table></div>
   <h3>Sensitivities S1–S16, S4b, FB4 (pre-registered; none can change a primary verdict)</h3>

@@ -32,12 +32,16 @@ per-bank probabilistic baselines B0–B6, plus two OT layers from the classical-
     and `sensitivities.json`.
 - `trials.jsonl` holds one `design_revision` entry (`counts_as_trial: false`). The OOS trial count is 0.
 - **Preflight order.** Every OOS entry point (`run_oos_v1_1`, `run_oos_v1_0`, `run_all_v1_1`, `stage_oos`) calls
-  `run.preflight` first: authorization → design sha256 vs the pin(s) in `statement_forecast.prereg` → errata sha256.
+  `run.preflight` first: authorization → design sha256 vs the pin(s) in `statement_forecast.prereg` → errata sha256
+  (ERRATA_v1_1, then ERRATA_v1_1b).
   Only then is a trial logged or any data touched. The provenance computed there is reused in every output JSON.
 - **One authorized run** (`python -m trading_ot.run oos`, design v1_1) writes `gate.json` (primary),
-  `secondary.json` (H1b–H1e, H2b–H2f, Holm within the family, F1–F5, secondary metrics), `sensitivities.json`
-  (S1–S16, S4b, FB4) and `r1.json`. Each execution is logged as its own trial before it runs: 1 primary + 11
-  secondary (H2c's two comparators are one execution) + F3 placebo + 23 sensitivity variants + R1 = 37 trials.
+  `secondary.json` (H1b–H1e, H2b–H2f, Holm within the family; outside the family the K = 2 FPCA WAR variant and the
+  ridge point MAE; F1–F5, secondary metrics), `sensitivities.json` (S1–S16, S4b, FB4) and `r1.json`. Each execution
+  is logged as its own trial before it runs: 1 primary + 11 secondary (H2c's two comparators are one execution)
+  + 2 outside the family (FPCA K = 2, ridge point) + F3 placebo + 23 sensitivity variants + R1 = **39 trials**.
+  F1/F2/F4/F5 and the secondary metrics are readings of these executions, not executions (ERRATA_v1_1b §1).
+  §4-B scenarios are deferred (note 34), so they add no trial.
 
 ## Layout
 | Path | What |
@@ -46,18 +50,18 @@ per-bank probabilistic baselines B0–B6, plus two OT layers from the classical-
 | `trading_ot/panel.py` | `build_trading_panel` (one or more raw dirs; hashes checked against `manifest.json` before parsing), `availability_date` (due date + 7d), `complete_quarters`, `memo9_check`, `merger_flags` + event list (v1.1 S5 additions). v1.1: `ytd_reset_guard`, `tiered_duplicate_mask`, `entrant_rule_b` (S11), `presample_mask`, `prepare_v1_1` / `prepare_v1_0` (R1) |
 | `trading_ot/sets.py` | Ex-ante 19-bank rule (v1.0), `exante_bank_set_rolling` / `set_for_target` (v1.1 annual S_o), balanced-13 sensitivity, cross-section `C_s` |
 | `trading_ot/macro.py` | v1.0/R1: FRED VIXCLS / DGS10 / SP500. v1.1: VIXCLS / DGS10 / NASDAQCOM / BAA10Y from 2007-01-01 (`data/fred_v1_1`, sha256 in manifest). Caches gitignored |
-| `trading_ot/baselines.py` | B0 SAA-8, B1 seasonal naive, B2 ratio RW, B3 SES(0.3), B4 AR(1)+Q1, B5 pooled QR (LP), B6 EB (`eb_forecast_origin` unchanged) |
-| `trading_ot/ot_bary.py`, `ot_war.py` | Barycenter, widening, trim, s selection, linear pool; WAR β, geodesic forecast, probit ranks, ρ, rank map |
+| `trading_ot/baselines.py` | B0 SAA-8, B1 seasonal naive, B2 ratio RW, B3 SES(0.3), B4 AR(1)+Q1, B5 pooled QR (LP), B6 EB (`eb_forecast_origin` unchanged); `ridge_gcv` / `ridge_gcv_lambda` / `ridge_point` (pooled ridge point forecast, secondary MAE) |
+| `trading_ot/ot_bary.py`, `ot_war.py` | Barycenter, widening, trim, s selection, linear pool; WAR β, geodesic forecast, probit ranks, ρ, rank map; `ar_map_forecast` (H2f), `fpca_war_forecast` (K = 2 FPCA WAR variant) |
 | `trading_ot/gate.py` | v1.1: `dm_fixedb` (Bartlett, M=⌊√T⌋, simulated p, R=200,000, seed 20261006), `gain_v1_1` (G, G_U), `verdict_v1_1`, `subperiods`, `fluctuation_test`, `mean_shift_tests`, `evaluate_primary_v1_1`. v1.0: panel DM (HLN), WPE fixed-m, Holm, LOBO |
 | `trading_ot/scoring.py`, `select.py` | Quantile CRPS, coverage, v1.1 `case_scale` (trailing-16 MAD at the case origin); annual epochs, matched cases, 80% coverage rule, ties |
 | `trading_ot/walkforward.py` | v1.0 / R1 engine (frozen 2021Q4 decisions; `exclude_b6` policy reports B6) |
 | `trading_ot/walkforward_v1_1.py` | v1.1 engine: epoch populations, first freeze (2013Q4, burn-in only), annual re-selection, H1/H2 matched cases (not executed on OOS) |
-| `trading_ot/secondary_v1_1.py` | Secondary family H1b–H1e / H2b–H2f, Holm within family, F1–F5 (F3 placebo), secondary metrics (pinball, MAE, 50/90% coverage, PIT) |
+| `trading_ot/secondary_v1_1.py` | Secondary family H1b–H1e / H2b–H2f, Holm within family; outside the family `h2_fpca` and `ridge_lambda` / `ridge_point_mae`; F1–F5 (F3 placebo), secondary metrics (pinball, MAE, 50/90% coverage, PIT) |
 | `trading_ot/sensitivity_v1_1.py` | `PLAN` of 23 registered sensitivity executions (S1–S16, S4b, FB4): refits through `walkforward_v1_1.Spec`, or rescoring of the stored primary forecasts |
 | `trading_ot/run.py` | `--design v1_1|v1_0`. Pin checks run first, then the `panel` stage. The `oos` stage is gated (`preflight`) on the v1.1 design; `run_all_v1_1` = primary + secondary + sensitivities + R1, `run_oos_v1_0` = R1 alone. Trials are logged to `trials.jsonl` before each execution |
 | `scripts/render_results_page.py` | `docs/tracks/y9c-trading-ot/results/index.html` (renders PENDING until `tables/gate.json` exists) |
 
-## IMPLEMENTATION_NOTES (Phase B: secondary family and sensitivities)
+## IMPLEMENTATION_NOTES (Phase B: secondary family and sensitivities; 32–34: ERRATA_v1_1b §4 items)
 Each line is an interpretation made where the prereg (v1.0 §4.1/§4.2/§5.6/§5.7), addendum v1.1 (§4.3, §7) or the
 pinned v1.1 JSON leave room; the reading most faithful to the text was chosen. None of it has been executed on OOS
 data. Common to all: fixed-b test C with M = ⌊√T⌋ (R = 200,000, seed 20261006), G = Σd̄/ΣS̄_ref, matched cases.
@@ -148,13 +152,60 @@ forecasts re-aggregated, no refit; the descriptive verdict uses the raw p and ne
     point-in-time assertions and a store-on/off equality test all pass. `war_rm` is bit-identical when every quarter
     is present and there is no Q1 shift.
 
-Not implemented (outside the requested family):
-- §4-B scenarios and the energy score.
-- §4.4 exploratory WDRO, drift and Gelbrich.
+32. **K = 2 FPCA functional WAR (prereg §4.2 Step 3 variant; its own trial; outside the Holm family).**
+    - Inputs are the primary's own objects at each origin: the cross-sections Q_s for the quarters present ≤ origin
+      (from 2009Q1) and the primary's Fréchet mean Q̄_t. Tangent vectors V_s = Q_s − Q̄_t.
+    - FPCA uses the Step 2 inner product (unweighted, trimmed grid U19): SVD of the quarters × 19 matrix V[:, U19].
+      Scores ξ_s are the first K = 2 left singular vectors × singular values. The eigenfunctions are extended to U99
+      by φ_k = Σ_s U_{s,k} V_s / S_k, which equals the U19 eigenvector on U19.
+    - Dynamics: ξ_{s+1} = A ξ_s with a 2 × 2 A (the "K × K operator" that Step 2 contrasts with the scalar β),
+      by least squares over consecutive present pairs with s + 1 ≤ origin; no intercept (the scores are centred), no
+      clipping or stability constraint. The spectral radius is reported per origin.
+    - Forecast: Q̂ = isotonic(Q̄_t + Σ_k (A ξ_t)_k φ_k) with `scipy.optimize.isotonic_regression`; components beyond
+      K are dropped (the FPCA truncation).
+    - Bank forecasts: the primary WAR rank map with the primary's ρ̂ and origin ranks z, on the primary T3 population;
+      scored against the epoch's B*_CS exactly as H2. Reported with G, G_U, the raw fixed-b test-C p, coverage and
+      LOBO; it is a secondary variant, not one of H2b–H2f, so it is outside the Holm family (no Holm p). N/A if it
+      cannot run at the first origin; later failures are logged per target.
+33. **Pooled ridge point forecast (prereg §3 "(pt)"; its own trial; a secondary-metric comparator, no test).**
+    - Bank set T2 (the set in force at each target), h = 1, ratio space r = 1e4·A220/TA_{t−1}; the $ point is
+      r̂ × TA_t / 1e4 (as B5).
+    - Regressors = B5's T2 regressors (r_s, r_{s−3}, the Q1 indicator of the target, the four macro columns at s;
+      B5's exact row rule) plus one intercept dummy per bank in the population.
+    - glmnet convention: every non-intercept column (including the bank dummies) is standardised on the training
+      rows (population sd); zero-variance columns are dropped; the global intercept is unpenalised and the bank
+      intercepts are penalised (pooled). Objective (1/n)·RSS + λ‖β‖².
+    - λ is chosen **once** by GCV(λ) = n·RSS/(n − df)², df = 1 + Σ d_j²/(d_j² + nλ), over the grid
+      λ = 10^(−4 … 4, step 0.05), on burn-in only: rows ≤ 2013Q4, h = 1 pairs with target ≤ 2013Q4, the epoch-0
+      bank set S_2013Q4 (12 banks, 190 rows, 19 columns). **Frozen λ = 10^−1.6 = 0.02512** (interior of the grid;
+      pinned by `test_burnin_secondary_real.py::test_ridge_lambda_frozen_on_burnin`).
+    - At each scored origin the ridge is refitted with the frozen λ on all pairs with target ≤ origin.
+    - Reported: scaled MAE |y − ŷ|/s_i(o) (the primary case scale) on the H1 matched cases where BARY-EW, B* and the
+      ridge are defined, for the ridge, the BARY-EW median and the B* median; equal weight per bank within a quarter,
+      then across quarters; relative MAE gains of BARY-EW and of B* over the ridge. No test.
+34. **§4-B scenarios + W₂ scenario reduction + energy score: DEFERRED (underspecified as written; not improvised).**
+    Quant to write a pinned, dated deferral note. What the prereg/addendum/errata do not pin down:
+    - *Historical-simulation benchmark:* "historical simulation from the last 12 quarters of scaled errors" does not
+      say which forecast's errors (B*, BARY-EW median?), the centre the errors are added to, the scale used to
+      unscale them, or how a joint 4-quarter (bank × horizon) path is drawn (same calendar quarter across banks?
+      consecutive blocks? which horizons' errors).
+    - *Copula correlation R̂_t over (bank, horizon):* how (bank, h) PITs are aligned into one observation (by origin,
+      which needs targets o + 4 ≤ t), the pseudo-OOS window (burn-in only, or expanding), which B* per horizon (B*_h
+      from H1e or the h = 1 B*), the equicorrelation target (the mean off-diagonal correlation, or a fixed level), and
+      the handling of missing pairs / a non-PSD matrix. At the first origin there are only about three complete
+      4-horizon origins for 48 dimensions (12 banks × 4), so the estimator is not determined by the text.
+    - *Reduction:* the k-means seed is "fixed" but not given; "standardized path vectors" does not say per-coordinate
+      z-scores vs the case scale; k-means++ restarts are not specified.
+    - *Evaluation design under v1.1:* v1 assumed about 15 overlapping 4-quarter origins (2018–2021 history); the
+      addendum does not say which origins v1.1 uses (every quarter 2013Q4–2025Q2? annual epochs?), nor how the
+      ex-ante set is handled when a bank lacks an actual at some horizon (energy score of a partly observed vector),
+      nor whether the "industry" path is the bank-set sum or T1.
+    `scoring.energy_score` exists from the v1 build but is not wired to any output (and has no dedicated test).
+
+Not implemented (later, labelled EXPLORATORY, per ERRATA_v1_1b §4):
+- §4.4 exploratory WDRO, drift monitor and Gelbrich bound.
 - The exploratory entropic barycenter.
-- The K = 2 FPCA WAR variant.
-- The pooled ridge point forecast for secondary MAE (`ridge_point` still raises).
-- The results-page figures, which need OOS outputs.
+- The results-page figures, which need OOS outputs (rendering of computed outputs only).
 
 ## Run
 ```bash

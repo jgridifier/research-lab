@@ -112,6 +112,15 @@
 <tr><td>H2f</td><td>Autoregressive OT map (scalar) + rank map</td><td>B*<sub>CS</sub></td><td>—</td><td>—</td><td>—</td><td>—</td><td><span class="verdict">PENDING</span></td></tr>
     </tbody>
   </table></div>
+  <h3>Other pre-registered secondary items (outside the Holm family)</h3>
+  <div class="table-scroll"><table class="dataframe">
+    <thead><tr><th>Item</th><th>Method</th><th>Comparator</th><th>Result</th><th>Role</th></tr></thead>
+    <tbody>
+<tr><td>H2 FPCA</td><td>K = 2 FPCA functional WAR + rank map (raw p, no Holm)</td><td>B*<sub>CS</sub></td><td>G —, p —</td><td><span class="verdict">PENDING</span></td></tr>
+<tr><td>Ridge (pt)</td><td>Pooled ridge point forecast, λ by GCV once on burn-in (frozen); scaled MAE</td><td>BARY-EW / B* medians</td><td>MAE gain — / —</td><td><span class="verdict">PENDING</span></td></tr>
+<tr><td>§4-B</td><td>Barycentric scenarios, W₂ scenario reduction, energy score</td><td>—</td><td>—</td><td><span class="verdict">DEFERRED</span></td></tr>
+    </tbody>
+  </table></div>
   <h3>Sensitivities S1–S16, S4b, FB4 (pre-registered; none can change a primary verdict)</h3>
   <div class="table-scroll"><table class="dataframe">
     <thead><tr><th>ID</th><th>Variation</th><th>H1 G</th><th>H2 G</th><th>H1d G</th><th>Role</th></tr></thead>
@@ -123,14 +132,14 @@
 <tr><td>S4b</td><td>Training from 2010Q1</td><td>—</td><td>—</td><td>—</td><td><span class="verdict">PENDING</span></td></tr>
 <tr><td>S5</td><td>Drop targets at merger events and the quarter after</td><td>—</td><td>—</td><td>—</td><td><span class="verdict">PENDING</span></td></tr>
 <tr><td>S6</td><td>No Q1 dummy in B4/B5; WAR with a Q1 tangent shift</td><td>—</td><td>—</td><td>—</td><td><span class="verdict">PENDING</span></td></tr>
-<tr><td>S7</td><td>CRPS on 19 levels</td><td>—</td><td>—</td><td>—</td><td><span class="verdict">PENDING</span></td></tr>
-<tr><td>S8</td><td>Target ex-CVA/DVA for banks ≥ $100bn</td><td>—</td><td>—</td><td>—</td><td><span class="verdict">PENDING</span></td></tr>
+<tr><td>S7</td><td>CRPS on 19 levels (rescore, no re-selection)</td><td>—</td><td>—</td><td>—</td><td><span class="verdict">PENDING</span></td></tr>
+<tr><td>S8</td><td>Target ex-CVA/DVA for banks ≥ $100bn (rows before 2011Q1 unadjusted)</td><td>—</td><td>—</td><td>—</td><td><span class="verdict">PENDING</span></td></tr>
 <tr><td>S9</td><td>Macro data through the availability date</td><td>—</td><td>—</td><td>—</td><td><span class="verdict">PENDING</span></td></tr>
 <tr><td>S10</td><td>Leave one OOS year out</td><td>—</td><td>—</td><td>—</td><td><span class="verdict">PENDING</span></td></tr>
 <tr><td>S11</td><td>Mid-year entrant rule (b), industry total</td><td>—</td><td>—</td><td>—</td><td><span class="verdict">PENDING</span></td></tr>
 <tr><td>S12</td><td>Rolling 16-quarter estimation windows</td><td>—</td><td>—</td><td>—</td><td><span class="verdict">PENDING</span></td></tr>
 <tr><td>S13</td><td>Settings frozen at 2013Q4</td><td>—</td><td>—</td><td>—</td><td><span class="verdict">PENDING</span></td></tr>
-<tr><td>S14</td><td>Frozen burn-in score scale (2010Q1–2013Q4)</td><td>—</td><td>—</td><td>—</td><td><span class="verdict">PENDING</span></td></tr>
+<tr><td>S14</td><td>Frozen burn-in score scale, 2010Q1–2013Q4 (rescore, no re-selection)</td><td>—</td><td>—</td><td>—</td><td><span class="verdict">PENDING</span></td></tr>
 <tr><td>S15</td><td>Test A and WPE p-values</td><td>—</td><td>—</td><td>—</td><td><span class="verdict">PENDING</span></td></tr>
 <tr><td>S16</td><td>B5 without the Baa–10-year spread</td><td>—</td><td>—</td><td>—</td><td><span class="verdict">PENDING</span></td></tr>
 <tr><td>FB4</td><td>Exclude 2020Q1–Q2 targets</td><td>—</td><td>—</td><td>—</td><td><span class="verdict">PENDING</span></td></tr>
