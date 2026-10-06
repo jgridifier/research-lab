@@ -55,3 +55,38 @@ def trimmed_w2sq(Qa, Qb, idx=U19_IDX):
     """Trimmed W2^2 on U19: mean over the 19 inner levels of (Qa - Qb)^2."""
     Qa, Qb = np.asarray(Qa, float), np.asarray(Qb, float)
     return float(np.mean((Qa[..., idx] - Qb[..., idx]) ** 2))
+
+
+# ── v1.1 case scale (addendum §2.4) ─────────────────────────────────────────
+MAD_K = 1.4826
+
+
+def raw_case_scale(panel, banks, origin, window=16, min_obs=12, column='trading_revenue_q'):
+    """1.4826 x MAD of each bank's A220_q over the `window` quarters ending at origin; NaN if < min_obs values.
+
+    Uses only rows with origin-window < quarter <= origin (pre-sample rows are NaN after the mask).
+    """
+    import pandas as pd
+    o = pd.Period(origin, freq='Q')
+    w = panel[panel.quarter.between(o - (window - 1), o) & panel.rssd_id.isin(list(banks))]
+    out = np.full(len(banks), np.nan)
+    groups = {k: g[column].to_numpy(float) for k, g in w.groupby('rssd_id')}
+    for k, b in enumerate(banks):
+        x = groups.get(b, np.array([]))
+        x = x[np.isfinite(x)]
+        if len(x) >= min_obs:
+            out[k] = MAD_K * np.median(np.abs(x - np.median(x)))
+    return out
+
+
+def case_scale(panel, banks, origin, set_, window=16, min_obs=12, floor_q=0.10, column='trading_revenue_q'):
+    """s_i(o): raw trailing-window MAD floored at the floor_q quantile of raw s_j(o) over `set_` (the set in force).
+
+    Banks with fewer than min_obs values get NaN (not scored at that origin; counted by the caller).
+    """
+    banks, set_ = list(banks), list(set_)
+    raw_set = raw_case_scale(panel, set_, origin, window, min_obs, column)
+    raw_set = raw_set[np.isfinite(raw_set)]
+    floor = float(np.quantile(raw_set, floor_q)) if len(raw_set) else np.nan
+    raw = raw_case_scale(panel, banks, origin, window, min_obs, column)
+    return np.where(np.isfinite(raw), np.fmax(raw, floor), np.nan), floor

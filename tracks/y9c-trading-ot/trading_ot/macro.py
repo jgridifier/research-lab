@@ -18,9 +18,13 @@ from .panel import availability_date
 from .paths import DATA
 
 FRED = 'https://fred.stlouisfed.org/graph/fredgraph.csv?id={sid}&cosd={start}&coed={end}'
-SERIES = ['VIXCLS', 'DGS10', 'SP500']
-OPTIONAL = 'BAMLC0A0CM'   # included only if FRED history covers 2018+ (decided before the freeze)
+SERIES = ['VIXCLS', 'DGS10', 'SP500']           # v1.0 / R1 (pinned)
+OPTIONAL = 'BAMLC0A0CM'   # v1.0: excluded (FRED history starts 2023-10-06)
 CACHE = DATA / 'fred'
+# v1.1 (addendum §5.2, §6 N2): NASDAQCOM replaces SP500 (FRED SP500 starts 2016-10-06); BAA10Y added.
+SERIES_V1_1 = ['VIXCLS', 'DGS10', 'NASDAQCOM', 'BAA10Y']
+START_V1_1 = '2007-01-01'
+CACHE_V1_1 = DATA / 'fred_v1_1'
 
 
 def fetch_fred(series, start='2017-01-01', end=None, cache=CACHE, refresh=False):
@@ -47,6 +51,37 @@ def fetch_fred(series, start='2017-01-01', end=None, cache=CACHE, refresh=False)
 
 def history_covers(series_values, start='2018-01-01'):
     return len(series_values) and series_values.index.min() <= pd.Timestamp(start) + pd.Timedelta(days=7)
+
+
+def max_gap_days(series_values, start='2008-01-01', end=None):
+    """Largest calendar gap (days) between consecutive observations inside [start, end]."""
+    idx = series_values.index
+    idx = idx[(idx >= pd.Timestamp(start)) & ((idx <= pd.Timestamp(end)) if end else True)]
+    if len(idx) < 2:
+        return np.inf
+    return int(np.diff(idx.values).max() / np.timedelta64(1, 'D'))
+
+
+def fetch_v1_1(end='2026-10-06', refresh=False):
+    return {s: fetch_fred(s, start=START_V1_1, end=end, cache=CACHE_V1_1, refresh=refresh) for s in SERIES_V1_1}
+
+
+def quarter_features_v1_1(quarters, asof_rule='qend', series=None):
+    """v1.1 B5 covariates: vix (mean VIXCLS), rates_rv (sd daily dDGS10), eq_rv (sd daily log NASDAQCOM
+    return), baa (mean BAA10Y). Primary rule: daily data inside quarter t only."""
+    series = series or fetch_v1_1()
+    vix, dgs, ndq, baa = (series[k] for k in SERIES_V1_1)
+    d10 = dgs.diff().dropna()
+    ret = np.log(ndq).diff().dropna()
+    rows = {}
+    for q in quarters:
+        q = pd.Period(q, freq='Q')
+        lo = q.start_time
+        hi = q.end_time if asof_rule == 'qend' else pd.Timestamp(availability_date(q)) + pd.Timedelta(hours=23)
+        win = lambda s: s[(s.index >= lo) & (s.index <= hi)]
+        rows[q] = dict(vix=float(win(vix).mean()), rates_rv=float(win(d10).std(ddof=1)),
+                       eq_rv=float(win(ret).std(ddof=1)), baa=float(win(baa).mean()))
+    return pd.DataFrame.from_dict(rows, orient='index')
 
 
 def quarter_features(quarters, asof_rule='qend', series=None):

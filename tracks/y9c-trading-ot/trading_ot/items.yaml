@@ -12,6 +12,7 @@ items:
   BHCKF186: {name: trd_credit, kind: flow_ytd, label: "Trading revenue from credit exposures (HI Memo 9.e)"}
   BHCKK090: {name: trd_cva_counterparty, kind: flow_ytd, label: "Impact on trading revenue of changes in counterparty creditworthiness (HI Memo 9.f)"}
   BHCKK094: {name: trd_dva_own, kind: flow_ytd, label: "Impact on trading revenue of changes in own creditworthiness (HI Memo 9.g)"}
+  BHCK4107: {name: total_interest_income, kind: flow_ytd, label: "Total interest income (Schedule HI item 1.h); v1.1 YTD-reset guard only"}
   BHCK3545: {name: trading_assets, kind: stock, label: "Trading assets (Schedule HC item 5)"}
   BHCK3548: {name: trading_liabilities, kind: stock, label: "Trading liabilities (Schedule HC item 15)"}
   BHCK2170: {name: total_assets, kind: stock, label: "Total assets (Schedule HC item 12)"}

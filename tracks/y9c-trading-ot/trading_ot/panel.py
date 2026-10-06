@@ -63,7 +63,7 @@ def _sha256(path):
     return hashlib.sha256(Path(path).read_bytes()).hexdigest()
 
 
-def build_trading_panel(raw_dir, as_of, out_dir=None):
+def build_trading_panel(raw_dir, as_of, out_dir=None, first=FIRST_QUARTER):
     """Parse every available quarter's ZIP and de-cumulate the YTD flows.
 
     Quarters whose availability date is after as_of are never read, so a
@@ -72,16 +72,25 @@ def build_trading_panel(raw_dir, as_of, out_dir=None):
     """
     spec = load_items()
     items = spec['items']
-    quarters = complete_quarters(as_of)
+    quarters = complete_quarters(as_of, first)
     if not quarters:
         raise ValueError(f'No complete quarters as of {as_of}')
-    raw_dir = Path(raw_dir)
+    raw_dirs = [Path(d) for d in (raw_dir if isinstance(raw_dir, (list, tuple)) else [raw_dir])]
     paths = []
     for q in quarters:
-        path = raw_dir / f'BHCF{q.end_time:%Y%m%d}.zip'
-        if not path.exists():
-            raise FileNotFoundError(f'{path} missing for available quarter {q}; manual NIC drop-in needed')
-        paths.append(path)
+        name = f'BHCF{q.end_time:%Y%m%d}.zip'
+        found = [d / name for d in raw_dirs if (d / name).exists()]
+        if not found:
+            raise FileNotFoundError(f'{name} missing for available quarter {q} in {raw_dirs}; manual NIC drop-in needed')
+        paths.append(found[0])
+    manifests = {}
+    for d in raw_dirs:
+        if (d / 'manifest.json').exists():
+            manifests.update(json.loads((d / 'manifest.json').read_text()))
+    zip_sha = {p.name: _sha256(p) for p in paths}
+    bad = [k for k, h in zip_sha.items() if k in manifests and manifests[k].get('sha256') != h]
+    if bad:
+        raise ValueError(f'ZIP sha256 does not match manifest.json for {bad}; refusing to build the panel')
     codes = list(items) + list(spec.get('parse_guard', []))
     frames = [read_quarter(p, codes) for p in paths]
     raw = pd.concat(frames, ignore_index=True)
@@ -102,12 +111,12 @@ def build_trading_panel(raw_dir, as_of, out_dir=None):
                    last_complete_quarter=str(quarters[-1]), n_quarters=len(quarters),
                    availability_rule='Y-9C due date (40d after Mar/Jun/Sep, 45d after Dec; next business day) + 7 calendar days',
                    availability_dates={str(q): str(availability_date(q)) for q in quarters},
-                   zips={p.name: _sha256(p) for p in paths}, units='thousands USD',
+                   zips=zip_sha, units='thousands USD',
                    n_rows=len(panel), n_rssd=int(panel.rssd_id.nunique()))
-    manifest = raw_dir / 'manifest.json'
-    if manifest.exists():
-        m = json.loads(manifest.read_text())
-        vintage['downloaded_at_utc'] = {p.name: m.get(p.name, {}).get('downloaded_at_utc') for p in paths}
+    if manifests:
+        vintage['downloaded_at_utc'] = {p.name: manifests.get(p.name, {}).get('downloaded_at_utc') for p in paths}
+        vintage['manifest_sha256_match'] = {p.name: manifests.get(p.name, {}).get('sha256') == vintage['zips'][p.name]
+                                            for p in paths}
     if out_dir is not None:
         out_dir = Path(out_dir)
         out_dir.mkdir(parents=True, exist_ok=True)
@@ -149,7 +158,19 @@ EVENTS = [
     dict(rssd_id=5280254, quarter='2018Q2', label='RBC US Group Holdings first filing (splice candidate)'),
     dict(rssd_id=1026632, quarter='2020Q1', label='Schwab +26%'),
     dict(rssd_id=1026632, quarter='2020Q4', label='Schwab (TD Ameritrade) +31%'),
+    # v1.1 additions (addendum §2.5, S5)
+    dict(rssd_id=1120754, quarter='2008Q4', label='Wells Fargo / Wachovia, +110%'),
+    dict(rssd_id=1069778, quarter='2008Q4', label='PNC / National City, +100%'),
+    dict(rssd_id=1073757, quarter='2009Q1', label='Bank of America / Merrill Lynch, +27.5%'),
+    dict(rssd_id=1039502, quarter='2008Q3', label='JPMorgan / WaMu, +26.8%'),
+    dict(rssd_id=1245415, quarter='2011Q3', label='BMO (Harris / M&I), +57%'),
+    dict(rssd_id=1068025, quarter='2016Q3', label='KeyCorp / First Niagara, +34%'),
+    dict(rssd_id=1378434, quarter='2016Q3', label='MUFG Americas IHC, +29%'),
+    dict(rssd_id=1094640, quarter='2017Q4', label='First Horizon / Capital Bank, +40%'),
+    dict(rssd_id=2277860, quarter='2010Q1', label='Capital One +19%'),
 ]
+IHC_WAVE = '2016Q3'
+TD_RETIER = '2015Q3'
 
 
 def merger_flags(panel, thr=0.15, events=None):
@@ -169,3 +190,94 @@ def merger_flags(panel, thr=0.15, events=None):
     out['flag_event'] = out.event_label.ne('')
     out['flag'] = out.flag_threshold | out.flag_event
     return out
+
+
+# ── v1.1 data rules (prereg addendum §2.5) ──────────────────────────────────
+PRESAMPLE_END = pd.Period('2008Q4', freq='Q')
+TIERED_DUPLICATES = [dict(rssd_id=5005998, name='BancWest Corporation', quarters=['2016Q3', '2016Q4']),
+                     dict(rssd_id=1032473, name='Deutsche Bank Trust Corporation', quarters=['2016Q3', '2016Q4'])]
+
+
+def flow_columns(panel):
+    return [c for c in panel.columns if c.endswith('_q') and c[:-2] + '_ytd' in panel.columns]
+
+
+def ytd_reset_rows(panel, guard='total_interest_income_ytd'):
+    """Bank-quarters (Q2-Q4) where the guard YTD is lower than the immediately prior quarter of the same year."""
+    s = panel.set_index(['rssd_id', 'quarter'])[guard]
+    prev = s.reindex(pd.MultiIndex.from_arrays([panel.rssd_id, panel.quarter - 1])).to_numpy()
+    q = panel.quarter.dt.quarter.to_numpy()
+    flag = (q > 1) & np.isfinite(prev) & (panel[guard].to_numpy(float) < prev)
+    return pd.Series(flag, index=panel.index)
+
+
+def ytd_reset_guard(panel, guard='total_interest_income_ytd'):
+    """Set every de-cumulated flow to NaN in flagged bank-quarters; neighbouring quarters are untouched."""
+    out = panel.copy()
+    flag = ytd_reset_rows(out, guard)
+    for c in flow_columns(out):
+        out.loc[flag, c] = np.nan
+    out['ytd_reset_flag'] = flag
+    return out
+
+
+def tiered_duplicate_mask(panel, entries=None):
+    """True for rows to exclude (tiered subsidiaries filing alongside their parents)."""
+    entries = TIERED_DUPLICATES if entries is None else entries
+    mask = pd.Series(False, index=panel.index)
+    for e in entries:
+        qs = pd.PeriodIndex(e['quarters'], freq='Q')
+        mask |= panel.rssd_id.eq(e['rssd_id']) & panel.quarter.isin(qs)
+    return mask
+
+
+def entrant_rule_b(panel, column='trading_revenue'):
+    """Rule (b) flow: like rule (a) but a first filing with no predecessor counts its YTD as the quarter's flow.
+
+    Applies only to rows with no filing in the prior quarter (entry or resumption after a gap); a
+    present-but-null predecessor still gives NaN. Used for sensitivity S11 (T1) only.
+    """
+    keys = set(zip(panel.rssd_id, panel.quarter))
+    has_prev = np.array([(i, q - 1) in keys for i, q in zip(panel.rssd_id, panel.quarter)])
+    q1 = panel.quarter.dt.quarter.eq(1).to_numpy()
+    out = panel[f'{column}_q'].copy()
+    entry = ~q1 & ~has_prev & panel[f'{column}_ytd'].notna().to_numpy()
+    out[entry] = panel.loc[entry, f'{column}_ytd']
+    return out
+
+
+def presample_mask(panel, presample_end=PRESAMPLE_END, keep=('trading_assets',)):
+    """NaN every value of rows <= presample_end except `keep` columns in the last pre-sample quarter.
+
+    After this, 2008 cannot enter any estimator, scale, set or selection; TA(2008Q4) survives only as
+    the lagged denominator of the 2009Q1 ratio.
+    """
+    out = panel.copy()
+    pre = out.quarter.le(presample_end)
+    ids = {'rssd_id', 'quarter', 'report_date', 'name', 'entity_type', 'ytd_reset_flag'}
+    vals = [c for c in out.columns if c not in ids and pd.api.types.is_numeric_dtype(out[c])
+            and not pd.api.types.is_bool_dtype(out[c])]
+    for c in vals:
+        m = pre if c not in keep else pre & out.quarter.ne(presample_end)
+        out.loc[m, c] = np.nan
+    return out
+
+
+def prepare_v1_1(panel, entrant_rule='a'):
+    """Apply the v1.1 rules: YTD-reset guard, tiered-duplicate exclusion, entrant rule (a) primary.
+
+    2008 rows are kept (TA 2008Q4 is the 2009Q1 denominator); estimators mask them via PRESAMPLE_END.
+    """
+    out = ytd_reset_guard(panel[panel.total_assets.notna()].reset_index(drop=True))
+    out = out[~tiered_duplicate_mask(out)].copy()
+    if entrant_rule == 'b':
+        out['trading_revenue_q'] = entrant_rule_b(out).where(~out.ytd_reset_flag)
+    elif entrant_rule != 'a':
+        raise ValueError("entrant_rule must be 'a' or 'b'")
+    return presample_mask(out).reset_index(drop=True)
+
+
+def prepare_v1_0(panel):
+    """R1: v1.0 design on 2018+ data with the YTD-reset guard (addendum §2.5 applies it to R1)."""
+    out = ytd_reset_guard(panel[panel.quarter.ge(FIRST_QUARTER) & panel.total_assets.notna()].reset_index(drop=True))
+    return out.reset_index(drop=True)

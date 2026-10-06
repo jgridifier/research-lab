@@ -44,3 +44,35 @@ def cross_section(panel, s, lag_ta_min=1e5):
         panel = add_ratio(panel)
     rows = panel[panel.quarter.eq(s) & panel.trading_assets_lag.ge(lag_ta_min) & panel.trading_revenue_q.notna()]
     return rows
+
+
+# ── v1.1: annually refreshed ex-ante bank set (addendum §2.5) ──────────────
+SET_ORIGINS_V1_1 = [pd.Period(f'{y}Q4', freq='Q') for y in range(2013, 2026)]
+SET_WINDOW = 16
+
+
+def exante_bank_set_rolling(panel, origin_q4, window=SET_WINDOW, thr=1e4):
+    """S_o: banks with non-null |A220_q| >= thr in all `window` quarters o-window+1..o; rows <= o only.
+
+    NaN from the YTD-reset guard, rule (a) or the pre-sample mask counts as missing.
+    """
+    o = pd.Period(origin_q4, freq='Q')
+    if o.quarter != 4:
+        raise ValueError(f'bank-set origins are Q4 quarters, got {o}')
+    return exante_bank_set(panel[panel.quarter.le(o)], burn_end=o, thr=thr, burn_start=o - (window - 1))
+
+
+def set_origin(origin):
+    """Last Q4 <= origin: the set in force for forecasts made at `origin` (any horizon)."""
+    o = pd.Period(origin, freq='Q')
+    return o - (o.quarter % 4)
+
+
+def set_for_target(t, h=1):
+    """Set origin for target t at horizon h: S_o with o = last Q4 <= t - h."""
+    return set_origin(pd.Period(t, freq='Q') - h)
+
+
+def rolling_sets(panel, origins=SET_ORIGINS_V1_1, window=SET_WINDOW, thr=1e4):
+    """{origin: S_o}; each S_o is computed from rows <= o only."""
+    return {o: exante_bank_set_rolling(panel, o, window, thr) for o in origins}
