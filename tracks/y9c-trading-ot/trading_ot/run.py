@@ -3,7 +3,8 @@
 Stages:
   panel  - parse the cached NIC ZIPs (complete quarters only) and write data/processed*/ (gitignored)
   oos    - walk-forward OOS scoring + gate; REFUSES to run unless the pin verifies, the governing
-           design has oos_authorized = true and every open question is resolved.
+           design still has oos_authorized = false (a true flag is a failure), every open question is
+           resolved, and the pinned approval file prereg/OOS_APPROVAL_v1_1.json verifies (it is the switch).
 
 --design v1_1 (default, primary gate): 2008Q1-2026Q2 ZIPs, test_design_trading_ot_v1_1.json.
 --design v1_0 (R1, non-gating sensitivity pre-registered by v1.1): 2018+ data, the byte-identical
@@ -20,7 +21,8 @@ import os
 import subprocess
 import sys
 
-from .paths import (DATA, DEFERRAL_4B_PATH, DEFERRAL_4B_SHA256, DESIGN_PATH, DESIGN_PATH_V1_1, ERRATA_1B_PATH, ERRATA_1B_SHA256, ERRATA_PATH, ERRATA_SHA256, RAW_DIR, RAW_DIRS_V1_1, ROOT,
+from .paths import (DATA, EXPECTED_TRIALS_V1_1, OOS_APPROVAL_DESIGN_COMMIT, OOS_APPROVAL_PATH, OOS_APPROVAL_SHA256,
+                    DEFERRAL_4B_PATH, DEFERRAL_4B_SHA256, DESIGN_PATH, DESIGN_PATH_V1_1, ERRATA_1B_PATH, ERRATA_1B_SHA256, ERRATA_PATH, ERRATA_SHA256, RAW_DIR, RAW_DIRS_V1_1, ROOT,
                     TRIALS_PATH, load_design)
 
 
@@ -29,10 +31,12 @@ class OOSNotAuthorized(RuntimeError):
 
 
 def assert_oos_authorized(design):
-    """Stop-gate: no OOS scoring until the design authorizes it and has no unresolved questions."""
-    if not design.get('oos_authorized', False):
-        raise OOSNotAuthorized('OOS scoring is not authorized by the pinned design (oos_authorized=false; '
-                               'awaiting approval, recorded as a separate commit). Nothing was scored.')
+    """Design-side stop-gate. The design JSON's oos_authorized must stay FALSE (Quant option (c): a true flag is a
+    failure, not a path) and every open question must be resolved. Authorization itself comes only from the pinned
+    approval file, checked in preflight after the design pin (approval_provenance)."""
+    if design.get('oos_authorized', False) is not False:
+        raise OOSNotAuthorized('The design JSON has oos_authorized != false. The flag must stay false; authorization '
+                               'is the pinned prereg/OOS_APPROVAL_v1_1.json. Nothing was scored.')
     open_q = [q['id'] for q in design.get('open_questions', []) if q.get('resolution') in (None, '')]
     if open_q:
         raise OOSNotAuthorized(f'Unresolved pre-registration questions: {open_q}. Nothing was scored.')
@@ -111,8 +115,36 @@ def preflight(design, which=('v1_1',)):
     gate.json / r1.json / companion JSONs, so nothing is recomputed after scoring."""
     assert_oos_authorized(design)
     designs = design_sha_check(which)
-    return dict(designs=designs, errata=errata_provenance(), errata_v1_1b=errata_provenance_1b(),
-                deferral_4b=deferral_provenance_4b())
+    out = dict(designs=designs, errata=errata_provenance(), errata_v1_1b=errata_provenance_1b(),
+               deferral_4b=deferral_provenance_4b())
+    out['oos_approval'] = approval_provenance(out)
+    return out
+
+
+def approval_provenance(pre):
+    """The OOS switch: prereg/OOS_APPROVAL_v1_1.json. Missing -> OOSNotAuthorized. Raw sha256 must equal the pin, and
+    its design sha, errata/deferral shas, design commit and trial count must equal the pinned constants."""
+    from statement_forecast.prereg import TRADING_OT_V1_1_PREREG_SHA256
+    if not OOS_APPROVAL_PATH.exists():
+        raise OOSNotAuthorized(f'No approval file at {OOS_APPROVAL_PATH}; OOS scoring is not authorized. '
+                               'Nothing was logged or scored.')
+    got = _sha(OOS_APPROVAL_PATH)
+    if got != OOS_APPROVAL_SHA256:
+        raise ProvenanceError(f'{OOS_APPROVAL_PATH} sha256 {got} != recorded {OOS_APPROVAL_SHA256}. '
+                              'Nothing was logged or scored.')
+    a = json.loads(OOS_APPROVAL_PATH.read_text(encoding='utf-8'))
+    want = dict(design_path=str(DESIGN_PATH_V1_1.relative_to(ROOT)), design_sha256=TRADING_OT_V1_1_PREREG_SHA256,
+                errata_v1_1_sha256=ERRATA_SHA256, errata_v1_1b_sha256=ERRATA_1B_SHA256,
+                deferral_4b_sha256=DEFERRAL_4B_SHA256, design_commit=OOS_APPROVAL_DESIGN_COMMIT,
+                trials=EXPECTED_TRIALS_V1_1)
+    bad = {k: (a.get(k), v) for k, v in want.items() if a.get(k) != v}
+    if bad:
+        raise ProvenanceError(f'approval file fields do not match the pinned constants: {bad}. Nothing was logged.')
+    v11 = pre['designs'].get('v1_1')
+    if v11 is not None and v11['design_sha256'] != a['design_sha256']:
+        raise ProvenanceError('approval design_sha256 != verified design sha256. Nothing was logged.')
+    return dict(path=str(OOS_APPROVAL_PATH.relative_to(ROOT)), sha256=got, design_commit=a['design_commit'],
+                trials=a['trials'], scope=a.get('scope'))
 
 
 def errata_provenance():
@@ -155,7 +187,7 @@ def _primary(panel, macro, pre, out_dir, trials_path, store=False, companions=()
     res = V.primary(panel, macro, store=store, **engine_kw)
     ev = gate.evaluate_primary_v1_1(res['h1'], res['h2'])
     provenance = dict(**pre['designs']['v1_1'], errata=pre['errata'], errata_v1_1b=pre['errata_v1_1b'],
-                      deferral_4b=pre['deferral_4b'])
+                      deferral_4b=pre['deferral_4b'], oos_approval=pre['oos_approval'])
     gate_json = _write(out_dir, 'gate.json', dict(design='v1_1', provenance=provenance,
                                                   config_hash=config_hash(config), git_head=git_head(),
                                                   hypotheses=ev, selection_log=res['selection_log'],
@@ -192,7 +224,8 @@ def _r1(panel, macro, pre, out_dir, trials_path):
                                                 v['n_targets'])
     provenance = dict(**pre['designs']['v1_0'], authorized_by=pre['designs']['v1_1']['design'],
                       authorized_by_sha256=pre['designs']['v1_1']['design_sha256'], errata=pre['errata'],
-                      errata_v1_1b=pre['errata_v1_1b'], deferral_4b=pre['deferral_4b'])
+                      errata_v1_1b=pre['errata_v1_1b'], deferral_4b=pre['deferral_4b'],
+                      oos_approval=pre['oos_approval'])
     return _write(out_dir, 'r1.json', dict(design='v1_0 (R1, non-gating)', provenance=provenance,
                                            config_hash=config_hash(config),
                                            frozen=frozen, hypotheses=out, war_params=params.to_dict(orient='list')))
@@ -252,7 +285,7 @@ def run_all_v1_1(panel, macro, design, out_dir, trials_path=TRIALS_PATH, inputs=
     epochs = list(engine_kw.get('epochs', V.select.EPOCH_ORIGINS))
     targets = engine_kw.get('targets', V.TARGETS_H1)
     provenance = dict(**pre['designs']['v1_1'], errata=pre['errata'], errata_v1_1b=pre['errata_v1_1b'],
-                      deferral_4b=pre['deferral_4b'])
+                      deferral_4b=pre['deferral_4b'], oos_approval=pre['oos_approval'])
 
     # ── secondary family ──
     names = SEC.FAMILY if secondary is None else [n for n in SEC.FAMILY if n in secondary]

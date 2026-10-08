@@ -13,8 +13,15 @@ per-bank probabilistic baselines B0–B6, plus two OT layers from the classical-
   fixed-b Bartlett DM with Holm over {H1, H2}, plus G > 0 in at least 2 of 3 subperiods.
 - **R1 (non-gating):** the v1.0 design `test_design_trading_ot.json` (commit `4e33139`, sha256 `dffd1323…4e30`) stays
   byte-identical. It runs on 2018+ data with the YTD-reset guard, with B6 excluded from M0/B* but still reported.
-- The v1.1 JSON ships with `oos_authorized: false`, so `python -m trading_ot.run oos [--design v1_1|v1_0]` refuses
-  before loading anything. Approval is a separate commit that flips that flag (which also re-pins, by construction).
+- **Authorization (Quant option (c)).** The v1.1 design JSON keeps `oos_authorized: false` permanently, and its pin
+  (`93035364…9694`) is unchanged; a `true` flag is a preflight failure, not a path. The switch is the separate pinned
+  file `prereg/OOS_APPROVAL_v1_1.json` (verbatim copy of Quant's file, sha256
+  `fe473f36b5308a15bc22b80b87fd124ae081e52460c49120d36df4ad442c77d9`). `run.preflight` checks, after the design pin and
+  before any trial is logged: the file's raw sha256, and that its `design_sha256`, both errata shas, the DEFERRAL_4B
+  sha, `design_commit` (`c38a284`, the PR #10 merge) and `trials` (39) equal the pinned constants. Without the file,
+  `python -m trading_ot.run oos` refuses (`OOSNotAuthorized`). Approval and path are written into the provenance of
+  all four output JSONs (`provenance.oos_approval`). The one authorized run is `python -m trading_ot.run oos --design
+  v1_1`, which includes R1; `--design v1_0` alone would log an extra trial and is not part of the approval.
 - **Errata:** `prereg/ERRATA_v1_1.md` is a verbatim copy of `/workspace/research/y9c_ot_prereg/ERRATA_v1_1.md`,
   sha256 `68d5128fa3da40d269340afda3862ee89374bd6df59ad108c9e84d8698a17fe9`, recorded before any OOS score.
   - E1: the set union is 31. E2: rule (b) T1 2016Q3 is 14.879. E3: fixed-b critical values at T=50 are
@@ -37,7 +44,7 @@ per-bank probabilistic baselines B0–B6, plus two OT layers from the classical-
 - `trials.jsonl` holds one `design_revision` entry (`counts_as_trial: false`). The OOS trial count is 0.
 - **Preflight order.** Every OOS entry point (`run_oos_v1_1`, `run_oos_v1_0`, `run_all_v1_1`, `stage_oos`) calls
   `run.preflight` first: authorization → design sha256 vs the pin(s) in `statement_forecast.prereg` → errata sha256
-  (ERRATA_v1_1, then ERRATA_v1_1b) → DEFERRAL_4B sha256.
+  (ERRATA_v1_1, then ERRATA_v1_1b) → DEFERRAL_4B sha256 → approval file (OOS_APPROVAL_v1_1.json).
   Only then is a trial logged or any data touched. The provenance computed there is reused in every output JSON.
 - **One authorized run** (`python -m trading_ot.run oos`, design v1_1) writes `gate.json` (primary),
   `secondary.json` (H1b–H1e, H2b–H2f, Holm within the family; outside the family the K = 2 FPCA WAR variant and the

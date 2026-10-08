@@ -28,6 +28,12 @@ ERRATA_1B_SHA256 = '2f134632acf4120ba410e7e2eacb352895eb41d9fbe9207cd0ddc6d22fef
 DEFERRAL_4B_PATH = TRACK / 'prereg' / 'DEFERRAL_4B.md'
 DEFERRAL_4B_SOURCE = '/workspace/research/y9c_ot_prereg/DEFERRAL_4B.md'
 DEFERRAL_4B_SHA256 = '3867ba4f48441cbc0b3745bd67abb0fd9e6ee3940f8e2fdebbdc696e577c05df'
+# OOS authorization (Quant option (c)): this pinned file is the switch; the design's oos_authorized stays false.
+OOS_APPROVAL_PATH = TRACK / 'prereg' / 'OOS_APPROVAL_v1_1.json'
+OOS_APPROVAL_SOURCE = '/workspace/research/y9c_ot_prereg/OOS_APPROVAL_v1_1.json'
+OOS_APPROVAL_SHA256 = 'fe473f36b5308a15bc22b80b87fd124ae081e52460c49120d36df4ad442c77d9'
+OOS_APPROVAL_DESIGN_COMMIT = 'c38a284807f688fe5db641dd8167b826f29a4d90'   # PR #10 squash merge
+EXPECTED_TRIALS_V1_1 = 39
 
 
 def load_design(path=DESIGN_PATH):

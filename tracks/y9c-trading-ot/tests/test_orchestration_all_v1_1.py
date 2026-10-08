@@ -14,7 +14,7 @@ SENS_SUBSET = ['S5', 'S7', 'S9', 'S10', 'S11', 'S13', 'S14', 'S15', 'FB4']
 
 
 def _fake():
-    return dict(load_design(DESIGN_PATH_V1_1), oos_authorized=True)
+    return load_design(DESIGN_PATH_V1_1)          # flag stays false; the pinned approval file authorizes
 
 
 def _labels(path):
@@ -45,6 +45,7 @@ def test_run_all_writes_everything(tmp_path, panel11, macro11, ytd11, panel, mac
     for doc in (g, sec, sens_doc, r1):
         assert doc['provenance']['errata_v1_1b']['sha256'] == ERRATA_1B
         assert doc['provenance']['deferral_4b']['sha256'] == DEFERRAL_4B
+        assert doc['provenance']['oos_approval']['sha256'] == 'fe473f36b5308a15bc22b80b87fd124ae081e52460c49120d36df4ad442c77d9'
     sens = sens_doc['sensitivities']
     assert [s['id'] for s in sens] == [p['id'] for p in SENS.PLAN if p['id'] in SENS_SUBSET]
     assert all(s['status'] == 'ok' for s in sens)
@@ -91,8 +92,9 @@ def test_outside_family_trial_logged_before_execution(tmp_path, panel11, macro11
     assert last['config']['member'] == member
 
 
-def test_run_all_unauthorized(tmp_path, panel11, macro11):
+def test_run_all_unauthorized(tmp_path, panel11, macro11, monkeypatch):
     trials = tmp_path / 'trials.jsonl'
+    monkeypatch.setattr(run, 'OOS_APPROVAL_PATH', tmp_path / 'absent.json')
     with pytest.raises(run.OOSNotAuthorized):
         run.run_all_v1_1(panel11, macro11, load_design(DESIGN_PATH_V1_1), tmp_path, trials_path=trials, **KW)
     assert not trials.exists() and not any(tmp_path.glob('*.json'))

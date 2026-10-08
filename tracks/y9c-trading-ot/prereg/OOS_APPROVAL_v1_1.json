@@ -1,0 +1,18 @@
+{
+  "artifact": "oos_approval",
+  "version": "v1.1",
+  "date": "2026-10-08",
+  "approver": "Jared",
+  "relayed_by": "Chief of Staff",
+  "cleared_by": "Quant",
+  "design_commit": "c38a284807f688fe5db641dd8167b826f29a4d90",
+  "cleared_head_before_merge": "7ea178c3cd4ccae582682c8630735d06bea093d0",
+  "design_path": "tracks/y9c-trading-ot/test_design_trading_ot_v1_1.json",
+  "design_sha256": "930353641c6af0b4846d6678648a7446a738a579a52b4863726c9edb5a6a9694",
+  "authorization": "this file authorizes one run; oos_authorized in the design JSON stays false and is not the switch",
+  "errata_v1_1_sha256": "68d5128fa3da40d269340afda3862ee89374bd6df59ad108c9e84d8698a17fe9",
+  "errata_v1_1b_sha256": "2f134632acf4120ba410e7e2eacb352895eb41d9fbe9207cd0ddc6d22fef21bf",
+  "deferral_4b_sha256": "3867ba4f48441cbc0b3745bd67abb0fd9e6ee3940f8e2fdebbdc696e577c05df",
+  "trials": 39,
+  "scope": "one run of run_all_v1_1"
+}

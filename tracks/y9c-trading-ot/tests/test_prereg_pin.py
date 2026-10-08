@@ -69,5 +69,7 @@ def test_oos_gate_closed_while_v11_pending():
     design = json.loads(prereg.TRADING_OT_DESIGN_PATH.read_text(encoding='utf-8'))
     with pytest.raises(run.OOSNotAuthorized):
         run.assert_oos_authorized(design)
-    ok = dict(design, oos_authorized=True, open_questions=[dict(q, resolution='x') for q in design['open_questions']])
-    run.assert_oos_authorized(ok)
+    ok = dict(design, oos_authorized=False, open_questions=[dict(q, resolution='x') for q in design['open_questions']])
+    run.assert_oos_authorized(ok)                  # design side: flag false + questions resolved
+    with pytest.raises(run.OOSNotAuthorized):
+        run.assert_oos_authorized(dict(ok, oos_authorized=True))    # a true flag is a failure (option (c))

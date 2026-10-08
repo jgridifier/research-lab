@@ -77,15 +77,40 @@ def test_modified_v1_1_fails(repo):
         prereg.verify_trading_ot_v1_1_preregistration(root=root, design_path=design, commit=commit)
 
 
-def test_v1_1_gate_closed():
+def test_v1_1_design_flag_stays_false(tmp_path, monkeypatch):
+    """Quant option (c): the design's oos_authorized stays false; a true flag fails; without the approval file the
+    gate is closed (stage_oos refuses before loading anything)."""
     design = json.loads(prereg.TRADING_OT_V1_1_DESIGN_PATH.read_text(encoding='utf-8'))
     assert design['oos_authorized'] is False and design['open_questions'] == []
+    run.assert_oos_authorized(design)                              # design side passes only with the flag false
     with pytest.raises(run.OOSNotAuthorized):
-        run.assert_oos_authorized(design)
+        run.assert_oos_authorized(dict(design, oos_authorized=True))
+    monkeypatch.setattr(run, 'OOS_APPROVAL_PATH', tmp_path / 'absent.json')
     with pytest.raises(run.OOSNotAuthorized):
         run.stage_oos('v1_1', '2026-10-06')
     with pytest.raises(run.OOSNotAuthorized):
-        run.stage_oos('v1_0', '2026-10-06')     # R1 is authorized only through the v1.1 design
+        run.stage_oos('v1_0', '2026-10-06')     # R1 is authorized only through the v1.1 approval
+
+
+def test_oos_approval_verbatim_and_hash():
+    from trading_ot.paths import (EXPECTED_TRIALS_V1_1, OOS_APPROVAL_DESIGN_COMMIT, OOS_APPROVAL_PATH,
+                                  OOS_APPROVAL_SHA256, OOS_APPROVAL_SOURCE)
+    assert OOS_APPROVAL_SHA256 == 'fe473f36b5308a15bc22b80b87fd124ae081e52460c49120d36df4ad442c77d9'
+    assert hashlib.sha256(OOS_APPROVAL_PATH.read_bytes()).hexdigest() == OOS_APPROVAL_SHA256
+    a = json.loads(OOS_APPROVAL_PATH.read_text(encoding='utf-8'))
+    assert a['design_sha256'] == SHA_V1_1 and a['design_commit'] == OOS_APPROVAL_DESIGN_COMMIT
+    assert a['trials'] == EXPECTED_TRIALS_V1_1 == 39
+    try:
+        assert open(OOS_APPROVAL_SOURCE, 'rb').read() == OOS_APPROVAL_PATH.read_bytes()
+    except FileNotFoundError:
+        pass
+
+
+def test_registered_executions_equal_approved_trials():
+    from trading_ot import secondary_v1_1 as SEC, sensitivity_v1_1 as SENS
+    from trading_ot.paths import EXPECTED_TRIALS_V1_1
+    n = 1 + (len(SEC.FAMILY) - 1) + 2 + 1 + len(SENS.PLAN) + 1     # primary, family (H2c once), FPCA+ridge, F3, S*, R1
+    assert n == EXPECTED_TRIALS_V1_1
 
 
 def test_trial_log_design_revision_only():

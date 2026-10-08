@@ -1,18 +1,19 @@
 """Provenance checks run before anything is logged or scored (Quant, post-Phase-A fix).
 
-Every OOS entry point calls run.preflight first: authorization, design pin sha256, errata sha256. A corrupted
-errata copy or a design sha mismatch must raise with trials.jsonl unchanged and no scoring function called.
-Authorization is mocked in memory; the pinned files are never modified (corrupted copies live in tmp_path).
+Every OOS entry point calls run.preflight first: design flag must be false, design pin sha256, errata / deferral
+sha256, then the pinned approval file (the switch). A corrupted copy of any of them, or a design sha mismatch, must
+raise with trials.jsonl unchanged and no scoring function called. The pinned files are never modified (corrupted
+copies live in tmp_path).
 """
 import pytest
 from trading_ot import run, walkforward as W10, walkforward_v1_1 as V
-from trading_ot.paths import DEFERRAL_4B_PATH, DESIGN_PATH, DESIGN_PATH_V1_1, ERRATA_1B_PATH, ERRATA_PATH, load_design
+from trading_ot.paths import OOS_APPROVAL_PATH, DEFERRAL_4B_PATH, DESIGN_PATH, DESIGN_PATH_V1_1, ERRATA_1B_PATH, ERRATA_PATH, load_design
 
 PRIOR = '{"type": "design_revision", "counts_as_trial": false}\n'
 
 
 def _fake():
-    return dict(load_design(DESIGN_PATH_V1_1), oos_authorized=True)       # in memory only
+    return load_design(DESIGN_PATH_V1_1)          # oos_authorized stays false; the approval file authorizes
 
 
 def _no_scoring(monkeypatch):
@@ -43,13 +44,15 @@ def _entry_points(tmp_path, trials):
         yield 'all', lambda: run.run_all_v1_1(empty, empty, _fake(), tmp_path, trials_path=trials)
 
 
-@pytest.mark.parametrize('target', ['errata', 'errata_1b', 'deferral_4b', 'design_v1_1', 'design_v1_0'])
+@pytest.mark.parametrize('target', ['errata', 'errata_1b', 'deferral_4b', 'approval', 'design_v1_1', 'design_v1_0'])
 def test_mismatch_raises_before_trial_log(tmp_path, monkeypatch, target):
     called = _no_scoring(monkeypatch)
     trials = tmp_path / 'trials.jsonl'
     trials.write_text(PRIOR)
     if target == 'errata':
         monkeypatch.setattr(run, 'ERRATA_PATH', _corrupt_copy(ERRATA_PATH, tmp_path / 'ERRATA_v1_1.md'))
+    elif target == 'approval':
+        monkeypatch.setattr(run, 'OOS_APPROVAL_PATH', _corrupt_copy(OOS_APPROVAL_PATH, tmp_path / 'OOS_APPROVAL_v1_1.json'))
     elif target == 'deferral_4b':
         monkeypatch.setattr(run, 'DEFERRAL_4B_PATH', _corrupt_copy(DEFERRAL_4B_PATH, tmp_path / 'DEFERRAL_4B.md'))
     elif target == 'errata_1b':
@@ -67,7 +70,7 @@ def test_mismatch_raises_before_trial_log(tmp_path, monkeypatch, target):
         ran += 1
         assert trials.read_text() == PRIOR, name               # nothing appended
         assert not called, (name, called)                      # nothing scored
-        assert not any(tmp_path.glob('*.json')) or all(p.name in ('d11.json', 'd10.json')
+        assert not any(tmp_path.glob('*.json')) or all(p.name in ('d11.json', 'd10.json', 'OOS_APPROVAL_v1_1.json')
                                                        for p in tmp_path.glob('*.json'))
     assert ran >= 1
 
@@ -80,10 +83,49 @@ def test_pinned_files_verify_in_preflight():
     assert pre['errata_v1_1b']['sha256'] == '2f134632acf4120ba410e7e2eacb352895eb41d9fbe9207cd0ddc6d22fef21bf'
     assert pre['deferral_4b'] == {'path': 'tracks/y9c-trading-ot/prereg/DEFERRAL_4B.md',
                                   'sha256': '3867ba4f48441cbc0b3745bd67abb0fd9e6ee3940f8e2fdebbdc696e577c05df'}
+    assert pre['oos_approval']['sha256'] == 'fe473f36b5308a15bc22b80b87fd124ae081e52460c49120d36df4ad442c77d9'
+    assert pre['oos_approval']['path'] == 'tracks/y9c-trading-ot/prereg/OOS_APPROVAL_v1_1.json'
+    assert pre['oos_approval']['trials'] == 39
 
 
-def test_unauthorized_beats_provenance(tmp_path, monkeypatch):
-    """Authorization is still the very first check, even when a file is also corrupted."""
+def test_design_flag_true_fails_first(tmp_path, monkeypatch):
+    """A true oos_authorized in the design is a failure (Quant option (c)), checked first, even with a corrupt file."""
     monkeypatch.setattr(run, 'ERRATA_PATH', _corrupt_copy(ERRATA_PATH, tmp_path / 'E.md'))
+    with pytest.raises(run.OOSNotAuthorized, match='must stay false'):
+        run.preflight(dict(load_design(DESIGN_PATH_V1_1), oos_authorized=True))
+
+
+@pytest.mark.parametrize('flag', [True, 'true', 1])
+def test_design_flag_true_raises_before_trial_log(tmp_path, monkeypatch, flag):
+    called = _no_scoring(monkeypatch)
+    trials = tmp_path / 'trials.jsonl'
+    trials.write_text(PRIOR)
+    import pandas as pd
     with pytest.raises(run.OOSNotAuthorized):
-        run.preflight(load_design(DESIGN_PATH_V1_1))
+        run.run_all_v1_1(pd.DataFrame(), pd.DataFrame(), dict(_fake(), oos_authorized=flag), tmp_path,
+                         trials_path=trials)
+    assert trials.read_text() == PRIOR and not called
+
+
+def test_missing_approval_is_not_authorized(tmp_path, monkeypatch):
+    called = _no_scoring(monkeypatch)
+    trials = tmp_path / 'trials.jsonl'
+    trials.write_text(PRIOR)
+    monkeypatch.setattr(run, 'OOS_APPROVAL_PATH', tmp_path / 'absent.json')
+    for name, call in _entry_points(tmp_path, trials):
+        with pytest.raises(run.OOSNotAuthorized):
+            call()
+        assert trials.read_text() == PRIOR and not called, name
+
+
+def test_approval_field_mismatch_raises(tmp_path, monkeypatch):
+    """A re-hashed approval with a wrong field still fails (raw sha first, then each pinned field)."""
+    import json
+    a = json.loads(OOS_APPROVAL_PATH.read_text())
+    bad = tmp_path / 'A.json'
+    bad.write_text(json.dumps(dict(a, trials=40)))
+    monkeypatch.setattr(run, 'OOS_APPROVAL_PATH', bad)
+    import hashlib
+    monkeypatch.setattr(run, 'OOS_APPROVAL_SHA256', hashlib.sha256(bad.read_bytes()).hexdigest())
+    with pytest.raises(run.ProvenanceError, match='trials'):
+        run.preflight(_fake())
