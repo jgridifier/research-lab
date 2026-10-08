@@ -30,10 +30,14 @@ per-bank probabilistic baselines B0–B6, plus two OT layers from the classical-
   - Handled exactly like ERRATA_v1_1: `run.preflight` checks its hash right after authorization and before any trial
     is logged, and `provenance.errata_v1_1b` (path, sha256) is written into `gate.json`, `r1.json`, `secondary.json`
     and `sensitivities.json`.
+- **§4-B deferral:** `prereg/DEFERRAL_4B.md` is a verbatim copy of `/workspace/research/y9c_ot_prereg/DEFERRAL_4B.md`
+  (Quant, 2026-10-08), sha256 `3867ba4f48441cbc0b3745bd67abb0fd9e6ee3940f8e2fdebbdc696e577c05df`. §4-B is not
+  implemented, not logged and not scored; the authorized run stays at 39 trials. `run.preflight` checks the hash after
+  the ERRATA_v1_1b check, and `provenance.deferral_4b` (path, sha256) is written into the same four JSONs.
 - `trials.jsonl` holds one `design_revision` entry (`counts_as_trial: false`). The OOS trial count is 0.
 - **Preflight order.** Every OOS entry point (`run_oos_v1_1`, `run_oos_v1_0`, `run_all_v1_1`, `stage_oos`) calls
   `run.preflight` first: authorization → design sha256 vs the pin(s) in `statement_forecast.prereg` → errata sha256
-  (ERRATA_v1_1, then ERRATA_v1_1b).
+  (ERRATA_v1_1, then ERRATA_v1_1b) → DEFERRAL_4B sha256.
   Only then is a trial logged or any data touched. The provenance computed there is reused in every output JSON.
 - **One authorized run** (`python -m trading_ot.run oos`, design v1_1) writes `gate.json` (primary),
   `secondary.json` (H1b–H1e, H2b–H2f, Holm within the family; outside the family the K = 2 FPCA WAR variant and the
@@ -184,7 +188,8 @@ forecasts re-aggregated, no refit; the descriptive verdict uses the raw p and ne
       ridge are defined, for the ridge, the BARY-EW median and the B* median; equal weight per bank within a quarter,
       then across quarters; relative MAE gains of BARY-EW and of B* over the ridge. No test.
 34. **§4-B scenarios + W₂ scenario reduction + energy score: DEFERRED (underspecified as written; not improvised).**
-    Quant to write a pinned, dated deferral note. What the prereg/addendum/errata do not pin down:
+    Pinned deferral: `prereg/DEFERRAL_4B.md`, sha256 `3867ba4f…05df` (hash-checked in preflight). What the
+    prereg/addendum/errata did not pin down:
     - *Historical-simulation benchmark:* "historical simulation from the last 12 quarters of scaled errors" does not
       say which forecast's errors (B*, BARY-EW median?), the centre the errors are added to, the scale used to
       unscale them, or how a joint 4-quarter (bank × horizon) path is drawn (same calendar quarter across banks?

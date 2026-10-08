@@ -125,3 +125,14 @@ def test_errata_1b_verbatim_and_hash():
         assert open(ERRATA_1B_SOURCE, 'rb').read() == ERRATA_1B_PATH.read_bytes()
     except FileNotFoundError:
         pass
+
+
+def test_deferral_4b_verbatim_and_hash():
+    from trading_ot.paths import DEFERRAL_4B_PATH, DEFERRAL_4B_SHA256, DEFERRAL_4B_SOURCE
+    assert DEFERRAL_4B_SHA256 == '3867ba4f48441cbc0b3745bd67abb0fd9e6ee3940f8e2fdebbdc696e577c05df'
+    assert hashlib.sha256(DEFERRAL_4B_PATH.read_bytes()).hexdigest() == DEFERRAL_4B_SHA256
+    assert run.deferral_provenance_4b()['sha256'] == DEFERRAL_4B_SHA256
+    try:
+        assert open(DEFERRAL_4B_SOURCE, 'rb').read() == DEFERRAL_4B_PATH.read_bytes()
+    except FileNotFoundError:
+        pass

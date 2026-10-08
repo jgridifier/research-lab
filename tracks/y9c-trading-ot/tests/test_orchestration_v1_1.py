@@ -36,6 +36,7 @@ def test_authorized_synthetic_run(tmp_path, panel11, macro11):
         'sha256': '68d5128fa3da40d269340afda3862ee89374bd6df59ad108c9e84d8698a17fe9',
         'precedence': 'where a stated value conflicts with an operative rule of the pinned design, the rule governs'}
     assert g['provenance']['design_sha256'] == '930353641c6af0b4846d6678648a7446a738a579a52b4863726c9edb5a6a9694'
+    assert g['provenance']['deferral_4b']['sha256'] == '3867ba4f48441cbc0b3745bd67abb0fd9e6ee3940f8e2fdebbdc696e577c05df'
     assert g['provenance']['errata_v1_1b'] == {
         'path': 'tracks/y9c-trading-ot/prereg/ERRATA_v1_1b.md',
         'sha256': '2f134632acf4120ba410e7e2eacb352895eb41d9fbe9207cd0ddc6d22fef21bf',
@@ -52,4 +53,5 @@ def test_authorized_synthetic_r1(tmp_path, panel, macro):
     assert set(out['hypotheses']) == {'H1', 'H2'} and (tmp_path / 'r1.json').exists()
     assert out['provenance']['errata']['sha256'] == '68d5128fa3da40d269340afda3862ee89374bd6df59ad108c9e84d8698a17fe9'
     assert out['provenance']['errata_v1_1b']['sha256'] == '2f134632acf4120ba410e7e2eacb352895eb41d9fbe9207cd0ddc6d22fef21bf'
+    assert out['provenance']['deferral_4b']['sha256'] == '3867ba4f48441cbc0b3745bd67abb0fd9e6ee3940f8e2fdebbdc696e577c05df'
     assert run.trial_count(tmp_path / 'trials.jsonl') == 1      # R1 counts as a trial (ERRATA C2)

@@ -20,7 +20,7 @@ import os
 import subprocess
 import sys
 
-from .paths import (DATA, DESIGN_PATH, DESIGN_PATH_V1_1, ERRATA_1B_PATH, ERRATA_1B_SHA256, ERRATA_PATH, ERRATA_SHA256, RAW_DIR, RAW_DIRS_V1_1, ROOT,
+from .paths import (DATA, DEFERRAL_4B_PATH, DEFERRAL_4B_SHA256, DESIGN_PATH, DESIGN_PATH_V1_1, ERRATA_1B_PATH, ERRATA_1B_SHA256, ERRATA_PATH, ERRATA_SHA256, RAW_DIR, RAW_DIRS_V1_1, ROOT,
                     TRIALS_PATH, load_design)
 
 
@@ -111,7 +111,8 @@ def preflight(design, which=('v1_1',)):
     gate.json / r1.json / companion JSONs, so nothing is recomputed after scoring."""
     assert_oos_authorized(design)
     designs = design_sha_check(which)
-    return dict(designs=designs, errata=errata_provenance(), errata_v1_1b=errata_provenance_1b())
+    return dict(designs=designs, errata=errata_provenance(), errata_v1_1b=errata_provenance_1b(),
+                deferral_4b=deferral_provenance_4b())
 
 
 def errata_provenance():
@@ -133,6 +134,15 @@ def errata_provenance_1b():
                 precedence='where a stated value conflicts with an operative rule of the pinned design, the rule governs')
 
 
+def deferral_provenance_4b():
+    """Path + sha256 of DEFERRAL_4B (§4-B not run in the authorized v1.1 run); raises if the copy does not match."""
+    got = _sha(DEFERRAL_4B_PATH)
+    if got != DEFERRAL_4B_SHA256:
+        raise ProvenanceError(f'{DEFERRAL_4B_PATH} sha256 {got} != recorded {DEFERRAL_4B_SHA256}. '
+                              'Nothing was logged or scored.')
+    return dict(path=str(DEFERRAL_4B_PATH.relative_to(ROOT)), sha256=got)
+
+
 def _cfg_kw(engine_kw):
     return {k: [str(x) for x in v] for k, v in engine_kw.items()}
 
@@ -144,7 +154,8 @@ def _primary(panel, macro, pre, out_dir, trials_path, store=False, companions=()
     log_trial(config, 'v1.1 primary', path=trials_path)
     res = V.primary(panel, macro, store=store, **engine_kw)
     ev = gate.evaluate_primary_v1_1(res['h1'], res['h2'])
-    provenance = dict(**pre['designs']['v1_1'], errata=pre['errata'], errata_v1_1b=pre['errata_v1_1b'])
+    provenance = dict(**pre['designs']['v1_1'], errata=pre['errata'], errata_v1_1b=pre['errata_v1_1b'],
+                      deferral_4b=pre['deferral_4b'])
     gate_json = _write(out_dir, 'gate.json', dict(design='v1_1', provenance=provenance,
                                                   config_hash=config_hash(config), git_head=git_head(),
                                                   hypotheses=ev, selection_log=res['selection_log'],
@@ -181,7 +192,7 @@ def _r1(panel, macro, pre, out_dir, trials_path):
                                                 v['n_targets'])
     provenance = dict(**pre['designs']['v1_0'], authorized_by=pre['designs']['v1_1']['design'],
                       authorized_by_sha256=pre['designs']['v1_1']['design_sha256'], errata=pre['errata'],
-                      errata_v1_1b=pre['errata_v1_1b'])
+                      errata_v1_1b=pre['errata_v1_1b'], deferral_4b=pre['deferral_4b'])
     return _write(out_dir, 'r1.json', dict(design='v1_0 (R1, non-gating)', provenance=provenance,
                                            config_hash=config_hash(config),
                                            frozen=frozen, hypotheses=out, war_params=params.to_dict(orient='list')))
@@ -240,7 +251,8 @@ def run_all_v1_1(panel, macro, design, out_dir, trials_path=TRIALS_PATH, inputs=
     store = res['store']
     epochs = list(engine_kw.get('epochs', V.select.EPOCH_ORIGINS))
     targets = engine_kw.get('targets', V.TARGETS_H1)
-    provenance = dict(**pre['designs']['v1_1'], errata=pre['errata'], errata_v1_1b=pre['errata_v1_1b'])
+    provenance = dict(**pre['designs']['v1_1'], errata=pre['errata'], errata_v1_1b=pre['errata_v1_1b'],
+                      deferral_4b=pre['deferral_4b'])
 
     # ── secondary family ──
     names = SEC.FAMILY if secondary is None else [n for n in SEC.FAMILY if n in secondary]
@@ -310,8 +322,8 @@ def run_all_v1_1(panel, macro, design, out_dir, trials_path=TRIALS_PATH, inputs=
         design='v1_1', label='secondary (Holm within family; non-gating)', provenance=provenance,
         family=SEC.FAMILY, holm=holm, results=results, outside_family=outside, details=details,
         falsification=fals, secondary_metrics=metrics, h1d_raw=h1d_raw,
-        deferred={'4B_scenarios': 'deferred: underspecified as written (README IMPLEMENTATION_NOTES 34); '
-                                  'Quant to pin a dated deferral note'})))
+        deferred={'4B_scenarios': 'deferred, not run, no trial: prereg/DEFERRAL_4B.md (provenance.deferral_4b); '
+                                  'README IMPLEMENTATION_NOTES 34'})))
 
     # ── sensitivities ──
     ctx = dict(panel=panel, macro=macro, engine_kw=engine_kw, macro_dt=inputs.get('macro_dt'),

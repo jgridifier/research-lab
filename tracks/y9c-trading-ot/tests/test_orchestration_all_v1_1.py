@@ -22,6 +22,7 @@ def _labels(path):
 
 
 ERRATA_1B = '2f134632acf4120ba410e7e2eacb352895eb41d9fbe9207cd0ddc6d22fef21bf'
+DEFERRAL_4B = '3867ba4f48441cbc0b3745bd67abb0fd9e6ee3940f8e2fdebbdc696e577c05df'
 
 
 def test_run_all_writes_everything(tmp_path, panel11, macro11, ytd11, panel, macro):
@@ -43,6 +44,7 @@ def test_run_all_writes_everything(tmp_path, panel11, macro11, ytd11, panel, mac
     r1 = json.loads((tmp_path / 'r1.json').read_text())
     for doc in (g, sec, sens_doc, r1):
         assert doc['provenance']['errata_v1_1b']['sha256'] == ERRATA_1B
+        assert doc['provenance']['deferral_4b']['sha256'] == DEFERRAL_4B
     sens = sens_doc['sensitivities']
     assert [s['id'] for s in sens] == [p['id'] for p in SENS.PLAN if p['id'] in SENS_SUBSET]
     assert all(s['status'] == 'ok' for s in sens)
