@@ -1,0 +1,2 @@
+-r ../y9c-panel/requirements.txt
+POT==0.9.7.post1

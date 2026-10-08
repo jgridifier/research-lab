@@ -1,0 +1,22 @@
+# Trading-revenue MDRM items, defined fresh for this track (MDRM-verified in the
+# prereg's DATA_CHECK §1). Do NOT reuse forma_adhoc/y9c/core_items.yaml: its
+# labels for 4074, 4079, 4093, 4135 and 4070 are wrong.
+# Money is thousands of USD as filed. flow_ytd items are calendar-year-to-date
+# and are de-cumulated with y9c.panel.decumulate; stock items are point-in-time.
+items:
+  BHCKA220: {name: trading_revenue, kind: flow_ytd, label: "Trading revenue (Schedule HI item 5.c)"}
+  BHCK8757: {name: trd_interest_rate, kind: flow_ytd, label: "Trading revenue from interest rate exposures (HI Memo 9.a)"}
+  BHCK8758: {name: trd_fx, kind: flow_ytd, label: "Trading revenue from foreign exchange exposures (HI Memo 9.b)"}
+  BHCK8759: {name: trd_equity, kind: flow_ytd, label: "Trading revenue from equity security and index exposures (HI Memo 9.c)"}
+  BHCK8760: {name: trd_commodity, kind: flow_ytd, label: "Trading revenue from commodity and other exposures (HI Memo 9.d)"}
+  BHCKF186: {name: trd_credit, kind: flow_ytd, label: "Trading revenue from credit exposures (HI Memo 9.e)"}
+  BHCKK090: {name: trd_cva_counterparty, kind: flow_ytd, label: "Impact on trading revenue of changes in counterparty creditworthiness (HI Memo 9.f)"}
+  BHCKK094: {name: trd_dva_own, kind: flow_ytd, label: "Impact on trading revenue of changes in own creditworthiness (HI Memo 9.g)"}
+  BHCK4107: {name: total_interest_income, kind: flow_ytd, label: "Total interest income (Schedule HI item 1.h); v1.1 YTD-reset guard only"}
+  BHCK3545: {name: trading_assets, kind: stock, label: "Trading assets (Schedule HC item 5)"}
+  BHCK3548: {name: trading_liabilities, kind: stock, label: "Trading liabilities (Schedule HC item 15)"}
+  BHCK2170: {name: total_assets, kind: stock, label: "Total assets (Schedule HC item 12)"}
+memo9: [BHCK8757, BHCK8758, BHCK8759, BHCK8760, BHCKF186]
+# y9c.panel.read_quarter insists that BHCK4074 is present in each file; it is
+# parsed as a file-integrity guard only and is not used by this track.
+parse_guard: [BHCK4074]

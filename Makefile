@@ -68,3 +68,20 @@ statement-forecast-combo:
 	$(MAKE) y9c-data
 	$(MAKE) statement-forecast-combo-notebook
 	$(MAKE) statement-forecast-combo-page
+
+TOT_TRACK = tracks/y9c-trading-ot
+TOT_PATH = $(TRACK):$(SF_TRACK):$(TOT_TRACK):$(TOT_TRACK)/tests
+
+.PHONY: trading-ot-venv trading-ot-test trading-ot-panel trading-ot-page
+
+trading-ot-venv: $(VENV_STAMP)
+	.venv/bin/pip install -r $(TOT_TRACK)/requirements.txt
+
+trading-ot-test: trading-ot-venv
+	OMP_NUM_THREADS=1 PYTHONPATH=$(TOT_PATH) $(PYTHON) -m pytest -c $(TOT_TRACK)/pytest.ini $(TOT_TRACK)/tests -q
+
+trading-ot-panel: trading-ot-venv
+	OMP_NUM_THREADS=1 PYTHONPATH=$(TOT_PATH) $(PYTHON) -m trading_ot.run panel
+
+trading-ot-page: trading-ot-venv
+	PYTHONPATH=$(TOT_PATH) $(PYTHON) $(TOT_TRACK)/scripts/render_results_page.py

@@ -1,0 +1,91 @@
+{
+  "name": "y9c-trading-ot",
+  "version": "1.0",
+  "status": "PINNED v1.0 design; OOS scoring NOT authorized (stop-gate: prereg addendum v1.1 pending, which may extend history to 2008 and must fix the primary run before any OOS result is seen). run.py refuses an OOS run while oos_authorized is false or open_questions is non-empty.",
+  "oos_authorized": false,
+  "prereg": {
+    "file": "/workspace/research/y9c_ot_prereg/PREREG_y9c_trading_revenue_ot.md",
+    "sha256": "777aa9097adc6300e39f03251696eae63d66f55d6d00852cfd9415347fd38855",
+    "data_check_sha256": "6fb57e145c9e1361fd48ebbd7489f4f93eff2861f217f0ee955fcce3f4e87f21"
+  },
+  "target": {
+    "item": "BHCKA220",
+    "label": "Trading revenue, Schedule HI item 5.c",
+    "units": "thousands USD as filed",
+    "decumulation": "y9c.panel.decumulate unchanged: Q1 as reported; Q2-Q4 = YTD - YTD of the immediately prior calendar quarter of the same year; NaN otherwise",
+    "logs": false,
+    "views": {
+      "T1": "industry total, sum of A220_q over all filers with non-null A220 at t, $bn",
+      "T2": "ex-ante bank set: |A220_q| >= 10000 ($k) in all 16 quarters 2018Q1-2021Q4, data <= 2021Q4 only; evaluated through last filing",
+      "T3": "cross-section C_s: TA(i,s-1) >= 100000 ($k, BHCK3545) and non-null A220_q(i,s); r = 1e4 * A220_q / TA_(t-1) in bp"
+    },
+    "items": ["BHCKA220", "BHCK8757", "BHCK8758", "BHCK8759", "BHCK8760", "BHCKF186", "BHCKK090", "BHCKK094", "BHCK3545", "BHCK3548", "BHCK2170"]
+  },
+  "data": {
+    "raw": "34 NIC BHCF ZIPs 2018Q1-2026Q2 (y9c-panel cache; sha256 per ZIP recorded in vintage.json)",
+    "as_of": "2026-10-06",
+    "availability_rule": "D_t = Y-9C due date (40 days after Mar/Jun/Sep quarter end, 45 after Dec 31, next business day under the US federal holiday calendar) + 7 calendar days; a quarter is usable iff D_t <= as_of",
+    "last_complete_quarter": "2026Q2",
+    "backfill_2008_2017": "not used in v1.0"
+  },
+  "window": {
+    "expanding_from": "2018Q1",
+    "burn_in": ["2018Q1", "2021Q4"],
+    "freeze_origin": "2021Q4",
+    "pseudo_oos_targets": ["2020Q2", "2021Q4"],
+    "origins_h1": ["2021Q4", "2026Q1"],
+    "targets_h1": ["2022Q1", "2026Q2"],
+    "n_targets_h1": 18,
+    "secondary_horizons": {"2": ["2021Q4", "2025Q4"], "3": ["2021Q4", "2025Q3"], "4": ["2021Q4", "2025Q2"]}
+  },
+  "baselines": {
+    "grid": "U99 = {0.01,...,0.99}",
+    "error_quantiles": "centre + type-7 quantiles of the bank's own historical errors for that baseline and horizon; < 8 own errors -> pooled scaled errors (errors / pooling scale, multiplied back); flat beyond extreme order statistics",
+    "B0": {"name": "SAA-8", "rule": "type-7 quantiles of the last 8 observed values"},
+    "B1": {"name": "seasonal naive", "centre": "y_(t+h-4)"},
+    "B2": {"name": "ratio random walk", "centre": "r_t x TA_t"},
+    "B3": {"name": "SES on ratio", "alpha": 0.3},
+    "B4": {"name": "AR(1)+Q1 on ratio, direct h-step, per bank", "min_pairs": 8, "fallback": "B2 (counted)"},
+    "B5": {"name": "pooled panel quantile regression on ratio", "taus": "U19 rearranged (sorted) and interpolated to U99", "bank_fixed_effects": false,
+           "covariates": ["VIXCLS quarter mean", "sd of daily change in DGS10", "sd of daily log SP500 return"],
+           "optional_BAMLC0A0CM": "EXCLUDED: FRED history starts 2023-10-06 (checked 2026-10-06), so it does not cover 2018+",
+           "standardisation": "training-window quarters", "solver": "exact LP (scipy HiGHS)"},
+    "B6": {"name": "EB dynamic panel", "code": "statement_forecast.eb.eb_forecast_origin unchanged (T = 12)", "horizon": "h = 1 only"},
+    "reference": "B* = lowest pooled scaled CRPS on burn-in pseudo-OOS targets 2020Q2-2021Q4, chosen once at 2021Q4; B*_CS likewise on the cross-section population"
+  },
+  "primary": {
+    "H1": {"name": "BARY-EW", "population": "T2", "members": "M0 = B0..B6", "trim": "drop members with pooled burn-in scaled CRPS > 1.25 x best; keep >= 2",
+           "weights": "equal", "widening_grid": [1.0, 1.1, 1.2, 1.35, 1.5], "s_rule": "argmin pooled burn-in pseudo-OOS scaled CRPS, ties -> smallest s", "comparator": "B*"},
+    "H2": {"name": "WAR-RM", "population": "banks in C_(t+1) with >= 8 prior quarters of r", "frechet_mean_window": "2018Q2..t",
+           "beta": "clip(sum <V_(s+h),V_s> / sum <V_s,V_s>, 0, 1) on U19", "forecast": "(1-beta) Qbar_t + beta Q_t",
+           "rank_map": "q_tau = Qhat(Phi(rho z + sqrt(1-rho^2) Phi^-1(tau))); Qhat linear on U99, flat beyond", "rho": "pooled Pearson of probit ranks over transitions with s+h <= t, clipped [0, 0.99]",
+           "scale": "1.4826 x MAD of the last 8 r values <= origin, floored at the 10th percentile across population banks at that origin", "comparator": "B*_CS"}
+  },
+  "scoring": {
+    "crps": "(2/99) sum_tau pinball_tau",
+    "bank_scale": "1.4826 x MAD(A220_q, 2018Q1-2021Q4), frozen",
+    "aggregation": "equal weight per bank within target quarter, then across quarters; G = sum_t dbar_t / sum_t Sbar_ref_t",
+    "matched_cases": "intersection of (bank, target) where both compared methods and the actual exist"
+  },
+  "test": {
+    "dm": "one-sided on dbar_t; Newey-West Bartlett lag h-1; HLN factor; t_(T-1)",
+    "multiplicity": "Holm over {H1, H2}, FWER 0.05",
+    "robustness_reported": ["fixed-smoothing DM (weighted periodogram, m = floor(T^(1/3)), t_(2m))", "y9c.forecast.clustered_dm CR1 continuity"],
+    "pass": ["Holm p < 0.05", "G >= 0.03", "pooled 90% coverage in [0.80, 0.97]", "G > 0 in every leave-one-bank-out"],
+    "pass_fragile": "all but leave-one-bank-out",
+    "fail": "one-sided 95% upper bound on G < 0.03, or G <= 0",
+    "incomplete": "otherwise, or < 16 valid targets, data-integrity failure, prereg pin failure",
+    "min_targets": 16
+  },
+  "secondary_and_sensitivity": "as prereg §4.1-§4.4, §5.6 (S1-S10), §5.7 (F1-F5); none can change a primary verdict; every OOS execution appended to trials.jsonl",
+  "seed": 20261006,
+  "open_questions": [
+    {"id": "Q1-B6-burnin", "text": "B6 (eb_forecast_origin, unchanged default T=12) needs a complete 13-quarter window of the ratio, which begins 2018Q2 (first lagged denominator). It is therefore undefined at pseudo-origins 2020Q1-2021Q1: on the burn-in pseudo-OOS window (targets 2020Q2-2021Q4) B6 exists only for targets 2021Q3-2021Q4 (38 of 133 bank cases; same pattern on the cross-section). The prereg's trim rule, s selection and B* selection assume 133 cases for every member. Options: (a) matched cases only (all members on 2021Q3-Q4, 38 cases); (b) each member on its own available cases; (c) exclude B6 from M0 and from B* eligibility; (d) other. Must be fixed before the freeze; v1.1 history extension to 2008 would remove the problem if the burn-in moves.", "resolution": null},
+    {"id": "Q2-B6-denominator", "text": "Prereg says B6 forecast = Tweedie posterior-mean ratio x TA_t (TA = trading assets, BHCK3545), but asset_ratio uses BHCK2170 total assets. Proposed: pass BHCK3545 into eb's total_assets slot (eb.py code unchanged). Confirm or choose total assets.", "resolution": null},
+    {"id": "Q3-B6-residuals", "text": "B6 'empirical residual quantiles': proposed = in-sample one-step residuals over the 12-quarter EB window, reconstructed from the returned fit (12 per bank, so own errors).", "resolution": null},
+    {"id": "Q4-pseudo-pool-scale", "text": "Pooled scaled errors at pseudo-origins before 2021Q4 would use s_i (2018Q1-2021Q4 MAD), i.e. data after the pseudo-origin. Proposed pooling scale = 1.4826 MAD over 2018Q1..min(origin, 2021Q4); scoring still uses frozen s_i.", "resolution": null},
+    {"id": "Q5-CS-baselines", "text": "B*_CS: baselines on the cross-section are run in ratio space (centres and errors in r bp, pooled errors scaled by s_i^r; B5 pooled over C_(s+h) members; B6 level forecast / TA_t).", "resolution": null},
+    {"id": "Q6-T1-baselines", "text": "T1 (H1d, secondary) has one series: with < 8 own errors there is nothing to pool, and B4's fallback B2 does not exist on levels. Proposed: own errors whatever their count (>= 2); B4 fallback = level random walk.", "resolution": null},
+    {"id": "Q7-minor", "text": "Minor conventions: SES initialised at the first observed r and held when r is missing; U19 -> U99 interpolation holds the 0.05/0.95 values flat in the tails; at h = 4 B5 drops r_(t+h-4) (identical to r_t); trailing-8 MAD uses the last 8 observed r values.", "resolution": null}
+  ]
+}

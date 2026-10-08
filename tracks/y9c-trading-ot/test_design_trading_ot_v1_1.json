@@ -1,0 +1,345 @@
+{
+  "name": "y9c-trading-ot",
+  "version": "1.1",
+  "status": "DRAFT v1.1 design (extended history 2008-2017 backfill). Becomes binding for the PRIMARY gate once pinned in its own commit. OOS scoring NOT authorized until Jared flips oos_authorized in a separate commit. run.py --design v1_1 refuses to run if the pin fails, oos_authorized is false, or open_questions is non-empty.",
+  "oos_authorized": false,
+  "supersedes_for_primary_gate": {
+    "design": "test_design_trading_ot.json",
+    "version": "1.0",
+    "sha256": "dffd1323883cb04e198853d95d4078fb67b4e0c8af4c8d19ef17d7f8f6234e30",
+    "pinned_commit": "4e33139",
+    "role_in_v1_1": "R1: pre-registered NON-GATING sensitivity, run unchanged except for the resolutions in r1_v1_0_resolutions; file stays byte-identical"
+  },
+  "prereg": {
+    "file": "/workspace/research/y9c_ot_prereg/PREREG_y9c_trading_revenue_ot.md",
+    "sha256": "777aa9097adc6300e39f03251696eae63d66f55d6d00852cfd9415347fd38855",
+    "addendum_file": "/workspace/research/y9c_ot_prereg/ADDENDUM_v1_1_extended_history.md",
+    "addendum_sha256": "04e815e89392dcd849679c62243d71fed8d262f2deee62ff19eccddbcbc90651",
+    "data_check_backfill_file": "/workspace/research/y9c_ot_prereg/DATA_CHECK_backfill.md",
+    "data_check_backfill_sha256": "b3d495346d2d7d49e2c203196d8ebed9ca4199038ea334ba3a1ee3a7ae1e0357",
+    "data_check_v1_sha256": "6fb57e145c9e1361fd48ebbd7489f4f93eff2861f217f0ee955fcce3f4e87f21",
+    "precedence": "v1 prereg carries over except where the addendum changes it; on conflict the addendum governs the primary gate"
+  },
+  "exposure_disclosure": "No OOS forecast, CRPS, DM or coverage number exists (v1.0 or v1.1). Seen before pinning: target descriptives 2018-2026 (v1 DATA_CHECK), 2008-2026 descriptives (DATA_CHECK_backfill), industry-total actuals 2018Q1-2026Q2 (Developer), v1.0 burn-in beta/rho on 2018-2021 data. v1.1 design choices use burn-in (<= 2013Q4) scores and simulation only.",
+  "target": {
+    "item": "BHCKA220",
+    "label": "Trading revenue, Schedule HI item 5.c",
+    "units": "thousands USD as filed",
+    "decumulation": "y9c.panel.decumulate unchanged: Q1 as reported; Q2-Q4 = YTD - YTD of the immediately prior calendar quarter of the same year; NaN otherwise",
+    "mid_year_entrants": {
+      "primary": "rule (a): first filing in Q2-Q4 (or first filing after a gap) -> q = NaN until a predecessor quarter exists (= decumulate)",
+      "sensitivity_S11": "rule (b), T1 only: first-filing YTD counted as that quarter's flow"
+    },
+    "ytd_reset_guard": "set every de-cumulated flow to NaN in bank-quarters where BHCK4107 (total interest income, YTD) is lower than the prior quarter of the same year; 16 rows 2008Q1-2026Q2 listed in v1_1/ytd_guard_rows.csv; applies to v1.1 and R1",
+    "tiered_duplicates_excluded": [
+      {
+        "rssd": 5005998,
+        "name": "BancWest Corporation",
+        "quarters": [
+          "2016Q3",
+          "2016Q4"
+        ],
+        "parent_filer": "BNP Paribas USA"
+      },
+      {
+        "rssd": 1032473,
+        "name": "Deutsche Bank Trust Corporation",
+        "quarters": [
+          "2016Q3",
+          "2016Q4"
+        ],
+        "parent_filer": "DB USA Corporation"
+      }
+    ],
+    "logs": false,
+    "views": {
+      "T1": "industry total, sum of A220_q over all filers with non-null A220_q at t after the ytd_reset_guard and tiered_duplicates exclusions, $bn",
+      "T2": "annually refreshed ex-ante bank set S_o (see bank_set)",
+      "T3": "cross-section C_s: TA(i,s-1) >= 100000 ($k, BHCK3545) and non-null A220_q(i,s), s >= 2009Q1 (2009Q1 uses TA 2008Q4); r = 1e4 * A220_q / TA_(t-1) in bp; TA_(t-1) <= 0 -> NaN"
+    },
+    "items": [
+      "BHCKA220",
+      "BHCK8757",
+      "BHCK8758",
+      "BHCK8759",
+      "BHCK8760",
+      "BHCKF186",
+      "BHCKK090",
+      "BHCKK094",
+      "BHCK3545",
+      "BHCK3548",
+      "BHCK2170",
+      "BHCK4107"
+    ],
+    "item_notes": "BHCKK090/K094 exist from 2011Q1 only (descriptive use only); A220 reported by all filers 2008Q1-2019Q3, by filers >= $5bn total assets from 2019Q4"
+  },
+  "data": {
+    "raw": [
+      "/workspace/rl/repo/tracks/y9c-panel/data/raw_backfill_2008_2017 (40 NIC BHCF ZIPs 2008Q1-2017Q4; sha256 per manifest.json)",
+      "y9c-panel raw cache (34 NIC BHCF ZIPs 2018Q1-2026Q2; sha256 per manifest.json)"
+    ],
+    "as_of": "2026-10-06",
+    "availability_rule": "D_t = Y-9C due date (40 days after Mar/Jun/Sep quarter end, 45 after Dec 31, next business day under the US federal holiday calendar) + 7 calendar days; a quarter is usable iff D_t <= as_of; same rule for 2008-2017 (2008 and 2012 FR Y-9C General Instructions)",
+    "last_complete_quarter": "2026Q2",
+    "presample": {
+      "quarters": [
+        "2008Q1",
+        "2008Q4"
+      ],
+      "use": "only TA(2008Q4) as the lagged denominator of 2009Q1 r; excluded from every estimator, scale, bank set, selection and score"
+    },
+    "no_external_pre_bhc_history": true,
+    "gap_filers_note": "no de-cumulation and no lagged TA across a filing gap (e.g. Taunus/DB USA 2816906 gap 2012Q1-2016Q2; RBC USA Holdco 3226762 gap 2012Q1-2015Q3)"
+  },
+  "window": {
+    "expanding_from": "2009Q1",
+    "burn_in": [
+      "2009Q1",
+      "2013Q4"
+    ],
+    "first_freeze_origin": "2013Q4",
+    "pseudo_oos_targets_epoch0": [
+      "2012Q3",
+      "2013Q4"
+    ],
+    "origins_h1": [
+      "2013Q4",
+      "2026Q1"
+    ],
+    "targets_h1": [
+      "2014Q1",
+      "2026Q2"
+    ],
+    "n_targets_h1": 50,
+    "secondary_horizons": {
+      "2": [
+        "2013Q4",
+        "2025Q4"
+      ],
+      "3": [
+        "2013Q4",
+        "2025Q3"
+      ],
+      "4": [
+        "2013Q4",
+        "2025Q2"
+      ]
+    },
+    "fixed_member_windows": {
+      "B0": "last 8 observed values",
+      "B6": "eb_forecast_origin T = 12 (13-quarter ratio window)"
+    },
+    "subperiods": {
+      "P1": [
+        "2014Q1",
+        "2017Q4"
+      ],
+      "P2": [
+        "2018Q1",
+        "2021Q4"
+      ],
+      "P3": [
+        "2022Q1",
+        "2026Q2"
+      ]
+    }
+  },
+  "bank_set": {
+    "rule": "S_o for each Q4 origin o in 2013Q4..2025Q4 = {i : A220_q(i,s) non-null and |A220_q(i,s)| >= 10000 ($k) for all 16 quarters s in [o-15, o]}, using data <= o only (NaN from ytd_reset_guard or rule (a) counts as missing; tiered_duplicates excluded)",
+    "applies_to_targets": "S_o is used for targets o+1..o+4 (all horizons: the set in force at the forecast origin's last Q4 <= origin); a member is evaluated through its last filing",
+    "expected_counts": {
+      "2013Q4": 12,
+      "2014Q4": 16,
+      "2015Q4": 17,
+      "2016Q4": 18,
+      "2017Q4": 18,
+      "2018Q4": 19,
+      "2019Q4": 17,
+      "2020Q4": 19,
+      "2021Q4": 19,
+      "2022Q4": 21,
+      "2023Q4": 22,
+      "2024Q4": 19,
+      "2025Q4": 21
+    },
+    "union_size": 32,
+    "check": "S_2021Q4 equals the v1 ex-ante 19 (exante_set_rssd.csv)"
+  },
+  "baselines": {
+    "as_in_v1_0": "B0-B6 definitions, grid U99, error-quantile rule and B4 min_pairs/fallback exactly as test_design_trading_ot.json v1.0 baselines, except as listed here",
+    "training": "expanding from 2009Q1 (pre-sample excluded); B0 and B6 keep fixed windows",
+    "pooling_scale": "pooled scaled errors use the case scale s_i(o) of the scoring section (data <= forecast origin o)",
+    "B5_covariates": [
+      "VIXCLS quarter mean",
+      "sd of daily change in DGS10",
+      "sd of daily log NASDAQCOM return",
+      "BAA10Y quarter mean"
+    ],
+    "B5_covariate_notes": "NASDAQCOM replaces SP500 (FRED SP500 history starts 2016-10-06); BAA10Y is the point-in-time credit spread (history before 2008); daily data through quarter end t (primary); fetched with cosd=2007-01-01, cached, sha256 recorded",
+    "B6": {
+      "code": "statement_forecast.eb.eb_forecast_origin unchanged (T = 12)",
+      "denominator": "BHCK3545 trading assets passed into the total_assets slot",
+      "nonpositive_lagged_TA": "NaN (bank leaves the window, counted)",
+      "error_quantiles": "in-sample one-step residuals over the 12-quarter EB window (own errors), type-7, flat beyond extremes",
+      "horizon": "h = 1 only"
+    },
+    "T1_members": [
+      "B0",
+      "B1",
+      "B3 (SES on level)",
+      "B4 (AR(1)+Q1 on level)"
+    ],
+    "T3_ratio_space": "see answers Q5"
+  },
+  "selection": {
+    "members": "M0 = B0..B6 (T2); M0_CS = B0..B6 in ratio space (T3)",
+    "epochs": "epoch 0 at origin 2013Q4 on targets 2012Q3-2013Q4; epoch k at each Q4 origin o in 2014Q4..2025Q4 on targets max(2012Q3, o-11)..o; settings apply to targets o+1..o+4",
+    "cases": "matched (bank, target) cases with bank in the set in force at the epoch origin (T2) or in the CS population (T3), target in the epoch window, and every M0 member plus the actual present; all forecasts are walk-forward forecasts from their own origins",
+    "coverage_rule": "a member covering < 80% of the epoch's cases (before matching) is excluded from M0 for that epoch (logged); if < 2 members remain, the epoch inherits the previous epoch's settings (logged)",
+    "B_star": "argmin pooled scaled CRPS over M0 on the epoch's matched cases; ties -> lowest member index",
+    "trim": "drop members with pooled scaled CRPS > 1.25 x best; keep >= 2",
+    "s": "argmin over [1.0, 1.1, 1.2, 1.35, 1.5] of pooled scaled CRPS of the widened barycenter on the epoch's matched cases; ties -> smallest s",
+    "expected_first_freeze_coverage": "all of B0-B6 cover 72 of 72 T2 cases (12 banks x 6 targets)",
+    "no_cv": true
+  },
+  "primary": {
+    "H1": {
+      "name": "BARY-EW",
+      "population": "T2 (S_o)",
+      "members": "trimmed M0 of the current epoch",
+      "weights": "equal",
+      "aggregation": "1-D W2 barycenter = quantile averaging, then widening by s about the median",
+      "comparator": "B* of the current epoch"
+    },
+    "H2": {
+      "name": "WAR-RM",
+      "population": "banks in C_(t+1) with >= 8 prior quarters of r in [2009Q1, t]",
+      "frechet_mean_window": "2009Q1..t",
+      "beta": "clip(sum <V_(s+h),V_s> / sum <V_s,V_s>, 0, 1) on U19, expanding from 2009Q1",
+      "forecast": "(1-beta) Qbar_t + beta Q_t",
+      "rank_map": "as v1.0",
+      "rho": "pooled Pearson of probit ranks over transitions with s+h <= t and s >= 2009Q1, clipped [0, 0.99]",
+      "scale": "1.4826 x MAD of the last 8 r values <= origin, floored at the 10th percentile across population banks at that origin",
+      "comparator": "B*_CS of the current epoch"
+    }
+  },
+  "scoring": {
+    "crps": "(2/99) sum_tau pinball_tau over U99 (the gate is defined on this score)",
+    "case_scale": "s_i(o), o = forecast origin of the case: 1.4826 x MAD of bank i's A220_q over the 16 quarters o-15..o, >= 12 non-NaN required (else the case is not scored, counted), floored at the 10th percentile of s_j(o) over the bank set in force at o",
+    "T1_scale": "1.4826 x MAD of the industry total over the 16 quarters ending at the origin",
+    "aggregation": "equal weight per bank within target quarter, then across quarters; G = sum_t dbar_t / sum_t Sbar_ref_t",
+    "matched_cases": "intersection of (bank, target) where both compared methods and the actual exist"
+  },
+  "test": {
+    "dm": "one-sided on dbar_t: DM_C = mean(dbar) / sqrt(Omega/T), Omega = g0 + 2 sum_{l=1..M} (1 - l/(M+1)) g_l, g_l = T^-1 sum_t (dbar_t - mean)(dbar_(t-l) - mean), M = floor(sqrt(T)); p = share of R null statistics >= DM_C, null statistics = the same statistic on iid N(0,1) series of length T",
+    "null_simulation": {
+      "R": 200000,
+      "rng": "numpy.random.default_rng(20261006)",
+      "expected_cv_T50": {
+        "0.975": 2.417,
+        "0.95": 1.976
+      },
+      "tolerance": 0.03
+    },
+    "multiplicity": "Holm over {H1, H2}, FWER 0.05; exactly one primary gate",
+    "pass": [
+      "Holm-adjusted p < 0.05",
+      "G >= 0.03",
+      "pooled 90% coverage in [0.80, 0.97]",
+      "G > 0 in every leave-one-bank-out (over all banks ever in a set for H1; over the CS population for H2)",
+      "G > 0 in at least 2 of the 3 subperiods P1, P2, P3"
+    ],
+    "pass_fragile": "all PASS conditions except leave-one-bank-out and/or the subperiod condition",
+    "fail": "G_U = G + c_0.95 * sqrt(Omega/T) / mean(Sbar_ref) < 0.03 (c_0.95 = simulated fixed-b 0.95 quantile), or G <= 0",
+    "incomplete": "otherwise, or < 40 valid target quarters, data-integrity test failure, prereg pin failure",
+    "min_targets": 40,
+    "robustness_reported": [
+      "v1 test A (HLN, NW lag h-1, t_(T-1))",
+      "fixed-m Daniell WPE, m = floor(T^(1/3)), t_(2m)",
+      "y9c.forecast.clustered_dm CR1 continuity"
+    ],
+    "secondary_horizons": "same statistic with M = floor(sqrt(T_h))"
+  },
+  "reporting": {
+    "subperiods": "P1/P2/P3: G, raw test-C p, coverage, LOBO-min; descriptive",
+    "R1": "v1.0 design (sha dffd1323...) on 2018+ data with r1_v1_0_resolutions; non-gating; shown next to P3 with the caption that they share the 2022Q1-2026Q2 targets and are not independent evidence",
+    "break_checks": {
+      "FB1": "fluctuation test: F_j = sqrt(m) * mean_{window j}(dbar) / sqrt(Omega_full), m = floor(0.3 T); two-sided 5% critical value of max_j |F_j| simulated (R = 200000, iid N(0,1), seed 20261006)",
+      "FB2": "mean shift in dbar before/after 2015Q3, 2016Q3, 2020Q1, 2022Q1; Bartlett HAC SE (M = floor(sqrt(T))); Holm within FB2; descriptive",
+      "FB3": "sign of G per subperiod",
+      "FB4": "exclude targets 2020Q1-2020Q2; S4b training from 2010Q1; S10 leave-one-OOS-year-out 2014..2026"
+    },
+    "sensitivities": [
+      "S1-S10 as v1 adapted (S1 adds fixed first-freeze set S_2013Q4)",
+      "S11 mid-year entrant rule (b), T1",
+      "S12 rolling W16 estimation windows",
+      "S13 settings frozen at 2013Q4",
+      "S14 frozen burn-in score scale (2010Q1-2013Q4 MAD)",
+      "S15 test A and WPE p-values",
+      "S16 B5 without BAA10Y",
+      "S4b training from 2010Q1",
+      "F1-F5 as v1"
+    ],
+    "none_can_change_primary_verdict": true
+  },
+  "trials_log": {
+    "pre_oos_entry": {
+      "type": "design_revision",
+      "from": "v1.0 dffd1323883cb04e198853d95d4078fb67b4e0c8af4c8d19ef17d7f8f6234e30",
+      "to": "v1.1 <sha256 of this file as pinned>",
+      "oos_seen": false,
+      "counts_as_trial": false,
+      "reason": "backfill 2008-2017; primary gate moved to 2014Q1-2026Q2 before any OOS score; see ADDENDUM_v1_1"
+    },
+    "counting": "first v1.1 primary run = trial 1; R1 and every secondary/sensitivity execution are further trials listed by config hash"
+  },
+  "answers_to_open_questions": [
+    {
+      "id": "Q1-B6-burnin",
+      "v1_1": "Resolved by burn-in 2009Q1-2013Q4: B6 defined on 72/72 first-freeze T2 cases; matched cases + 80% coverage rule (selection.coverage_rule); test_member_coverage_first_freeze",
+      "R1": "option (c): exclude B6 from M0 and B* eligibility at the 2021Q4 freeze; report B6 descriptively"
+    },
+    {
+      "id": "Q2-B6-denominator",
+      "v1_1": "trading assets BHCK3545 passed into eb's total_assets slot (eb.py unchanged); TA_(t-1) <= 0 -> NaN",
+      "R1": "same"
+    },
+    {
+      "id": "Q3-B6-residuals",
+      "v1_1": "yes: in-sample one-step residuals over the 12-quarter EB window (12 per bank, own errors), type-7, flat beyond extremes",
+      "R1": "same"
+    },
+    {
+      "id": "Q4-pseudo-pool-scale",
+      "v1_1": "pooling scale inside a forecast at origin t = s_i(t) (trailing-16 MAD ending at t); scoring uses s_i(o) at each case's origin",
+      "R1": "pooling scale = 1.4826 MAD over 2018Q1..min(origin, 2021Q4); scoring uses the frozen v1.0 s_i"
+    },
+    {
+      "id": "Q5-CS-baselines",
+      "v1_1": "ratio space (bp): B0 type-7 quantiles of the last 8 observed r; B1 centre r_(t+h-4); B2 centre r_t; B3 SES level (alpha 0.3); B4 per-bank direct OLS r_(s+h) = a + b r_s + c 1[Q1], < 8 pairs -> B2 (counted); B5 pooled QR (v1.1 covariates) over training pairs of banks in C_(s+h), s+h <= t; B6 eb_forecast_origin over C_(t+1) banks with a complete 13-quarter r window, level forecast / TA_t; B0-B4 and B6 add own error quantiles in r, < 8 own errors -> pooled errors scaled by s_i^r (trailing-8 MAD of r) and multiplied back",
+      "R1": "same, with v1.0 windows and covariates"
+    },
+    {
+      "id": "Q6-T1-baselines",
+      "v1_1": "confirmed: T1 members B0, B1, B3 (level), B4 (AR(1)+Q1 on level); own errors whatever their count (>= 2); no pooling; B4 fallback = level random walk (counted); scale = trailing-16 MAD of the series at the origin",
+      "R1": "same, with the v1.0 frozen scale"
+    },
+    {
+      "id": "Q7-minor",
+      "v1_1": "accepted: SES initialised at the first observed r of the training sample and held when r is missing; U19 -> U99 interpolation holds 0.05/0.95 flat in the tails; at h = 4 B5 drops r_(t+h-4); trailing-8 MAD uses the last 8 observed r values",
+      "R1": "same"
+    },
+    {
+      "id": "N1-crps-approx",
+      "v1_1": "the 99-level score exceeds exact CRPS by a near-uniform 0.89-0.99% on average (per-case p5-p95 0.71-1.02%) (v1_1/crps_approx_check_output.txt); its effect on G and DM is negligible and coverage is unaffected; the gate is defined on the 99-level quantile score (proper for the 99 quantiles); no change",
+      "R1": "same"
+    },
+    {
+      "id": "N2-credit-spread",
+      "v1_1": "BAA10Y added as the 4th B5 covariate; NASDAQCOM replaces SP500",
+      "R1": "unchanged v1.0 covariates (BAMLC0A0CM excluded)"
+    }
+  ],
+  "seed": 20261006,
+  "open_questions": []
+}
