@@ -86,7 +86,8 @@ class ForwardLog:
         issued_at = _aware(issued_at)
         if origin.dayofweek != 4 or target != origin + pd.Timedelta(days=7):
             raise ValueError('Expected Friday origin and target exactly seven days later')
-        if pd.Timestamp(input_max_date) > origin or issued_at >= data_available_at(target):
+        if (pd.Timestamp(input_max_date) > origin or issued_at < data_available_at(origin)
+                or issued_at >= data_available_at(target)):
             raise ValueError('Invalid forecast timing')
         key = (str(target.date()),cp_type)
         if any((r['target'],r['cp_type']) == key and

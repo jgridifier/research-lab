@@ -42,6 +42,9 @@ def test_forward_log(tmp_path):
     args=dict(origin='2008-12-19',target='2008-12-26',cp_type='AAA',mix=mix,model='P',input_max_date='2008-12-19')
     with pytest.raises(ValueError): log.record_outcome('2008-12-26','AAA',mix,dt('2008-12-29T18:00:00+00:00'))
     with pytest.raises(ValueError): log.record_forecast(**args,issued_at=dt('2008-12-29T18:00:00+00:00'))
+    # issued before the origin week's data were published (Mon 2008-12-22 13:00 ET): uses future data
+    with pytest.raises(ValueError): log.record_forecast(**args,issued_at=dt('2008-12-18T18:00:00+00:00'))
+    with pytest.raises(ValueError): log.record_forecast(**args,issued_at=dt('2008-12-22T17:59:00+00:00'))
     log.record_forecast(**args,issued_at=dt('2008-12-22T18:00:00+00:00'))
     with pytest.raises(ValueError): log.record_outcome('2008-12-26','AAA',mix,dt('2008-12-29T17:59:00+00:00'))
     log.record_outcome('2008-12-26','AAA',mix,dt('2008-12-29T18:00:00+00:00'))
