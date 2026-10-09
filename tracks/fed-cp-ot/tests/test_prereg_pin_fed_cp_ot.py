@@ -46,11 +46,12 @@ def test_prereg_file_verbatim(name):
     assert src.read_bytes() == (PREREG / name).read_bytes()
 
 
-def test_only_prereg_tests_and_docs_in_track():
-    files = {p.relative_to(TRACK).as_posix() for p in TRACK.rglob('*') if p.is_file() and '__pycache__' not in p.parts}
+def test_track_layout():
+    """The pipeline now lives with the pinned prereg; ignore local data/cache artifacts."""
+    files = {p.relative_to(TRACK).as_posix() for p in TRACK.rglob('*') if p.is_file() and '__pycache__' not in p.parts and p.relative_to(TRACK).parts[0] not in {'data', '.pytest_cache'}}
     assert {f for f in files if f.startswith('prereg/')} == {f'prereg/{n}' for n in PINS}
-    assert all(f.startswith(('prereg/', 'tests/')) or f == 'README.md' for f in files), files
-    assert not any(f.endswith('.py') and not f.startswith('tests/') for f in files)
+    assert all(f.startswith(('prereg/', 'tests/')) or f in {'README.md', 'pytest.ini', 'requirements.txt'} or (Path(f).parent.as_posix() == 'fed_cp_ot' and f.endswith('.py')) for f in files), files
+    assert not any(f.endswith('.py') and not f.startswith(('tests/', 'fed_cp_ot/')) for f in files)
 
 
 def test_pin_txt_names_design_prereg_and_learning_page():
