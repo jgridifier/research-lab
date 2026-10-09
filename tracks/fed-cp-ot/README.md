@@ -50,26 +50,34 @@ python -m pytest -q -m 'not realdata'
 
 The prereg location is fixed at the committed `tracks/fed-cp-ot/prereg/`.
 
+Raw pinned inputs (`FRB_CP_xml.zip` sha256 16805f2c…, `fed_cp_volume_stats_by_maturity.csv` sha256 aeab7b09…)
+are not vendored. Point `FED_CP_OT_RAW_DIR` at a directory holding them; the default is the gitignored `data/raw/`.
+Seeded or fetched vintages live in `data/vintages/` with `data/manifest.jsonl`.
+
 ```sh
-python -m fed_cp_ot.ingest seed /workspace/research/fed_cp_ot_prereg/raw/FRB_CP_xml.zip
+python -m fed_cp_ot.ingest seed "$FED_CP_OT_RAW_DIR/FRB_CP_xml.zip"
 python -m fed_cp_ot.ingest fetch
 python -m fed_cp_ot.ingest list
-python -m fed_cp_ot.burnin_checks --zip /workspace/research/fed_cp_ot_prereg/raw/FRB_CP_xml.zip
-python -m fed_cp_ot.app --zip /workspace/research/fed_cp_ot_prereg/raw/FRB_CP_xml.zip
+python -m fed_cp_ot.burnin_checks --zip "$FED_CP_OT_RAW_DIR/FRB_CP_xml.zip"
+python -m fed_cp_ot.app --zip "$FED_CP_OT_RAW_DIR/FRB_CP_xml.zip"
 ```
 
-`burnin_checks --csv PATH` selects a CSV explicitly; its pinned hash is required.
-The default search is `/workspace/research/fed_cp_ot_prereg/raw/fed_cp_volume_stats_by_maturity.csv`,
-then `data/fed_cp_volume_stats_by_maturity.csv`. Zip SHA256 and equality to the
-pinned research vintage are printed. `--compare-to-pinned --zip NEWER.zip` reports
-changed burn-in series-dates and whether the replicated numbers still match;
-it creates no trial and makes no gate decision. Both vintages withhold post-wall values.
+`burnin_checks --csv PATH` selects a CSV explicitly; its pinned hash is required. Otherwise it looks in
+`$FED_CP_OT_RAW_DIR`, then in `data/`. It prints the zip sha256 and whether it equals the pinned vintage.
+`--compare-to-pinned --zip NEWER.zip` reports changed burn-in series-dates and whether the replicated numbers
+still match. It creates no trial and makes no gate decision. Both vintages withhold post-wall values.
 
-`ingest fetch` downloads the public Fed zip using urllib; `ingest list` prints
-manifest records. Tests never use the network. Fast tests copy prereg files into
-temporary directories from committed pins, without requiring the research directory.
-Real-data tests parse once per session and skip if neither the research zip nor
-a cached vintage with its pinned hash exists.
+`ingest fetch` downloads the public Fed zip with urllib, with a finite timeout and bounded retries.
+`ingest list` prints the manifest records.
+
+Tests: `make fed-cp-test` from the repo root runs the synthetic suite (preflight order, leakage, parse validation,
+metric, app). It needs no network and no box paths, and it never skips. Its fixtures copy the committed
+`prereg/` into temporary directories. Real-data tests (`-m realdata`) parse the pinned zip once per session and
+skip if it is absent from `$FED_CP_OT_RAW_DIR` and `data/vintages/`. `FED_CP_OT_PREREG_SOURCE` optionally points
+the verbatim-copy test at the original research directory; by default it compares against the vendored pins.
+
+Parsing fails loudly on any `OBS_STATUS` other than `A`/`ND`, on any valid weekend row, and on any negative or
+non-integer value. After the wall, values are checked as text (digits only) and never converted to numbers.
 
 - `fed_cp_ot/preflight.py`: checks all seven pinned files, PIN references and
   design semantics. Only issued immutable Provenance objects can open a loader.
@@ -119,7 +127,9 @@ Fed holidays: New Year's, MLK, Presidents, Memorial, Juneteenth (from 2021), Ind
 Veterans, Thanksgiving, Christmas. A Sunday holiday is observed on Monday; a Saturday holiday is not moved to
 Friday. Actual posting is not guaranteed. The live forward log (`ForwardLog`, live by default) stores each
 forecast's vintage fetch time and the release `Last-Modified` time, and rejects any forecast stamped before
-either (`vintage_stamps(manifest_row)`). Burn-in replays use `live=False`.
+either (`vintage_stamps(manifest_row)`). Burn-in replays use `live=False`. Every forward-log row, forecast or outcome, stores its input
+`vintage_sha256` and `vintage_through` (`parse.vintage_through`). The vintage must contain the last Fed business
+day of the origin week (for a forecast) or of the target week (for an outcome).
 
 A valid day is defined **per type**: all 12 of that type's series (6 buckets x AMT and VOL) must be present that
 day. One type missing a day does not void the other types. A partial type-day fails the run. Planned pulls are
