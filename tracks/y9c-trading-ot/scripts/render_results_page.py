@@ -73,6 +73,21 @@ def subperiod_rows(gate):
     return '\n'.join(rows)
 
 
+def logged_sensitivities():
+    """Sensitivity IDs with a registered trial in trials.jsonl (the record of the one authorized run)."""
+    out = []
+    if TRIALS_PATH.exists():
+        for line in TRIALS_PATH.read_text(encoding='utf-8').splitlines():
+            if line.strip():
+                lab = json.loads(line).get('label', '')
+                if lab.startswith('v1.1 sensitivity '):
+                    out.append(lab[len('v1.1 sensitivity '):].split(':')[0])
+    return out
+
+
+CRASHED = {'S4': 'KeyError 2020Q1 in WAR-RM'}   # logged as a trial, then the run stopped; not scored
+
+
 def p3_r1_rows(gate, r1):
     rows = []
     for key, _, _ in HYPS:
@@ -80,7 +95,7 @@ def p3_r1_rows(gate, r1):
         r = ((r1 or {}).get('hypotheses') or {}).get(key, {})
         rows.append(f"<tr><td>{key}</td><td>{_fmt(p3.get('G'), '{:+.1%}')}</td><td>{_fmt(p3.get('p'), '{:.3f}')}</td>"
                     f"<td>{_fmt(r.get('G'), '{:+.1%}')}</td><td>{_fmt((r.get('test_A') or {}).get('p'), '{:.3f}')}</td>"
-                    f"<td><span class=\"verdict\">{'PENDING' if not r else 'non-gating'}</span></td></tr>")
+                    f"<td><span class=\"verdict\">{('PENDING' if not gate else 'NOT RUN') if not r else 'non-gating'}</span></td></tr>")
     return '\n'.join(rows)
 
 
@@ -114,6 +129,37 @@ def secondary_rows(sec):
         rows.append(f"<tr><td>{e(key)}</td><td>{e(what)}</td><td>{ref}</td><td>{_fmt(r.get('G'), '{:+.1%}')}</td>"
                     f"<td>{_fmt(r.get('p'), '{:.3f}')}</td><td>{_fmt(r.get('p_holm_secondary'), '{:.3f}')}</td>"
                     f"<td>{_fmt(r.get('n_targets'), '{:d}')}</td><td><span class=\"verdict\">{status}</span></td></tr>")
+    return '\n'.join(rows)
+
+
+def fb_rows(gate):
+    """FB1 (fluctuation test) and FB2 (mean-shift tests, Holm within FB2) from gate.json robustness."""
+    rows = []
+    for key, _, _ in HYPS:
+        rb = (((gate or {}).get('hypotheses') or {}).get(key) or {}).get('robustness') or {}
+        f1 = rb.get('FB1') or {}
+        rows.append(f"<tr><td>{key}</td><td>FB1 fluctuation (rolling 15-quarter mean of d̄<sub>t</sub>)</td>"
+                    f"<td>stat {_fmt(f1.get('stat'), '{:.2f}')} vs cv {_fmt(f1.get('cv'), '{:.2f}')}</td>"
+                    f"<td>{'reject' if f1.get('reject') else 'no reject' if f1 else '—'}</td></tr>")
+        for brk, v in (rb.get('FB2') or {}).items():
+            rows.append(f"<tr><td>{key}</td><td>FB2 mean shift at {e(brk)}</td>"
+                        f"<td>shift {_fmt(v.get('shift'), '{:+.3f}')}, p (Holm) {_fmt(v.get('p_holm'), '{:.3f}')}</td>"
+                        f"<td>{'shift' if (v.get('p_holm') or 1) < 0.05 else 'no shift'}</td></tr>")
+    return '\n'.join(rows)
+
+
+def calibration_rows(sec):
+    """Pooled secondary metrics on the primary matched cases (scaled pinball / MAE, coverage, PIT counts)."""
+    m = (sec or {}).get('secondary_metrics') or {}
+    rows = []
+    for h, ot_name, ref_name in [('H1', 'BARY-EW', 'B*'), ('H2', 'WAR-RM', 'B*<sub>CS</sub>')]:
+        for k, name in [('ot', ot_name), ('ref', ref_name)]:
+            v = (m.get(h) or {}).get(k) or {}
+            pit = v.get('pit_hist10')
+            rows.append(f"<tr><td>{h}</td><td>{name}</td><td>{_fmt(v.get('cov50'), '{:.2f}')}</td>"
+                        f"<td>{_fmt(v.get('cov90'), '{:.2f}')}</td><td>{_fmt(v.get('pin05'), '{:.3f}')}</td>"
+                        f"<td>{_fmt(v.get('pin50'), '{:.3f}')}</td><td>{_fmt(v.get('pin95'), '{:.3f}')}</td>"
+                        f"<td>{_fmt(v.get('mae'), '{:.3f}')}</td><td>{e(' '.join(str(x) for x in pit)) if pit else '—'}</td></tr>")
     return '\n'.join(rows)
 
 
@@ -152,14 +198,23 @@ SENS_LABELS = [('S1', 'Bank set: full-sample balanced ($10m, $100m; look-ahead) 
                ('S16', 'B5 without the Baa–10-year spread'), ('FB4', 'Exclude 2020Q1–Q2 targets')]
 
 
-def sensitivity_rows(sens):
+def sensitivity_rows(sens, ran=None):
+    """ran: None before any OOS run (PENDING); otherwise the sensitivity IDs logged in trials.jsonl."""
     items = (sens or {}).get('sensitivities') or []
     rows = []
     for sid, label in SENS_LABELS:
         mine = [x for x in items if x.get('id') == sid]
         if not mine:
+            if ran is None:
+                st = 'PENDING'
+            elif sid in CRASHED:
+                st = f'CRASHED ({CRASHED[sid]}); logged, not scored'
+            elif sid in ran:
+                st = 'ran; not saved (sensitivities.json not produced)'
+            else:
+                st = 'NOT RUN'
             rows.append(f"<tr><td>{sid}</td><td>{e(label)}</td><td>—</td><td>—</td><td>—</td>"
-                        f"<td><span class=\"verdict\">PENDING</span></td></tr>")
+                        f"<td><span class=\"verdict\">{e(st)}</span></td></tr>")
             continue
         for x in mine:
             res = x.get('results') or {}
@@ -182,14 +237,45 @@ def render():
     pending = gate is None
     trials = trial_count(TRIALS_PATH)
     authorized = bool(design.get('oos_authorized'))
-    headline = 'Verdict: PENDING (out-of-sample scoring not run)' if pending else e(gate.get('headline', 'Primary gate'))
+    verdicts = {k: ((gate or {}).get('hypotheses') or {}).get(k, {}).get('verdict', '—') for k, _, _ in HYPS}
+    headline = ('Verdict: PENDING (out-of-sample scoring not run)' if pending
+                else e(f"Primary verdict: H1 {verdicts['H1']} · H2 {verdicts['H2']} (run INCOMPLETE)"
+                       if r1 is None or sens is None else f"Primary verdict: H1 {verdicts['H1']} · H2 {verdicts['H2']}"))
+    appr = ((gate or {}).get('provenance') or {}).get('oos_approval') or {}
+    hy = ((gate or {}).get('hypotheses') or {})
+    g1, g2 = hy.get('H1', {}), hy.get('H2', {})
+    done = ("<div class=\"callout\"><strong>Status: the one authorized out-of-sample run is INCOMPLETE. "
+            f"Primary verdict: FAIL on both hypotheses.</strong> H1 G = {_fmt(g1.get('G'), '{:+.2%}')}, fixed-b p = "
+            f"{_fmt((g1.get('dm') or {}).get('p'), '{:.4f}')}, T = {_fmt(g1.get('n_targets'), '{:d}')} targets / "
+            f"{_fmt(g1.get('n_cases'), '{:d}')} cases; H2 G = {_fmt(g2.get('G'), '{:+.2%}')}, p = "
+            f"{_fmt((g2.get('dm') or {}).get('p'), '{:.4f}')}, T = {_fmt(g2.get('n_targets'), '{:d}')} / "
+            f"{_fmt(g2.get('n_cases'), '{:d}')} cases. The primary gate and the secondary family completed "
+            "(<code>gate.json</code>, <code>secondary.json</code>). The run then stopped in sensitivity S4 (exclude "
+            "2020Q1–Q2 from training): <code>KeyError: Period('2020Q1')</code> in WAR-RM, because the masked 2020Q1 "
+            "origin cross-section was empty. S4 was logged as a trial before it ran and was not scored. "
+            "<code>sensitivities.json</code> and <code>r1.json</code> were not produced; S1–S3 ran but their results "
+            "were not saved; 15 approved executions never ran (S4b, S5–S16, FB4 and R1). By Quant's ruling there is "
+            f"no rerun. Trials logged: <strong>{trials}</strong> of the 39 approved.</div>"
+            "<div class=\"callout\"><strong>Authorization and trial count.</strong> Authorized by the pinned approval "
+            f"file <code>{e(appr.get('path', ''))}</code> (sha256 <code>{e(str(appr.get('sha256', ''))[:12])}…</code>, "
+            f"design commit <code>{e(str(appr.get('design_commit', ''))[:7])}</code>); the design JSON keeps "
+            f"<code>oos_authorized: false</code> and its pin <code>{e(V11_SHA[:12])}…</code>. Run at commit "
+            f"<code>{e(str((gate or {}).get('git_head', ''))[:7])}</code>. 37 → 39: ERRATA_v1_1b §1 confirmed 37 "
+            "executions at <code>ce9ce39</code>; its §4 then required the K = 2 FPCA WAR variant and the ridge point "
+            "forecast with a trial each, giving the 39 pinned in the approval file. §4-B scenarios are deferred with no "
+            "trial (<code>prereg/DEFERRAL_4B.md</code>). The pinned errata are not edited.</div>"
+            "<div class=\"callout\"><strong>Quant's reading of S4 (for the record only; not applied in this run).</strong> "
+            "The origin cross-section is built from the masked A220<sub>q</sub> for 2020Q1/Q2; the target and the "
+            "scale stay unmasked; an empty origin cross-section makes that case N/A.</div>")
+    nofig = ('<p><em>Figure not rendered: results-page figures are a later rendering step (ERRATA_v1_1b §4); the '
+             'numbers are in the tables on this page and in the JSON outputs.</em></p>')
     status = ("<div class=\"callout\"><strong>Status: OOS not run. Design v1.1 is pinned and awaiting approval.</strong> "
               "<code>tracks/y9c-trading-ot/test_design_trading_ot_v1_1.json</code> (prereg addendum v1.1, extended history "
               f"2008–2026) is pinned in its own commit <code>{e(V11_COMMIT[:7])}</code>, sha256 <code>{e(V11_SHA[:12])}…</code>. "
               f"<code>oos_authorized</code> is <strong>{str(authorized).lower()}</strong>, so the pipeline refuses to score "
               "any 2014Q1+ target. The leakage tests pass. No out-of-sample forecast, score or test statistic has been "
               f"computed. Trials logged on OOS data: <strong>{trials}</strong> (the log holds only the v1.0 → v1.1 "
-              "design revision, which is not a trial).</div>") if pending else ''
+              "design revision, which is not a trial).</div>") if pending else done
     ph = lambda what: f'<div class="placeholder"><strong>PENDING.</strong> {what}</div>' if pending else ''
     set_cells = ''.join(f'<td>{n}</td>' for _, n in SET_COUNTS)
     set_heads = ''.join(f'<th>{q}</th>' for q, _ in SET_COUNTS)
@@ -264,14 +350,31 @@ def render():
   </table></div>
   <h3>Break checks (FB1–FB4)</h3>
   {ph('Fluctuation test on rolling 15-quarter means of d̄<sub>t</sub>; mean-shift tests at 2015Q3, 2016Q3, 2020Q1 and 2022Q1 (Holm within FB2); excluding 2020Q1–Q2; training from 2010Q1; leave one OOS year out.')}
+  {'' if pending else f'''<div class="table-scroll"><table class="dataframe">
+    <thead><tr><th>Hypothesis</th><th>Check</th><th>Result</th><th>Reading</th></tr></thead>
+    <tbody>
+{fb_rows(gate)}
+    </tbody>
+  </table></div>
+  <p>FB3 (training from 2010Q1) is sensitivity S4b and FB4 (excluding 2020Q1–Q2 targets) is in the sensitivity table below; S10 is the leave-one-year-out check.</p>'''}
   <h3>Per-bank CRPS gains (H1)</h3>
   {ph('Distribution of per-bank relative CRPS gains of BARY-EW over B* (anonymised; no per-BHC rows are published).')}
+  {'' if pending else '<p>The minimum G after dropping any one bank is in the primary table (column “Min G, drop one bank”).</p>' + nofig}
   <h3>Coverage and calibration</h3>
   {ph('Pooled 50% and 90% central-interval coverage and 10-bin PIT histograms for BARY-EW, WAR-RM and the reference baselines.')}
+  {'' if pending else f'''<div class="table-scroll"><table class="dataframe">
+    <caption>Primary matched cases; pinball and MAE are scaled like the CRPS; equal weight per bank within a quarter, then across quarters. PIT: counts in 10 equal bins.</caption>
+    <thead><tr><th>Hypothesis</th><th>Method</th><th>50% cov.</th><th>90% cov.</th><th>Pinball 0.05</th><th>Pinball 0.5</th><th>Pinball 0.95</th><th>MAE (median)</th><th>PIT counts (10 bins)</th></tr></thead>
+    <tbody>
+{calibration_rows(sec)}
+    </tbody>
+  </table></div>'''}
   <h3>Industry total (T1): forecast vs actual</h3>
   {ph('BARY-EW on the industry total ($bn, secondary H1d) with 50%/90% bands against realised totals, 2014Q1–2026Q2.')}
+  {'' if pending else nofig}
   <h3>Cross-section (T3): WAR-RM density fan</h3>
   {ph('One-step WAR-RM forecasts of the cross-sectional quantile function of revenue / lagged trading assets (bp), with the realised cross-section.')}
+  {'' if pending else nofig}
   <h3>Secondary family (Holm within the family; cannot change the primary verdict)</h3>
   <div class="table-scroll"><table class="dataframe">
     <thead><tr><th>Test</th><th>Method</th><th>Comparator</th><th>G</th><th>p (raw, test C)</th><th>p (Holm, secondary)</th><th>Targets</th><th>Role</th></tr></thead>
@@ -290,7 +393,7 @@ def render():
   <div class="table-scroll"><table class="dataframe">
     <thead><tr><th>ID</th><th>Variation</th><th>H1 G</th><th>H2 G</th><th>H1d G</th><th>Role</th></tr></thead>
     <tbody>
-{sensitivity_rows(sens)}
+{sensitivity_rows(sens, None if pending else logged_sensitivities())}
     </tbody>
   </table></div>
   <h2>Design (v1.1)</h2>

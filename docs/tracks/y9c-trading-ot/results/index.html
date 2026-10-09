@@ -42,8 +42,8 @@
     <a href="../../../index.html">Home</a><span aria-hidden="true"> › </span>
     <a href="../index.html">Trading × OT</a><span aria-hidden="true"> › </span>Results
   </nav>
-  <div class="callout"><strong>Status: OOS not run. Design v1.1 is pinned and awaiting approval.</strong> <code>tracks/y9c-trading-ot/test_design_trading_ot_v1_1.json</code> (prereg addendum v1.1, extended history 2008–2026) is pinned in its own commit <code>06dbc28</code>, sha256 <code>930353641c6a…</code>. <code>oos_authorized</code> is <strong>false</strong>, so the pipeline refuses to score any 2014Q1+ target. The leakage tests pass. No out-of-sample forecast, score or test statistic has been computed. Trials logged on OOS data: <strong>0</strong> (the log holds only the v1.0 → v1.1 design revision, which is not a trial).</div>
-  <h2>Verdict: PENDING (out-of-sample scoring not run)</h2>
+  <div class="callout"><strong>Status: the one authorized out-of-sample run is INCOMPLETE. Primary verdict: FAIL on both hypotheses.</strong> H1 G = -4.48%, fixed-b p = 0.8865, T = 50 targets / 901 cases; H2 G = -29.37%, p = 0.9998, T = 50 / 2383 cases. The primary gate and the secondary family completed (<code>gate.json</code>, <code>secondary.json</code>). The run then stopped in sensitivity S4 (exclude 2020Q1–Q2 from training): <code>KeyError: Period('2020Q1')</code> in WAR-RM, because the masked 2020Q1 origin cross-section was empty. S4 was logged as a trial before it ran and was not scored. <code>sensitivities.json</code> and <code>r1.json</code> were not produced; S1–S3 ran but their results were not saved; 15 approved executions never ran (S4b, S5–S16, FB4 and R1). By Quant's ruling there is no rerun. Trials logged: <strong>24</strong> of the 39 approved.</div><div class="callout"><strong>Authorization and trial count.</strong> Authorized by the pinned approval file <code>tracks/y9c-trading-ot/prereg/OOS_APPROVAL_v1_1.json</code> (sha256 <code>fe473f36b530…</code>, design commit <code>c38a284</code>); the design JSON keeps <code>oos_authorized: false</code> and its pin <code>930353641c6a…</code>. Run at commit <code>5f11ed5</code>. 37 → 39: ERRATA_v1_1b §1 confirmed 37 executions at <code>ce9ce39</code>; its §4 then required the K = 2 FPCA WAR variant and the ridge point forecast with a trial each, giving the 39 pinned in the approval file. §4-B scenarios are deferred with no trial (<code>prereg/DEFERRAL_4B.md</code>). The pinned errata are not edited.</div><div class="callout"><strong>Quant's reading of S4 (for the record only; not applied in this run).</strong> The origin cross-section is built from the masked A220<sub>q</sub> for 2020Q1/Q2; the target and the scale stay unmasked; an empty origin cross-section makes that case N/A.</div>
+  <h2>Primary verdict: H1 FAIL · H2 FAIL (run INCOMPLETE)</h2>
   <p>One primary gate: two hypotheses on the 2014Q1–2026Q2 targets, Holm-adjusted across the pair (FWER 0.05). The methods come from the classical-OT guide:
   <a href="../../../notes/ot_classical_learning.html#family-4">§4 barycenters for forecast combination</a> (H1) and
   <a href="../../../notes/ot_classical_learning.html#family-3">§3 density time series in Wasserstein space</a> (H2).</p>
@@ -56,8 +56,8 @@
   <div class="table-scroll"><table class="dataframe">
     <thead><tr><th>Hypothesis</th><th>Comparator</th><th>G (scaled CRPS)</th><th>p (fixed-b, one-sided)</th><th>p (Holm)</th><th>G<sub>U</sub></th><th>90% coverage</th><th>Min G, drop one bank</th><th>Subperiods with G &gt; 0</th><th>Targets</th><th>Verdict</th></tr></thead>
     <tbody>
-<tr><td>H1 · §4 BARY-EW (equal-weight W₂ barycenter, annually refreshed bank set)</td><td>B* (epoch)</td><td>—</td><td>—</td><td>—</td><td>—</td><td>—</td><td>—</td><td>—</td><td>—</td><td><span class="verdict">PENDING</span></td></tr>
-<tr><td>H2 · §3 WAR-RM (Wasserstein AR + rank map, cross-section)</td><td>B*<sub>CS</sub> (epoch)</td><td>—</td><td>—</td><td>—</td><td>—</td><td>—</td><td>—</td><td>—</td><td>—</td><td><span class="verdict">PENDING</span></td></tr>
+<tr><td>H1 · §4 BARY-EW (equal-weight W₂ barycenter, annually refreshed bank set)</td><td>B* (epoch)</td><td>-4.5%</td><td>0.887</td><td>1.000</td><td>+1.8%</td><td>0.86</td><td>-6.0%</td><td>1 of 3</td><td>50</td><td><span class="verdict">FAIL</span></td></tr>
+<tr><td>H2 · §3 WAR-RM (Wasserstein AR + rank map, cross-section)</td><td>B*<sub>CS</sub> (epoch)</td><td>-29.4%</td><td>1.000</td><td>1.000</td><td>-18.5%</td><td>0.93</td><td>-33.0%</td><td>0 of 3</td><td>50</td><td><span class="verdict">FAIL</span></td></tr>
     </tbody>
   </table></div>
   <p>Test C: DM on the per-quarter cross-bank mean loss differential d̄<sub>t</sub> (positive favours the OT method), Bartlett long-run variance with M = ⌊√T⌋ (7 at T = 50),
@@ -67,12 +67,12 @@
   <div class="table-scroll"><table class="dataframe">
     <thead><tr><th>Hypothesis</th><th>Subperiod</th><th>G</th><th>p (raw)</th><th>90% coverage</th><th>Min G, drop one bank</th><th>Targets</th><th>Sign</th></tr></thead>
     <tbody>
-<tr><td>H1</td><td>P1 · 2014Q1–2017Q4</td><td>—</td><td>—</td><td>—</td><td>—</td><td>—</td><td><span class="verdict">PENDING</span></td></tr>
-<tr><td>H1</td><td>P2 · 2018Q1–2021Q4</td><td>—</td><td>—</td><td>—</td><td>—</td><td>—</td><td><span class="verdict">PENDING</span></td></tr>
-<tr><td>H1</td><td>P3 · 2022Q1–2026Q2</td><td>—</td><td>—</td><td>—</td><td>—</td><td>—</td><td><span class="verdict">PENDING</span></td></tr>
-<tr><td>H2</td><td>P1 · 2014Q1–2017Q4</td><td>—</td><td>—</td><td>—</td><td>—</td><td>—</td><td><span class="verdict">PENDING</span></td></tr>
-<tr><td>H2</td><td>P2 · 2018Q1–2021Q4</td><td>—</td><td>—</td><td>—</td><td>—</td><td>—</td><td><span class="verdict">PENDING</span></td></tr>
-<tr><td>H2</td><td>P3 · 2022Q1–2026Q2</td><td>—</td><td>—</td><td>—</td><td>—</td><td>—</td><td><span class="verdict">PENDING</span></td></tr>
+<tr><td>H1</td><td>P1 · 2014Q1–2017Q4</td><td>-3.4%</td><td>0.867</td><td>0.88</td><td>-5.7%</td><td>16</td><td><span class="verdict">G ≤ 0</span></td></tr>
+<tr><td>H1</td><td>P2 · 2018Q1–2021Q4</td><td>+0.3%</td><td>0.476</td><td>0.81</td><td>-1.3%</td><td>16</td><td><span class="verdict">G &gt; 0</span></td></tr>
+<tr><td>H1</td><td>P3 · 2022Q1–2026Q2</td><td>-11.9%</td><td>0.871</td><td>0.88</td><td>-14.1%</td><td>18</td><td><span class="verdict">G ≤ 0</span></td></tr>
+<tr><td>H2</td><td>P1 · 2014Q1–2017Q4</td><td>-51.2%</td><td>1.000</td><td>0.93</td><td>-54.5%</td><td>16</td><td><span class="verdict">G ≤ 0</span></td></tr>
+<tr><td>H2</td><td>P2 · 2018Q1–2021Q4</td><td>-21.2%</td><td>0.971</td><td>0.92</td><td>-28.8%</td><td>16</td><td><span class="verdict">G ≤ 0</span></td></tr>
+<tr><td>H2</td><td>P3 · 2022Q1–2026Q2</td><td>-21.2%</td><td>0.956</td><td>0.93</td><td>-24.4%</td><td>18</td><td><span class="verdict">G ≤ 0</span></td></tr>
     </tbody>
   </table></div>
   <h3>P3 next to R1 (v1.0 design): not independent evidence</h3>
@@ -80,44 +80,73 @@
     <caption>P3 (the primary run restricted to 2022Q1–2026Q2) and R1 (the pinned v1.0 design: 2018+ history, 2021Q4 freeze, B6 excluded from selection but reported) share the same 18 target quarters. They are not independent evidence, and neither can change the primary verdict.</caption>
     <thead><tr><th>Hypothesis</th><th>P3 G</th><th>P3 p (raw, test C)</th><th>R1 G</th><th>R1 p (v1 test A)</th><th>Role</th></tr></thead>
     <tbody>
-<tr><td>H1</td><td>—</td><td>—</td><td>—</td><td>—</td><td><span class="verdict">PENDING</span></td></tr>
-<tr><td>H2</td><td>—</td><td>—</td><td>—</td><td>—</td><td><span class="verdict">PENDING</span></td></tr>
+<tr><td>H1</td><td>-11.9%</td><td>0.871</td><td>—</td><td>—</td><td><span class="verdict">NOT RUN</span></td></tr>
+<tr><td>H2</td><td>-21.2%</td><td>0.956</td><td>—</td><td>—</td><td><span class="verdict">NOT RUN</span></td></tr>
     </tbody>
   </table></div>
   <h3>Break checks (FB1–FB4)</h3>
-  <div class="placeholder"><strong>PENDING.</strong> Fluctuation test on rolling 15-quarter means of d̄<sub>t</sub>; mean-shift tests at 2015Q3, 2016Q3, 2020Q1 and 2022Q1 (Holm within FB2); excluding 2020Q1–Q2; training from 2010Q1; leave one OOS year out.</div>
+  
+  <div class="table-scroll"><table class="dataframe">
+    <thead><tr><th>Hypothesis</th><th>Check</th><th>Result</th><th>Reading</th></tr></thead>
+    <tbody>
+<tr><td>H1</td><td>FB1 fluctuation (rolling 15-quarter mean of d̄<sub>t</sub>)</td><td>stat 2.03 vs cv 3.07</td><td>no reject</td></tr>
+<tr><td>H1</td><td>FB2 mean shift at 2015Q3</td><td>shift +0.013, p (Holm) 1.000</td><td>no shift</td></tr>
+<tr><td>H1</td><td>FB2 mean shift at 2016Q3</td><td>shift -0.038, p (Holm) 1.000</td><td>no shift</td></tr>
+<tr><td>H1</td><td>FB2 mean shift at 2020Q1</td><td>shift -0.019, p (Holm) 1.000</td><td>no shift</td></tr>
+<tr><td>H1</td><td>FB2 mean shift at 2022Q1</td><td>shift -0.096, p (Holm) 0.617</td><td>no shift</td></tr>
+<tr><td>H2</td><td>FB1 fluctuation (rolling 15-quarter mean of d̄<sub>t</sub>)</td><td>stat 4.38 vs cv 3.07</td><td>reject</td></tr>
+<tr><td>H2</td><td>FB2 mean shift at 2015Q3</td><td>shift +0.009, p (Holm) 0.906</td><td>no shift</td></tr>
+<tr><td>H2</td><td>FB2 mean shift at 2016Q3</td><td>shift +0.127, p (Holm) 0.271</td><td>no shift</td></tr>
+<tr><td>H2</td><td>FB2 mean shift at 2020Q1</td><td>shift +0.241, p (Holm) 0.028</td><td>shift</td></tr>
+<tr><td>H2</td><td>FB2 mean shift at 2022Q1</td><td>shift +0.143, p (Holm) 0.467</td><td>no shift</td></tr>
+    </tbody>
+  </table></div>
+  <p>FB3 (training from 2010Q1) is sensitivity S4b and FB4 (excluding 2020Q1–Q2 targets) is in the sensitivity table below; S10 is the leave-one-year-out check.</p>
   <h3>Per-bank CRPS gains (H1)</h3>
-  <div class="placeholder"><strong>PENDING.</strong> Distribution of per-bank relative CRPS gains of BARY-EW over B* (anonymised; no per-BHC rows are published).</div>
+  
+  <p>The minimum G after dropping any one bank is in the primary table (column “Min G, drop one bank”).</p><p><em>Figure not rendered: results-page figures are a later rendering step (ERRATA_v1_1b §4); the numbers are in the tables on this page and in the JSON outputs.</em></p>
   <h3>Coverage and calibration</h3>
-  <div class="placeholder"><strong>PENDING.</strong> Pooled 50% and 90% central-interval coverage and 10-bin PIT histograms for BARY-EW, WAR-RM and the reference baselines.</div>
+  
+  <div class="table-scroll"><table class="dataframe">
+    <caption>Primary matched cases; pinball and MAE are scaled like the CRPS; equal weight per bank within a quarter, then across quarters. PIT: counts in 10 equal bins.</caption>
+    <thead><tr><th>Hypothesis</th><th>Method</th><th>50% cov.</th><th>90% cov.</th><th>Pinball 0.05</th><th>Pinball 0.5</th><th>Pinball 0.95</th><th>MAE (median)</th><th>PIT counts (10 bins)</th></tr></thead>
+    <tbody>
+<tr><td>H1</td><td>BARY-EW</td><td>0.48</td><td>0.85</td><td>0.254</td><td>0.670</td><td>0.239</td><td>1.340</td><td>93 82 82 91 78 81 83 93 101 117</td></tr>
+<tr><td>H1</td><td>B*</td><td>0.35</td><td>0.67</td><td>0.227</td><td>0.615</td><td>0.308</td><td>1.230</td><td>148 70 54 51 69 69 56 80 83 221</td></tr>
+<tr><td>H2</td><td>WAR-RM</td><td>0.68</td><td>0.93</td><td>0.382</td><td>0.836</td><td>0.540</td><td>1.672</td><td>129 127 245 320 359 330 313 238 169 153</td></tr>
+<tr><td>H2</td><td>B*<sub>CS</sub></td><td>0.37</td><td>0.69</td><td>0.322</td><td>0.690</td><td>0.366</td><td>1.379</td><td>471 227 197 174 176 175 164 179 180 440</td></tr>
+    </tbody>
+  </table></div>
   <h3>Industry total (T1): forecast vs actual</h3>
-  <div class="placeholder"><strong>PENDING.</strong> BARY-EW on the industry total ($bn, secondary H1d) with 50%/90% bands against realised totals, 2014Q1–2026Q2.</div>
+  
+  <p><em>Figure not rendered: results-page figures are a later rendering step (ERRATA_v1_1b §4); the numbers are in the tables on this page and in the JSON outputs.</em></p>
   <h3>Cross-section (T3): WAR-RM density fan</h3>
-  <div class="placeholder"><strong>PENDING.</strong> One-step WAR-RM forecasts of the cross-sectional quantile function of revenue / lagged trading assets (bp), with the realised cross-section.</div>
+  
+  <p><em>Figure not rendered: results-page figures are a later rendering step (ERRATA_v1_1b §4); the numbers are in the tables on this page and in the JSON outputs.</em></p>
   <h3>Secondary family (Holm within the family; cannot change the primary verdict)</h3>
   <div class="table-scroll"><table class="dataframe">
     <thead><tr><th>Test</th><th>Method</th><th>Comparator</th><th>G</th><th>p (raw, test C)</th><th>p (Holm, secondary)</th><th>Targets</th><th>Role</th></tr></thead>
     <tbody>
-<tr><td>H1b</td><td>CRPS-shrunk barycenter weights (κ = n/(n+200))</td><td>B*</td><td>—</td><td>—</td><td>—</td><td>—</td><td><span class="verdict">PENDING</span></td></tr>
-<tr><td>H1c</td><td>Equal-weight linear pool (F1 comparator)</td><td>B*</td><td>—</td><td>—</td><td>—</td><td>—</td><td><span class="verdict">PENDING</span></td></tr>
-<tr><td>H1d</td><td>BARY-EW on the industry total (B0, B1, B3, B4 on the level)</td><td>B*<sub>T1</sub></td><td>—</td><td>—</td><td>—</td><td>—</td><td><span class="verdict">PENDING</span></td></tr>
-<tr><td>H1e_h2</td><td>BARY-EW at h = 2</td><td>B*<sub>h</sub></td><td>—</td><td>—</td><td>—</td><td>—</td><td><span class="verdict">PENDING</span></td></tr>
-<tr><td>H1e_h3</td><td>BARY-EW at h = 3</td><td>B*<sub>h</sub></td><td>—</td><td>—</td><td>—</td><td>—</td><td><span class="verdict">PENDING</span></td></tr>
-<tr><td>H1e_h4</td><td>BARY-EW at h = 4</td><td>B*<sub>h</sub></td><td>—</td><td>—</td><td>—</td><td>—</td><td><span class="verdict">PENDING</span></td></tr>
-<tr><td>H2b</td><td>WAR-RM mapped to the bank set ($)</td><td>B*</td><td>—</td><td>—</td><td>—</td><td>—</td><td><span class="verdict">PENDING</span></td></tr>
-<tr><td>H2c_persistence</td><td>Cross-section trimmed W₂² (U19)</td><td>persistence Q<sub>t</sub></td><td>—</td><td>—</td><td>—</td><td>—</td><td><span class="verdict">PENDING</span></td></tr>
-<tr><td>H2c_climatology</td><td>Cross-section trimmed W₂² (U19)</td><td>climatology Q̄<sub>t</sub></td><td>—</td><td>—</td><td>—</td><td>—</td><td><span class="verdict">PENDING</span></td></tr>
-<tr><td>H2d</td><td>Fréchet regression on VIX and rates volatility + rank map</td><td>B*<sub>CS</sub></td><td>—</td><td>—</td><td>—</td><td>—</td><td><span class="verdict">PENDING</span></td></tr>
-<tr><td>H2e</td><td>OT quantile-map recalibration of B* (≥ 100 PITs)</td><td>B*</td><td>—</td><td>—</td><td>—</td><td>—</td><td><span class="verdict">PENDING</span></td></tr>
-<tr><td>H2f</td><td>Autoregressive OT map (scalar) + rank map</td><td>B*<sub>CS</sub></td><td>—</td><td>—</td><td>—</td><td>—</td><td><span class="verdict">PENDING</span></td></tr>
+<tr><td>H1b</td><td>CRPS-shrunk barycenter weights (κ = n/(n+200))</td><td>B*</td><td>+2.8%</td><td>0.107</td><td>0.967</td><td>50</td><td><span class="verdict">secondary</span></td></tr>
+<tr><td>H1c</td><td>Equal-weight linear pool (F1 comparator)</td><td>B*</td><td>+0.3%</td><td>0.461</td><td>1.000</td><td>50</td><td><span class="verdict">secondary</span></td></tr>
+<tr><td>H1d</td><td>BARY-EW on the industry total (B0, B1, B3, B4 on the level)</td><td>B*<sub>T1</sub></td><td>+6.3%</td><td>0.076</td><td>0.761</td><td>50</td><td><span class="verdict">secondary</span></td></tr>
+<tr><td>H1e_h2</td><td>BARY-EW at h = 2</td><td>B*<sub>h</sub></td><td>-1.4%</td><td>0.633</td><td>1.000</td><td>49</td><td><span class="verdict">secondary</span></td></tr>
+<tr><td>H1e_h3</td><td>BARY-EW at h = 3</td><td>B*<sub>h</sub></td><td>+3.4%</td><td>0.114</td><td>0.967</td><td>48</td><td><span class="verdict">secondary</span></td></tr>
+<tr><td>H1e_h4</td><td>BARY-EW at h = 4</td><td>B*<sub>h</sub></td><td>+2.4%</td><td>0.255</td><td>1.000</td><td>47</td><td><span class="verdict">secondary</span></td></tr>
+<tr><td>H2b</td><td>WAR-RM mapped to the bank set ($)</td><td>B*</td><td>-66.0%</td><td>1.000</td><td>1.000</td><td>50</td><td><span class="verdict">secondary</span></td></tr>
+<tr><td>H2c_persistence</td><td>Cross-section trimmed W₂² (U19)</td><td>persistence Q<sub>t</sub></td><td>+26.7%</td><td>0.046</td><td>0.508</td><td>50</td><td><span class="verdict">secondary</span></td></tr>
+<tr><td>H2c_climatology</td><td>Cross-section trimmed W₂² (U19)</td><td>climatology Q̄<sub>t</sub></td><td>+12.3%</td><td>0.006</td><td>0.068</td><td>50</td><td><span class="verdict">secondary</span></td></tr>
+<tr><td>H2d</td><td>Fréchet regression on VIX and rates volatility + rank map</td><td>B*<sub>CS</sub></td><td>-33.6%</td><td>1.000</td><td>1.000</td><td>50</td><td><span class="verdict">secondary</span></td></tr>
+<tr><td>H2e</td><td>OT quantile-map recalibration of B* (≥ 100 PITs)</td><td>B*</td><td>+0.9%</td><td>0.278</td><td>1.000</td><td>47</td><td><span class="verdict">secondary</span></td></tr>
+<tr><td>H2f</td><td>Autoregressive OT map (scalar) + rank map</td><td>B*<sub>CS</sub></td><td>-30.2%</td><td>0.999</td><td>1.000</td><td>50</td><td><span class="verdict">secondary</span></td></tr>
     </tbody>
   </table></div>
   <h3>Other pre-registered secondary items (outside the Holm family)</h3>
   <div class="table-scroll"><table class="dataframe">
     <thead><tr><th>Item</th><th>Method</th><th>Comparator</th><th>Result</th><th>Role</th></tr></thead>
     <tbody>
-<tr><td>H2 FPCA</td><td>K = 2 FPCA functional WAR + rank map (raw p, no Holm)</td><td>B*<sub>CS</sub></td><td>G —, p —</td><td><span class="verdict">PENDING</span></td></tr>
-<tr><td>Ridge (pt)</td><td>Pooled ridge point forecast, λ by GCV once on burn-in (frozen); scaled MAE</td><td>BARY-EW / B* medians</td><td>MAE gain — / —</td><td><span class="verdict">PENDING</span></td></tr>
+<tr><td>H2 FPCA</td><td>K = 2 FPCA functional WAR + rank map (raw p, no Holm)</td><td>B*<sub>CS</sub></td><td>G -31.9%, p 1.000</td><td><span class="verdict">secondary</span></td></tr>
+<tr><td>Ridge (pt)</td><td>Pooled ridge point forecast, λ by GCV once on burn-in (frozen = 0.02512); scaled MAE</td><td>BARY-EW / B* medians</td><td>MAE gain +79.5% / +81.2%</td><td><span class="verdict">secondary metric</span></td></tr>
 <tr><td>§4-B</td><td>Barycentric scenarios, W₂ scenario reduction, energy score</td><td>—</td><td>—</td><td><span class="verdict">DEFERRED</span></td></tr>
     </tbody>
   </table></div>
@@ -125,24 +154,24 @@
   <div class="table-scroll"><table class="dataframe">
     <thead><tr><th>ID</th><th>Variation</th><th>H1 G</th><th>H2 G</th><th>H1d G</th><th>Role</th></tr></thead>
     <tbody>
-<tr><td>S1</td><td>Bank set: full-sample balanced ($10m, $100m; look-ahead) and the fixed 2013Q4 set</td><td>—</td><td>—</td><td>—</td><td><span class="verdict">PENDING</span></td></tr>
-<tr><td>S2</td><td>Modelling scale: revenue / total assets; raw $</td><td>—</td><td>—</td><td>—</td><td><span class="verdict">PENDING</span></td></tr>
-<tr><td>S3</td><td>Cross-section threshold $10m / $50m / $1bn</td><td>—</td><td>—</td><td>—</td><td><span class="verdict">PENDING</span></td></tr>
-<tr><td>S4</td><td>Exclude 2020Q1–Q2 from training</td><td>—</td><td>—</td><td>—</td><td><span class="verdict">PENDING</span></td></tr>
-<tr><td>S4b</td><td>Training from 2010Q1</td><td>—</td><td>—</td><td>—</td><td><span class="verdict">PENDING</span></td></tr>
-<tr><td>S5</td><td>Drop targets at merger events and the quarter after</td><td>—</td><td>—</td><td>—</td><td><span class="verdict">PENDING</span></td></tr>
-<tr><td>S6</td><td>No Q1 dummy in B4/B5; WAR with a Q1 tangent shift</td><td>—</td><td>—</td><td>—</td><td><span class="verdict">PENDING</span></td></tr>
-<tr><td>S7</td><td>CRPS on 19 levels (rescore, no re-selection)</td><td>—</td><td>—</td><td>—</td><td><span class="verdict">PENDING</span></td></tr>
-<tr><td>S8</td><td>Target ex-CVA/DVA for banks ≥ $100bn (rows before 2011Q1 unadjusted)</td><td>—</td><td>—</td><td>—</td><td><span class="verdict">PENDING</span></td></tr>
-<tr><td>S9</td><td>Macro data through the availability date</td><td>—</td><td>—</td><td>—</td><td><span class="verdict">PENDING</span></td></tr>
-<tr><td>S10</td><td>Leave one OOS year out</td><td>—</td><td>—</td><td>—</td><td><span class="verdict">PENDING</span></td></tr>
-<tr><td>S11</td><td>Mid-year entrant rule (b), industry total</td><td>—</td><td>—</td><td>—</td><td><span class="verdict">PENDING</span></td></tr>
-<tr><td>S12</td><td>Rolling 16-quarter estimation windows</td><td>—</td><td>—</td><td>—</td><td><span class="verdict">PENDING</span></td></tr>
-<tr><td>S13</td><td>Settings frozen at 2013Q4</td><td>—</td><td>—</td><td>—</td><td><span class="verdict">PENDING</span></td></tr>
-<tr><td>S14</td><td>Frozen burn-in score scale, 2010Q1–2013Q4 (rescore, no re-selection)</td><td>—</td><td>—</td><td>—</td><td><span class="verdict">PENDING</span></td></tr>
-<tr><td>S15</td><td>Test A and WPE p-values</td><td>—</td><td>—</td><td>—</td><td><span class="verdict">PENDING</span></td></tr>
-<tr><td>S16</td><td>B5 without the Baa–10-year spread</td><td>—</td><td>—</td><td>—</td><td><span class="verdict">PENDING</span></td></tr>
-<tr><td>FB4</td><td>Exclude 2020Q1–Q2 targets</td><td>—</td><td>—</td><td>—</td><td><span class="verdict">PENDING</span></td></tr>
+<tr><td>S1</td><td>Bank set: full-sample balanced ($10m, $100m; look-ahead) and the fixed 2013Q4 set</td><td>—</td><td>—</td><td>—</td><td><span class="verdict">ran; not saved (sensitivities.json not produced)</span></td></tr>
+<tr><td>S2</td><td>Modelling scale: revenue / total assets; raw $</td><td>—</td><td>—</td><td>—</td><td><span class="verdict">ran; not saved (sensitivities.json not produced)</span></td></tr>
+<tr><td>S3</td><td>Cross-section threshold $10m / $50m / $1bn</td><td>—</td><td>—</td><td>—</td><td><span class="verdict">ran; not saved (sensitivities.json not produced)</span></td></tr>
+<tr><td>S4</td><td>Exclude 2020Q1–Q2 from training</td><td>—</td><td>—</td><td>—</td><td><span class="verdict">CRASHED (KeyError 2020Q1 in WAR-RM); logged, not scored</span></td></tr>
+<tr><td>S4b</td><td>Training from 2010Q1</td><td>—</td><td>—</td><td>—</td><td><span class="verdict">NOT RUN</span></td></tr>
+<tr><td>S5</td><td>Drop targets at merger events and the quarter after</td><td>—</td><td>—</td><td>—</td><td><span class="verdict">NOT RUN</span></td></tr>
+<tr><td>S6</td><td>No Q1 dummy in B4/B5; WAR with a Q1 tangent shift</td><td>—</td><td>—</td><td>—</td><td><span class="verdict">NOT RUN</span></td></tr>
+<tr><td>S7</td><td>CRPS on 19 levels (rescore, no re-selection)</td><td>—</td><td>—</td><td>—</td><td><span class="verdict">NOT RUN</span></td></tr>
+<tr><td>S8</td><td>Target ex-CVA/DVA for banks ≥ $100bn (rows before 2011Q1 unadjusted)</td><td>—</td><td>—</td><td>—</td><td><span class="verdict">NOT RUN</span></td></tr>
+<tr><td>S9</td><td>Macro data through the availability date</td><td>—</td><td>—</td><td>—</td><td><span class="verdict">NOT RUN</span></td></tr>
+<tr><td>S10</td><td>Leave one OOS year out</td><td>—</td><td>—</td><td>—</td><td><span class="verdict">NOT RUN</span></td></tr>
+<tr><td>S11</td><td>Mid-year entrant rule (b), industry total</td><td>—</td><td>—</td><td>—</td><td><span class="verdict">NOT RUN</span></td></tr>
+<tr><td>S12</td><td>Rolling 16-quarter estimation windows</td><td>—</td><td>—</td><td>—</td><td><span class="verdict">NOT RUN</span></td></tr>
+<tr><td>S13</td><td>Settings frozen at 2013Q4</td><td>—</td><td>—</td><td>—</td><td><span class="verdict">NOT RUN</span></td></tr>
+<tr><td>S14</td><td>Frozen burn-in score scale, 2010Q1–2013Q4 (rescore, no re-selection)</td><td>—</td><td>—</td><td>—</td><td><span class="verdict">NOT RUN</span></td></tr>
+<tr><td>S15</td><td>Test A and WPE p-values</td><td>—</td><td>—</td><td>—</td><td><span class="verdict">NOT RUN</span></td></tr>
+<tr><td>S16</td><td>B5 without the Baa–10-year spread</td><td>—</td><td>—</td><td>—</td><td><span class="verdict">NOT RUN</span></td></tr>
+<tr><td>FB4</td><td>Exclude 2020Q1–Q2 targets</td><td>—</td><td>—</td><td>—</td><td><span class="verdict">NOT RUN</span></td></tr>
     </tbody>
   </table></div>
   <h2>Design (v1.1)</h2>

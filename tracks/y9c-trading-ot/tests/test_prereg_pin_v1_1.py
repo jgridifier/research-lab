@@ -1,5 +1,6 @@
 """Addendum §5.3 test 16: the v1.1 design is pinned in its own commit; a modified v1.1 JSON fails; the v1.0 pin
-still verifies; the OOS gate stays closed (oos_authorized=false); the trial log holds the design revision only."""
+still verifies; the design flag stays false (the pinned approval file is the switch); the trial log holds the design
+revision followed by the 24 trials the one authorized run logged before it stopped in S4 (INCOMPLETE; no rerun)."""
 import hashlib
 import json
 import subprocess
@@ -11,6 +12,8 @@ from trading_ot.paths import TRIALS_PATH
 
 RELATIVE = 'tracks/y9c-trading-ot/test_design_trading_ot_v1_1.json'
 SHA_V1_1 = '930353641c6af0b4846d6678648a7446a738a579a52b4863726c9edb5a6a9694'
+RUN_HEAD = '5f11ed5618ec3bc9bd5b28c273aaaa942c808c2c'      # approval/preflight commit the OOS run used
+RECORDED_TRIALS = 24                                           # the run stopped in S4 (INCOMPLETE; no rerun)
 SHA_V1_0 = 'dffd1323883cb04e198853d95d4078fb67b4e0c8af4c8d19ef17d7f8f6234e30'
 QUANT_SOURCE = '/workspace/research/y9c_ot_prereg/v1_1/test_design_trading_ot_v1_1.json'
 
@@ -113,13 +116,26 @@ def test_registered_executions_equal_approved_trials():
     assert n == EXPECTED_TRIALS_V1_1
 
 
-def test_trial_log_design_revision_only():
+def test_trial_log_design_revision_then_one_run():
     lines = [json.loads(x) for x in TRIALS_PATH.read_text(encoding='utf-8').splitlines() if x.strip()]
     assert lines[0] == {"type": "design_revision", "from": f"v1.0 {SHA_V1_0}", "to": f"v1.1 {SHA_V1_1}",
                         "oos_seen": False, "counts_as_trial": False,
                         "reason": "backfill 2008-2017; primary gate moved to 2014Q1-2026Q2 before any OOS score; "
                                   "see ADDENDUM_v1_1"}
-    assert run.trial_count() == 0
+    # Post-run (deliberate update, Quant ruling option 1): the one authorized run (approved for 39 trials by
+    # prereg/OOS_APPROVAL_v1_1.json) logged 24 registered trials and then stopped in S4 (KeyError 2020Q1 in WAR-RM).
+    # S4 was logged before it ran and is kept; no rerun, no completion. All from the approval/preflight commit.
+    from trading_ot.paths import EXPECTED_TRIALS_V1_1
+    trials = lines[1:]
+    assert EXPECTED_TRIALS_V1_1 == 39                                # approved count (unchanged)
+    assert run.trial_count() == len(trials) == RECORDED_TRIALS == 24
+    assert all(t['status'] == 'registered' for t in trials)
+    assert all(t['config']['design_sha256'] == SHA_V1_1 for t in trials if 'design_sha256' in t['config'])
+    assert {t['git_head'] for t in trials} == {RUN_HEAD}
+    assert len({t['config_hash'] for t in trials}) == len(trials)
+    assert trials[0]['label'] == 'v1.1 primary'
+    assert trials[-1]['label'] == 'v1.1 sensitivity S4:exclude_2020Q1Q2_training'
+    assert not any(t['label'].startswith('R1') for t in trials)
 
 
 def test_trial_count_rule(tmp_path):

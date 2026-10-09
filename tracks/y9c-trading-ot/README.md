@@ -5,7 +5,7 @@ per-bank probabilistic baselines B0–B6, plus two OT layers from the classical-
 - **H1 (§4)**: equal-weight W₂ barycenter (quantile average) of the baselines.
 - **H2 (§3)**: Wasserstein autoregression of the cross-sectional quantile function, mapped to banks through a Gaussian-copula AR on probit ranks.
 
-**Status: OOS not run; design v1.1 pinned and awaiting approval.**
+**Status: the one authorized OOS run (2026-10-08, commit `5f11ed5`) is INCOMPLETE. Primary verdict: FAIL on H1 and H2.** It logged 24 of the 39 approved trials and stopped in sensitivity S4 (`KeyError` 2020Q1 in WAR-RM); `gate.json` and `secondary.json` were written, `sensitivities.json` and `r1.json` were not. No rerun (Quant ruling). Results: `docs/tracks/y9c-trading-ot/results/`.
 - **Primary (v1.1):** `test_design_trading_ot_v1_1.json`, copied verbatim from prereg addendum v1.1 and pinned in its own
   commit `06dbc28` (sha256 `930353641c6a…9694`) via `statement_forecast.prereg.verify_trading_ot_v1_1_preregistration`.
   History runs 2009Q1–2026Q2 (2008 is pre-sample, used only for TA 2008Q4) and the burn-in is 2009Q1–2013Q4. The 50 h=1
