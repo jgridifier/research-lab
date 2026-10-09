@@ -139,3 +139,38 @@ def test_fetch_timeout_is_finite_and_retried(tmp_path):
         calls.append(timeout); raise socket.timeout('stalled')
     with pytest.raises(OSError): fetch_vintage(tmp_path/'c',opener=stalled,retries=3,backoff_s=0,timeout_s=5)
     assert calls==[5,5,5]
+
+
+# --- Valid day is per type: all 12 of THAT type's series (6 buckets x AMT/VOL), never 48 at once, never filled ---
+def _drop(types, day, series_filter=lambda sid: True):
+    def mutate(attrs, obs):
+        if attrs['CP_TYPE'] in types and series_filter(attrs['SERIES_NAME']):
+            for row in obs:
+                if row['TIME_PERIOD'] == day: row['OBS_STATUS'] = 'ND'; row['OBS_VALUE'] = '-9999'
+    return mutate
+
+def test_valid_day_is_per_type_not_all_48(provenance, tmp_path):
+    # 2004-04-07: only AAA reports (FAA, NAA, NA2 and M all ND). A 48-series rule would void AAA's day; per type keeps it.
+    df, report = load_vol(provenance, make_zip(tmp_path/'s.zip', _drop({'FAA', 'NAA', 'NA2', 'M'}, '2004-04-07')))
+    w = build_weekly(df).set_index(['cp_type', 'week'])
+    wk = pd.Timestamp('2004-04-09')
+    assert w.loc[('AAA', wk), 'valid_days'] == 5
+    for t in ('FAA', 'NAA', 'NA2'):
+        assert w.loc[(t, wk), 'valid_days'] == 4
+    assert report['anomalies']['AAA'] == [] and report['anomalies']['FAA'] == ['2004-04-07']
+
+def test_valid_day_needs_all_12_of_the_type(provenance, tmp_path):
+    # NA2 loses one of its 12 series on 2004-04-07 while the other types are complete -> partial type-day fails the run
+    one = _drop({'NA2'}, '2004-04-07', lambda sid: sid == 'NONFIN.GT80.A2P2.VOL')
+    with pytest.raises(ValidationError, match='Partial type-day'):
+        load_vol(provenance, make_zip(tmp_path/'s.zip', one))
+
+def test_missing_type_day_not_forward_filled(provenance, tmp_path):
+    df, _ = load_vol(provenance, make_zip(tmp_path/'s.zip', _drop({'NA2'}, '2004-04-07')))
+    na2 = df[(df.cp_type == 'NA2') & (df.date == '2004-04-07')]
+    assert len(na2) == 12 and not na2.valid.any() and na2.value.isna().all()
+    w = build_weekly(df).set_index(['cp_type', 'week'])
+    full = build_weekly(load_vol(provenance, make_zip(tmp_path/'f.zip'))[0]).set_index(['cp_type', 'week'])
+    wk = pd.Timestamp('2004-04-09')
+    # dropping a day lowers the weekly sums (nothing carried forward from 2004-04-06)
+    assert (w.loc[('NA2', wk), 'D'] < full.loc[('NA2', wk), 'D']).all()

@@ -32,7 +32,7 @@ def test_design_semantics(pins,monkeypatch,change):
     pin=pins.PREREG_DIR/'PIN.txt'
     pin.write_text(' '.join(k+'='+pins.PINS[n] for k,n in [('design_sha256',path.name),('prereg_sha256','PREREG_fed_cp_ot.md'),('html_sha256','fed_cp_ot_learning.html')]))
     repin(pins,monkeypatch,'PIN.txt')
-    with pytest.raises(ProvenanceError): pins.preflight('burnin')
+    with pytest.raises(ProvenanceError,match='record, not the switch' if change=='flag' else None): pins.preflight('burnin')
 
 @pytest.mark.parametrize('kind',['missing','unpinned','wrong_sha','missing_reference'])
 def test_approval_refusal(pins,monkeypatch,kind):
@@ -78,3 +78,32 @@ def test_committed_preflight():
     assert provenance.prereg_dir == 'tracks/fed-cp-ot/prereg'
     assert len(provenance.file_hashes) == 7
     with pytest.raises(OOSNotAuthorized): pf.preflight('oos')
+
+
+def _flag_true_and_repinned(pins,monkeypatch):
+    path=pins.PREREG_DIR/'test_design_fed_cp_ot_v1.json'; d=json.loads(path.read_text()); d['oos_authorized']=True
+    path.write_text(json.dumps(d)); repin(pins,monkeypatch,path.name)
+    (pins.PREREG_DIR/'PIN.txt').write_text(' '.join(k+'='+pins.PINS[n] for k,n in [('design_sha256',path.name),('prereg_sha256','PREREG_fed_cp_ot.md'),('html_sha256','fed_cp_ot_learning.html')]))
+    repin(pins,monkeypatch,'PIN.txt')
+
+def test_oos_fails_if_design_flag_true_even_with_valid_approval(pins,monkeypatch,tmp_path):
+    """Like Y-9C: oos_authorized=true in the design is a preflight FAILURE, never the switch, even with a pinned approval."""
+    _flag_true_and_repinned(pins,monkeypatch)
+    pins.APPROVAL_PATH.write_text('Jared approves PIN.txt sha256 '+pins.PINS['PIN.txt'])
+    monkeypatch.setattr(pins,'APPROVAL_SHA256',pins.sha256(pins.APPROVAL_PATH))
+    calls=[]
+    monkeypatch.setattr(trials,'preflight',pins.preflight)
+    monkeypatch.setattr(trials,'log_trial',lambda *a,**k:calls.append('log'))
+    monkeypatch.setattr(trials,'load_vol',lambda *a,**k:calls.append('load'))
+    with pytest.raises(ProvenanceError,match='record, not the switch'): pins.preflight('oos')
+    with pytest.raises(ProvenanceError,match='record, not the switch'): trials.run_oos()
+    assert calls==[]
+
+def test_approval_requires_pinned_hash_in_code():
+    """APPROVAL_SHA256 stays None until Jared approves and a reviewed commit pins the file's hash."""
+    assert pf.APPROVAL_SHA256 is None
+    assert pf.APPROVAL_PATH.name=='APPROVAL_fed_cp_ot.txt' and not pf.APPROVAL_PATH.exists()
+
+def test_unpinned_approval_file_is_refused(pins):
+    pins.APPROVAL_PATH.write_text('Jared approves PIN.txt sha256 '+pins.PINS['PIN.txt'])
+    with pytest.raises(OOSNotAuthorized,match='not pinned'): pins.preflight('oos')

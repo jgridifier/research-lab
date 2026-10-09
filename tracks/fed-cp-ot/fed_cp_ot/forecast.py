@@ -10,6 +10,7 @@ import pandas as pd
 from .paths import FORWARD_LOG_PATH
 from .weekly import check_wall
 from .metric import q_from_p, w2sq, X_LOG
+from .fedcal import data_available_at as _fed_available_at
 
 class Forecaster(Protocol):
     def fit_predict(self, history, origin): ...
@@ -41,13 +42,14 @@ def walk_forward(weekly, forecaster, origins):
     return rows
 
 def data_available_at(friday):
-    day = pd.Timestamp(friday).date()
-    if day.weekday() != 4: raise ValueError('Expected Friday')
-    day += timedelta(days=1)
-    while day.weekday() >= 5: day += timedelta(days=1)
-    return datetime.combine(day, time(13), ZoneInfo('America/New_York'))
+    """A completed W-FRI week is available at 13:00 ET on the next Fed business day after its Friday."""
+    if pd.Timestamp(friday).dayofweek != 4: raise ValueError('Expected Friday')
+    return _fed_available_at(friday)
 
 def _aware(value):
+    if isinstance(value,str) and not value[:4].isdigit():
+        from email.utils import parsedate_to_datetime
+        return parsedate_to_datetime(value)  # HTTP Last-Modified, e.g. 'Fri, 09 Oct 2026 17:00:03 GMT'
     result = datetime.fromisoformat(value) if isinstance(value,str) else value
     if result.tzinfo is None or result.utcoffset() is None: raise ValueError('Timezone-aware timestamp required')
     return result
@@ -62,7 +64,10 @@ def _hash(record):
     return hashlib.sha256(json.dumps(record,sort_keys=True,separators=(',',':'),allow_nan=False).encode()).hexdigest()
 
 class ForwardLog:
-    def __init__(self, path=FORWARD_LOG_PATH): self.path = Path(path)
+    def __init__(self, path=FORWARD_LOG_PATH, live=True):
+        """live=True (default; the app's log): every forecast must carry the vintage fetch timestamp and the
+        release's Last-Modified time, and may not be stamped before either. live=False is for burn-in replays."""
+        self.path = Path(path); self.live = live
     def _rows(self):
         return [json.loads(s) for s in self.path.read_text().splitlines()] if self.path.exists() else []
     def verify(self):
@@ -80,10 +85,19 @@ class ForwardLog:
         self.path.parent.mkdir(parents=True,exist_ok=True)
         with self.path.open('a') as f: f.write(json.dumps(row,sort_keys=True)+'\n')
         return row
-    def record_forecast(self, origin, target, cp_type, mix, model, issued_at, input_max_date):
+    def record_forecast(self, origin, target, cp_type, mix, model, issued_at, input_max_date,
+                        fetched_at=None, release_last_modified=None):
         self.verify()
         origin,target = pd.Timestamp(origin),pd.Timestamp(target)
         issued_at = _aware(issued_at)
+        stamps = {}
+        if self.live:
+            if fetched_at is None or release_last_modified is None:
+                raise ValueError('Live forecasts need the vintage fetch time and the release Last-Modified time')
+            fetched_at, release_last_modified = _aware(fetched_at), _aware(release_last_modified)
+            if issued_at < fetched_at or issued_at < release_last_modified:
+                raise ValueError('Forecast stamped before the data fetch or the release update')
+            stamps = dict(fetched_at=fetched_at.isoformat(), release_last_modified=release_last_modified.isoformat())
         if origin.dayofweek != 4 or target != origin + pd.Timedelta(days=7):
             raise ValueError('Expected Friday origin and target exactly seven days later')
         if (pd.Timestamp(input_max_date) > origin or issued_at < data_available_at(origin)
@@ -94,7 +108,7 @@ class ForwardLog:
                (r['kind'] == 'outcome' or r.get('model') == model) for r in self._rows()):
             raise ValueError('Forecast key already recorded; records cannot be edited')
         return self._append(dict(kind='forecast',origin=str(origin.date()),target=key[0],cp_type=cp_type,
-            mix=_mix(mix),model=model,issued_at=issued_at.isoformat(),input_max_date=str(pd.Timestamp(input_max_date).date())))
+            mix=_mix(mix),model=model,issued_at=issued_at.isoformat(),input_max_date=str(pd.Timestamp(input_max_date).date()),**stamps))
     def record_outcome(self, target, cp_type, mix, recorded_at, provenance=None):
         check_wall(target, provenance)
         self.verify()
@@ -111,3 +125,10 @@ class ForwardLog:
         rows = {r['kind']:r for r in self._rows() if (r['target'],r['cp_type']) == (target,cp_type)
                 and (r['kind'] == 'outcome' or r.get('model') == model)}
         return w2sq(q_from_p(rows['forecast']['mix'],X_LOG),q_from_p(rows['outcome']['mix'],X_LOG))
+
+
+def vintage_stamps(manifest_record):
+    """(fetched_at, release_last_modified) from an ingest manifest row, for live record_forecast calls."""
+    if not manifest_record.get('last_modified') or not manifest_record.get('fetched_at_utc'):
+        raise ValueError('Manifest row lacks fetch time or Last-Modified (local seeds cannot back live forecasts)')
+    return manifest_record['fetched_at_utc'], manifest_record['last_modified']
