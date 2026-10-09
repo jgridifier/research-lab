@@ -85,3 +85,10 @@ trading-ot-panel: trading-ot-venv
 
 trading-ot-page: trading-ot-venv
 	PYTHONPATH=$(TOT_PATH) $(PYTHON) $(TOT_TRACK)/scripts/render_results_page.py
+
+PIN_TESTS = tracks/cfpb-complaints-ot/tests tracks/fdic-sod-ot/tests tracks/fed-cp-ot/tests programs/cp-funding/tests
+
+.PHONY: pins-test
+
+pins-test: $(VENV_STAMP)
+	PYTHONPATH= $(PYTHON) -m pytest $(PIN_TESTS) -q

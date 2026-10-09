@@ -1,0 +1,211 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Fed CP maturity mix × OT: Passed burn-in, pinned, awaiting Jared&#x27;s approval</title>
+<style>
+  :root { --navy: #0b2545; --ink: #111; --line: #c9d1dc; }
+  * { box-sizing: border-box; }
+  body { margin: 0; background: #fff; color: var(--ink);
+         font-family: system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif; line-height: 1.55; }
+  header { background: var(--navy); color: #fff; padding: 1.25rem 1rem; }
+  header a { color: #fff; }
+  .wrap { max-width: 44rem; margin: 0 auto; padding: 0 1rem; }
+  nav { font-size: 0.9rem; margin-bottom: 0.5rem; }
+  h1 { font-size: 1.35rem; line-height: 1.3; margin: 0.25rem 0 0; }
+  h2 { font-size: 1.05rem; color: var(--navy); margin-top: 1.6rem; }
+  h3 { font-size: 0.98rem; color: var(--navy); }
+  main { padding: 1rem 0 3rem; overflow-wrap: break-word; }
+  a { color: var(--navy); }
+  ul, ol { padding-left: 1.3rem; }
+  li { margin: 0.2rem 0; }
+  .status { color: var(--navy); font-size: 1.05rem; }
+  .note { border: 2px solid var(--navy); padding: 0.75rem 0.9rem; margin: 1rem 0; }
+  table { border-collapse: collapse; width: 100%; font-size: 0.88rem; }
+  th, td { border-bottom: 1px solid var(--line); padding: 0.4rem 0.3rem; text-align: left; vertical-align: top; overflow-wrap: anywhere; }
+  th { color: var(--navy); }
+  code { font-size: 0.85em; overflow-wrap: anywhere; }
+  .scroll { overflow-x: auto; }
+  footer { border-top: 1px solid var(--line); font-size: 0.85rem; padding: 1rem 0 2rem; color: #333; }
+</style>
+</head>
+<body>
+<header>
+  <div class="wrap">
+    <nav><a href="../../index.html">Research Lab</a> › Fed CP maturity mix × OT</nav>
+    <h1>PREREG: Fed CP issuance maturity mix (applied lab; OT is one candidate)</h1>
+  </div>
+</header>
+<main class="wrap">
+  <p class="note"><strong class="status">Passed burn-in, pinned, awaiting Jared's approval</strong><br>
+  No out-of-sample (held-out) run has been made, and none starts without a separate approval file. The design keeps oos_authorized: false, which is a record, not the switch. Rendered from the pinned source
+  <code>tracks/fed-cp-ot/prereg/PREREG_fed_cp_ot.md</code>, sha256 <code>e3da87af2da1002b0635959d751dad4b885c59c985edc3b3a23612fa5bee0ecf</code> · <a href="learning.html">learning page</a> · <a href="../../programs/cp-funding/plan.html">CP funding lab plan</a>.</p>
+<h2>Pinned files</h2>
+<div class="scroll"><table>
+<thead><tr><th>file</th><th>sha256</th></tr></thead>
+<tbody>
+<tr><td><code>PIN.txt</code></td><td><code>65032235646fb984f2b0a0b66f100b5257b239f4e66ac7c4a9f2f079aab419da</code></td></tr>
+<tr><td><code>test_design_fed_cp_ot_v1.json</code></td><td><code>6c87f7ab5efe3a220cb1c50497e3a9edd7435de5965aff4a20f8f6f1b2ce7793</code></td></tr>
+<tr><td><code>PREREG_fed_cp_ot.md</code></td><td><code>e3da87af2da1002b0635959d751dad4b885c59c985edc3b3a23612fa5bee0ecf</code></td></tr>
+<tr><td><code>fed_cp_ot_learning.html</code></td><td><code>44e77a0c51476724947386a4fc9686af9caea4ccba9c37ae4ad61f50374f5fc7</code></td></tr>
+<tr><td><code>GATE_THRESHOLDS_fed_cp_ot.md</code></td><td><code>c15eb60cbe1467090fcc920b8f4e311dd14f7b3bbfd0437e21809355721a6c8a</code></td></tr>
+<tr><td><code>DATA_SPEC_for_app.md</code></td><td><code>9c50a16e994cdb04e2598b270800e2941d027e314b375e33cbf5caa98f102c6c</code></td></tr>
+<tr><td><code>ENGINEERING_TICKET.md</code></td><td><code>088d9f2e72a162daf25436b2c76c3b4cfe6b93abd0082d480b5f94befa86346d</code></td></tr>
+</tbody></table></div>
+<p><strong>Status:</strong> BURN-IN GATE PASSED. Out-of-sample (OOS) scoring is NOT authorized (<code>oos_authorized: false</code>).</p>
+<p><strong>Verdicts</strong> (from <code>compute_cp_ot_burnin.stdout.txt</code>):</p>
+<ul>
+<li>(i) <strong>OT_CLAIM = CLEARED.</strong> K4 cleared only narrowly; see §4.</li>
+<li>(ii) <strong>DATASET_USABLE = yes.</strong></li>
+<li>(iii) <strong>FORECASTABLE_SIGNAL (any method) = yes.</strong></li>
+</ul>
+<p>Prepared 2026-10-09 (ET). Draft only; not sent anywhere.</p>
+<h2>1. Files</h2>
+<div class="scroll"><table>
+<thead><tr><th>file</th><th>sha256</th></tr></thead>
+<tbody>
+<tr><td>GATE_THRESHOLDS_fed_cp_ot.md (hashed before any distance was computed)</td><td>c15eb60cbe1467090fcc920b8f4e311dd14f7b3bbfd0437e21809355721a6c8a</td></tr>
+<tr><td>compute_cp_facts.py</td><td>a3c79f457083a639be489f6cc7060ee4dfa5ee97bb057d222730fb32529c4c56</td></tr>
+<tr><td>compute_cp_facts.stdout.txt</td><td>d06ac2c3e0d4fcc8a046b56027bc921f79ec8ed83a6d362ff020ca71786d735a</td></tr>
+<tr><td>compute_cp_ot_burnin.py</td><td>34021c50bf30efbe2541b119816e8ef98c455ab5819ee232a892ca990ab11857</td></tr>
+<tr><td>compute_cp_ot_burnin.stdout.txt</td><td>17a0b23936e5b0c56e15a4937830e0f032a55ff20713f45cda7cf2d5adc11e8e</td></tr>
+<tr><td>DATA_FACTS.md</td><td>63f3b0dff5751afee95de8028b550c2727965e6393c32f9dd3de6b97f8186b1e</td></tr>
+<tr><td>DATA_SPEC_for_app.md</td><td>9c50a16e994cdb04e2598b270800e2941d027e314b375e33cbf5caa98f102c6c</td></tr>
+<tr><td>ENGINEERING_TICKET.md (draft, not filed)</td><td>088d9f2e72a162daf25436b2c76c3b4cfe6b93abd0082d480b5f94befa86346d</td></tr>
+<tr><td>drive_manifest.json</td><td>95b31d3e955e3530887f0f5baf2e493a634f34795bc6c005a8a509fff5c6a52b</td></tr>
+<tr><td>raw/FRB_CP_xml.zip</td><td>16805f2ce102d5b6703de6393e89f345e9e68e15381ab457fb58f3830cff22d2</td></tr>
+<tr><td>raw/fed_cp_volume_stats_by_maturity.csv</td><td>aeab7b0941af5e2b492e42dbe4fe05c6752efd6bc9eff3fa9b620b5545596d7a</td></tr>
+</tbody></table></div>
+<h2>2. Data</h2>
+<ul>
+<li><strong>Source:</strong> the XML VOL dataset (see DATA_FACTS.md).</li>
+<li><strong>NONFIN duplication repaired</strong> by reading NAA and NA2 from the XML. The CSV pairs equal {NAA, NA2} in 0.999845 of keys. The CSV is used only as a check.</li>
+<li><strong>Primary types:</strong> AAA, FAA, NAA, NA2.</li>
+<li><strong>MKT</strong> is excluded from the object because it is not the sum of the types (exact match 0.001109). It is used only as a stress comparator.</li>
+<li><strong>Caveats:</strong><ul>
+<li>The volumes cover rate-eligible issues only.</li>
+<li>The rating criteria changed on 2007-06-18 (Fitch dropped), inside the burn-in.</li>
+</ul></li>
+</ul>
+<h2>3. Object and windows</h2>
+<ul>
+<li><strong>Object:</strong> the weekly (Mon–Fri, Friday label) dollar mix over 6 maturity buckets, for each type.</li>
+<li><strong>Ground metric:</strong> log geometric bucket midpoints in days (0.693, 1.903, 2.649, 3.367, 4.048, 4.996). Log-days were chosen over rank because a location shift then reads as a proportional change in maturity. The step between buckets is nearly uniform, so rank is close and is kept as a sensitivity check.</li>
+<li><strong>Weekly, not daily</strong>, aggregation. Daily data have day-of-week effects and thin NAA days (a burn-in daily minimum of 0 issues).</li>
+<li><strong>Distance:</strong> exact W2² between step quantile functions.</li>
+<li><strong>Windows:</strong><ul>
+<li>Burn-in: weeks ending 2001-01-05..2008-12-26, 417 weeks. It includes the 2007–08 stress so the warm-up sees a stressed regime.</li>
+<li>OOS: weeks ending 2009-01-02..2026-10-02, 927 calendar weeks. CPFF was active 2008–2010, so the first OOS years are a policy regime.</li>
+</ul></li>
+</ul>
+<h2>4. Gate (labelled burn-in values; pooled over 4 types)</h2>
+<div class="scroll"><table>
+<thead><tr><th>quantity</th><th>value</th></tr></thead>
+<tbody>
+<tr><td>usable type-weeks</td><td>417/417 for every type</td></tr>
+<tr><td>MEDIAN_NEXT_W2SQ (week to week)</td><td>0.1411976508</td></tr>
+<tr><td>MEDIAN_HALF_W2SQ (issue-level half split, K1 floor)</td><td>0.0352191046</td></tr>
+<tr><td>ratio next/half</td><td>4.009 → <strong>K1 not fired</strong></td></tr>
+<tr><td>K1b half-week day split (NON-gating) median</td><td>0.1155302457; ratio next/halfweek 1.222</td></tr>
+<tr><td>pooled share of next-week W2² (LOC / SCALE / SHAPE)</td><td>0.2435 / 0.0853 / <strong>0.6713</strong> → <strong>K2 not fired</strong> (threshold 0.15)</td></tr>
+<tr><td>median SHAPE (next / half)</td><td>0.1119603788 / 0.0333280627, ratio 3.36 → <strong>K3 not fired</strong></td></tr>
+<tr><td>decomposition identity error</td><td>2.2e-15</td></tr>
+<tr><td>calm 2001–2006 (non-gating)</td><td>next/half 3.94; SHAPE share 0.723</td></tr>
+<tr><td>rank metric (non-gating)</td><td>next/half 4.01; SHAPE share 0.647</td></tr>
+</tbody></table></div>
+<p>How to read this:</p>
+<ul>
+<li>The weekly mix moves about 4× more than the issue-level sampling floor, and about two-thirds of that movement is shape, not location or scale.</li>
+<li><strong>Caveat:</strong> the day-split floor is only 22% below the week-to-week change. Much of the week-to-week movement is within-week, day-level variation. That limits how well any model can forecast it. The issue-level floor is a lower bound on noise (it ignores the spread of issue sizes within a bucket).</li>
+</ul>
+<h3>Forecastable signal (any method; burn-in only)</h3>
+<ul>
+<li>EWMA alpha selected on 2002–2004: 0.2 (losses: 0.1: 0.1433, 0.2: 0.1399, 0.3: 0.1425, 0.5: 0.1534).</li>
+<li>Evaluated on 2005–2008 (208 weeks), mean W2²: P 0.2694, EWMA0.2 0.1894, MA4 0.2079, EXP 0.4493.</li>
+<li>Ratios:<ul>
+<li>P/EXP 0.600.</li>
+<li>EWMA/EXP 0.422.</li>
+<li>EWMA/P 0.703.</li>
+</ul></li>
+<li><strong>SIGNAL = yes</strong> (threshold 0.90).</li>
+<li>Calm 2005–2006 (non-gating): P 0.2158, EWMA 0.1408, EXP 0.2614.</li>
+<li>Smoothing beats persistence: last week alone is noisy.</li>
+</ul>
+<h3>Planning power (K4; PLANNING ONLY, not an OOS result)</h3>
+<ul>
+<li><strong>Proxy differential</strong> d = L(P) − L(MA4), averaged over types:<ul>
+<li>n 413, mean 0.05725, sd 0.15779;</li>
+<li>AR(1) phi −0.155, residual sd 0.15620;</li>
+<li>gain scale 0.17873 (the MA4 mean loss).</li>
+</ul></li>
+<li><strong>Test:</strong> T = 927, Bartlett L = 30, fixed-b with an AR(1)-simulated critical value.</li>
+</ul>
+<div class="scroll"><table>
+<thead><tr><th>DGP</th><th>gain 0 (size)</th><th>0.02</th><th>0.05</th><th>0.10</th></tr></thead>
+<tbody>
+<tr><td>Gaussian AR(1), 2.5% one-sided</td><td>0.0260</td><td>0.1185</td><td><strong>0.5015</strong></td><td>0.9760</td></tr>
+<tr><td>block bootstrap (mean block 13), 2.5%</td><td>0.0135</td><td>0.1250</td><td>0.7285</td><td>1.0000</td></tr>
+<tr><td>Gaussian AR(1), 5%</td><td>0.0585</td><td>0.1930</td><td>0.6335</td><td>0.9915</td></tr>
+<tr><td>block bootstrap, 5%</td><td>0.0300</td><td>0.2150</td><td>0.8380</td><td>1.0000</td></tr>
+</tbody></table></div>
+<ul>
+<li><strong>K4:</strong> min power at gain 0.05 and 2.5% = <strong>0.5015 ≥ 0.50 → not fired</strong>.<ul>
+<li><strong>This is knife-edge.</strong> The Monte Carlo SE is about 0.011 (2000 reps), so another seed could fall below 0.50. The pinned rule and seed decide, and the result is CLEARED.</li>
+<li>Read it this way: the OOS test can detect about a 10% gain reliably, and a 5% gain only about half the time.</li>
+</ul></li>
+<li><strong>Non-gating contrast</strong> (a short-series test at T = 50, Gaussian DGP): power 0.062 at gain 5% and 0.135 at gain 10%. The 927-week length is what makes the test useful.</li>
+<li>The bootstrap null is conservative (size 0.0135 at nominal 0.025).</li>
+</ul>
+<h2>5. Methods (specified, not fit)</h2>
+<p>These are as in GATE_THRESHOLDS §5:</p>
+<ul>
+<li>P, EWMA, EXP;</li>
+<li>LS (location-scale on log-duration);</li>
+<li>ALR-AR, ALR-VAR(1), MNL-AR (fractional multinomial logit), RIDGE on lagged ALR;</li>
+<li>WAR(1) (JTSA 2022, DOI 10.1111/jtsa.12590);</li>
+<li>TMAR (transport-map AR, arXiv:2105.05439).</li>
+</ul>
+<p><strong>SEL rule</strong> (trailing 156 weeks, re-selection every 13 weeks, 1% tie band, then complexity order) decides the shipped app model. If Family B fails, the app headline is persistence.</p>
+<p>Background: Fréchet regression (AoS 2019, DOI 10.1214/17-AOS1624; background only) and Wasserstein regression (JASA 2021, DOI 10.1080/01621459.2021.1956937).</p>
+<h2>6. Trials (TRIAL_COUNT)</h2>
+<ul>
+<li><strong>Confirmatory OOS tests: 3.</strong><ul>
+<li>Family A: WAR vs B*, TMAR vs B*, Holm 0.05.</li>
+<li>Family B: SEL vs P, at 0.05.</li>
+</ul></li>
+<li><strong>Burn-in gate runs:</strong> 1 (no reruns).</li>
+<li><strong>Facts runs:</strong> 2. The second added missing-date detail and fixed a mislabel. No threshold depended on the first.</li>
+<li><strong>Outputs printed beyond the thresholds file, all non-gating:</strong><ul>
+<li>per-type medians;</li>
+<li>the d ACF;</li>
+<li>the T = 50 contrast;</li>
+<li>MA4 and alpha-grid losses.</li>
+</ul></li>
+<li><strong>Stress study:</strong> descriptive only, 4 signals × 3 events (+E4). No p-values. Not computed.</li>
+</ul>
+<h2>7. Leakage and exposure log</h2>
+<ol>
+<li>FS structural facts over all dates: series ids, valid and ND counts, zero-day counts per series for 2001–2026 (e.g. FIN.10_20 has 1764 zero days), and the missing dates.</li>
+<li>FS consistency checks over all dates: CSV vs XML value-match fractions, and MKT vs sum-of-types fractions. These involve value comparisons over OOS dates, but no distributional statistics.</li>
+<li>FS burn-in summaries included 2008-12-29..31, 3 days of the first OOS week.</li>
+<li>BS: OOS valid-day counts per type-week (structural; no amounts).</li>
+<li>The 2026-10-08 inventory memo mentioned FIN volume detail for 2026-10-01.</li>
+<li>Web: the Fed CP About page, release and DDP URLs, the FRASER crisis timeline, the Fed 2020-03-17 press release, FDIC PR-16-2023, DFPI, LII 15 U.S.C. 77c.</li>
+<li>No RATES values have been parsed; only RATES series ids were listed.</li>
+<li>Drive: read-only metadata search.</li>
+</ol>
+<h2>8. Authorization</h2>
+<p>OOS requires a separate <code>APPROVAL_fed_cp_ot.txt</code>, written by the user, that references PIN.txt. The <code>oos_authorized</code> flag is a record, not the switch.</p>
+<h2>9. Constraints</h2>
+<ul>
+<li>Classical statistics only.</li>
+<li>NumPy and pandas, no SciPy.</li>
+<li>Citations come from the verified list; papers older than 2020 are labelled background.</li>
+</ul>
+</main>
+<footer class="wrap">
+  Independent research lab · Not affiliated with any employer or financial institution · Not investment advice.
+</footer>
+</body>
+</html>

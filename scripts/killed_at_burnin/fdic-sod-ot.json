@@ -1,0 +1,78 @@
+{
+  "slug": "fdic-sod-ot",
+  "name": "FDIC branch deposits × OT",
+  "label": "FDIC branch deposits × OT: killed at burn-in (negative result)",
+  "source_dir": "/workspace/research/fdic_sod_ot_prereg",
+  "files": [
+    {
+      "name": "PREREG_fdic_sod_ot.md",
+      "sha256": "2f7f7917e484663ecfc7260345de24e947094b886bdfc7f9ef1ade857aaf988c"
+    },
+    {
+      "name": "fdic_sod_ot_learning.html",
+      "sha256": "d1aced8016107f88a81742239fd334ffc0375fb6753aa63c7abe543483fc2ba7"
+    },
+    {
+      "name": "test_design_fdic_sod_ot_v1.json",
+      "sha256": "b9c1aef3086b9dc70e00f74fd88890674d2497bd7a58330c36d92be672627db3"
+    },
+    {
+      "name": "GATE_THRESHOLDS_fdic_sod_ot.md",
+      "sha256": "14018b0c4f44de33f30e276134ddfa42334f64044333db19d5a924ae4f9af4a8"
+    },
+    {
+      "name": "PIN.txt",
+      "sha256": "ab4efcd9d6032be439c4585591664fa128db2a1281db9339be1725479c406cc4"
+    }
+  ],
+  "design_sha256": "b9c1aef3086b9dc70e00f74fd88890674d2497bd7a58330c36d92be672627db3",
+  "learning_sha256": "d1aced8016107f88a81742239fd334ffc0375fb6753aa63c7abe543483fc2ba7",
+  "verdict_html": "    The burn-in median next-year W₂² was <strong>0.0078</strong>, below the half-sample noise floor of\n    <strong>0.0196</strong> (ratio 0.399), and it was below the floor in every one of the 9 burn-in target years.\n    By the pre-registered rule the object is killed: from one year to the next, the spread of branch deposits inside\n    a state moved less than two random halves of the same state-year differ. The shape-only part of the move was\n    also below its own noise floor. Separately, the planned test had power 0.07 with the 22 out-of-sample years\n    available. Nothing was scored and no replacement object is proposed.\n",
+  "what_html": "  <p>Each year, the spread of branch deposits inside each US state (FDIC Summary of Deposits): for each state and year,\n  the equal-weighted distribution of ln(branch deposits) minus ln(the national median branch deposit), over branches\n  other than main offices with positive deposits, in the 50 states and DC. Two optimal-transport methods were\n  pre-registered against simple baselines: a pooled Wasserstein autoregression around the yearly barycenter, and a\n  Wasserstein regression on state deposit growth. The plain-language explanation is on the\n  <a href=\"learning.html\">learning page</a>.</p>",
+  "metrics": [
+    [
+      "Burn-in years (next-year targets)",
+      "1994–2003 (1995–2003)"
+    ],
+    [
+      "Median next-year W₂² (99-point grid, 459 pairs)",
+      "0.0078208250"
+    ],
+    [
+      "Median half-sample W₂² (510 state-years, seed 20261009)",
+      "0.0195766804"
+    ],
+    [
+      "Ratio, next-year / half-sample",
+      "0.3994969939"
+    ],
+    [
+      "Burn-in target years with next-year below the floor",
+      "9 of 9"
+    ],
+    [
+      "K1: kill if next-year ≤ half-sample",
+      "fired"
+    ],
+    [
+      "K3: shape term, next-year 0.0036937468 vs half-sample 0.0093507007",
+      "fired"
+    ],
+    [
+      "K2: shape share of the move 0.4200 (kill if &lt; 0.15)",
+      "did not fire"
+    ],
+    [
+      "Planning power, primary test (5% gain, Holm 2.5%, T = 22)",
+      "0.0705"
+    ],
+    [
+      "Out-of-sample years scored (2004–2025)",
+      "0"
+    ]
+  ],
+  "rule_html": "  <p>The half-sample distance is the noise floor: split a state's branches in one year at random into two halves and\n  measure how far apart their quantile functions are. If consecutive years are closer than that, the year-to-year signal\n  is below the noise and there is nothing for a forecast to beat. Any one of the pre-stated kill rules was enough; K1\n  and K3 both fired. Power is a second, independent reason not to proceed: with about 22 test years and a common\n  year shock across states, a 5% gain would be detected about 7% of the time.</p>",
+  "record_note_html": "  <p>The design JSON keeps <code>oos_authorized: false</code>, and that flag is not the switch. Because the burn-in\n  kill fired, an out-of-sample run of this object would not start even if an approval file were written later.\n  A different object would need its own pre-registration.</p>",
+  "card_desc_html": "        Next-year change in the within-state spread of branch deposits was below the half-sample noise floor in all 9\n        burn-in years (median W₂² 0.0078 vs 0.0196); planning power 0.07 with 22 test years. No out-of-sample run.\n",
+  "learning_link_text": "FDIC branch deposits: what the forecast was going to test (learning page)"
+}

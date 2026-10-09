@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>What the FDIC branch-deposit forecast was going to test</title>
+<style>
+  body {
+    font-family: system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+    max-width: 40rem;
+    margin: 1.5rem auto;
+    padding: 0 1.25rem 3rem;
+    line-height: 1.55;
+    color: #1c1c1c;
+    background: #fff;
+  }
+  h1 { font-size: 1.35rem; line-height: 1.3; font-weight: 650; }
+  h2 { font-size: 1.05rem; margin-top: 1.6rem; }
+  p { margin: 0.75rem 0; }
+  .eq {
+    font-family: Georgia, "Times New Roman", Times, serif;
+    text-align: center;
+    margin: 1.1rem 0;
+    font-size: 1.05rem;
+  }
+  a { color: #0b3d91; }
+  .note { color: #333; }
+</style>
+</head>
+<body>
+<h1>Forecasting the shape of a state’s bank branches, and why it stopped at the gate</h1>
+<p>Every June 30 the FDIC records how much money in deposits sits at each bank branch in the country. Pick a state and a year, and you can line up every branch from smallest to largest. The question was whether next year’s lineup, the whole spread and not only the average, can be forecast better with optimal-transport tools than with simple rules.</p>
+<p>Each branch gets one number: the natural log of its deposits, minus the log of that year’s national median branch. The log keeps a $5 billion branch from swamping everything. Subtracting the national median takes out inflation and growth that every state shares, so what remains is how a state’s branches sit relative to the country that year.</p>
+<p>Main offices are left out. The FDIC’s own instructions say office number 0 is always the main office, and that banks may book whole classes of deposits at one office “for reasons of convenience or efficiency.” A bank with only a main office shows up with its whole balance sheet. In the 1994–2003 files, main offices held roughly 29–33% of all deposits, and in most banks with branches the main office was the largest office. Counting them would make the spread tell a story about where banks keep their books, not where customers bank. That trim is the only one. The top 1% of branches never enters anyway, because the forecast is scored on the 1st through 99th percentiles.</p>
+
+<h2>Distance between two lineups</h2>
+<p>The lineup is summarized by its quantile curve: the value at the 1st percentile, the 2nd, up to the 99th. The distance between two years is the average squared gap between their curves. In one dimension, that is the squared Wasserstein-2 distance: the cost of sliding one pile of branches into the shape of the other.</p>
+<p class="eq">W<sub>2</sub><sup>2</sup> ≈ (1/99) Σ<sub>k</sub> ( Q<sub>1</sub>(k/100) − Q<sub>2</sub>(k/100) )<sup>2</sup></p>
+<p>That number splits exactly into three parts. One is the move in the center, one is the change in width, and what is left is a change in shape. The split matters. If nearly all of the yearly move were center and width, a plain shift-and-stretch model would do the job, and transport methods would have nothing to add.</p>
+
+<h2>What would have been compared</h2>
+<p>The simple rules: last year’s curve; the average of all the state’s earlier curves; and shift-and-stretch models whose center and width follow a simple autoregression. Whichever had done best over the past five years would be the champion. Two transport methods would try to beat it. The first is a Wasserstein autoregression: average every state’s curve to get the national “barycenter,” measure how far each state sits from it, and carry a fraction of that gap forward, using one slope shared by all states and clipped between 0 and 1 (<a href="https://doi.org/10.1111/jtsa.12590">Journal of Time Series Analysis, 2022</a>). The second is a Wasserstein regression that moves each state’s curve according to last year’s growth in the state’s deposits (<a href="https://doi.org/10.1080/01621459.2021.1956937">Journal of the American Statistical Association, 2021</a>). A falsification check would ask whether plainly mixing the simple forecasts does as well as averaging their curves (<a href="https://doi.org/10.3390/e22090929">Entropy, 2020</a>). If it does, the transport geometry is not what is helping.</p>
+
+<h2>The gate, and why it closed</h2>
+<p>Before any forecast is made, the burn-in years ask a blunt question. Split one state’s branches at random into two halves and measure the distance between the two half-curves. That is how much the curve wobbles just from which branches you happen to have. Then measure how far the same state moved from one year to the next. If the yearly move is no larger than the wobble, there is little to forecast. The rule, the 15% shape threshold, and a third rule for the shape part alone were written down and fingerprinted before any distance was computed.</p>
+<p>On 1994–2003, across 51 states, the median half-sample distance was 0.0195766804 and the median next-year distance was 0.0078208250, a ratio of 0.3994969939. The yearly move is smaller than the wobble, so the first rule fired. Shape is not negligible: it is 0.4199810024 of the yearly move, well above the 15% bar. But the shape part of the yearly move (median 0.0036937468) is also below the shape part of the wobble (median 0.0093507007), so the third rule fired too. Status: killed at burn-in. No other object was swapped in.</p>
+<p>One honest caveat. Most branches are the same branches from one year to the next, so consecutive curves share most of their points. The half-sample wobble is about twice the noise in one full curve. Even half of the wobble is still larger than the median yearly move, so the caveat does not change the verdict.</p>
+
+<h2>Fifty states do not make up for twenty years</h2>
+<p>The out-of-sample run would have had 22 years, 2004 to 2025. Having 51 states feels like a lot of data. But some years are good or bad for every state at once, and a test has to count those common shocks. In a planning simulation calibrated on the burn-in, the honest test, which works on each year’s average across states, had power of 0.0705 to detect a 5% improvement at the level a two-test Holm correction demands. Even a 30% improvement had power 0.5327. A test that treats each state as an independent witness looks more powerful, but it rejected 0.1403 of the time at a nominal 5% when nothing was there. That extra power is mostly false alarms. The simulation uses a deliberately noisy stand-in for the gap between two forecasts, so real power could be somewhat higher. It would not be high enough to rescue a design that had already failed the gate.</p>
+<p class="note">Ten trials were written down: the two primary comparisons, keeping main offices in, dropping each bank’s largest branch instead, the falsification check, a transport-map variant, and two state-clustered versions labelled non-gating. None will run. The flag in the design file stays false, and a later approval file would not undo the kill. Every number here comes from the burn-in script’s printed output. No year after 2003 was summarized.</p>
+</body>
+</html>

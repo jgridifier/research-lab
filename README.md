@@ -103,6 +103,30 @@ GitHub Actions will deploy to Pages automatically (see `.github/workflows/pages.
 
 ---
 
+## Publishing a study killed at burn-in
+
+A pre-registered study whose burn-in gate killed it is still published, as a negative result. Write a config
+`scripts/killed_at_burnin/<slug>.json` (see `fdic-sod-ot.json`: slug, name, source_dir, the pinned files with their
+sha256, which file is the design and which the teaching page, the verdict/what/rule/record text, the metric rows and
+the index card text), then:
+
+```bash
+python scripts/publish_killed_at_burnin.py scripts/killed_at_burnin/<slug>.json --check   # dry run, writes nothing
+python scripts/publish_killed_at_burnin.py scripts/killed_at_burnin/<slug>.json           # publish
+```
+
+It stops if any pinned hash is missing from the source directory, or if the design is not `KILLED_AT_BURNIN`
+with `oos_authorized: false`. It copies the files byte-for-byte to `tracks/<slug>/prereg/` and re-checks the hashes,
+renders `docs/tracks/<slug>/index.html`, publishes the teaching page verbatim as `learning.html`, and adds the
+index card and learning link only if they are missing. Re-running it changes nothing (CFPB and FDIC both
+regenerate with no diff). Add a `tracks/<slug>/tests/test_prereg_pin_<slug>.py` (copy the FDIC one) and list the
+directory in `PIN_TESTS` in the Makefile; `make pins-test` runs them.
+
+Lab plans and pinned pre-registrations that are not killed are rendered from Markdown by
+`scripts/render_lab_plan.py`; the CP funding pages are rebuilt with `sh scripts/render_cp_pages.sh` (`--check` to verify).
+
+---
+
 ## Local preview
 
 No build step needed — this is plain HTML/CSS. Open any file directly in a browser, or

@@ -16,7 +16,7 @@ within a month. No replacement object is proposed.
 | `prereg/cfpb_ot_learning.html` | `9c5d5dc30264673cefe68df15163a6ddae5b89be63cad752843d37801d9f9061` |
 | `prereg/test_design_cfpb_ot_v1.json` | `a5170147070a25163ed3549403ffe48860c749c4ccb4e0243d20aa6befada584` |
 
-The three files are verbatim copies of `/workspace/research/cfpb_ot_prereg/`; `tests/test_prereg_pin.py` pins them.
+The three files are verbatim copies of `/workspace/research/cfpb_ot_prereg/`; `tests/test_prereg_pin_cfpb_ot.py` pins them.
 The design's `oos_authorized` stays `false` and is not the switch; the burn-in kill forbids an out-of-sample run
 of this object even if an approval file were written later.
 

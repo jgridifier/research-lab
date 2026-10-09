@@ -1,0 +1,129 @@
+{
+ "study": "fed_cp_maturity_mix",
+ "version": 1,
+ "status": "BURNIN_PASSED",
+ "oos_authorized": false,
+ "verdicts": {
+  "OT_CLAIM": "CLEARED",
+  "DATASET_USABLE": "yes",
+  "FORECASTABLE_SIGNAL": "yes"
+ },
+ "file_sha256": {
+  "GATE_THRESHOLDS_fed_cp_ot.md": "c15eb60cbe1467090fcc920b8f4e311dd14f7b3bbfd0437e21809355721a6c8a",
+  "compute_cp_facts.py": "a3c79f457083a639be489f6cc7060ee4dfa5ee97bb057d222730fb32529c4c56",
+  "compute_cp_facts.stdout.txt": "d06ac2c3e0d4fcc8a046b56027bc921f79ec8ed83a6d362ff020ca71786d735a",
+  "compute_cp_ot_burnin.py": "34021c50bf30efbe2541b119816e8ef98c455ab5819ee232a892ca990ab11857",
+  "compute_cp_ot_burnin.stdout.txt": "17a0b23936e5b0c56e15a4937830e0f032a55ff20713f45cda7cf2d5adc11e8e",
+  "DATA_FACTS.md": "63f3b0dff5751afee95de8028b550c2727965e6393c32f9dd3de6b97f8186b1e",
+  "DATA_SPEC_for_app.md": "9c50a16e994cdb04e2598b270800e2941d027e314b375e33cbf5caa98f102c6c",
+  "ENGINEERING_TICKET.md": "088d9f2e72a162daf25436b2c76c3b4cfe6b93abd0082d480b5f94befa86346d",
+  "drive_manifest.json": "95b31d3e955e3530887f0f5baf2e493a634f34795bc6c005a8a509fff5c6a52b",
+  "raw/FRB_CP_xml.zip": "16805f2ce102d5b6703de6393e89f345e9e68e15381ab457fb58f3830cff22d2",
+  "raw/fed_cp_volume_stats_by_maturity.csv": "aeab7b0941af5e2b492e42dbe4fe05c6752efd6bc9eff3fa9b620b5545596d7a"
+ },
+ "object": {
+  "types": [
+   "AAA",
+   "FAA",
+   "NAA",
+   "NA2"
+  ],
+  "week": "W-FRI",
+  "usable": "days>=3, issues>=100, amount>0",
+  "support_log_days": [
+   0.693147,
+   1.903331,
+   2.649159,
+   3.366701,
+   4.047799,
+   4.996436
+  ],
+  "loss": "exact W2^2"
+ },
+ "windows": {
+  "burnin": [
+   "2001-01-05",
+   "2008-12-26"
+  ],
+  "oos": [
+   "2009-01-02",
+   "2026-10-02"
+  ],
+  "T_oos": 927
+ },
+ "kill_rules": {
+  "K1": "median next W2SQ <= median issue half-split W2SQ",
+  "K2": "pooled SHAPE share < 0.15",
+  "K3": "median next SHAPE <= median half SHAPE",
+  "K4": "min(power_G,power_B) at 5% gain, 2.5% one-sided < 0.50"
+ },
+ "burnin_printed": {
+  "median_next": 0.1411976508,
+  "median_half": 0.0352191046,
+  "median_halfweek_nongating": 0.1155302457,
+  "share_loc": 0.2434826461,
+  "share_scale": 0.0852632883,
+  "share_shape": 0.6712540656,
+  "median_next_shape": 0.1119603788,
+  "median_half_shape": 0.0333280627,
+  "K1": false,
+  "K2": false,
+  "K3": false,
+  "K4": false,
+  "signal": {
+   "ewma_alpha": 0.2,
+   "eval_2005_2008": {
+    "P": 0.2693876042,
+    "EWMA0.2": 0.1894077263,
+    "MA4": 0.2078828687,
+    "EXP": 0.4493067987
+   },
+   "ratio_min_over_exp": 0.4215554424
+  }
+ },
+ "planning": {
+  "proxy": "L(P)-L(MA4)",
+  "phi": -0.1551255446,
+  "resid_sd": 0.156204732,
+  "gain_scale": 0.1787325317,
+  "L": 30,
+  "power_2p5": {
+   "G": {
+    "0": 0.026,
+    "0.02": 0.1185,
+    "0.05": 0.5015,
+    "0.10": 0.976
+   },
+   "B": {
+    "0": 0.0135,
+    "0.02": 0.125,
+    "0.05": 0.7285,
+    "0.10": 1.0
+   }
+  },
+  "K4_margin_note": "0.5015 vs 0.50; MC SE ~0.011"
+ },
+ "trials": {
+  "confirmatory_oos_tests": 3,
+  "family_A": [
+   "WAR vs B*",
+   "TMAR vs B*"
+  ],
+  "family_B": [
+   "SEL vs P"
+  ],
+  "burnin_gate_runs": 1,
+  "facts_runs": 2
+ },
+ "selection_rule": "trailing 156w mean W2SQ, reselect every 13w, 1% ties -> simpler",
+ "stress_study": "descriptive only, pinned, not computed",
+ "exposures": [
+  "structural all-date facts",
+  "all-date zero-day counts",
+  "all-date CSV/XML and MKT value-match checks",
+  "3 OOS days in FS burn-in summaries",
+  "OOS structural valid-day counts",
+  "inventory memo 2026-10-01 FIN note",
+  "web fetches listed in PREREG s7"
+ ]
+}

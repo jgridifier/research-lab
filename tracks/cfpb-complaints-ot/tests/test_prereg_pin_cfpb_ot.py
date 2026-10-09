@@ -51,3 +51,13 @@ def test_track_page_states_the_kill():
     for s in ('Killed at burn-in', 'negative result', '0.0064', '0.0269', 'oos_authorized'):
         assert s in html, s
     assert '<script' not in html and 'http://' not in html and 'stylesheet' not in html
+
+
+def test_publisher_regenerates_with_no_changes():
+    import subprocess, sys
+    if not SOURCE.exists():
+        pytest.skip('source directory not on this machine')
+    out = subprocess.run([sys.executable, str(ROOT / 'scripts/publish_killed_at_burnin.py'),
+                          str(ROOT / 'scripts/killed_at_burnin/cfpb-complaints-ot.json'), '--check'],
+                         capture_output=True, text=True)
+    assert out.returncode == 0 and out.stdout.strip() == 'no changes', out.stdout + out.stderr

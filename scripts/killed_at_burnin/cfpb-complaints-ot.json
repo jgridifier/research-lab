@@ -1,0 +1,54 @@
+{
+  "slug": "cfpb-complaints-ot",
+  "name": "CFPB complaints × OT",
+  "label": "CFPB complaints × OT: killed at burn-in (negative result)",
+  "source_dir": "/workspace/research/cfpb_ot_prereg",
+  "files": [
+    {
+      "name": "PREREG_cfpb_complaints_ot.md",
+      "sha256": "d3e8ac46de75fdd181a99d3fc3519107ff84d704ae37034390cbf9bd8ac24a46"
+    },
+    {
+      "name": "cfpb_ot_learning.html",
+      "sha256": "9c5d5dc30264673cefe68df15163a6ddae5b89be63cad752843d37801d9f9061"
+    },
+    {
+      "name": "test_design_cfpb_ot_v1.json",
+      "sha256": "a5170147070a25163ed3549403ffe48860c749c4ccb4e0243d20aa6befada584"
+    }
+  ],
+  "design_sha256": "a5170147070a25163ed3549403ffe48860c749c4ccb4e0243d20aa6befada584",
+  "learning_sha256": "9c5d5dc30264673cefe68df15163a6ddae5b89be63cad752843d37801d9f9061",
+  "learning_link_text": "CFPB complaints: what the forecast was going to test (learning page)",
+  "card_desc_html": "        Burn-in median next-month W₂² 0.0064 &lt; half-sample noise floor 0.0269: month-to-month change in the\n        cross-company shape of complaints is below sampling noise, so the pre-registered rule killed the object.\n        No out-of-sample run.\n",
+  "verdict_html": "    The burn-in median next-month W₂² was <strong>0.0064</strong>, below the half-sample noise floor of\n    <strong>0.0269</strong> (ratio 0.237). By the pre-registered rule the object is killed: from one month to the next,\n    the shape of complaints across companies moved less than two random halves of the same month differ.\n    A forecast of that month-to-month change could not be told apart from sampling noise, so nothing was scored\n    and no replacement object is proposed.\n",
+  "what_html": "  <p>Each month, the spread of complaint counts across companies in the CFPB consumer-complaint file: the\n  equal-weighted distribution of log(1 + complaints) among companies with at least one complaint that month, with three\n  pinned credit-bureau names left out. Two optimal-transport methods were pre-registered against simple baselines: an\n  equal-weight W₂ barycenter of the baselines (the average of their quantile functions) and a Wasserstein\n  autoregression of the monthly quantile functions. The plain-language explanation is on the\n  <a href=\"learning.html\">learning page</a>.</p>",
+  "metrics": [
+    [
+      "Burn-in target months",
+      "2013-01 to 2017-12"
+    ],
+    [
+      "Median next-month W₂² (99-point grid, 59 pairs)",
+      "0.0063598632"
+    ],
+    [
+      "Median half-sample W₂² (60 months, seed 20261008)",
+      "0.0268769480"
+    ],
+    [
+      "Ratio, next-month / half-sample",
+      "0.2366289198"
+    ],
+    [
+      "Rule: kill if next-month ≤ half-sample",
+      "fired"
+    ],
+    [
+      "Out-of-sample months scored (2018-01 to 2026-09)",
+      "0"
+    ]
+  ],
+  "rule_html": "  <p>The half-sample distance is the noise floor: split each month's companies at random into two halves and measure how\n  far apart their quantile functions are. If consecutive months are closer than that, the month-to-month signal is\n  below the noise and there is nothing for a forecast to beat.</p>",
+  "record_note_html": "  <p>The design JSON keeps <code>oos_authorized: false</code>, and that flag is not the switch. Because the burn-in\n  kill fired, an out-of-sample run of this object would not start even if an approval file were written later.\n  A different object would need its own pre-registration.</p>"
+}
