@@ -10,7 +10,7 @@ import pandas as pd
 from .paths import FORWARD_LOG_PATH
 from .weekly import check_wall
 from .metric import q_from_p, w2sq, X_LOG
-from .fedcal import data_available_at as _fed_available_at
+from .fedcal import data_available_at as _fed_available_at, last_fed_business_day_of_week
 
 class Forecaster(Protocol):
     def fit_predict(self, history, origin): ...
@@ -63,6 +63,16 @@ def _mix(value):
 def _hash(record):
     return hashlib.sha256(json.dumps(record,sort_keys=True,separators=(',',':'),allow_nan=False).encode()).hexdigest()
 
+def _vintage(vintage_sha256, vintage_through, friday, what):
+    """Every row names its input vintage; the vintage must contain the week's last Fed business day."""
+    if not isinstance(vintage_sha256, str) or len(vintage_sha256) != 64 or any(c not in '0123456789abcdef' for c in vintage_sha256):
+        raise ValueError('vintage_sha256 must be a lowercase sha256 hex digest')
+    if vintage_through is None: raise ValueError('vintage_through is required')
+    need = last_fed_business_day_of_week(friday)
+    if need is not None and pd.Timestamp(vintage_through).date() < need:
+        raise ValueError(f'Vintage ends {pd.Timestamp(vintage_through).date()} before the {what} week\'s last Fed business day {need}')
+    return dict(vintage_sha256=vintage_sha256, vintage_through=str(pd.Timestamp(vintage_through).date()))
+
 class ForwardLog:
     def __init__(self, path=FORWARD_LOG_PATH, live=True):
         """live=True (default; the app's log): every forecast must carry the vintage fetch timestamp and the
@@ -86,7 +96,7 @@ class ForwardLog:
         with self.path.open('a') as f: f.write(json.dumps(row,sort_keys=True)+'\n')
         return row
     def record_forecast(self, origin, target, cp_type, mix, model, issued_at, input_max_date,
-                        fetched_at=None, release_last_modified=None):
+                        fetched_at=None, release_last_modified=None, *, vintage_sha256, vintage_through):
         self.verify()
         origin,target = pd.Timestamp(origin),pd.Timestamp(target)
         issued_at = _aware(issued_at)
@@ -103,21 +113,23 @@ class ForwardLog:
         if (pd.Timestamp(input_max_date) > origin or issued_at < data_available_at(origin)
                 or issued_at >= data_available_at(target)):
             raise ValueError('Invalid forecast timing')
+        vintage = _vintage(vintage_sha256, vintage_through, origin, 'origin')
         key = (str(target.date()),cp_type)
         if any((r['target'],r['cp_type']) == key and
                (r['kind'] == 'outcome' or r.get('model') == model) for r in self._rows()):
             raise ValueError('Forecast key already recorded; records cannot be edited')
         return self._append(dict(kind='forecast',origin=str(origin.date()),target=key[0],cp_type=cp_type,
-            mix=_mix(mix),model=model,issued_at=issued_at.isoformat(),input_max_date=str(pd.Timestamp(input_max_date).date()),**stamps))
-    def record_outcome(self, target, cp_type, mix, recorded_at, provenance=None):
+            mix=_mix(mix),model=model,issued_at=issued_at.isoformat(),input_max_date=str(pd.Timestamp(input_max_date).date()),**stamps,**vintage))
+    def record_outcome(self, target, cp_type, mix, recorded_at, provenance=None, *, vintage_sha256, vintage_through):
         check_wall(target, provenance)
+        vintage = _vintage(vintage_sha256, vintage_through, target, 'target')
         self.verify()
         target = str(pd.Timestamp(target).date()); recorded_at = _aware(recorded_at)
         rows = [r for r in self._rows() if (r['target'],r['cp_type']) == (target,cp_type)]
         if not rows or any(r['kind'] == 'outcome' for r in rows): raise ValueError('Need forecasts without an outcome')
         if recorded_at < data_available_at(target) or any(_aware(r['issued_at']) >= recorded_at for r in rows):
             raise ValueError('Invalid outcome timing')
-        return self._append(dict(kind='outcome',target=target,cp_type=cp_type,mix=_mix(mix),recorded_at=recorded_at.isoformat()))
+        return self._append(dict(kind='outcome',target=target,cp_type=cp_type,mix=_mix(mix),recorded_at=recorded_at.isoformat(),**vintage))
     def score(self, target, cp_type, model, provenance=None):
         check_wall(target, provenance)
         self.verify()

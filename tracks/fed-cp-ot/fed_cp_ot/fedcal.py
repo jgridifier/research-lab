@@ -59,3 +59,13 @@ def next_fed_business_day(d):
 def data_available_at(day):
     """Daily data for `day` post at 13:00 ET on the next Fed business day (DATA_SPEC: one-day lag, ~1 pm ET)."""
     return datetime.combine(next_fed_business_day(day), RELEASE_TIME_ET, ET)
+
+
+def last_fed_business_day_of_week(friday):
+    """Last Fed business day in the Mon-Fri week labelled by `friday` (None if the whole week is holidays)."""
+    friday = pd.Timestamp(friday).date()
+    for k in range(5):
+        d = friday - timedelta(days=k)
+        if is_fed_business_day(d):
+            return d
+    return None

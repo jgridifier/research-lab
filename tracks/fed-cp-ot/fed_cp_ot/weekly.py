@@ -15,7 +15,8 @@ def build_weekly(vol_long, types=TYPES, through=SCORING_WALL, provenance=None):
     check_wall(through, provenance)
     through = vol_long.date.max() if through is None else pd.Timestamp(through)
     df = vol_long.loc[(vol_long.date <= pd.Timestamp(through)) & vol_long.cp_type.isin(types)].copy()
-    df = df[df.date.dt.dayofweek < 5]
+    if (df.valid & (df.date.dt.dayofweek >= 5)).any(): raise ValidationError('Valid weekend observation')
+    df = df[df.date.dt.dayofweek < 5]  # only ND weekend rows remain to drop
     df['week'] = df.date.dt.to_period('W-FRI').dt.end_time.dt.normalize()
     df = df[df.week <= pd.Timestamp(through)]
     records = []

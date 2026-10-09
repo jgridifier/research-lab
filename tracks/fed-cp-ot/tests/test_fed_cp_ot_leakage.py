@@ -5,7 +5,7 @@ import numpy as np
 import pandas as pd
 import pytest
 from synth import make_zip
-from fed_cp_ot.errors import ProvenanceError, ScoringWallError
+from fed_cp_ot.errors import ProvenanceError, ScoringWallError, ValidationError
 from fed_cp_ot.parse import load_vol, parse_vol
 from fed_cp_ot.weekly import build_weekly, mkt_weekly_total, provisional_partial_week
 from fed_cp_ot.forecast import ForwardLog, data_available_at, Persistence, origin_view, walk_forward
@@ -37,8 +37,20 @@ def test_forecast_no_future(provenance,tmp_path):
 
 def dt(s): return datetime.fromisoformat(s)
 
+
+VINTAGE = dict(vintage_sha256='ab'*32, vintage_through='2026-10-02')
+
+class VLog(ForwardLog):
+    """ForwardLog with a fixed input vintage, for tests that exercise other invariants."""
+    def record_forecast(self, *a, **k):
+        for key, value in VINTAGE.items(): k.setdefault(key, value)
+        return super().record_forecast(*a, **k)
+    def record_outcome(self, *a, **k):
+        for key, value in VINTAGE.items(): k.setdefault(key, value)
+        return super().record_outcome(*a, **k)
+
 def test_forward_log(tmp_path):
-    log=ForwardLog(tmp_path/'f.jsonl',live=False); mix=np.ones(6)/6
+    log=VLog(tmp_path/'f.jsonl',live=False); mix=np.ones(6)/6
     args=dict(origin='2008-12-19',target='2008-12-26',cp_type='AAA',mix=mix,model='P',input_max_date='2008-12-19')
     with pytest.raises(ValueError): log.record_outcome('2008-12-26','AAA',mix,dt('2008-12-29T18:00:00+00:00'))
     with pytest.raises(ValueError): log.record_forecast(**args,issued_at=dt('2008-12-29T18:00:00+00:00'))
@@ -54,19 +66,40 @@ def test_forward_log(tmp_path):
     log.path.write_text(log.path.read_text().replace('"model": "P"','"model": "EXP"'))
     with pytest.raises(ValueError,match='tampered'): log.verify()
 
-@pytest.mark.parametrize('friday,expected',[('2008-12-26','2008-12-29T13:00:00-05:00'),('2008-07-04','2008-07-07T13:00:00-04:00')])
+@pytest.mark.parametrize('friday,expected',[('2008-12-26','2008-12-29T13:00:00-05:00'),('2008-07-04','2008-07-07T13:00:00-04:00'),
+                                            ('2026-10-09','2026-10-13T13:00:00-04:00')])  # Mon 2026-10-12 is Columbus Day
 def test_release(friday,expected): assert data_available_at(friday).isoformat()==expected
 
-def test_postwall_nonnumeric_is_not_converted(provenance,tmp_path):
+@pytest.mark.parametrize('raw,match',[('-5','Negative'),('12.5','Non-integer'),('NOT A NUMBER','Non-integer'),('1e3','Non-integer')])
+def test_postwall_amounts_checked_as_text(provenance,tmp_path,monkeypatch,raw,match):
+    """DATA_SPEC rule 3 holds after 2008 too, but post-wall amounts are only inspected as text, never converted."""
     def mutate(attrs,obs):
         for row in obs:
-            if row['TIME_PERIOD']>'2008-12-26': row['OBS_VALUE']='NOT A NUMBER'
+            if row['TIME_PERIOD']>'2008-12-26' and row['OBS_STATUS']=='A': row['OBS_VALUE']=raw
+    with pytest.raises(ValidationError,match=match): load_vol(provenance,make_zip(tmp_path/'s.zip',mutate))
+
+def test_postwall_digits_pass_and_stay_withheld(provenance,tmp_path):
+    df,_=load_vol(provenance,make_zip(tmp_path/'s.zip'))
+    post=df[df.date>'2008-12-26']
+    assert len(post) and post.valid.all() and post.value.isna().all()
+
+@pytest.mark.parametrize('status',['E','P',''])
+def test_unknown_obs_status_fails(provenance,tmp_path,status):
+    def mutate(attrs,obs): obs[0]['OBS_STATUS']=status
+    with pytest.raises(ValidationError,match='OBS_STATUS'): load_vol(provenance,make_zip(tmp_path/'s.zip',mutate))
+
+def test_valid_weekend_row_fails(provenance,tmp_path):
+    def mutate(attrs,obs): obs[0]['TIME_PERIOD']='2004-04-10'  # a Saturday, status A
+    with pytest.raises(ValidationError,match='weekend'): load_vol(provenance,make_zip(tmp_path/'s.zip',mutate))
+
+def test_nd_weekend_row_is_ignored(provenance,tmp_path):
+    def mutate(attrs,obs): obs.append(dict(TIME_PERIOD='2004-04-10',OBS_STATUS='ND',OBS_VALUE='-9999'))
     df,_=load_vol(provenance,make_zip(tmp_path/'s.zip',mutate))
-    assert df.loc[df.date>'2008-12-26','valid'].all()
-    assert df.loc[df.date>'2008-12-26','value'].isna().all()
+    assert not df.loc[df.date=='2004-04-10','valid'].any()
+    assert build_weekly(df).valid_days.max()==5
 
 def test_forward_input_timing(tmp_path):
-    log=ForwardLog(tmp_path/'f.jsonl',live=False); mix=np.ones(6)/6
+    log=VLog(tmp_path/'f.jsonl',live=False); mix=np.ones(6)/6
     with pytest.raises(ValueError):
         log.record_forecast('2008-12-19','2008-12-26','AAA',mix,'P',dt('2008-12-22T18:00:00+00:00'),'2008-12-20')
     with pytest.raises(ValueError):
@@ -74,7 +107,7 @@ def test_forward_input_timing(tmp_path):
     assert not log.path.exists()
 
 def test_models_share_one_outcome(tmp_path, provenance):
-    log = ForwardLog(tmp_path/'forward.jsonl',live=False)
+    log = VLog(tmp_path/'forward.jsonl',live=False)
     mix = np.ones(6)/6
     args = dict(origin='2008-12-19', target='2008-12-26', cp_type='AAA',
                 issued_at='2008-12-22T18:00:00+00:00', input_max_date='2008-12-19')
@@ -89,13 +122,13 @@ def test_models_share_one_outcome(tmp_path, provenance):
 
 @pytest.mark.parametrize('origin,target',[('2008-12-18','2008-12-26'),('2008-12-12','2008-12-26')])
 def test_friday_seven_day_horizon(tmp_path,origin,target):
-    log = ForwardLog(tmp_path/'forward.jsonl',live=False)
+    log = VLog(tmp_path/'forward.jsonl',live=False)
     with pytest.raises(ValueError):
         log.record_forecast(origin,target,'AAA',np.ones(6)/6,'P','2008-12-22T18:00:00+00:00',origin)
     assert not log.path.exists()
 
 def test_outcome_wall_before_storage(tmp_path,provenance,approved):
-    log = ForwardLog(tmp_path/'forward.jsonl',live=False)
+    log = VLog(tmp_path/'forward.jsonl',live=False)
     mix = np.ones(6)/6
     log.record_forecast('2008-12-26','2009-01-02','AAA',mix,'P','2008-12-29T18:00:00+00:00','2008-12-26')
     before = log.path.read_bytes()
@@ -154,7 +187,7 @@ from fed_cp_ot.forecast import vintage_stamps
 LIVE = dict(origin='2008-12-19', target='2008-12-26', cp_type='AAA', mix=np.ones(6)/6, model='P', input_max_date='2008-12-19')
 
 def test_live_log_requires_and_stores_stamps(tmp_path):
-    log = ForwardLog(tmp_path/'live.jsonl')  # live is the default
+    log = VLog(tmp_path/'live.jsonl')  # live is the default
     with pytest.raises(ValueError, match='fetch time'):
         log.record_forecast(**LIVE, issued_at=dt('2008-12-22T19:00:00+00:00'))
     row = log.record_forecast(**LIVE, issued_at=dt('2008-12-22T19:00:00+00:00'),
@@ -169,7 +202,7 @@ def test_live_log_requires_and_stores_stamps(tmp_path):
     ('2008-12-22T18:40:00+00:00', 'Mon, 22 Dec 2008 19:10:00 GMT'),   # stamped before the release update
 ])
 def test_live_log_rejects_forecast_before_fetch_or_release(tmp_path, fetched, modified):
-    log = ForwardLog(tmp_path/'live.jsonl')
+    log = VLog(tmp_path/'live.jsonl')
     with pytest.raises(ValueError, match='stamped before'):
         log.record_forecast(**LIVE, issued_at=dt('2008-12-22T19:00:00+00:00'), fetched_at=fetched, release_last_modified=modified)
     assert not (tmp_path/'live.jsonl').exists()
@@ -178,3 +211,54 @@ def test_vintage_stamps_from_manifest():
     assert vintage_stamps({'fetched_at_utc': '2026-10-09T23:25:14+00:00', 'last_modified': 'Fri, 09 Oct 2026 17:00:03 GMT'}) == \
         ('2026-10-09T23:25:14+00:00', 'Fri, 09 Oct 2026 17:00:03 GMT')
     with pytest.raises(ValueError): vintage_stamps({'fetched_at_utc': '2026-10-09T23:25:14+00:00', 'last_modified': None})
+
+
+# --- Every forward-log row names its input vintage, which must cover the week's last Fed business day ---
+REPLAY = dict(origin='2008-12-19', target='2008-12-26', cp_type='AAA', mix=np.ones(6)/6, model='P',
+              issued_at='2008-12-22T18:00:00+00:00', input_max_date='2008-12-19')
+
+def test_forward_rows_store_vintage_sha(tmp_path):
+    log = ForwardLog(tmp_path/'f.jsonl', live=False)
+    with pytest.raises(TypeError): log.record_forecast(**REPLAY)  # vintage is mandatory
+    row = log.record_forecast(**REPLAY, vintage_sha256='cd'*32, vintage_through='2008-12-19')
+    assert row['vintage_sha256'] == 'cd'*32 and row['vintage_through'] == '2008-12-19'
+    out = log.record_outcome('2008-12-26', 'AAA', np.ones(6)/6, '2008-12-29T18:00:00+00:00',
+                             vintage_sha256='ef'*32, vintage_through='2008-12-26')
+    assert out['vintage_sha256'] == 'ef'*32
+    rows = [json.loads(x) for x in (tmp_path/'f.jsonl').read_text().splitlines()]
+    assert all(len(r['vintage_sha256']) == 64 for r in rows)
+
+@pytest.mark.parametrize('sha', ['short', 'AB'*32, None])
+def test_forward_rows_reject_bad_vintage_sha(tmp_path, sha):
+    with pytest.raises(ValueError, match='sha256'):
+        ForwardLog(tmp_path/'f.jsonl', live=False).record_forecast(**REPLAY, vintage_sha256=sha, vintage_through='2008-12-19')
+
+def test_vintage_must_contain_origin_weeks_last_business_day(tmp_path):
+    log = ForwardLog(tmp_path/'f.jsonl', live=False)
+    with pytest.raises(ValueError, match='last Fed business day 2008-12-19'):
+        log.record_forecast(**REPLAY, vintage_sha256='cd'*32, vintage_through='2008-12-18')
+    assert not (tmp_path/'f.jsonl').exists()
+
+def test_vintage_coverage_uses_fed_calendar(tmp_path):
+    # Week ending Fri 2008-07-04 (Independence Day): its last Fed business day is Thu 2008-07-03
+    log = ForwardLog(tmp_path/'f.jsonl', live=False)
+    args = dict(REPLAY, origin='2008-07-04', target='2008-07-11', issued_at='2008-07-07T18:00:00+00:00', input_max_date='2008-07-03')
+    log.record_forecast(**args, vintage_sha256='cd'*32, vintage_through='2008-07-03')
+    with pytest.raises(ValueError, match='last Fed business day 2008-07-03'):
+        log.record_forecast(**dict(args, model='EXP'), vintage_sha256='cd'*32, vintage_through='2008-07-02')
+
+def test_outcome_vintage_must_contain_target_week(tmp_path):
+    log = ForwardLog(tmp_path/'f.jsonl', live=False)
+    log.record_forecast(**REPLAY, vintage_sha256='cd'*32, vintage_through='2008-12-19')
+    with pytest.raises(ValueError, match='target week'):
+        log.record_outcome('2008-12-26', 'AAA', np.ones(6)/6, '2008-12-29T18:00:00+00:00',
+                           vintage_sha256='ef'*32, vintage_through='2008-12-24')
+
+def test_outcome_availability_uses_fed_calendar(tmp_path):
+    # target Fri 2008-10-10 -> Mon 10-13 is Columbus Day -> outcome available Tue 2008-10-14 13:00 ET
+    log = ForwardLog(tmp_path/'f.jsonl', live=False)
+    log.record_forecast(**dict(REPLAY, origin='2008-10-03', target='2008-10-10', issued_at='2008-10-06T18:00:00+00:00',
+                               input_max_date='2008-10-03'), vintage_sha256='cd'*32, vintage_through='2008-10-03')
+    with pytest.raises(ValueError, match='outcome timing'):
+        log.record_outcome('2008-10-10', 'AAA', np.ones(6)/6, '2008-10-13T18:00:00+00:00', vintage_sha256='ef'*32, vintage_through='2008-10-10')
+    log.record_outcome('2008-10-10', 'AAA', np.ones(6)/6, '2008-10-14T17:00:00+00:00', vintage_sha256='ef'*32, vintage_through='2008-10-10')

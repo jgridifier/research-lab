@@ -4,7 +4,7 @@ import json
 from pathlib import Path
 import numpy as np
 import pandas as pd
-from .paths import DATA_DIR, PINNED_RESEARCH_ZIP_SHA256, PINNED_CSV_SHA256, SCORING_WALL
+from .paths import DATA_DIR, RAW_DIR, PINNED_RESEARCH_ZIP_SHA256, PINNED_CSV_SHA256, SCORING_WALL
 from .preflight import preflight, sha256
 from .parse import load_vol
 from .weekly import build_weekly, TYPES
@@ -57,15 +57,16 @@ def replicate(weekly, strict=True):
 
 def csv_source(path=None):
     if path is not None: return Path(path)
-    research = Path('/workspace/research/fed_cp_ot_prereg/raw/fed_cp_volume_stats_by_maturity.csv')
-    return research if research.exists() else DATA_DIR/'fed_cp_volume_stats_by_maturity.csv'
+    for candidate in (RAW_DIR/'fed_cp_volume_stats_by_maturity.csv', DATA_DIR/'fed_cp_volume_stats_by_maturity.csv'):
+        if candidate.exists(): return candidate
+    raise FileNotFoundError('CSV not found: pass --csv or set FED_CP_OT_RAW_DIR')
 
 def pinned_zip():
-    candidates = [Path('/workspace/research/fed_cp_ot_prereg/raw/FRB_CP_xml.zip'),
+    candidates = [RAW_DIR/'FRB_CP_xml.zip',
                   *sorted((DATA_DIR/'vintages').glob('*.zip'))]
     for path in candidates:
         if path.exists() and sha256(path) == PINNED_RESEARCH_ZIP_SHA256: return path
-    raise FileNotFoundError('Pinned research zip unavailable')
+    raise FileNotFoundError('Pinned zip unavailable: set FED_CP_OT_RAW_DIR or run `ingest seed`')
 
 def run(zip_path=None, csv_path=None, compare_to_pinned=False):
     provenance = preflight('burnin')

@@ -6,6 +6,7 @@ Prereg files, tests and docs only: the pipeline code lives on branch fed-cp-ot-p
 """
 import hashlib
 import json
+import os
 import subprocess
 import sys
 from pathlib import Path
@@ -15,7 +16,8 @@ import pytest
 TRACK = Path(__file__).resolve().parents[1]
 ROOT = TRACK.parents[1]
 PREREG = TRACK / 'prereg'
-SOURCE = Path('/workspace/research/fed_cp_ot_prereg')
+# Original research copies; set FED_CP_OT_PREREG_SOURCE to compare against them. Defaults to the vendored pins.
+SOURCE = Path(os.environ.get('FED_CP_OT_PREREG_SOURCE') or PREREG)
 DOCS = ROOT / 'docs/tracks/fed-cp-ot'
 LABEL = "Passed burn-in, pinned, awaiting Jared's approval"
 PINS = {

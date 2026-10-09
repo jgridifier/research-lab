@@ -14,8 +14,8 @@ def test_real_structure(real_vol):
 
 def test_real_csv(real_vol):
     from fed_cp_ot.burnin_checks import csv_source
-    path = csv_source()
-    if not path.exists(): pytest.skip('Pinned CSV absent')
+    try: path = csv_source()
+    except FileNotFoundError: pytest.skip('Pinned CSV absent (set FED_CP_OT_RAW_DIR)')
     from fed_cp_ot.paths import PINNED_CSV_SHA256
     from fed_cp_ot.preflight import sha256
     assert sha256(path) == PINNED_CSV_SHA256

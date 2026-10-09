@@ -1,8 +1,12 @@
+import os
 from pathlib import Path
 TRACK = Path(__file__).resolve().parents[1]
 ROOT = TRACK.parents[1]
 PREREG_DIR = TRACK / 'prereg'
 DATA_DIR = TRACK / 'data'
+# Raw pinned inputs (FRB_CP_xml.zip, fed_cp_volume_stats_by_maturity.csv) are not vendored (zip/CSV too large).
+# Point FED_CP_OT_RAW_DIR at a directory holding them; default is the gitignored cache data/raw/.
+RAW_DIR = Path(os.environ.get('FED_CP_OT_RAW_DIR') or DATA_DIR / 'raw')
 TRIALS_PATH = TRACK / 'trials.jsonl'
 FORWARD_LOG_PATH = DATA_DIR / 'forward_log.jsonl'
 SCORING_WALL = '2008-12-26'

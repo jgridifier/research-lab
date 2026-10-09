@@ -113,7 +113,7 @@ def test_compare_burnin_only(tmp_path,monkeypatch,provenance):
     baseline=make_zip(tmp_path/'baseline.zip')
     def mutate(attrs,obs):
         for row in obs:
-            if row['TIME_PERIOD'] > '2008-12-26': row['OBS_VALUE']='WITHHELD'
+            if row['TIME_PERIOD'] > '2008-12-26': row['OBS_VALUE']='77777'  # valid integer text; must never surface
         if attrs['SERIES_NAME']=='AB.1_4.AA.AMT': obs[0]['OBS_VALUE']='999'
     newer=make_zip(tmp_path/'newer.zip',mutate)
     csv_path=tmp_path/'check.csv'; csv_path.write_text('synthetic')
@@ -128,7 +128,7 @@ def test_compare_burnin_only(tmp_path,monkeypatch,provenance):
     result=checks.run(newer,csv_path,True)
     assert result['changed_series_dates']==1
     assert not result['matches_pinned_numbers']
-    assert 'WITHHELD' not in json.dumps(result)
+    assert '77777' not in json.dumps(result)
 
 
 def test_fetch_timeout_is_finite_and_retried(tmp_path):

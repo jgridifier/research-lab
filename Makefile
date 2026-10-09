@@ -92,3 +92,9 @@ PIN_TESTS = tracks/cfpb-complaints-ot/tests tracks/fdic-sod-ot/tests tracks/fed-
 
 pins-test: $(VENV_STAMP)
 	PYTHONPATH= $(PYTHON) -m pytest $(PIN_TESTS) -q
+
+# Fed CP OT pipeline: synthetic preflight/leakage/parse/metric/app tests (no box paths, no network; realdata deselected).
+.PHONY: fed-cp-test
+
+fed-cp-test: $(VENV_STAMP)
+	PYTHONPATH= $(PYTHON) -m pytest tracks/fed-cp-ot/tests -q -m "not realdata" -p no:cacheprovider

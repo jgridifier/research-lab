@@ -107,3 +107,17 @@ def test_approval_requires_pinned_hash_in_code():
 def test_unpinned_approval_file_is_refused(pins):
     pins.APPROVAL_PATH.write_text('Jared approves PIN.txt sha256 '+pins.PINS['PIN.txt'])
     with pytest.raises(OOSNotAuthorized,match='not pinned'): pins.preflight('oos')
+
+
+@pytest.mark.parametrize('failure',['no_checkout','no_git_binary'])
+def test_log_trial_fails_cleanly_without_git(approved,tmp_path,monkeypatch,failure):
+    import subprocess
+    if failure=='no_checkout':
+        monkeypatch.setattr(trials,'ROOT',tmp_path)  # not a git repository
+    else:
+        def missing(*a,**k): raise FileNotFoundError('git')
+        monkeypatch.setattr(subprocess,'run',missing)
+    path=tmp_path/'trials.jsonl'
+    with pytest.raises(ProvenanceError,match='Nothing was logged'):
+        trials.log_trial({'x':1},'t',approved,path)
+    assert not path.exists()
