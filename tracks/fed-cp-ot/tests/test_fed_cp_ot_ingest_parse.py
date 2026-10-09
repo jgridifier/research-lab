@@ -1,3 +1,4 @@
+import zipfile
 import csv
 import io
 import json
@@ -54,7 +55,7 @@ def test_ingest(tmp_path):
         status=200
         headers={'ETag':'abc','Last-Modified':'Monday','Content-Length':str(len(blob))}
     seen=[]
-    def opener(req): seen.append(req); return Response(blob)
+    def opener(req, timeout=None): assert timeout and timeout > 0; seen.append(req); return Response(blob)
     cache=tmp_path/'cache'
     a=fetch_vintage(cache,opener=opener); b=fetch_vintage(cache,opener=opener)
     assert a['sha256']==b['sha256'] and b['unchanged_from_previous']
@@ -63,8 +64,8 @@ def test_ingest(tmp_path):
     assert seen[0].get_header('User-agent')=='research-lab fed-cp-ot (jgridifier)'
     assert len((cache/'manifest.jsonl').read_text().splitlines())==2
     with pytest.raises(ValueError): register_local_vintage(tmp_path/'s.zip','bad',cache,pinned=True)
-    bad=lambda req: Response(b'not a zip')
-    with pytest.raises(Exception): fetch_vintage(cache,opener=bad,retries=1)
+    bad=lambda req, timeout=None: Response(b'not a zip')
+    with pytest.raises(zipfile.BadZipFile): fetch_vintage(cache,opener=bad,retries=1)
 
 def test_vintage_diff(provenance,tmp_path):
     from fed_cp_ot.vintages import diff_vintages,append_diff
@@ -128,3 +129,13 @@ def test_compare_burnin_only(tmp_path,monkeypatch,provenance):
     assert result['changed_series_dates']==1
     assert not result['matches_pinned_numbers']
     assert 'WITHHELD' not in json.dumps(result)
+
+
+def test_fetch_timeout_is_finite_and_retried(tmp_path):
+    import socket
+    from fed_cp_ot.ingest import fetch_vintage
+    calls=[]
+    def stalled(req, timeout=None):
+        calls.append(timeout); raise socket.timeout('stalled')
+    with pytest.raises(OSError): fetch_vintage(tmp_path/'c',opener=stalled,retries=3,backoff_s=0,timeout_s=5)
+    assert calls==[5,5,5]

@@ -52,12 +52,12 @@ def _store(blob, cache_dir, metadata):
     with (cache_dir/'manifest.jsonl').open('a') as f: f.write(json.dumps(record, sort_keys=True)+'\n')
     return record
 
-def fetch_vintage(cache_dir=DATA_DIR, url=SOURCE_URL, opener=None, retries=3, backoff_s=1):
+def fetch_vintage(cache_dir=DATA_DIR, url=SOURCE_URL, opener=None, retries=3, backoff_s=1, timeout_s=60):
     opener = opener or urlopen
     for attempt in range(retries):
         try:
             req = Request(url, headers={'User-Agent':'research-lab fed-cp-ot (jgridifier)'})
-            with opener(req) as response:
+            with opener(req, timeout=timeout_s) as response:
                 status = response.status
                 if status != 200: raise ValueError(f'HTTP {status}')
                 blob = response.read()
