@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>What the CFPB complaint forecast was going to test</title>
+<style>
+  body {
+    font-family: system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+    max-width: 40rem;
+    margin: 1.5rem auto;
+    padding: 0 1.25rem 3rem;
+    line-height: 1.55;
+    color: #1c1c1c;
+    background: #fff;
+  }
+  h1 { font-size: 1.35rem; line-height: 1.3; font-weight: 650; }
+  h2 { font-size: 1.05rem; margin-top: 1.6rem; }
+  p { margin: 0.75rem 0; }
+  .eq {
+    font-family: Georgia, "Times New Roman", Times, serif;
+    text-align: center;
+    margin: 1.1rem 0;
+    font-size: 1.05rem;
+  }
+  a { color: #0b3d91; }
+  .note { color: #333; }
+</style>
+</head>
+<body>
+<h1>Forecasting the shape of complaints, not Equifax’s total</h1>
+<p>The question is what the crowd of companies looks like next month. Take every company that drew at least one complaint, turn its monthly total into a single number, and look at how those numbers are spread out. The forecast is that whole spread. It is not a forecast of Equifax’s count, or of the national total.</p>
+<p>The number on each company is the natural log of one plus its complaints that month. A bank with a handful of complaints and a bank with a huge pile would otherwise sit so far apart that the shape of the crowd is really just the size of the pile. The log pulls that in without pretending a company with no complaints is in the crowd. Companies that filed nothing that month are left out. The law being forecast is the law among companies that showed up.</p>
+<p>Three names are left out of the main object: TransUnion Intermediate Holdings, Equifax, and Experian Information Solutions, spelled exactly as they appear in the file. They are pinned names. They were already the top of a lifetime ranking in the facts memo, which used the whole snapshot, and that ranking is not redone here and not updated later. Credit-bureau volume is a different phenomenon from the rest of the complaint file. Leaving those three in would make “the shape across companies” a story about three firms. Putting them back is a side trial. It is not the main question. No other company is dropped because of its rank.</p>
+
+<h2>Two ways to say what next month’s shape will be</h2>
+<p>Both methods forecast the quantile function. That is the curve that says how high the log-complaint number sits at each rank in the crowd, from near the bottom to near the top. In one dimension, averaging those curves is the Wasserstein barycenter: the center of the distributions under a distance that charges you for how far you move the mass. Averaging the densities instead smears them and makes the crowd look more spread out than any of the inputs.</p>
+<p class="eq">Q&#772;(u) = (Q<sub>0</sub>(u) + Q<sub>1</sub>(u) + Q<sub>2</sub>(u) + Q<sub>3</sub>(u)) / 4</p>
+<p>That display is the first method, when all four baselines exist. The four curves are not new models of the economy. They are simple forecasts built only from earlier months. One is last month’s curve. One is the average of every earlier month. One is the average of the same calendar month in past years, and if there are not two of those it falls back. One is a normal curve whose center and width come from autoregressions of the monthly mean and of the log of the monthly spread, refit each time, with the autoregressive coefficient kept inside a fixed clip. The barycenter is their equal-weight average, then a monotone repair so the curve cannot bend backward. If fewer than two of them exist, this method sits out. The 2020 Entropy paper is the citation for combining probability forecasts this way. The thing computed here is the plain average of quantiles. It is not that paper’s entropy-regularized barycenter. <a href="https://doi.org/10.3390/e22090929">DOI 10.3390/e22090929</a>.</p>
+<p>The second method is an autoregression on the curves themselves. At the moment you forecast, average every usable curve you are allowed to know, including the month you are standing on. Write each past curve as its gap from that average. A single slope, shared across the whole grid and clipped to sit between zero and one, says how much of last month’s gap to carry forward. Next month’s curve is the average plus that shrunk gap, then the same monotone repair. The citation is the 2022 Journal of Time Series Analysis paper on Wasserstein autoregression for density time series. <a href="https://doi.org/10.1111/jtsa.12590">DOI 10.1111/jtsa.12590</a>. Older Fréchet regression is background, not the estimator.</p>
+
+<h2>Walk-forward, then a gate</h2>
+<p>Nothing is fit on the month you are trying to call. When the target is March, February is known and April is not. The slope, the normal autoregression, and the choice of which simple baseline is the champion are all redone at that origin using only earlier months. The champion is whichever of the four simple forecasts has the lowest average score on the trailing 24 past months, or on as many as exist if that is at least 12. Scores from the future are not used. One dispersion knob, a widening of the barycenter, would have been chosen once on the 2013–2017 burn-in and then frozen. It was not chosen. The burn-in kill below means the fitting step never starts.</p>
+<p>The score is a 99-point approximation to CRPS, the same approximation for every method. It asks, company by company in the target month, how good the forecast curve was as a distribution for that company’s log-total, then averages. The interesting comparison is against the champion baseline, not against a model fit on the same month.</p>
+<p>A pass is hard on purpose. There are two primary comparisons, the barycenter and the autoregression, each against the champion. They share one Holm family at 0.05: the stronger result has to clear 0.025 before the other can use 0.05. The score also has to improve by more than 0.0200000000, and that improvement has to be positive in at least two of three calendar blocks: 2018-01 through 2021-12, 2022-01 through 2024-12, and 2025-01 through 2026-09. A statistically significant gain at or below 0.0200000000 is an incomplete result, not a pass. Fewer than 80 comparable months, or too many months with under 100 companies, is also incomplete.</p>
+<p>That hurdle of 0.0200000000 was not tuned to the power calculation. Under independence, planning simulations say a gain of 0.0200000000 would be easy to see at this length. Under the autocorrelation actually measured on the burn-in scores of the last-month baseline, coefficient 0.8520187511, the same gain has simulated power 0.1670 at the 5% critical value and 0.0990 at the 2.5% critical value. Both are below 0.5. The hurdle stays 0.0200000000 anyway. This is a planning statement from burn-in scale, not a finding about later years.</p>
+
+<h2>Where it stopped</h2>
+<p>Before any later year is scored, the burn-in asks a blunt question. Split each month’s companies at random into two halves and measure how far the two half-curves are. Then measure how far this month’s curve is from next month’s. If the month-to-month move is no larger than the split-sample noise, the object is too noisy to forecast and the design is killed. On 60 burn-in months the median half-sample distance was 0.0268769480 and the median next-month distance was 0.0063598632. The next-month number is smaller. The ratio is 0.2366289198. The rule fired. Status: killed at burn-in. No replacement shape was invented. Company counts in that window ran from 218 to 1374, all of them above the floor of 100, so the kill is not a small-sample accident of the 100-company rule.</p>
+
+<h2>The file is one snapshot, not a vintage backtest</h2>
+<p>The panel is one pull dated 6 October 2026. October 2026 is dropped because the pull sits inside that month, not because of a cutoff tuned on how small the month looks. The facts memo’s fetch of the CFPB complaints page says complaints are published after the company responds, or after 15 days, and that the database generally updates daily. A later edit can change an old month. Walking forward through this file is pseudo-real-time. That can leak future information into the past. It is a limitation, not the thing that killed the design. Vintages are not in the file, so the leak cannot be removed by a cleverer statistic. The lifetime ranking that named the three bureaus, the October 2026 size note, the product-name timeline, and the 2014 percentiles were already computed on the full snapshot and are disclosed in the facts memo. This round added distributional summaries only through December 2017. No distributional summary of 2018 through 2026 has been computed.</p>
+<p class="note">Nine trials are written down, including side versions that put the bureaus back, drop the log, or score the mix of product types on a short window of stable product names. Only the two primary comparisons could have gated. None of them run. Authorizing a run, if it ever happened, would be a separate file. The flag in the design JSON stays false and is not the switch. A kill is not undone by that file.</p>
+</body>
+</html>

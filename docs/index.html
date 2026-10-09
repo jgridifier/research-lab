@@ -78,7 +78,16 @@
       <p class="track-card__desc">
         Pre-registered forecasts of FR Y-9C trading revenue: per-bank baselines with
         W₂-barycenter combination and Wasserstein autoregression of the cross-section.
-        Results pending (out-of-sample scoring not run).
+        One authorized out-of-sample run: primary FAIL on both hypotheses; run incomplete (stopped in a sensitivity).
+      </p>
+    </a>
+    <a class="track-card" href="tracks/cfpb-complaints-ot/index.html">
+      <div class="track-card__label">Track 5</div>
+      <div class="track-card__title">CFPB complaints × OT: killed at burn-in (negative result)</div>
+      <p class="track-card__desc">
+        Burn-in median next-month W₂² 0.0064 &lt; half-sample noise floor 0.0269: month-to-month change in the
+        cross-company shape of complaints is below sampling noise, so the pre-registered rule killed the object.
+        No out-of-sample run.
       </p>
     </a>
   </div>
@@ -86,6 +95,7 @@
   <p class="section-heading">Learning guides</p>
   <ul class="resource-list">
     <li><a href="notes/kernel_ot_learning.html">Optimal transport on kernels: learning guide</a></li>
+    <li><a href="tracks/cfpb-complaints-ot/learning.html">CFPB complaints: what the forecast was going to test (learning page)</a></li>
     <li><a href="notes/ot_classical_learning.html">Optimal transport for operations research, risk &amp; planning: classical methods</a></li>
   </ul>
 

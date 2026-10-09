@@ -529,5 +529,7 @@ body {
 @media (max-width: 640px) {
   .page-header h1 { font-size: 1.45rem; }
   .site-nav__links a { padding: .65rem .55rem; font-size: .8rem; }
+  .site-nav__inner { flex-wrap: wrap; }
+  .site-nav__links { flex-wrap: wrap; min-width: 0; }
   .track-grid { grid-template-columns: 1fr; }
 }

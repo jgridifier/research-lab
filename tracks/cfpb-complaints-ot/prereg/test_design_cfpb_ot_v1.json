@@ -1,0 +1,216 @@
+{
+  "name": "cfpb-complaints-ot",
+  "version": "1",
+  "status": "KILLED_AT_BURNIN",
+  "oos_authorized": false,
+  "oos_authorized_is_the_switch": false,
+  "authorization": "A separate file authorizes a run. oos_authorized stays false and is not the switch. The burn-in kill forbids an out-of-sample run of this object even if a later file exists.",
+  "replacement_object": null,
+  "recorded": "2026-10-08",
+  "for": "Jared (GitHub jgridifier)",
+  "prereg_path": "/workspace/research/cfpb_ot_prereg/PREREG_cfpb_complaints_ot.md",
+  "constraints": ["classical statistics only", "no pretrained model", "no neural net"],
+  "one_run": true,
+  "rerun_if_output_looks_odd": false,
+  "log_all_trials_before_execution": true,
+  "execution": "do not start; noise floor killed the design",
+  "data": {
+    "panel": "/workspace/research/cfpb_ot_prereg/raw/cfpb_panel_company_month_product.csv.gz",
+    "panel_sha256": "1630a2054886f64d702930e25794362bfb1fe49de16127be5cfe837444ce068f",
+    "facts_memo": "/workspace/research/cfpb_ot_prereg/DATA_FACTS.md",
+    "facts_stdout": "/workspace/research/cfpb_ot_prereg/compute_cfpb_facts.stdout.txt",
+    "facts_stdout_sha256": "56036095bafb30a004652f08d517d0f94678c49380d601e6522cad808a1ec956",
+    "burnin_script": "/workspace/research/cfpb_ot_prereg/compute_cfpb_ot_burnin.py",
+    "burnin_script_sha256": "74d682924a51ead286ad373a2bf417b8e316f7d401082a3ccb075d2e935a6f6b",
+    "burnin_stdout": "/workspace/research/cfpb_ot_prereg/compute_cfpb_ot_burnin.stdout.txt",
+    "burnin_stdout_sha256": "3edaa56bcf706936a91e5f0fe4a47651831425e1d8d38171a4a00ffbcaa4821d",
+    "bank_products_panel": "not used and not checked",
+    "do_not_open": ["complaints.csv.zip", "cfpb_top60_companies.csv"]
+  },
+  "snapshot": {
+    "pull_date": "2026-10-06",
+    "drop_in_progress_month": "2026-10",
+    "drop_rule": "pull date, not a complaint-volume ratio",
+    "vintages_in_file": false,
+    "backtest": "pseudo-real-time",
+    "leak_is_a_kill": false
+  },
+  "object": {
+    "x": "log(1 + sum of complaints over product rows)",
+    "log": "natural",
+    "weights": "equal",
+    "support": "companies with at least one complaint that month; zeros not filled",
+    "pinned_exclusions": [
+      "TRANSUNION INTERMEDIATE HOLDINGS, INC.",
+      "EQUIFAX, INC.",
+      "EXPERIAN INFORMATION SOLUTIONS INC."
+    ],
+    "further_exclusions": false
+  },
+  "windows": {
+    "sample": ["2013-01", "2026-09"],
+    "burnin": ["2013-01", "2017-12"],
+    "oos": ["2018-01", "2026-09"],
+    "T_oos_calendar": 105,
+    "lag": 10,
+    "min_companies": 100,
+    "oos_fail_fraction": 0.10,
+    "oos_fail_count_threshold_exclusive": 10.5,
+    "min_paired_oos_months": 80,
+    "subperiods": [
+      ["2018-01", "2021-12", 48],
+      ["2022-01", "2024-12", 36],
+      ["2025-01", "2026-09", 21]
+    ]
+  },
+  "grid": {"u": "k/100", "k_from": 1, "k_to": 99, "quantile_method": "linear"},
+  "crps99": "(2/99)*sum_{k=1}^{99} (1{y<q_k}-u_k)*(q_k-y)",
+  "w2sq_grid": "mean_{k=1}^{99} (Q1(u_k)-Q2(u_k))**2",
+  "sd": "numpy.std ddof=0",
+  "mad": "unscaled median absolute deviation from the median",
+  "isotonic": "PAVA, equal weights, increasing in u, before scoring",
+  "pairs": "calendar-adjacent usable months only",
+  "baselines": {
+    "B0": "empirical quantile function of calendar month t-1 if usable, else undefined",
+    "B1": "average of empirical quantile functions of all earlier usable months",
+    "B2": "same-calendar-month average if at least 2 earlier usable years, else B1",
+    "B3": "Gaussian location-scale; AR(1) with intercept on the mean and on log(sd); clip AR coefficient to [-0.99, 0.99]; undefined if forecast sd is not finite and positive",
+    "Bstar": {
+      "trailing": 24,
+      "min_past": 12,
+      "tie_break": ["B0", "B1", "B2", "B3"],
+      "past_scores_only": true
+    }
+  },
+  "h1": {
+    "rule": "equal-weight average of distinct defined baseline quantile functions, then isotonic",
+    "min_baselines": 2,
+    "fallback_B2_not_double_counted": true,
+    "not": "entropic or Sinkhorn barycenter",
+    "cite": "Entropy 22(9):929, 2020, DOI 10.3390/e22090929"
+  },
+  "h2": {
+    "rule": "Qbar + slope * (Q_origin - Qbar), slope pooled OLS without intercept on log-maps, clip slope to [0, 1], then isotonic",
+    "qbar": "average of usable months at or before the origin, including the origin",
+    "origin": "t-1, must be usable",
+    "cite": "Journal of Time Series Analysis 43(1), 2022, DOI 10.1111/jtsa.12590, arXiv:2006.12640",
+    "background": "Fréchet regression, Annals of Statistics 47(2), 2019, DOI 10.1214/17-AOS1624"
+  },
+  "score": "mean over companies of crps99",
+  "gain": "1 - mean(score_method)/mean(score_Bstar)",
+  "hurdle_G": 0.02,
+  "statistic": "sqrt(T)*mean(d)/s_b with Bartlett Newey-West HAC, weights 1-j/(L+1), L=floor(sqrt(T)), gamma_j uses 1/T and demeaned products",
+  "runtime_pvalue": {
+    "null": "mean-zero AR(1) at the OLS-with-intercept coefficient of d_t",
+    "if_phi_not_in_open_interval": "INCOMPLETE, do not clip",
+    "phi_interval": [-0.99, 0.99],
+    "interval_open": true,
+    "draws": 100000,
+    "seed": 20261008,
+    "p": "(1 + count(Z_sim >= Z_obs)) / (N_DRAWS + 1)",
+    "phi0_sensitivity_gates": false
+  },
+  "holm": {
+    "family": ["H1_vs_Bstar", "H2_vs_Bstar"],
+    "familywise": 0.05,
+    "sided": "one",
+    "first_threshold": 0.025,
+    "second_threshold": 0.05
+  },
+  "pass_requires": ["Holm rejection", "G > 0.02", "G > 0 in at least 2 of 3 subperiods", "at least 80 paired OOS months", "OOS company-count rule not tripped"],
+  "rejection_with_G_at_or_below_hurdle": "INCOMPLETE",
+  "burnin_printed": {
+    "label": "BURN-IN",
+    "n_usable": 60,
+    "n_unusable": 0,
+    "company_count_min": 218,
+    "company_count_min_month": "2013-05",
+    "company_count_max": 1374,
+    "company_count_max_month": "2017-03",
+    "usable_mean_of_mean_x": "1.4154610730",
+    "usable_mean_of_sd_x": "1.0325601745",
+    "usable_mean_of_mad_x": "0.4102598093",
+    "ar1_mean": {"coefficient": "0.8316994457", "intercept": "0.2322962145", "residual_sd": "0.0449416661", "n_pairs": 59},
+    "ar1_log_sd": {"coefficient": "0.8826149263", "intercept": "-0.0026692645", "residual_sd": "0.0258960254", "n_pairs": 59},
+    "noise_floor": {
+      "seed": 20261008,
+      "n_months_half_split": 60,
+      "n_pairs_next_month": 59,
+      "median_half_w2sq": "0.0268769480",
+      "median_next_w2sq": "0.0063598632",
+      "ratio_next_over_half": "0.2366289198",
+      "kill": true
+    },
+    "b0": {
+      "label": "BURN-IN",
+      "n_scores": 59,
+      "first_month": "2013-02",
+      "last_month": "2017-12",
+      "mean_score": "0.4881777450",
+      "score_sd_ddof1": "0.0630861719",
+      "ar1_coefficient": "0.8520187511",
+      "ar1_intercept": "0.0685685922",
+      "ar1_residual_sd": "0.0195693433",
+      "ar1_n_pairs": 58
+    }
+  },
+  "planning": {
+    "label": "PLANNING",
+    "not_an_oos_result": true,
+    "critical_values_4dp": {
+      "iid_5pct": "1.8579",
+      "iid_2_5pct": "2.2585",
+      "ar_phi_0.8520187511_5pct": "2.7900",
+      "ar_phi_0.8520187511_2_5pct": "3.4417"
+    },
+    "draws": 100000,
+    "power_reps": 2000,
+    "seed": 20261008,
+    "power_at_gain_0.02_burnin_phi": {"at_5pct": "0.1670", "at_2_5pct": "0.0990", "below_one_half": true},
+    "hurdle_unchanged": 0.02,
+    "smallest_gain_power_at_least_0.80_burnin_phi": "0.1000000000"
+  },
+  "trials": [
+    {"id": 1, "name": "H1_vs_Bstar", "gates": true, "holm_family": "primary"},
+    {"id": 2, "name": "H2_vs_Bstar", "gates": true, "holm_family": "primary"},
+    {"id": 3, "name": "H1s", "gates": false, "s_grid": [1.0, 1.1, 1.2, 1.35, 1.5], "s_fit_in_this_file": false, "not": "Sinkhorn barycenter"},
+    {"id": 4, "name": "H2m", "gates": false, "b_clip": [0, 2], "cite": "arXiv:2105.05439", "reproduction_of_paper": false},
+    {"id": 5, "name": "H1_bureaus_included", "gates": false, "log": true},
+    {"id": 6, "name": "H2_bureaus_included", "gates": false, "log": true},
+    {"id": 7, "name": "H1_raw_totals", "gates": false, "log": false, "bureaus_excluded": true},
+    {"id": 8, "name": "H2_raw_totals", "gates": false, "log": false, "bureaus_excluded": true},
+    {"id": 9, "name": "Hmix_vs_Bstar", "gates": false, "computed": false, "holm_family": null}
+  ],
+  "product_mix": {
+    "computed": false,
+    "window": ["2017-05", "2023-07"],
+    "window_months": 75,
+    "burnin": ["2017-05", "2019-12"],
+    "burnin_months": 32,
+    "oos": ["2020-01", "2023-07"],
+    "oos_months": 43,
+    "products": [
+      "Checking or savings account",
+      "Credit card or prepaid card",
+      "Credit reporting, credit repair services, or other personal consumer reports",
+      "Debt collection",
+      "Money transfer, virtual currency, or money service",
+      "Mortgage",
+      "Payday loan, title loan, or personal loan",
+      "Student loan",
+      "Vehicle loan or lease"
+    ],
+    "groups": {
+      "deposits": ["Checking or savings account"],
+      "revolving": ["Credit card or prepaid card"],
+      "info": ["Credit reporting, credit repair services, or other personal consumer reports", "Debt collection"],
+      "housing": ["Mortgage"],
+      "installment": ["Student loan", "Vehicle loan or lease", "Payday loan, title loan, or personal loan"],
+      "payments": ["Money transfer, virtual currency, or money service"]
+    },
+    "cost": {"diagonal": 0, "same_group": 1, "other": 2},
+    "barycenter": "equal-weight W1 linear program, not entropic",
+    "population": "non-bureau companies only"
+  },
+  "no_month_after_2017_12_aggregated": true
+}
