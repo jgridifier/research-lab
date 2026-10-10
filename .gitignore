@@ -7,3 +7,4 @@ __pycache__/
 BHCF*.txt
 .pytest_cache/
 tracks/y9c-trading-ot/data/
+tracks/fed-cp-ot/data/
