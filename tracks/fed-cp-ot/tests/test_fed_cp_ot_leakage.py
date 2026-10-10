@@ -272,3 +272,15 @@ def test_provisional_mix_shown_before_week_is_usable(provenance,tmp_path):
     assert np.isfinite(row.mix).all() and np.isclose(row.mix.sum(),1)
     np.testing.assert_allclose(row.mix,row.D/row.D.sum())
     assert not monday.usable.any()   # never usable -> never a forecast input
+
+
+def test_three_day_partial_week_never_forecast_input(provenance,tmp_path):
+    df,_=load_vol(provenance,make_zip(tmp_path/'s.zip'))
+    wed=provisional_partial_week(df,'2008-12-24')   # Mon-Wed: 3 valid days, enough issues and dollars
+    aaa=wed[wed.cp_type=='AAA'].iloc[0]
+    assert aaa.valid_days==3 and aaa.meets_usable_rule_so_far and not aaa.usable and aaa.provisional
+    hist=build_weekly(df,through='2008-12-19')
+    hist=hist[hist.cp_type=='AAA']
+    mixed=pd.concat([hist.assign(provisional=False),wed[wed.cp_type=='AAA']],ignore_index=True)
+    with pytest.raises(ValueError,match='Provisional'): Persistence().fit_predict(mixed,'2008-12-26')
+    with pytest.raises(ValueError,match='Provisional'): origin_view(mixed,'2008-12-26')

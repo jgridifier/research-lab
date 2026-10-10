@@ -48,5 +48,7 @@ def provisional_partial_week(vol_long, asof, provenance=None):
     # Display mix from the observed dollars even when the week is not (yet) usable; `usable` stays as built,
     # so a partial week can never feed a forecast.
     result['mix'] = [D / D.sum() if D.sum() > 0 else np.full(6, np.nan) for D in result.D]
+    result['meets_usable_rule_so_far'] = result['usable']
+    result['usable'] = False  # a partial week is never a completed-week forecast input
     result['provisional'] = True
     return result

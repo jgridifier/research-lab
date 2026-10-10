@@ -24,6 +24,8 @@ class Persistence:
         return usable.iloc[-1]['mix'].copy()
 
 def origin_view(weekly, origin):
+    if 'provisional' in weekly and weekly['provisional'].fillna(False).astype(bool).any():
+        raise ValueError('Provisional (partial-week) rows cannot be forecast inputs')
     result = weekly[weekly.week <= pd.Timestamp(origin)].copy(deep=True)
     # pandas deep copy does not copy arrays in object columns.
     for column in ('D','N','mix'):
