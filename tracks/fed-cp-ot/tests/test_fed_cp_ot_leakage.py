@@ -262,3 +262,13 @@ def test_outcome_availability_uses_fed_calendar(tmp_path):
     with pytest.raises(ValueError, match='outcome timing'):
         log.record_outcome('2008-10-10', 'AAA', np.ones(6)/6, '2008-10-13T18:00:00+00:00', vintage_sha256='ef'*32, vintage_through='2008-10-10')
     log.record_outcome('2008-10-10', 'AAA', np.ones(6)/6, '2008-10-14T17:00:00+00:00', vintage_sha256='ef'*32, vintage_through='2008-10-10')
+
+
+def test_provisional_mix_shown_before_week_is_usable(provenance,tmp_path):
+    df,_=load_vol(provenance,make_zip(tmp_path/'s.zip'))
+    monday=provisional_partial_week(df,'2008-12-22')   # one valid day so far
+    row=monday[monday.cp_type=='AAA'].iloc[0]
+    assert row.provisional and row.valid_days==1 and not row.usable
+    assert np.isfinite(row.mix).all() and np.isclose(row.mix.sum(),1)
+    np.testing.assert_allclose(row.mix,row.D/row.D.sum())
+    assert not monday.usable.any()   # never usable -> never a forecast input

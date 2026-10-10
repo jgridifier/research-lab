@@ -45,5 +45,8 @@ def provisional_partial_week(vol_long, asof, provenance=None):
     friday = monday + pd.Timedelta(days=4)
     check_wall(friday, provenance)
     result = build_weekly(data, through=friday, provenance=provenance)
+    # Display mix from the observed dollars even when the week is not (yet) usable; `usable` stays as built,
+    # so a partial week can never feed a forecast.
+    result['mix'] = [D / D.sum() if D.sum() > 0 else np.full(6, np.nan) for D in result.D]
     result['provisional'] = True
     return result
