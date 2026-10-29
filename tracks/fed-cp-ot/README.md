@@ -51,19 +51,19 @@ python -m pytest -q -m 'not realdata'
 The prereg location is fixed at the committed `tracks/fed-cp-ot/prereg/`.
 
 Raw pinned inputs (`FRB_CP_xml.zip` sha256 16805f2c…, `fed_cp_volume_stats_by_maturity.csv` sha256 aeab7b09…)
-are not vendored. Point `FED_CP_OT_RAW_DIR` at a directory holding them; the default is the gitignored `data/raw/`.
+are not vendored. Put them in the gitignored `data/raw/`.
 Seeded or fetched vintages live in `data/vintages/` with `data/manifest.jsonl`.
 
 ```sh
-python -m fed_cp_ot.ingest seed "$FED_CP_OT_RAW_DIR/FRB_CP_xml.zip"
+python -m fed_cp_ot.ingest seed data/raw/FRB_CP_xml.zip
 python -m fed_cp_ot.ingest fetch
 python -m fed_cp_ot.ingest list
-python -m fed_cp_ot.burnin_checks --zip "$FED_CP_OT_RAW_DIR/FRB_CP_xml.zip"
-python -m fed_cp_ot.app --zip "$FED_CP_OT_RAW_DIR/FRB_CP_xml.zip"
+python -m fed_cp_ot.burnin_checks --zip data/raw/FRB_CP_xml.zip
+python -m fed_cp_ot.app --zip data/raw/FRB_CP_xml.zip
 ```
 
 `burnin_checks --csv PATH` selects a CSV explicitly; its pinned hash is required. Otherwise it looks in
-`$FED_CP_OT_RAW_DIR`, then in `data/`. It prints the zip sha256 and whether it equals the pinned vintage.
+`data/raw/`, then in `data/`. It prints the zip sha256 and whether it equals the pinned vintage.
 `--compare-to-pinned --zip NEWER.zip` reports changed burn-in series-dates and whether the replicated numbers
 still match. It creates no trial and makes no gate decision. Both vintages withhold post-wall values.
 
@@ -73,7 +73,7 @@ still match. It creates no trial and makes no gate decision. Both vintages withh
 Tests: `make fed-cp-test` from the repo root runs the synthetic suite (preflight order, leakage, parse validation,
 metric, app). It needs no network and no box paths, and it never skips. Its fixtures copy the committed
 `prereg/` into temporary directories. Real-data tests (`-m realdata`) parse the pinned zip once per session and
-skip if it is absent from `$FED_CP_OT_RAW_DIR` and `data/vintages/`. `FED_CP_OT_PREREG_SOURCE` optionally points
+skip if it is absent from `data/raw/` and `data/vintages/`. `FED_CP_OT_PREREG_SOURCE` optionally points
 the verbatim-copy test at the original research directory; by default it compares against the vendored pins.
 
 Parsing fails loudly on any `OBS_STATUS` other than `A`/`ND`, on any valid weekend row, and on any negative or

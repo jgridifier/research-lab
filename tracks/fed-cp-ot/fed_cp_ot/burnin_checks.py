@@ -59,14 +59,14 @@ def csv_source(path=None):
     if path is not None: return Path(path)
     for candidate in (RAW_DIR/'fed_cp_volume_stats_by_maturity.csv', DATA_DIR/'fed_cp_volume_stats_by_maturity.csv'):
         if candidate.exists(): return candidate
-    raise FileNotFoundError('CSV not found: pass --csv or set FED_CP_OT_RAW_DIR')
+    raise FileNotFoundError('CSV not found: pass --csv or place it in data/raw/')
 
 def pinned_zip():
     candidates = [RAW_DIR/'FRB_CP_xml.zip',
                   *sorted((DATA_DIR/'vintages').glob('*.zip'))]
     for path in candidates:
         if path.exists() and sha256(path) == PINNED_RESEARCH_ZIP_SHA256: return path
-    raise FileNotFoundError('Pinned zip unavailable: set FED_CP_OT_RAW_DIR or run `ingest seed`')
+    raise FileNotFoundError('Pinned zip unavailable: pass --zip, place it in data/raw/, or run `ingest seed`')
 
 def run(zip_path=None, csv_path=None, compare_to_pinned=False):
     provenance = preflight('burnin')
