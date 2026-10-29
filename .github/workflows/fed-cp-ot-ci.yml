@@ -1,0 +1,87 @@
+name: Fed CP OT CI
+
+on:
+  pull_request:
+    paths: ['tracks/fed-cp-ot/**', '.github/workflows/fed-cp-ot-*.yml']
+  push:
+    branches: [main]
+    paths: ['tracks/fed-cp-ot/**', '.github/workflows/fed-cp-ot-*.yml']
+
+permissions:
+  contents: read
+
+env:
+  GH_TOKEN: ${{ github.token }}
+  # Issues are opened only off pull requests (fork PR tokens cannot write issues).
+  ISSUE_FLAG: ${{ github.event_name != 'pull_request' && '--issue' || '' }}
+
+defaults:
+  run:
+    working-directory: tracks/fed-cp-ot
+
+jobs:
+  tests:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.13'
+          cache: pip
+          cache-dependency-path: tracks/fed-cp-ot/requirements.txt
+      - run: pip install -r requirements.txt
+      - run: python -m pytest -q -m 'not realdata' -p no:cacheprovider
+
+  burnin_checks:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      issues: write
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.13'
+      - run: pip install numpy==2.5.3 pandas==3.0.6
+      - name: Create the pinned tree the script hardcodes
+        run: |
+          sudo mkdir -p /workspace/research/fed_cp_ot_prereg/raw
+          sudo chown -R "$USER" /workspace/research/fed_cp_ot_prereg
+      - name: Fetch pinned release assets and verify sha256
+        run: python -m fed_cp_ot.pinned_inputs $ISSUE_FLAG
+      - name: Burn-in replication on the pinned zip
+        run: >
+          python -m fed_cp_ot.burnin_checks
+          --zip /workspace/research/fed_cp_ot_prereg/raw/FRB_CP_xml.zip
+          --csv /workspace/research/fed_cp_ot_prereg/raw/fed_cp_volume_stats_by_maturity.csv
+
+  burnin_hash_check:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      issues: write
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.13'
+      # stdout line 1 prints library versions, so these must be exact.
+      - run: pip install numpy==2.5.3 pandas==3.0.6
+      - name: Create the pinned tree the script hardcodes
+        run: |
+          sudo mkdir -p /workspace/research/fed_cp_ot_prereg/raw
+          sudo chown -R "$USER" /workspace/research/fed_cp_ot_prereg
+      - name: Fetch pinned release assets and verify sha256 (zip 16805f2c..., csv aeab7b09..., script 34021c50...)
+        run: python -m fed_cp_ot.pinned_inputs $ISSUE_FLAG
+      - name: Copy gate thresholds from repo prereg and verify sha256 (c15eb60c...)
+        run: |
+          cp "$GITHUB_WORKSPACE"/tracks/fed-cp-ot/prereg/GATE_THRESHOLDS_fed_cp_ot.md /workspace/research/fed_cp_ot_prereg/
+          echo "c15eb60cbe1467090fcc920b8f4e311dd14f7b3bbfd0437e21809355721a6c8a  /workspace/research/fed_cp_ot_prereg/GATE_THRESHOLDS_fed_cp_ot.md" | sha256sum -c - || { echo "::error::fed-cp-ot: GATE_THRESHOLDS sha256 mismatch"; exit 1; }
+      - name: Run the pinned script unchanged (stdout captured)
+        working-directory: /workspace/research/fed_cp_ot_prereg
+        run: python compute_cp_ot_burnin.py > out.txt
+      - name: Verify script sha256 (34021c50...) and stdout sha256 (17a0b239...) byte-for-byte
+        run: >
+          python -m fed_cp_ot.burnin_hash
+          --script /workspace/research/fed_cp_ot_prereg/compute_cp_ot_burnin.py
+          --stdout /workspace/research/fed_cp_ot_prereg/out.txt $ISSUE_FLAG
