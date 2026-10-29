@@ -75,7 +75,7 @@ jobs:
         run: python -m fed_cp_ot.pinned_inputs $ISSUE_FLAG
       - name: Copy gate thresholds from repo prereg and verify sha256 (c15eb60c...)
         run: |
-          cp tracks/fed-cp-ot/prereg/GATE_THRESHOLDS_fed_cp_ot.md /workspace/research/fed_cp_ot_prereg/
+          cp "$GITHUB_WORKSPACE"/tracks/fed-cp-ot/prereg/GATE_THRESHOLDS_fed_cp_ot.md /workspace/research/fed_cp_ot_prereg/
           echo "c15eb60cbe1467090fcc920b8f4e311dd14f7b3bbfd0437e21809355721a6c8a  /workspace/research/fed_cp_ot_prereg/GATE_THRESHOLDS_fed_cp_ot.md" | sha256sum -c - || { echo "::error::fed-cp-ot: GATE_THRESHOLDS sha256 mismatch"; exit 1; }
       - name: Run the pinned script unchanged (stdout captured)
         working-directory: /workspace/research/fed_cp_ot_prereg
