@@ -1,0 +1,96 @@
+name: Fed CP OT CI
+
+on:
+  pull_request:
+    paths: ['tracks/fed-cp-ot/**', '.github/workflows/fed-cp-ot-*.yml']
+  push:
+    branches: [main]
+    paths: ['tracks/fed-cp-ot/**', '.github/workflows/fed-cp-ot-*.yml']
+
+permissions:
+  contents: read
+
+env:
+  GH_TOKEN: ${{ github.token }}
+  # Issues are opened only off pull requests (fork PR tokens cannot write issues).
+  ISSUE_FLAG: ${{ github.event_name != 'pull_request' && '--issue' || '' }}
+
+defaults:
+  run:
+    working-directory: tracks/fed-cp-ot
+
+jobs:
+  tests:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.13'
+          cache: pip
+          cache-dependency-path: tracks/fed-cp-ot/requirements.txt
+      - run: pip install -r requirements.txt
+      - run: python -m pytest -q -m 'not realdata' -p no:cacheprovider
+
+  burnin_checks:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      issues: write
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.13'
+          cache: pip
+          cache-dependency-path: tracks/fed-cp-ot/requirements.txt
+      - run: pip install -r requirements.txt
+      - name: Fetch pinned zip and CSV from the release
+        run: |
+          python - <<'PY'
+          import os, sys
+          from fed_cp_ot.alerts import alert
+          from fed_cp_ot.release_assets import PINNED_TAG, MissingAssetError, download_asset
+          try:
+              for name in ('FRB_CP_xml.zip', 'fed_cp_volume_stats_by_maturity.csv'):
+                  download_asset(PINNED_TAG, name, 'data/raw')
+          except MissingAssetError as exc:
+              alert('fed-cp-ot: pinned release asset missing', str(exc), issue=bool(os.environ.get("ISSUE_FLAG")))
+              sys.exit(1)
+          PY
+      - name: Burn-in replication on the pinned zip
+        run: python -m fed_cp_ot.burnin_checks --zip data/raw/FRB_CP_xml.zip
+
+  burnin_hash_check:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      issues: write
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.13'
+          cache: pip
+          cache-dependency-path: tracks/fed-cp-ot/requirements.txt
+      - run: pip install -r requirements.txt
+      - name: Fetch pinned burn-in script and zip from the release
+        run: |
+          python - <<'PY'
+          import os, sys
+          from fed_cp_ot.alerts import alert
+          from fed_cp_ot.release_assets import PINNED_TAG, MissingAssetError, download_asset
+          try:
+              for name in ('compute_cp_ot_burnin.py', 'FRB_CP_xml.zip', 'fed_cp_volume_stats_by_maturity.csv'):
+                  download_asset(PINNED_TAG, name, '/tmp/pinned')
+          except MissingAssetError as exc:
+              alert('fed-cp-ot: pinned release asset missing', str(exc), issue=bool(os.environ.get("ISSUE_FLAG")))
+              sys.exit(1)
+          PY
+      - name: Run the pinned script unchanged (stdout captured)
+        # ASSUMPTION: the script finds its inputs via FED_CP_OT_RAW_DIR; adjust once its CLI is confirmed.
+        run: |
+          mkdir -p /tmp/run
+          (cd /tmp/run && FED_CP_OT_RAW_DIR=/tmp/pinned python /tmp/pinned/compute_cp_ot_burnin.py > /tmp/run/stdout.txt)
+      - name: Verify script sha256 (34021c50...) and stdout sha256 (17a0b239...) byte-for-byte
+        run: python -m fed_cp_ot.burnin_hash --script /tmp/pinned/compute_cp_ot_burnin.py --stdout /tmp/run/stdout.txt $ISSUE_FLAG

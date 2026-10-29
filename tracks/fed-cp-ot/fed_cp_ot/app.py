@@ -9,10 +9,14 @@ from .preflight import preflight, sha256
 from .parse import load_vol, EXPECTED_VOL_SERIES
 from .weekly import build_weekly
 from .ingest import latest_vintage
+from .wall import oos_authorized
+from .errors import ProvenanceError
 
 BANNER = 'PLACEHOLDER — burn-in data only (weeks ending on or before 2008-12-26). Not live data. No forecast has been scored.'
 
 def build_app(out=ROOT/'docs/tracks/fed-cp-ot/app/index.html', zip_path=None):
+    if oos_authorized():
+        raise ProvenanceError('design says oos_authorized; this app renders burn-in/placeholder only until the OOS app exists')
     if zip_path is None:
         try: zip_path = latest_vintage()
         except FileNotFoundError: pass

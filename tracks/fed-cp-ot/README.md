@@ -143,3 +143,16 @@ semantics (including the fixed trial count **3**), then verify approval for OOS.
 Only then is an immutable Provenance issued, recording the repo-relative prereg
 directory. `run_oos` next checks harness implementation, logs the three trial
 configurations, and only then loads data. The current stub stops before logging.
+
+## Daily ingest (Part A)
+
+`.github/workflows/fed-cp-ot-daily.yml` runs Mon-Fri every 30 minutes (UTC crons cover 13:30-18:00 ET in EDT and EST).
+`python -m fed_cp_ot.daily gate` decides in America/New_York time and skips outside the window, on a Fed holiday
+(`fed_holidays.py`, 2025-2030, hardcoded), or when a manifest row fetched today also has a `Last-Modified` dated today.
+Steps: `fetch` (sha256, fetch time UTC, Last-Modified into the hash-chained `data/manifest.jsonl`) -> `validate`
+(strict parse) -> `diff` (appends `data/vintage_diffs.jsonl`) -> `upload` (raw zip as release asset, tag
+`fed-cp-ot-vintages`) -> `build-app` -> Pages. Only `manifest.jsonl`, `vintage_diffs.jsonl` and `forward_log.jsonl`
+are committed back; zips are gitignored. `wall.wall_guard` is the single place post-wall amounts are blanked.
+A missing release asset, a broken manifest chain or a schema change fails the job, emits `::error` and opens or
+comments on a GitHub issue. CI (`fed-cp-ot-ci.yml`): `tests`, `burnin_checks`, `burnin_hash_check`. The hash
+`17a0b239…` pins the burn-in script's **stdout**; the script itself is pinned as `34021c50…`; both are checked.

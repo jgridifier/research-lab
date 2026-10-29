@@ -5,6 +5,7 @@ import zipfile
 import numpy as np
 import pandas as pd
 from .paths import SCORING_WALL
+from .wall import readable, wall_guard
 from .preflight import validate_provenance
 from .errors import ValidationError, ScoringWallError
 
@@ -55,7 +56,7 @@ def parse_vol(zip_path, provenance, wall=SCORING_WALL):
                             raise ValidationError(f'Negative or missing value in {series} on {date}')
                         if not INTEGER_TEXT.fullmatch(raw):
                             raise ValidationError(f'Non-integer value in {series} on {date}')
-                    if valid and (cutoff is None or date <= cutoff):
+                    if valid and readable(date, cutoff):
                         try: value = float(raw)
                         except (TypeError, ValueError) as exc: raise ValidationError('Invalid numeric observation') from exc
                         if not np.isfinite(value) or value < 0 or value % 1:
@@ -83,7 +84,7 @@ def parse_vol(zip_path, provenance, wall=SCORING_WALL):
               'known_gaps': known, 'anomalies': anomalies,
               'post_wall_values_withheld': cutoff is not None,
               'post_wall_rows': int((frame.date > SCORING_WALL).sum())}
-    return frame, report
+    return wall_guard(frame, cutoff), report
 
 def load_vol(provenance, zip_path=None):
     validate_provenance(provenance)
