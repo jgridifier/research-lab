@@ -1,0 +1,37 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Fed CP OT — PREREG v2 explained</title>
+<style>body{font-family:Georgia,serif;line-height:1.6;max-width:88rem;margin:2rem auto;padding:0 1.15rem;color:#1d1d1f}
+h1,h2{font-family:system-ui,sans-serif}.wrap{overflow-x:auto}table{border-collapse:collapse;width:100%}td,th{border:1px solid #ccc;padding:.4rem .6rem;vertical-align:top;text-align:left}th{background:#f3f3f3}
+.note{background:#fff8e1;border-left:4px solid #f0b400;padding:.6rem 1rem}code{background:#f4f4f4;padding:0 .2rem}</style></head><body>
+<h1>Fed CP maturity-mix track: what PREREG v2 pins, and why</h1>
+<p class="note"><b>Status (2026-11-03 ET):</b> out-of-sample scoring is <b>NOT authorized</b>. Nothing out-of-sample has been run. v2 only fixes the rules <i>before</i> anyone looks. Full text: <a href="https://github.com/jgridifier/research-lab/blob/main/docs/tracks/fed-cp-ot/prereg_v2/PREREG_v2_fed_cp_ot.md">PREREG_v2_fed_cp_ot.md</a>. Engineering spec: <a href="https://github.com/jgridifier/research-lab/blob/main/docs/tracks/fed-cp-ot/prereg_v2/HARNESS_TICKET_v2.md">HARNESS_TICKET_v2.md</a>. Review it answers: <a href="https://github.com/jgridifier/research-lab/pull/20">PR #20</a>.</p>
+<h2>Why pre-register again?</h2>
+<p>A pre-registration is only worth something if every choice that could move the answer is fixed before the data is seen. The Quant review found choices that were still open: how to score a forecast that puts mass between the six maturity buckets, what the "gain" hurdle G means, and when data counts as known. Each could have been settled after peeking, so v2 settles them now. Where there was a choice, v2 takes the stricter one.</p>
+<h2>The key ideas in one table</h2><div class="wrap"><table><tr><th>Problem</th><th>Pinned rule</th><th>Intuition</th></tr>
+<tr><td>OT models (WAR, TMAR) predict a smooth quantile function, but the target sits on 6 points</td><td>Project each quantile mass to the nearest support point in log-days. The cuts are the midpoints 1.298, 2.276, 3.008, 3.707, 4.522, and ties go to the lower bucket.</td><td>This is the closest 6-point law in Wasserstein-2 distance. Every model is scored on the same kind of object, so no model gets credit for "in-between" mass that no competitor can use.</td></tr>
+<tr><td>Hurdle G undefined</td><td><code>G = 1 − ΣL(cand)/ΣL(comp)</code> over weeks where all 4 issuer types are usable. It must be &gt; 0.02, positive in 2 of the 3 subperiods, with at least 800 such weeks.</td><td>A 2% loss reduction that also holds up in most eras, not just one lucky stretch.</td></tr>
+<tr><td>Gaps between day buckets</td><td>Cut at ln(4.5), ln(9.5), ln(20.5), ln(40.5), ln(80.5), with tails folded into the end buckets</td><td>Integer-day buckets meet at half-days, so no probability gets lost.</td></tr>
+<tr><td>Look-ahead through the data vintage</td><td>The harness truncates the data at the origin itself, recomputes the latest date it saw, and a test injects future rows and checks that forecasts don't change</td><td>Don't trust the caller; check what the model actually received.</td></tr>
+<tr><td>Unstable test statistic</td><td>If |φ̂| ≥ 0.99, the test is INCOMPLETE (no extrapolation)</td><td>Near a unit root, fixed-b critical values are unreliable.</td></tr>
+<tr><td>Holiday weeks</td><td>"Last usable week" for persistence; SEL uses 156 <i>usable</i> weeks</td><td>A short holiday week is noise, not information.</td></tr>
+<tr><td>Comparator B* drifts</td><td>Use the B* chosen at each origin, held until the next quarterly reselection</td><td>Compare against what you could actually have picked at the time, never the best in hindsight.</td></tr>
+<tr><td>Who flips the OOS switch?</td><td>Jared commits an APPROVAL file. A separate reviewed PR pins its SHA-256 in code. The harness then runs once.</td><td>Two keys, and no agent can turn it on.</td></tr></table></div>
+<h2>KumoRFM as a rival row</h2>
+<p>As learned on the <a href="kumo_rfm_nim.html">KumoRFM-on-NIM page</a>, a relational foundation model is a cheap, no-training rival. v2 adds it as a separate <b>Family K</b> with these rules:</p>
+<ul>
+<li><b>Graph:</b> 24 (type, bucket) entities, using the last 156 usable weeks as context.</li>
+<li><b>Target:</b> next week's share, as a regression. Negative predictions are clipped to zero and the shares renormalized.</li>
+<li><b>Modes:</b> <code>best</code> is the primary run; <code>fast</code> is descriptive only.</li>
+<li><b>Tests:</b> two one-sided tests (vs SEL, vs persistence), Holm-adjusted, with the same G bars as the other families.</li>
+<li><b>Failures:</b> if more than 5% of calls fail after retries, Family K is INCOMPLETE.</li>
+</ul>
+<p>Kumo never enters the app or the model-selection pool.</p>
+<h2>Intervals (non-gating)</h2>
+<p>The app will show a 90% Wasserstein ball around its forecast. Its radius is the 90th-percentile realized loss over the past 156 usable weeks, which is split-conformal calibration on the past only. Coverage is reported, but no claim rests on it.</p>
+<h2>Honest caveats</h2>
+<ul>
+<li><b>Power:</b> planning power to detect a 5% gain is only about 0.50 (K4 passed at 0.5015). A null result will be reported as "underpowered", not as "no gain".</li>
+<li><b>Revisions:</b> the historical run uses one late data vintage, so revisions are a disclosed pseudo-real-time limitation.</li>
+<li><b>Error control:</b> each family controls its own error rate, but no family-wise control across the five tests is claimed.</li>
+</ul>
+</body></html>
