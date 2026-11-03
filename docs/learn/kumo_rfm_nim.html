@@ -1,0 +1,129 @@
+<!DOCTYPE html>
+<html lang="en"><head><meta charset="utf-8"/><meta name="viewport" content="width=device-width, initial-scale=1"/>
+<title>KumoRFM / Kumo Relational on NVIDIA NIM: a learning note and an honest test</title>
+<style>
+:root { --navy:#0b1f3a; --fg:#111; --muted:#555; --border:#d6d9de; --bg:#f5f6f8; --good:#1d6b3a; --bad:#8a1c1c; }
+* { box-sizing:border-box; }
+body { font-family: Georgia, "Times New Roman", serif; color:var(--fg); line-height:1.6; max-width:44rem; margin:2rem auto; padding:0 1.15rem; font-size:1.06rem; overflow-wrap:anywhere; }
+h1,h2,h3 { font-family: system-ui,-apple-system,"Segoe UI",sans-serif; color:var(--navy); line-height:1.25; }
+h1 { font-size:1.6rem; margin-bottom:.2rem; } h2 { font-size:1.25rem; margin-top:2.2rem; border-bottom:1px solid var(--border); padding-bottom:.3rem; } h3 { font-size:1.05rem; margin-top:1.4rem; }
+.meta,.small { color:var(--muted); font-family:system-ui,sans-serif; font-size:.86rem; }
+.callout { background:var(--bg); border-left:4px solid var(--navy); padding:.75rem 1rem; margin:1rem 0; }
+.verdict { border:1px solid var(--border); border-radius:6px; padding:.7rem 1rem; margin:.8rem 0; }
+.verdict b.tag { font-family:system-ui,sans-serif; font-size:.8rem; padding:.1rem .45rem; border-radius:4px; color:#fff; }
+.tag.rival { background:var(--good); } .tag.no { background:var(--bad); } .tag.maybe { background:#7a5b00; }
+.wrap { overflow-x:auto; } table { border-collapse:collapse; width:100%; font-size:.84rem; margin:.75rem 0 1rem; font-family:system-ui,sans-serif; }
+th,td { border:1px solid var(--border); padding:.35rem .45rem; vertical-align:top; text-align:left; } th { background:var(--navy); color:#fff; font-weight:600; } td.n { text-align:right; font-variant-numeric:tabular-nums; }
+code,.m { font-family:Menlo,Consolas,monospace; font-size:.86em; background:#eef0f3; padding:0 .2em; border-radius:3px; }
+pre { background:#eef0f3; padding:.7rem .9rem; overflow-x:auto; font-size:.8rem; line-height:1.45; border-radius:4px; }
+a { color:var(--navy); } sup a { text-decoration:none; } ol.refs li { margin-bottom:.45rem; font-size:.92rem; }
+</style></head><body>
+<h1>KumoRFM on NVIDIA NIM</h1>
+<div class="meta">Learning note + live test on our data · Nov 3, 2026 · Prepared for Jared · Model: <code>kumo-relational</code> on the NVIDIA API Catalog endpoint · Not investment advice.</div>
+
+<div class="callout"><b>Bottom line.</b> We ran the real hosted model (130 walk-forward prediction calls across three panels). It worked mechanically and was fast (≈1.5–2 s per call for 100–340 entities). It <b>lost clearly to a plain LightGBM</b> on our two bank panels: AUC 0.56–0.60 vs 0.65 on deposit outflows, 0.58–0.60 vs 0.69 on complaint spikes. Both gaps are outside the bootstrap noise. On the ETF cross-section, every method was close to a coin flip (0.53–0.57), and Kumo was no better. Verdict: keep it as a <i>cheap external rival or baseline</i> for relational, event-style tasks. It is not a forecasting engine for us, and it must never go inside TRACE core.</div>
+
+<h2>1. Why this model</h2>
+<p>Most of our data is <b>relational</b>: banks have quarterly filings, holding companies own banks, companies get monthly complaint counts, and ETFs belong to categories and have return histories. The standard workflow flattens all of that into one feature table by hand and then trains a model for each task. KumoRFM claims to skip both steps. You describe the tables and the keys, give it labeled examples <i>at inference time</i>, and it predicts with no training. That is "in-context learning," the same trick LLMs use with few-shot prompts.<sup><a href="#r1">[1]</a></sup> NVIDIA now ships it as a NIM microservice called <code>kumo-relational</code>, with a free hosted endpoint and a downloadable container.<sup><a href="#r3">[3]</a><a href="#r4">[4]</a></sup> If it worked on our data, we would get a zero-training baseline for any new panel question in minutes.</p>
+
+<h2>2. What the original work found</h2>
+<h3>Claims</h3>
+<ul>
+<li>One pre-trained model makes predictions over arbitrary multi-table databases, covering classification, regression, and link prediction, with no task-specific training.<sup><a href="#r1">[1]</a><a href="#r2">[2]</a></sup></li>
+<li>On RelBench (7 databases, 30 tasks, about 103M rows), zero-shot KumoRFM beats feature engineering and supervised relational deep learning by 2–8% on average. Fine-tuning adds another 10–30%.<sup><a href="#r1">[1]</a></sup></li>
+<li>On entity classification, zero-shot KumoRFM averages 76.71 AUROC. The paper reports 62.44 for LightGBM, 75.83 for supervised RDL, and 81.14 for fine-tuned KumoRFM.<sup><a href="#r2">[2]</a></sup></li>
+<li>KumoRFM-2 (Apr 2026) injects the task earlier, scales to billion-row graphs, and reports up to +8% over supervised and foundation-model rivals on 41 benchmarks.<sup><a href="#r6">[6]</a></sup></li>
+</ul>
+<h3>Setup</h3>
+<p>Pre-training used public real-world and synthetic relational databases, with no private enterprise data.<sup><a href="#r2">[2]</a></sup> None of the RelBench databases were in pre-training, so the RelBench numbers are zero-shot. The tasks are mostly user and item <i>events</i> such as churn, top-3 finishes, and clinical-trial outcomes, with hundreds of thousands of entities and a dense event history.</p>
+<h3>Limitations and caveats</h3>
+<ul>
+<li>The headline LightGBM baseline in [1] gets only <i>minimal</i> feature engineering. Our LightGBM gets hand-built lag features, which is a harder rival than the paper's.</li>
+<li>The benchmarks are rich in behavioral events. They are not low-signal financial forecasting with a handful of entities and a few dozen periods, which is our regime.</li>
+<li>The hosted NIM caps a call at 1,000 predicted entities, about 10,000 context rows through the SDK client, and 30 MB of context.<sup><a href="#r5">[5]</a><a href="#r7">[7]</a></sup></li>
+<li>The model is closed-weight-ish. Weights are on Hugging Face under NVIDIA's license, but you cannot inspect or attribute a prediction the way we can with TRACE's linear/OT decompositions.<sup><a href="#r4">[4]</a></sup></li>
+</ul>
+
+<h2>3. Core math and intuition</h2>
+<h3>3.1 The relational graph</h3>
+<p>Treat every row as a node and every foreign key as an edge. A database with tables <span class="m">T₁…T_k</span> becomes a heterogeneous temporal graph <span class="m">G=(V,E,τ)</span>, where <span class="m">τ(v)</span> is a row's timestamp. A prediction is made for an <b>entity</b> <span class="m">e</span> at an <b>anchor time</b> <span class="m">t</span>. The model may only see the subgraph of rows with <span class="m">τ ≤ t</span> within a few hops of <span class="m">e</span>. That time-respecting subgraph is what keeps it leakage-free by construction.<sup><a href="#r1">[1]</a></sup></p>
+<h3>3.2 Table-invariant encoding + Relational Graph Transformer</h3>
+<p>Each cell is encoded by its semantic type (numerical, categorical, timestamp, text, ID) rather than its column name. That is why one model can read any schema. Row embeddings are pooled over cells. A graph transformer then attends over the sampled subgraph using positional signals for table type, hop distance, and relative time. In plain words: "for this bank at this quarter, look at its own recent filings, its holding company, and its siblings, and weigh them by how recent and how close they are."<sup><a href="#r1">[1]</a><a href="#r2">[2]</a></sup></p>
+<pre>h_v⁰ = Pool_cells( Enc_stype(cell) )          # schema-agnostic row encoding
+h_v^(l+1) = h_v^l + Attn( h_v^l , {h_u^l + PE(hop, Δt, table)}_u∈N(v) )
+z_(e,t) = readout( subgraph(e, t) )            # one vector per (entity, anchor time)</pre>
+<h3>3.3 In-context learning</h3>
+<p>For a task, the system samples historical (entity, anchor-time) pairs whose labels are already known, called the <b>context</b>, and encodes them the same way. The test entity's representation then attends to the labeled context representations, and a head outputs a probability or value. Nothing is trained. The "fit" is a forward pass, much like TabPFN, but over subgraphs instead of flat rows.<sup><a href="#r1">[1]</a></sup></p>
+<pre>p(y | e*, t*) = Head( z_(e*,t*) , {(z_(e_i,t_i), y_i)}_(i=1..N) ),   t_i + horizon ≤ t*</pre>
+<h3>3.4 Predictive Query Language (PQL)</h3>
+<p>In the Kumo SDK you write the task as a declarative query. The system builds the labels and the context table from the raw tables.<sup><a href="#r8">[8]</a></sup></p>
+<pre>PREDICT COUNT(orders.*, 0, 30, days) &gt; 0        -- target over a future window
+FOR users.user_id = 1                            -- entity (or IN (...))
+WHERE ...                                        -- optional context filter</pre>
+<p>Our analogue: <code>PREDICT call_reports.DEP(next quarter) &lt; DEP(now) FOR banks.CERT IN (...)</code>. The NIM REST API does <i>not</i> parse PQL directly. It takes an already-materialized request with an instance table (entity ref, anchor time, label), related tables, and declared relationships. The SDK's <code>PredictiveQuery(...).materialize()</code> does that compilation client-side.<sup><a href="#r5">[5]</a><a href="#r7">[7]</a></sup> We built the materialized payload ourselves so we control exactly which rows the model sees.</p>
+
+<h2>4. What we ran on our data</h2>
+<h3>Access</h3>
+<ul><li>Endpoint: <code>POST https://ai.api.nvidia.com/v1/structured-data/nvidia/kumo-relational/predictions</code> with <code>Authorization: Bearer $NVIDIA_API_KEY</code>.<sup><a href="#r3">[3]</a></sup> An NVIDIA API Catalog key was already on the box. <b>No Kumo key is needed</b> for the NIM path. A <code>KUMO_API_KEY</code> is only needed for Kumo's own SaaS SDK (<code>kumoai.rfm</code>).<sup><a href="#r8">[8]</a></sup></li>
+<li>Self-host alternative: <code>nvcr.io/nim/nvidia/kumo-relational:1.1.0</code>. It needs an NGC login and an A10G/L4/L40S/H100-class GPU.<sup><a href="#r3">[3]</a><a href="#r4">[4]</a></sup></li></ul>
+<h3>Data (from the Drive "Bank forecasting datasets" folder)</h3>
+<ol>
+<li><b>Call Report panel, top 100 banks</b> (FDIC SDI, 2008Q1–2026Q2, 7,392 bank-quarters). Graph: <code>banks</code> (state, holding company) ← <code>call_reports</code> (last 4 quarters: deposit, asset, and loan growth, uninsured and core deposit shares, equity/assets, NPL ratio, ROA, NIM, efficiency, loan/deposit). Target: <b>do deposits fall next quarter?</b></li>
+<li><b>CFPB complaints, company × month</b> (banking products, top 150 companies by 2023+ volume, 2015–2026-09). Graph: <code>companies</code> ← <code>monthly_complaints</code> (last 6 months). Target: <b>is next month's count more than 10% above the trailing 6-month geometric mean?</b></li>
+<li><b>USA ETF panel</b> (<code>usa_universe_panel_monthly_returns.csv</code> joined to <code>usa_universe_categorized_v2.csv</code>, ≈335 tickers with categories). Graph: <code>etfs</code> (category) ← <code>monthly_returns</code> (last 6 months of return, 12-month momentum, 6-month vol). Target: <b>is next month's return above the cross-sectional median?</b></li>
+</ol>
+<h3>Protocol (walk-forward, no leakage)</h3>
+<ul>
+<li>For each test period <span class="m">t</span>, the only anchors used for training or context are those <span class="m">s &lt; t</span>. A label at <span class="m">s</span> resolves at <span class="m">s+1 ≤ t</span>, so every label used is known at <span class="m">t</span>.</li>
+<li>For each instance we attach only fact rows with timestamp ≤ its own anchor. Related rows are copied per instance, so no future row can leak through a shared node.</li>
+<li><b>Kumo</b>: context is a seeded random sample of labeled anchors from the most recent 12 periods (n = 600 bank, 700 CFPB/ETF). Ablation: 24 periods, n = 1,400/1,100, <code>run_mode=best</code>.</li>
+<li><b>Baselines</b>, refit every period on an expanding window: LightGBM (200 trees, 15 leaves) on the latest features plus lags. Logistic regression (standardized, L2). A <b>pre-specified</b> one-feature naive rule: banks = "fell last quarter → falls again", CFPB = mean reversion (−gap), ETF = 12-month momentum.</li>
+<li>Metrics: AUC per test period, averaged, with a 95% bootstrap CI over periods; Brier score; Kumo − LightGBM paired AUC gap. Test windows: banks 2022Q1–2025Q4 (17 quarters), CFPB and ETF the last 24 months.</li>
+<li>Nothing from TRACE (including the sealed seeds 9600–9619) or fed-cp-ot was touched. No fed-cp-ot out-of-sample run was made.</li>
+</ul>
+
+<h2>5. How we'd know it worked, plus results</h2>
+<p><b>Pre-stated success bar:</b> Kumo is "useful as a rival" if its mean AUC is within the noise of LightGBM (the paired-gap CI includes 0) at a fraction of the effort. It is "better" if the paired-gap CI is entirely above 0. It "fails" if the CI is entirely below 0.</p>
+<div class="wrap"><table>
+<tr><th>Task</th><th>Kumo AUC</th><th>LightGBM</th><th>Logit</th><th>Naive</th><th>Kumo − LGBM</th><th>Brier K / LGBM</th><th>Latency s med/p90/max</th></tr>
+<tr><td>Bank deposit outflow (Call Report, 100 banks)<br><span class='small'>17 test periods, 1,700 predictions, 2022-03-31 → 2026-03-31; context n=600, mode=fast</span></td><td class='n'>0.564<br><span class='small'>[0.53, 0.60]</span></td><td class='n'>0.654<br><span class='small'>[0.63, 0.68]</span></td><td class='n'>0.540<br><span class='small'>[0.50, 0.58]</span></td><td class='n'>0.537<br><span class='small'>[0.50, 0.58]</span></td><td class='n'>-0.089<br><span class='small'>[-0.118, -0.062]</span><br><span class='small'>Kumo won 2/17</span></td><td class='n'>0.256 / 0.233</td><td class='n'>2.21 / 6.22 / 234.8</td></tr>
+<tr><td>… same, bigger context (ablation)<br><span class='small'>17 test periods, 1,700 predictions, 2022-03-31 → 2026-03-31; context n=1400, mode=best_ctx1400</span></td><td class='n'>0.600<br><span class='small'>[0.57, 0.63]</span></td><td class='n'>0.654<br><span class='small'>[0.63, 0.68]</span></td><td class='n'>0.540<br><span class='small'>[0.50, 0.58]</span></td><td class='n'>0.537<br><span class='small'>[0.50, 0.58]</span></td><td class='n'>-0.054<br><span class='small'>[-0.078, -0.030]</span><br><span class='small'>Kumo won 3/17</span></td><td class='n'>0.241 / 0.233</td><td class='n'>1.64 / 2.01 / 2.3</td></tr>
+<tr><td>CFPB complaint spike (150 companies)<br><span class='small'>24 test periods, 3,600 predictions, 2024-09-30 → 2026-08-31; context n=700, mode=fast</span></td><td class='n'>0.595<br><span class='small'>[0.57, 0.62]</span></td><td class='n'>0.685<br><span class='small'>[0.66, 0.71]</span></td><td class='n'>0.637<br><span class='small'>[0.61, 0.66]</span></td><td class='n'>0.347<br><span class='small'>[0.33, 0.37]</span></td><td class='n'>-0.090<br><span class='small'>[-0.116, -0.066]</span><br><span class='small'>Kumo won 2/24</span></td><td class='n'>0.244 / 0.229</td><td class='n'>2.05 / 2.28 / 243.8</td></tr>
+<tr><td>… same, bigger context (ablation)<br><span class='small'>24 test periods, 3,600 predictions, 2024-09-30 → 2026-08-31; context n=1400, mode=best_ctx1400</span></td><td class='n'>0.579<br><span class='small'>[0.56, 0.60]</span></td><td class='n'>0.685<br><span class='small'>[0.66, 0.71]</span></td><td class='n'>0.637<br><span class='small'>[0.61, 0.66]</span></td><td class='n'>0.347<br><span class='small'>[0.33, 0.37]</span></td><td class='n'>-0.106<br><span class='small'>[-0.127, -0.084]</span><br><span class='small'>Kumo won 1/24</span></td><td class='n'>0.249 / 0.229</td><td class='n'>1.68 / 1.86 / 1.9</td></tr>
+<tr><td>ETF next-month above median (≈335 ETFs)<br><span class='small'>24 test periods, 7,952 predictions, 2024-08-30 → 2026-07-31; context n=700, mode=fast</span></td><td class='n'>0.532<br><span class='small'>[0.46, 0.60]</span></td><td class='n'>0.550<br><span class='small'>[0.46, 0.63]</span></td><td class='n'>0.558<br><span class='small'>[0.47, 0.64]</span></td><td class='n'>0.569<br><span class='small'>[0.49, 0.64]</span></td><td class='n'>-0.019<br><span class='small'>[-0.096, +0.060]</span><br><span class='small'>Kumo won 12/24</span></td><td class='n'>0.271 / 0.252</td><td class='n'>1.61 / 2.62 / 242.6</td></tr>
+<tr><td>… same, bigger context (ablation)<br><span class='small'>24 test periods, 7,952 predictions, 2024-08-30 → 2026-07-31; context n=1100, mode=best_ctx1100</span></td><td class='n'>0.553<br><span class='small'>[0.52, 0.59]</span></td><td class='n'>0.550<br><span class='small'>[0.46, 0.63]</span></td><td class='n'>0.558<br><span class='small'>[0.47, 0.64]</span></td><td class='n'>0.569<br><span class='small'>[0.49, 0.64]</span></td><td class='n'>+0.002<br><span class='small'>[-0.073, +0.084]</span><br><span class='small'>Kumo won 11/24</span></td><td class='n'>0.255 / 0.252</td><td class='n'>1.42 / 1.63 / 3.3</td></tr>
+</table></div>
+<p class="small">AUC = mean of per-period AUCs [95% bootstrap CI over periods]. CFPB naive (mean reversion, pre-specified) scored 0.35, meaning momentum is the real signal there. Flipping it post hoc would give ≈0.65, and we do not count that.</p>
+<h3>Reading the results</h3>
+<ul>
+<li><b>Banks:</b> Kumo <i>fails</i> the bar. The paired gap is −0.09 (CI entirely below 0). The bigger context closes part of it (−0.05) but not all. Kumo still beats the logistic and naive baselines about half the time.</li>
+<li><b>CFPB:</b> Kumo <i>fails</i>. The gap is about −0.09 to −0.11, and a bigger context did not help.</li>
+<li><b>ETFs:</b> a <i>tie at near-chance</i>. The gap CI includes 0, but everything sits at 0.53–0.57 and naive momentum is the best point estimate. That is a statement about the task, not a win for Kumo.</li>
+<li><b>Why it underperforms here (our read):</b> tiny entity counts (100–335), short and noisy targets, and signals that hand-made lag and growth features already capture. That is the opposite of RelBench's large behavioral event graphs. Our graphs are also shallow (2 tables), which gives the graph transformer little relational structure to exploit.</li>
+</ul>
+<h3>Latency, cost, reliability</h3>
+<ul>
+<li>Payloads were 0.5–1.9 MB per call. Median latency was 1.4–2.2 s, so a full 17–24-period backtest takes under a minute of model time.</li>
+<li><b>Cost:</b> $0 billed. We used the NVIDIA API Catalog free/trial endpoint. NVIDIA does not publish a per-call price for it, and production use means self-hosting the NIM (GPU cost) or an NVIDIA AI Enterprise license.<sup><a href="#r3">[3]</a><a href="#r4">[4]</a></sup></li>
+<li><b>Reliability:</b> three calls (one per task, at the same wall-clock time) hung for about 4 minutes and then the server dropped the connection. The same deterministic payload succeeded on retry. A few other calls queued for about 4 minutes before succeeding (the "max" column). Budget for retries.</li>
+</ul>
+
+<h2>Verdict per test case</h2>
+<div class="verdict"><b class="tag rival">RIVAL ONLY</b> <b>TRACE</b> (distribution-shift attribution and anomaly detection). Kumo answers "what happens next," not "what shifted and why," and it gives no additive attribution. Its single-row "explanation" output is often refused by deployments.<sup><a href="#r7">[7]</a></sup> It can serve as an <i>external black-box rival</i> in a TRACE benchmark: e.g., does a Kumo outlier/next-period score flag the same anomalous bank-quarters TRACE flags? It should run only on non-sealed seeds and never inside TRACE core. It has no bearing on the parked V5.2 curved-mean problem.</div>
+<div class="verdict"><b class="tag no">NOT USEFUL (as predictor)</b> · <b class="tag rival">OK as sanity baseline</b> <b>USA ETF panel.</b> It is no better than 12-month momentum or a two-line logistic model on next-month cross-sectional ranks, and all methods sit near chance. Keep it out of allocation. At most, log it as a "zero-effort ML baseline" row on scoreboards.</div>
+<div class="verdict"><b class="tag maybe">RIVAL / BASELINE, later</b> <b>fed-cp-ot.</b> Not run, by design: no out-of-sample work without Jared's APPROVAL file. Based on the bank panels, expect Kumo to trail a tuned GBM. If an APPROVAL is granted, the cheap way to include it is as one more pre-registered rival row (same walk-forward splits, recorded before unsealing), never as the method under test.</div>
+<p><b>Where it might still pay off:</b> event-rich, many-entity, multi-table problems where we have <i>no</i> feature pipeline yet, such as the full CFPB complaint table (18M rows, product and issue links) or the HMDA loan-level panel. Those look like RelBench, and zero-training time-to-first-baseline is valuable there.</p>
+
+<h2>6. Citations</h2>
+<ol class="refs">
+<li id="r1">Fey, M., Kocijan, V., Lopez, F., Lenssen, J. E., Leskovec, J. (2025). <i>KumoRFM: A Foundation Model for In-Context Learning on Relational Data.</i> Kumo AI. <a href="https://kumo.ai/research/kumo_relational_foundation_model.pdf">kumo.ai/research/kumo_relational_foundation_model.pdf</a> · blog: <a href="https://kumo.ai/company/news/kumo-relational-foundation-model/">kumo.ai/company/news/kumo-relational-foundation-model</a></li>
+<li id="r2">NVIDIA (2026). <i>KumoRFM: A Relational Foundation Model</i> (paper summary and benchmark tables). <a href="https://docs.nvidia.com/sdgm/research/concepts-models/kumorfm-paper">docs.nvidia.com/sdgm/research/concepts-models/kumorfm-paper</a></li>
+<li id="r3">NVIDIA (2026). <i>Kumo Relational Model — NVIDIA NIM</i> (API example, deploy). <a href="https://build.nvidia.com/nvidia/kumo-relational">build.nvidia.com/nvidia/kumo-relational</a> · model card: <a href="https://build.nvidia.com/nvidia/kumo-relational/modelcard">…/modelcard</a></li>
+<li id="r4">NVIDIA NGC (2026). <i>Kumo Relational Foundation Model (NIM)</i> container v1.1. <a href="https://catalog.ngc.nvidia.com/orgs/nim/nvidia/containers/kumo-relational">catalog.ngc.nvidia.com/orgs/nim/nvidia/containers/kumo-relational</a></li>
+<li id="r5">NVIDIA (2026). <i>NIM REST API</i> and <i>Configuration</i> (run modes, 30 MB limit, 1,000-entity batches). <a href="https://docs.nvidia.com/sdgm/rfm/nim-rest-api">docs.nvidia.com/sdgm/rfm/nim-rest-api</a> · <a href="https://docs.nvidia.com/sdgm/rfm/configuration">…/rfm/configuration</a> · <a href="https://nvidia.github.io/structured-data-models/nim.html">nvidia.github.io/structured-data-models/nim.html</a></li>
+<li id="r6">Hudovernik, V., López, F., Kocijan, V., Nitta, A., Lenssen, J. E., Leskovec, J., Fey, M. (2026). <i>KumoRFM-2: Scaling Foundation Models for Relational Learning.</i> arXiv:2604.12596. <a href="https://arxiv.org/abs/2604.12596">arxiv.org/abs/2604.12596</a></li>
+<li id="r7">NVIDIA (2026). <i>Python SDK API</i> and <i>context-size limits FAQ</i> (10,000-row client cap; PredictiveQuery.materialize). <a href="https://docs.nvidia.com/sdgm/kumo-relational/reference/python-api-reference">docs.nvidia.com/sdgm/kumo-relational/reference/python-api-reference</a> · <a href="https://docs.nvidia.com/sdgm/faq/kumo-foundation-models/what-are-the-context-size-limits">…/what-are-the-context-size-limits</a></li>
+<li id="r8">Kumo AI (2025–26). <i>KumoRFM SDK docs: getting started (KUMO_API_KEY), Predictive Query Language.</i> <a href="https://kumo.ai/docs/reference/sdk/">kumo.ai/docs/reference/sdk</a> · <a href="https://kumoai.mintlify.dev/docs/rfm/make-predictions">kumoai.mintlify.dev/docs/rfm/make-predictions</a> · notebook: <a href="https://github.com/kumo-ai/kumo-rfm/blob/master/notebooks/predictive_query.ipynb">github.com/kumo-ai/kumo-rfm</a></li>
+</ol>
+<p class="small">Reproduce: code and raw per-period predictions live on the research box at <code>/workspace/kumo-nim/</code> (<code>kumo_client.py</code>, <code>exp.py</code>, <code>fill.py</code>, <code>runs/*.json</code>). Data source files: Drive › Bank forecasting datasets › Call report panel (top 100 banks), CFPB complaints.</p>
+</body></html>
