@@ -1,0 +1,22 @@
+source,target,key,matched,total,share,note
+HMDA lender-year (LEI),FFIEC panel RSSD,lei+year,27103,34036,0.7963,LEI-years
+HMDA loans,FFIEC panel RSSD,lei+year,58586311,66971175,0.8748,loan-weighted
+HMDA lender-year w/ RSSD,SOD bank RSSDID (any year),respondent_rssd,14121,27103,0.521,depository banks only; nonbanks/CUs expected to miss
+HMDA loans,SOD bank RSSDID,respondent_rssd,19967273,66971175,0.2981,loan-weighted
+HMDA loans,Call report top100 RSSDID,respondent_rssd,10863935,66971175,0.1622,loan-weighted
+Call report top100 banks,"HMDA reporter (RSSD, 2018-23)",RSSDID,84,100,0.84,
+SOD branch CERTs (2008-25),Call report top100 CERT,CERT,98,8615,0.0114,distinct CERTs
+SOD branches 2025,Call report top100 CERT,CERT,38929,76097,0.5116,branch rows
+SOD deposits 2025,Call report top100 CERT,CERT,14266154919,18103110848,0.788,deposit-weighted
+Call report top100 CERT,SOD branches (2025),CERT,98,100,0.98,
+Call report CERT->RSSDID,SOD CERT->RSSDID (2025),CERT,98,98,1.0,consistency check
+Call report RSSDHCR,SOD RSSDHCR,RSSDHCR,108,116,0.931,
+Call report RSSDHCR,BHCF 2017Q4 RSSD9001,RSSDHCR,80,116,0.6897,BHCF covers only 2017Q4 locally
+SOD 2017 RSSDHCR,BHCF 2017Q4 RSSD9001,RSSDHCR,4068,4314,0.943,small HCs below Y-9C threshold expected to miss
+HMDA topholder RSSD,SOD RSSDHCR,RSSD,2683,2687,0.9985,
+CFPB companies (bank products),bank/holdco by normalized name,name,209,5000,0.0418,distinct companies
+CFPB bank-product complaints,bank/holdco by normalized name,name,729190,1532082,0.4759,complaint-weighted
+CFPB bank-product complaints,top-100 call-report bank/holdco,name,692765,1532082,0.4522,complaint-weighted
+SOD branches,county FIPS,STCNTYBR,0,76097,0.0,column absent in Drive extract (only state + lat/lon)
+SOD branches with lat/lon,coordinates present,"lat,lon",76097,76097,1.0,
+HMDA state codes,SOD states,state,51,51,1.0,
