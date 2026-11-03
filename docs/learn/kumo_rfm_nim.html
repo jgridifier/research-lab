@@ -114,6 +114,7 @@ WHERE ...                                        -- optional context filter</pre
 <div class="verdict"><b class="tag maybe">RIVAL / BASELINE, later</b> <b>fed-cp-ot.</b> Not run, by design: no out-of-sample work without Jared's APPROVAL file. Based on the bank panels, expect Kumo to trail a tuned GBM. If an APPROVAL is granted, the cheap way to include it is as one more pre-registered rival row (same walk-forward splits, recorded before unsealing), never as the method under test.</div>
 <p><b>Where it might still pay off:</b> event-rich, many-entity, multi-table problems where we have <i>no</i> feature pipeline yet, such as the full CFPB complaint table (18M rows, product and issue links) or the HMDA loan-level panel. Those look like RelBench, and zero-training time-to-first-baseline is valuable there.</p>
 
+<p class="callout"><b>Follow-up.</b> A benchmark built from our own Drive data, with fixed splits and pre-registered comparison bars for KumoRFM and TRACE: <a href="bankgraph_benchmark.html">BankGraph: our own relational benchmark</a>.</p>
 <h2>6. Citations</h2>
 <ol class="refs">
 <li id="r1">Fey, M., Kocijan, V., Lopez, F., Lenssen, J. E., Leskovec, J. (2025). <i>KumoRFM: A Foundation Model for In-Context Learning on Relational Data.</i> Kumo AI. <a href="https://kumo.ai/research/kumo_relational_foundation_model.pdf">kumo.ai/research/kumo_relational_foundation_model.pdf</a> · blog: <a href="https://kumo.ai/company/news/kumo-relational-foundation-model/">kumo.ai/company/news/kumo-relational-foundation-model</a></li>

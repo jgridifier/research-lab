@@ -1,0 +1,169 @@
+{
+ "bank_quarter": {
+  "rows": 7392,
+  "cols": 37,
+  "grain": "bank (CERT) x quarter",
+  "keys": [
+   "CERT",
+   "date"
+  ],
+  "time_col": "date",
+  "range": [
+   "2008-03-31 00:00:00",
+   "2026-06-30 00:00:00"
+  ]
+ },
+ "bank": {
+  "rows": 100,
+  "cols": 7,
+  "grain": "bank charter (CERT)",
+  "keys": [
+   "CERT"
+  ],
+  "time_col": null,
+  "range": null
+ },
+ "branch_year": {
+  "rows": 1609794,
+  "cols": 13,
+  "grain": "branch (CERT,BRNUM) x year (June 30)",
+  "keys": [
+   "CERT",
+   "BRNUM",
+   "YEAR"
+  ],
+  "time_col": "date",
+  "range": [
+   "2008-06-30 00:00:00",
+   "2025-06-30 00:00:00"
+  ]
+ },
+ "hc_state_year": {
+  "rows": 103721,
+  "cols": 7,
+  "grain": "holding co (RSSDHCR) x state x year",
+  "keys": [
+   "RSSDHCR",
+   "STALPBR",
+   "YEAR"
+  ],
+  "time_col": "date",
+  "range": [
+   "2008-06-30 00:00:00",
+   "2025-06-30 00:00:00"
+  ]
+ },
+ "holding_company": {
+  "rows": 6372,
+  "cols": 2,
+  "grain": "holding co (RSSDHCR)",
+  "keys": [
+   "RSSDHCR"
+  ],
+  "time_col": null,
+  "range": null
+ },
+ "state": {
+  "rows": 59,
+  "cols": 1,
+  "grain": "state",
+  "keys": [
+   "STALP"
+  ],
+  "time_col": null,
+  "range": null
+ },
+ "hmda_lender_state_year": {
+  "rows": 660124,
+  "cols": 7,
+  "grain": "LEI x state x year x loan_purpose (originations)",
+  "keys": [
+   "lei",
+   "state_code",
+   "activity_year",
+   "loan_purpose"
+  ],
+  "time_col": "date",
+  "range": [
+   "2018-12-31 00:00:00",
+   "2024-12-31 00:00:00"
+  ]
+ },
+ "hmda_lender_year": {
+  "rows": 29579,
+  "cols": 10,
+  "grain": "LEI x year (FFIEC HMDA reporter panel, ext)",
+  "keys": [
+   "lei",
+   "activity_year"
+  ],
+  "time_col": "activity_year",
+  "range": [
+   "2018",
+   "2023"
+  ]
+ },
+ "complaint_company_month_product": {
+  "rows": 352177,
+  "cols": 5,
+  "grain": "company x month x product",
+  "keys": [
+   "company",
+   "yyyymm",
+   "product"
+  ],
+  "time_col": "date",
+  "range": [
+   "2011-12-01 00:00:00",
+   "2026-10-01 00:00:00"
+  ]
+ },
+ "macro_series": {
+  "rows": 16176,
+  "cols": 3,
+  "grain": "series x date (as observed date)",
+  "keys": [
+   "series",
+   "date"
+  ],
+  "time_col": "date",
+  "range": [
+   "2000-01-03 00:00:00",
+   "2026-10-05 00:00:00"
+  ]
+ },
+ "sloos_series": {
+  "rows": 62403,
+  "cols": 4,
+  "grain": "SLOOS series x survey quarter",
+  "keys": [
+   "series",
+   "date"
+  ],
+  "time_col": "date",
+  "range": [
+   "1966-09-30 00:00:00",
+   "2026-09-30 00:00:00"
+  ]
+ },
+ "bhcf_hc_quarter_2017q4": {
+  "rows": 4598,
+  "cols": 3,
+  "grain": "holding co x quarter (Y-9C, 2017Q4 sample only)",
+  "keys": [
+   "RSSDHCR"
+  ],
+  "time_col": null,
+  "range": null
+ },
+ "company_entity_map": {
+  "rows": 209,
+  "cols": 5,
+  "grain": "CFPB company -> CERT or RSSDHCR (name rule)",
+  "keys": [
+   "company"
+  ],
+  "time_col": null,
+  "range": null
+ }
+}

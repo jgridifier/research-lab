@@ -1,0 +1,28 @@
+task,metric,model,val,ci_lo,ci_hi,n_train,n_val,val_pos_rate,n_single_feats,n_rel_feats,top_rel_features
+bank-deposit-decline,AUC,naive,0.5079,0.4681,0.5462,3492.0,1200.0,0.315,18.0,20.0,
+bank-deposit-decline,AUC,linear_single,0.5791,0.5416,0.621,3492.0,1200.0,0.315,18.0,20.0,
+bank-deposit-decline,AUC,lgbm_single,0.6443,0.605,0.6788,3492.0,1200.0,0.315,18.0,20.0,
+bank-deposit-decline,AUC,lgbm_relational,0.6253,0.5869,0.6625,3492.0,1200.0,0.315,18.0,20.0,
+bank-deposit-decline,delta rel-single,lgbm_relational - lgbm_single,-0.019,-0.0405,0.0019,,,,,,"s_dep_g,s_dep_g_l4,s_dep_g_l2,s_dep_g_l1,s_loan_dep,s_ROA"
+branch-closure,AUC,naive,0.5707,0.559,0.5819,749643.0,262957.0,0.0295,7.0,13.0,
+branch-closure,AUC,linear_single,0.6749,0.6562,0.6929,749643.0,262957.0,0.0295,7.0,13.0,
+branch-closure,AUC,lgbm_single,0.6922,0.6748,0.7096,749643.0,262957.0,0.0295,7.0,13.0,
+branch-closure,AUC,lgbm_relational,0.7603,0.7444,0.7769,749643.0,262957.0,0.0295,7.0,13.0,
+branch-closure,delta rel-single,lgbm_relational - lgbm_single,0.0681,0.0559,0.0827,,,,,,"s_log_dep,s_dep_g2,r_hc_nbr,r_bank_prev_closure_rate,r_bank_bdep,r_dep_share_of_bank"
+complaint-spike,AUC,naive,0.8246,0.7634,0.8736,9853.0,4242.0,0.025,10.0,19.0,
+complaint-spike,AUC,linear_single,0.8463,0.792,0.8938,9853.0,4242.0,0.025,10.0,19.0,
+complaint-spike,AUC,lgbm_single,0.8609,0.8147,0.8995,9853.0,4242.0,0.025,10.0,19.0,
+complaint-spike,AUC,lgbm_relational,0.844,0.7925,0.8852,9853.0,4242.0,0.025,10.0,19.0,
+complaint-spike,delta rel-single,lgbm_relational - lgbm_single,-0.0169,-0.0418,0.0113,,,,,,"s_ratio_med6,s_ratio_mean12,r_mix_mkt_g3,s_lag12,s_lag6,r_prod_hhi"
+hmda-share-drop,AUC,naive,0.4691,0.4387,0.4976,23565.0,13268.0,0.246,12.0,19.0,
+hmda-share-drop,AUC,linear_single,0.4976,0.4729,0.5228,23565.0,13268.0,0.246,12.0,19.0,
+hmda-share-drop,AUC,lgbm_single,0.48,0.4522,0.5053,23565.0,13268.0,0.246,12.0,19.0,
+hmda-share-drop,AUC,lgbm_relational,0.4988,0.4629,0.5329,23565.0,13268.0,0.246,12.0,19.0,
+hmda-share-drop,delta rel-single,lgbm_relational - lgbm_single,0.0187,0.0023,0.0375,,,,,,"r_lender_log_n,r_lender_nstates,s_share_g,r_log_assets,s_purp_31,s_purp_32"
+hc-state-deposit-growth,MAE,naive,0.0894,0.0864,0.0922,44841.0,16081.0,,3.0,16.0,
+hc-state-deposit-growth,MAE,naive_last_growth,0.1049,0.1005,0.1093,44841.0,16081.0,,3.0,16.0,
+hc-state-deposit-growth,MAE,linear_single,0.08,0.077,0.0828,44841.0,16081.0,,3.0,16.0,
+hc-state-deposit-growth,MAE,lgbm_single,0.0783,0.0753,0.0813,44841.0,16081.0,,3.0,16.0,
+hc-state-deposit-growth,MAE,lgbm_relational,0.0772,0.0744,0.0803,44841.0,16081.0,,3.0,16.0,
+hc-state-deposit-growth,MAE,train_median,0.0806,0.0777,0.0835,44841.0,16081.0,,3.0,16.0,
+hc-state-deposit-growth,delta rel-single,lgbm_relational - lgbm_single,-0.0011,-0.0015,-0.0006,,,,,,"r_hc_g,s_g1,s_g2,r_state_g,r_hc_log_tot,s_log_dep"
