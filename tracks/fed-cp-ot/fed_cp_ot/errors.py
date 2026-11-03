@@ -6,3 +6,5 @@ class ScoringWallError(ValueError):
     pass
 class ValidationError(ValueError):
     pass
+class RunOnceError(ProvenanceError):
+    pass

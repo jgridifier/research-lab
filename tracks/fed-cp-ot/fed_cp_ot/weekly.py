@@ -19,17 +19,20 @@ def build_weekly(vol_long, types=TYPES, through=SCORING_WALL, provenance=None):
     df = df[df.date.dt.dayofweek < 5]  # only ND weekend rows remain to drop
     df['week'] = df.date.dt.to_period('W-FRI').dt.end_time.dt.normalize()
     df = df[df.week <= pd.Timestamp(through)]
-    records = []
     if df.empty: return pd.DataFrame(columns=['cp_type','week','valid_days','D','N','usable','mix'])
     weeks = pd.date_range(df.week.min(), df.week.max(), freq='W-FRI')
+    ok = df[df.valid]
+    if ok.value.isna().any(): raise ValidationError('Required values withheld or missing')
+    days = ok.groupby(['cp_type','week']).date.nunique()
+    wide = {vt: ok[ok.vt == vt].groupby(['cp_type','week','mat']).value.sum().unstack('mat').reindex(columns=MATS).fillna(0) for vt in ('D','N')}
+    wide = {vt: {k: row for k, row in zip(w.index, w.to_numpy())} for vt, w in wide.items()}
+    records = []
     for typ in types:
         for week in weeks:
-            g = df[(df.cp_type == typ) & (df.week == week) & df.valid]
-            if g.value.isna().any(): raise ValidationError('Required values withheld or missing')
-            days = g.date.nunique()
-            D,N = [g[g.vt == vt].groupby('mat').value.sum().reindex(MATS, fill_value=0).to_numpy() for vt in ('D','N')]
-            usable = bool(days >= 3 and N.sum() >= 100 and D.sum() > 0)
-            records.append((typ, week, days, D, N, usable, D/D.sum() if usable else np.full(6,np.nan)))
+            D,N = [wide[vt].get((typ,week), np.zeros(6)).copy() for vt in ('D','N')]
+            nd = int(days.get((typ,week), 0))
+            usable = bool(nd >= 3 and N.sum() >= 100 and D.sum() > 0)
+            records.append((typ, week, nd, D, N, usable, D/D.sum() if usable else np.full(6,np.nan)))
     return pd.DataFrame(records, columns=['cp_type','week','valid_days','D','N','usable','mix'])
 
 def mkt_weekly_total(vol_long, through=SCORING_WALL, provenance=None):
