@@ -1,0 +1,5 @@
+70e570f346892d823d1372a7a78ea7087de8a3a9525fedf73731526d0a0c9bb2  tracks/fed-cp-ot/prereg/PREREG_v2_fed_cp_ot.md
+c15eb60cbe1467090fcc920b8f4e311dd14f7b3bbfd0437e21809355721a6c8a  tracks/fed-cp-ot/prereg/GATE_THRESHOLDS_fed_cp_ot.md
+e3da87af2da1002b0635959d751dad4b885c59c985edc3b3a23612fa5bee0ecf  tracks/fed-cp-ot/prereg/PREREG_fed_cp_ot.md
+6c87f7ab5efe3a220cb1c50497e3a9edd7435de5965aff4a20f8f6f1b2ce7793  tracks/fed-cp-ot/prereg/test_design_fed_cp_ot_v1.json
+56bde3b64a8e43fc15bd1f469f712e9c8bd86e536b28379cb80efc229b0fcb47  docs/tracks/fed-cp-ot/prereg_v2/IMPLEMENTATION_CHOICES_v2.md
