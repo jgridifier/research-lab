@@ -33,9 +33,15 @@ def test_payload_has_24_entities_and_156_usable_weeks_each(frame):
     o = pd.Timestamp('2006-12-29')
     p = kumo.build_payload(frame, o, 'best')
     ctx, pre = p['context']['related_tables'], p['predict']['related_tables']
-    assert len(ctx['entities']['rows']) == 24
+    n_ctx = 24 * 155
+    assert len(p['predict']['instance_table']['rows']) == 24 and len(p['context']['instance_table']['rows']) == n_ctx
+    # Entity attribute rows are instance-scoped and declare instance_id (live NIM requirement).
+    assert ctx['entities']['columns'][0] == 'instance_id'
+    assert len(ctx['entities']['rows']) == n_ctx and len(pre['entities']['rows']) == 24
+    assert all(r[0] == inst[0] and r[1] == inst[1]
+               for r, inst in zip(ctx['entities']['rows'], p['context']['instance_table']['rows']))
+    assert 'instance_id' in p['schema']['related_tables']['entities']['columns']
     assert len(ctx['weekly_facts']['rows']) + len(pre['weekly_facts']['rows']) == 24 * 156 == 3744
-    assert len(p['predict']['instance_table']['rows']) == 24 and len(p['context']['instance_table']['rows']) == 24 * 155
     assert p['inference'] == {'run_mode': 'best'} and p['task']['kind'] == 'regression'
 
 def test_payload_is_anchored_at_o_and_never_looks_past_it(frame):

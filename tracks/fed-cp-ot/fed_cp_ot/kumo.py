@@ -1,8 +1,9 @@
 """KumoRFM via NVIDIA NIM as a pre-registered rival row (PREREG v2 9, T6). Family K only; never a SEL candidate.
 
 The request layout follows the instance-scoped 'arrays' format used by the research-box client (/workspace/kumo-nim,
-see docs/learn/kumo_rfm_nim.html), changed to a regression task. The regression request/response field names have NOT
-been checked against the live service (no secrets in this PR); a first dry smoke test with a key must confirm them.
+see docs/learn/kumo_rfm_nim.html), changed to a regression task. Related `entities` rows are instance-scoped and must
+declare `instance_id` (live NIM 422 otherwise). Response shape `{predictions:[{row_index, prediction}, ...]}` was
+confirmed against the live NVIDIA endpoint on burn-in targets only (see artifacts/ and tests/test_v2_kumo_live_schema.py).
 """
 import hashlib
 import json
@@ -47,7 +48,8 @@ def build_payload(weekly_o, origin, mode='best'):
     """Graph from H_o only. Per entity (type, bucket): the last CONTEXT_WEEKS usable weeks become anchors. Each anchor but
     the newest is a labelled context instance (target = the share in the next usable week); the newest week is not
     labelled and an unlabelled predict instance anchored at the origin carries its facts. Each instance carries only its
-    own week's facts (share, log total amount, log issue count, valid days): 24 x 156 = 3,744 fact rows."""
+    own week's facts (share, log total amount, log issue count, valid days): 24 x 156 = 3,744 fact rows. Entity attribute
+    rows are instance-scoped and include `instance_id` (required by the live NIM schema)."""
     if mode not in MODES: raise ValueError('Unknown Kumo mode')
     origin = pd.Timestamp(origin)
     if weekly_o.week.max() > origin: raise ValueError('Weekly frame extends past the origin')
@@ -66,11 +68,15 @@ def build_payload(weekly_o, origin, mode='best'):
             pre_f.append([iid, node, ent, _ts(rows[-1].week), *fact(rows[-1])]); iid += 1; node += 1
     if len(ctx_f) + len(pre_f) > MAX_CONTEXT_ROWS: raise ValueError('Context exceeds the 10k-row cap')
     fcols = ['instance_id', '__node_id', 'entity_id', 'week', 'share', 'log_total_amount', 'log_issue_count', 'valid_days']
-    ecols = ['entity_id', 'cp_type', 'bucket']
+    ecols = ['instance_id', 'entity_id', 'cp_type', 'bucket']
+    ent_by_id = {e[0]: e for e in ents}
+    def entity_rows(inst):
+        # One attribute row per instance; live NIM requires declared instance_id on entities.
+        return [[iid, eref, ent_by_id[eref][1], ent_by_id[eref][2]] for iid, eref, *_ in inst]
     def pack(inst, facts, labelled):
         return {'instance_table': {'format': 'arrays', 'rows': inst,
                     'columns': ['instance_id', '__kumo_entity_ref_0', '__kumo_anchor_time'] + (['TARGET'] if labelled else [])},
-                'related_tables': {'entities': {'format': 'arrays', 'columns': ecols, 'rows': ents},
+                'related_tables': {'entities': {'format': 'arrays', 'columns': ecols, 'rows': entity_rows(inst)},
                                    'weekly_facts': {'format': 'arrays', 'columns': fcols, 'rows': facts}}}
     schema = {'instance_table': {'columns': {
                   'instance_id': {'dtype': 'int64', 'stype': 'ID', 'nullable': False},
@@ -78,9 +84,11 @@ def build_payload(weekly_o, origin, mode='best'):
                   '__kumo_anchor_time': {'dtype': 'timestamp[us]', 'stype': 'timestamp', 'nullable': False},
                   'TARGET': {'dtype': 'float64', 'stype': 'numerical'}}, 'primary_key': 'instance_id'},
               'related_tables': {
-                  'entities': {'columns': {'entity_id': {'dtype': 'int64', 'stype': 'ID', 'nullable': False},
+                  'entities': {'columns': {'instance_id': {'dtype': 'int64', 'stype': 'ID', 'nullable': False},
+                                           'entity_id': {'dtype': 'int64', 'stype': 'ID', 'nullable': False},
                                            'cp_type': {'dtype': 'string', 'stype': 'categorical'},
-                                           'bucket': {'dtype': 'int64', 'stype': 'categorical'}}, 'primary_key': ['entity_id']},
+                                           'bucket': {'dtype': 'int64', 'stype': 'categorical'}},
+                               'primary_key': ['instance_id', 'entity_id']},
                   'weekly_facts': {'columns': {'instance_id': {'dtype': 'int64', 'stype': 'ID', 'nullable': False},
                                                '__node_id': {'dtype': 'int64', 'stype': 'ID', 'nullable': False},
                                                'entity_id': {'dtype': 'int64', 'stype': 'ID', 'nullable': False},
@@ -134,12 +142,15 @@ class KumoClient:
             if attempt < MAX_RETRIES: self.sleep(BACKOFF_S)
         raise KumoFailure('retries exhausted')
     @staticmethod
-    def _parse(text):
+    def _parse(text, n=None):
+        """Parse a live/mock NIM regression body. `n` defaults to len(entities()) (=24 in production)."""
+        n = len(entities()) if n is None else int(n)
         try:
             preds = sorted(json.loads(text)['predictions'], key=lambda x: x['row_index'])
             values = np.array([float(p['prediction']) for p in preds])
         except (KeyError, TypeError, ValueError) as exc: raise KumoFailure('Unparseable response') from exc
-        if values.shape != (len(entities()),) or not np.isfinite(values).all(): raise KumoFailure('Expected 24 finite predictions')
+        if values.shape != (n,) or not np.isfinite(values).all():
+            raise KumoFailure(f'Expected {n} finite predictions')
         return values
 
 def to_mixes(values, persistence):
