@@ -37,7 +37,21 @@ not a second gate run (see `EXPOSURE_LOG_addendum.md`). The pipeline's own numbe
 
 This track implements provenance checks, vintage storage, streaming VOL ingestion,
 weekly aggregation, exact step-quantile metrics, burn-in replication, and a static
-placeholder. Candidate fitting and the confirmatory OOS harness are a later PR.
+placeholder, plus the OOS harness of PREREG v2 section 12 (`prereg/PREREG_v2_fed_cp_ot.md`). The harness is built but
+**not run**: `run-oos` raises `OOSNotAuthorized` until Jared's approval PR and the `APPROVAL_SHA256` pin PR have merged.
+
+| Module | Part |
+|---|---|
+| `harness.py` | T1 `run-oos` / `dry-run-burnin`; T3 per-origin vintage wall; T8 `oos_result.json`, run-once lock |
+| `candidates.py` | T2 v1 candidates, `project_qf` use, LS cutpoints |
+| `schedule.py` | T4 SEL window and B* schedule |
+| `scoring.py` | T5 paired weeks, G, G_s, fixed-b HAC, phi rule, Holm |
+| `kumo.py` | T6 Kumo NIM client (mock-tested only) |
+
+```sh
+python -m fed_cp_ot.harness dry-run-burnin --zip "$FED_CP_OT_RAW_DIR/FRB_CP_xml.zip"   # burn-in targets only, ~5 min
+python -m fed_cp_ot.harness run-oos                                                      # refuses without approval
+```
 
 Run from this directory with a Python 3.13 venv built from `requirements.txt` (NumPy 2.5.3,
 pandas 3.0.6, pytest; standard library otherwise):

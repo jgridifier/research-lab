@@ -29,6 +29,8 @@ PINS = {
     'DATA_SPEC_for_app.md': '9c50a16e994cdb04e2598b270800e2941d027e314b375e33cbf5caa98f102c6c',
     'ENGINEERING_TICKET.md': '088d9f2e72a162daf25436b2c76c3b4cfe6b93abd0082d480b5f94befa86346d',
 }
+# PREREG v2 (harness PR, section 10 step 1): the v1 files above stay byte-identical; v2 is pinned alongside them.
+V2_PINS = {'PREREG_v2_fed_cp_ot.md': '70e570f346892d823d1372a7a78ea7087de8a3a9525fedf73731526d0a0c9bb2'}
 
 
 def _sha(path):
@@ -51,9 +53,15 @@ def test_prereg_file_verbatim(name):
 def test_track_layout():
     """The pipeline now lives with the pinned prereg; ignore local data/cache artifacts."""
     files = {p.relative_to(TRACK).as_posix() for p in TRACK.rglob('*') if p.is_file() and '__pycache__' not in p.parts and p.relative_to(TRACK).parts[0] not in {'data', '.pytest_cache'}}
-    assert {f for f in files if f.startswith('prereg/')} == {f'prereg/{n}' for n in PINS}
-    assert all(f.startswith(('prereg/', 'tests/')) or f in {'README.md', 'pytest.ini', 'requirements.txt', 'EXPOSURE_LOG_addendum.md'} or (Path(f).parent.as_posix() == 'fed_cp_ot' and f.endswith('.py')) for f in files), files
+    assert {f for f in files if f.startswith('prereg/')} == {f'prereg/{n}' for n in (*PINS, *V2_PINS, 'PIN_v2.txt')}
+    assert all(f.startswith(('prereg/', 'tests/')) or f in {'README.md', 'pytest.ini', 'requirements.txt', 'EXPOSURE_LOG_addendum.md', 'trials.jsonl', 'oos_result.json', 'artifacts/kumo_burnin_smoke_v2.json', 'artifacts/kumo_burnin_smoke_v2_live.json', 'artifacts/README.md'} or (Path(f).parent.as_posix() == 'fed_cp_ot' and f.endswith('.py')) for f in files), files
     assert not any(f.endswith('.py') and not f.startswith(('tests/', 'fed_cp_ot/')) for f in files)
+
+
+def test_prereg_v2_is_pinned_and_matches_the_published_copy():
+    for name, sha in V2_PINS.items():
+        assert _sha(PREREG / name) == sha
+        assert (DOCS / 'prereg_v2' / name).read_bytes() == (PREREG / name).read_bytes()
 
 
 def test_pin_txt_names_design_prereg_and_learning_page():

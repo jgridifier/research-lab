@@ -14,3 +14,24 @@ jobs:
         with:
           python-version: '3.13'
       - run: make y9c-test statement-forecast-test
+  fed-cp-ot:
+    # Pinned stack of tracks/fed-cp-ot/requirements.txt (numpy 2.5.3, pandas 3.0.6) on Python 3.13.
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.13'
+      - run: pip install -r tracks/fed-cp-ot/requirements.txt
+      - name: Fed CP OT synthetic suite (incl. vintage injection test)
+        run: PYTHONPATH= python -m pytest tracks/fed-cp-ot/tests -q -m "not realdata" -p no:cacheprovider
+      - name: Fetch the pinned vintage zip (only if the repo variable FED_CP_OT_ZIP_URL is set)
+        if: ${{ vars.FED_CP_OT_ZIP_URL != '' }}
+        run: |
+          mkdir -p "$RUNNER_TEMP/fedcp-raw"
+          curl -fsSL "${{ vars.FED_CP_OT_ZIP_URL }}" -o "$RUNNER_TEMP/fedcp-raw/FRB_CP_xml.zip"
+          echo "FED_CP_OT_RAW_DIR=$RUNNER_TEMP/fedcp-raw" >> "$GITHUB_ENV"
+      - name: Burn-in replication (stdout sha256 17a0b239...); skipped with a reason when the zip is unavailable
+        run: PYTHONPATH= python -m pytest tracks/fed-cp-ot/tests/test_v2_replication.py tracks/fed-cp-ot/tests/test_v2_dryrun_real.py -q -rs -p no:cacheprovider
