@@ -1,0 +1,1360 @@
+{
+  "B1_A": {
+    "n": 40,
+    "p": 14,
+    "threshold": 5.435,
+    "raw": [
+      {
+        "break_after": "2017Q1",
+        "first_new_quarter": "2017Q2",
+        "cusum": 11.53,
+        "segment": ["2016Q3", "2017Q4"],
+        "top_projection": {
+          "DB": -0.881,
+          "UBS.CS": -0.214,
+          "Barclays": -0.208,
+          "JPM": 0.203
+        },
+        "share_change_pp": {
+          "JPM": 0.34,
+          "GS": 0.39,
+          "MS": 0.44,
+          "BAC": 0.19,
+          "C": -0,
+          "WFC": 0.5,
+          "Barclays": -0.86,
+          "UBS.CS": -0.95,
+          "DB": -0.31,
+          "BNP": -0.1,
+          "HSBC": 0.31,
+          "Mizuho": 0.08,
+          "RBC": 0.02,
+          "TD": -0.04
+        }
+      },
+      {
+        "break_after": "2017Q4",
+        "first_new_quarter": "2018Q1",
+        "cusum": 6.84,
+        "segment": ["2017Q2", "2018Q4"],
+        "top_projection": {
+          "UBS.CS": -0.982,
+          "TD": 0.173,
+          "JPM": 0.061,
+          "C": 0.035
+        },
+        "share_change_pp": {
+          "JPM": 0.66,
+          "GS": 0.43,
+          "MS": -1,
+          "BAC": -0.02,
+          "C": 0.13,
+          "WFC": -0.01,
+          "Barclays": 0.16,
+          "UBS.CS": -0.69,
+          "DB": -0.08,
+          "BNP": 0.13,
+          "HSBC": 0.6,
+          "Mizuho": -0.04,
+          "RBC": -0.31,
+          "TD": 0.06
+        }
+      },
+      {
+        "break_after": "2018Q4",
+        "first_new_quarter": "2019Q1",
+        "cusum": 44.44,
+        "segment": ["2018Q1", "2019Q2"],
+        "top_projection": {
+          "BNP": -0.588,
+          "WFC": 0.558,
+          "C": 0.415,
+          "UBS.CS": 0.288
+        },
+        "share_change_pp": {
+          "JPM": 3.29,
+          "GS": -0.4,
+          "MS": -1.08,
+          "BAC": 0.12,
+          "C": 0.32,
+          "WFC": -0.38,
+          "Barclays": -0.34,
+          "UBS.CS": -0.12,
+          "DB": -0.09,
+          "BNP": -0.24,
+          "HSBC": -0.19,
+          "Mizuho": -0.08,
+          "RBC": -0.56,
+          "TD": -0.27
+        }
+      },
+      {
+        "break_after": "2019Q2",
+        "first_new_quarter": "2019Q3",
+        "cusum": 6,
+        "segment": ["2019Q1", "2019Q4"],
+        "top_projection": {
+          "UBS.CS": 0.84,
+          "TD": -0.525,
+          "Mizuho": 0.09,
+          "Barclays": -0.079
+        },
+        "share_change_pp": {
+          "JPM": -3.51,
+          "GS": 2.47,
+          "MS": 0.56,
+          "BAC": 0.11,
+          "C": -0.1,
+          "WFC": 0.88,
+          "Barclays": -0.12,
+          "UBS.CS": 0.14,
+          "DB": -0.1,
+          "BNP": -0.08,
+          "HSBC": -0.31,
+          "Mizuho": 0.14,
+          "RBC": 0,
+          "TD": -0.07
+        }
+      },
+      {
+        "break_after": "2019Q4",
+        "first_new_quarter": "2020Q1",
+        "cusum": 11.42,
+        "segment": ["2019Q3", "2021Q1"],
+        "top_projection": {
+          "BNP": -0.915,
+          "Mizuho": 0.341,
+          "C": 0.166,
+          "WFC": -0.124
+        },
+        "share_change_pp": {
+          "JPM": 1.39,
+          "GS": -0.22,
+          "MS": -0.45,
+          "BAC": -1.6,
+          "C": 1.95,
+          "WFC": -0.7,
+          "Barclays": 0.09,
+          "UBS.CS": -0.24,
+          "DB": -0.1,
+          "BNP": -0.12,
+          "HSBC": -0.13,
+          "Mizuho": 0.13,
+          "RBC": -0.05,
+          "TD": 0.05
+        }
+      },
+      {
+        "break_after": "2021Q1",
+        "first_new_quarter": "2021Q2",
+        "cusum": 18.72,
+        "segment": ["2020Q1", "2022Q1"],
+        "top_projection": {
+          "WFC": 0.548,
+          "HSBC": -0.513,
+          "Barclays": -0.461,
+          "BAC": 0.354
+        },
+        "share_change_pp": {
+          "JPM": -1.37,
+          "GS": -0.4,
+          "MS": 0.18,
+          "BAC": 2.13,
+          "C": -0.47,
+          "WFC": 1.23,
+          "Barclays": -0.26,
+          "UBS.CS": -0.64,
+          "DB": -0.02,
+          "BNP": -0.01,
+          "HSBC": -0.39,
+          "Mizuho": 0.07,
+          "RBC": 0.04,
+          "TD": -0.1
+        }
+      },
+      {
+        "break_after": "2022Q1",
+        "first_new_quarter": "2022Q2",
+        "cusum": 10.03,
+        "segment": ["2021Q2", "2022Q4"],
+        "top_projection": {
+          "UBS.CS": -0.489,
+          "BAC": 0.474,
+          "RBC": -0.452,
+          "C": 0.317
+        },
+        "share_change_pp": {
+          "JPM": -0.25,
+          "GS": -1.28,
+          "MS": -0.17,
+          "BAC": 1.88,
+          "C": 0.09,
+          "WFC": -0.01,
+          "Barclays": 0.11,
+          "UBS.CS": -0.28,
+          "DB": -0.1,
+          "BNP": 0.05,
+          "HSBC": -0.12,
+          "Mizuho": 0.18,
+          "RBC": -0.29,
+          "TD": 0.19
+        }
+      },
+      {
+        "break_after": "2022Q4",
+        "first_new_quarter": "2023Q1",
+        "cusum": 83.54,
+        "segment": ["2022Q2", "2023Q2"],
+        "top_projection": {
+          "Mizuho": 0.952,
+          "UBS.CS": -0.27,
+          "Barclays": 0.12,
+          "BAC": -0.041
+        },
+        "share_change_pp": {
+          "JPM": 2.66,
+          "GS": -0.05,
+          "MS": -0.3,
+          "BAC": -2.05,
+          "C": 0.52,
+          "WFC": -0.82,
+          "Barclays": 0.31,
+          "UBS.CS": -0.55,
+          "DB": 0.07,
+          "BNP": 0.06,
+          "HSBC": -0.23,
+          "Mizuho": 0.4,
+          "RBC": -0.07,
+          "TD": 0.06
+        }
+      },
+      {
+        "break_after": "2023Q2",
+        "first_new_quarter": "2023Q3",
+        "cusum": 7.22,
+        "segment": ["2023Q1", "2024Q2"],
+        "top_projection": {
+          "UBS.CS": -0.916,
+          "Barclays": 0.281,
+          "BAC": -0.202,
+          "C": -0.15
+        },
+        "share_change_pp": {
+          "JPM": -0.1,
+          "GS": 1.88,
+          "MS": 0.57,
+          "BAC": -1.72,
+          "C": -0.45,
+          "WFC": -0.15,
+          "Barclays": 0.16,
+          "UBS.CS": -0.22,
+          "DB": -0.12,
+          "BNP": 0.09,
+          "HSBC": 0.01,
+          "Mizuho": 0.05,
+          "RBC": 0.05,
+          "TD": -0.05
+        }
+      },
+      {
+        "break_after": "2024Q2",
+        "first_new_quarter": "2024Q3",
+        "cusum": 22.03,
+        "segment": ["2023Q3", "2024Q4"],
+        "top_projection": {
+          "BNP": 0.673,
+          "UBS.CS": -0.526,
+          "WFC": 0.445,
+          "MS": -0.203
+        },
+        "share_change_pp": {
+          "JPM": 0.17,
+          "GS": 1.89,
+          "MS": -1.51,
+          "BAC": -0.11,
+          "C": -0.26,
+          "WFC": 0.22,
+          "Barclays": -0.22,
+          "UBS.CS": -0.16,
+          "DB": 0.04,
+          "BNP": 0.1,
+          "HSBC": -0.13,
+          "Mizuho": -0.01,
+          "RBC": -0.01,
+          "TD": -0.01
+        }
+      },
+      {
+        "break_after": "2024Q4",
+        "first_new_quarter": "2025Q1",
+        "cusum": 5.9,
+        "segment": ["2024Q3", "2025Q3"],
+        "top_projection": {
+          "C": 0.551,
+          "HSBC": -0.514,
+          "UBS.CS": -0.383,
+          "Barclays": 0.338
+        },
+        "share_change_pp": {
+          "JPM": 2.32,
+          "GS": -1.91,
+          "MS": 0.59,
+          "BAC": -1.31,
+          "C": 0.77,
+          "WFC": -0.05,
+          "Barclays": 0.19,
+          "UBS.CS": -0.04,
+          "DB": -0.13,
+          "BNP": 0.06,
+          "HSBC": -0.23,
+          "Mizuho": -0.21,
+          "RBC": 0,
+          "TD": -0.05
+        }
+      },
+      {
+        "break_after": "2025Q3",
+        "first_new_quarter": "2025Q4",
+        "cusum": 8.3,
+        "segment": ["2025Q1", "2026Q2"],
+        "top_projection": {
+          "GS": 0.613,
+          "UBS.CS": -0.61,
+          "HSBC": 0.415,
+          "WFC": 0.201
+        },
+        "share_change_pp": {
+          "JPM": -0.9,
+          "GS": 1.04,
+          "MS": 0.85,
+          "BAC": -0.39,
+          "C": -1.03,
+          "WFC": 0.6,
+          "Barclays": -0.11,
+          "UBS.CS": -0.07,
+          "DB": -0.06,
+          "BNP": 0.01,
+          "HSBC": 0.09,
+          "Mizuho": -0.01,
+          "RBC": 0.01,
+          "TD": -0.03
+        }
+      }
+    ],
+    "market_adjusted": [
+      {
+        "break_after": "2017Q1",
+        "first_new_quarter": "2017Q2",
+        "cusum": 7.32,
+        "segment": ["2016Q3", "2018Q4"],
+        "top_projection": {
+          "WFC": 0.581,
+          "DB": -0.461,
+          "UBS.CS": -0.361,
+          "Barclays": -0.345
+        },
+        "share_change_pp": {
+          "JPM": 0.72,
+          "GS": 0.64,
+          "MS": -0.13,
+          "BAC": 0.17,
+          "C": 0.07,
+          "WFC": 0.49,
+          "Barclays": -0.77,
+          "UBS.CS": -1.34,
+          "DB": -0.36,
+          "BNP": -0.03,
+          "HSBC": 0.66,
+          "Mizuho": 0.05,
+          "RBC": -0.16,
+          "TD": -0.01
+        }
+      },
+      {
+        "break_after": "2018Q4",
+        "first_new_quarter": "2019Q1",
+        "cusum": 14.81,
+        "segment": ["2017Q2", "2019Q4"],
+        "top_projection": {
+          "GS": 0.548,
+          "JPM": 0.53,
+          "RBC": -0.405,
+          "WFC": 0.359
+        },
+        "share_change_pp": {
+          "JPM": 1.82,
+          "GS": 1.02,
+          "MS": -1.23,
+          "BAC": 0.16,
+          "C": 0.33,
+          "WFC": 0.06,
+          "Barclays": -0.33,
+          "UBS.CS": -0.35,
+          "DB": -0.17,
+          "BNP": -0.23,
+          "HSBC": -0.09,
+          "Mizuho": -0.03,
+          "RBC": -0.69,
+          "TD": -0.28
+        }
+      },
+      {
+        "break_after": "2019Q4",
+        "first_new_quarter": "2020Q1",
+        "cusum": 6.77,
+        "segment": ["2019Q1", "2021Q1"],
+        "top_projection": {
+          "JPM": -0.657,
+          "TD": 0.468,
+          "HSBC": -0.408,
+          "RBC": 0.272
+        },
+        "share_change_pp": {
+          "JPM": -0.37,
+          "GS": 1.02,
+          "MS": -0.17,
+          "BAC": -1.55,
+          "C": 1.9,
+          "WFC": -0.25,
+          "Barclays": 0.02,
+          "UBS.CS": -0.17,
+          "DB": -0.16,
+          "BNP": -0.16,
+          "HSBC": -0.29,
+          "Mizuho": 0.2,
+          "RBC": -0.05,
+          "TD": 0.01
+        }
+      },
+      {
+        "break_after": "2021Q1",
+        "first_new_quarter": "2021Q2",
+        "cusum": 10.27,
+        "segment": ["2020Q1", "2022Q1"],
+        "top_projection": {
+          "Barclays": -0.49,
+          "BAC": 0.481,
+          "WFC": 0.403,
+          "HSBC": -0.275
+        },
+        "share_change_pp": {
+          "JPM": -1.37,
+          "GS": -0.4,
+          "MS": 0.18,
+          "BAC": 2.13,
+          "C": -0.47,
+          "WFC": 1.23,
+          "Barclays": -0.26,
+          "UBS.CS": -0.64,
+          "DB": -0.02,
+          "BNP": -0.01,
+          "HSBC": -0.39,
+          "Mizuho": 0.07,
+          "RBC": 0.04,
+          "TD": -0.1
+        }
+      },
+      {
+        "break_after": "2022Q1",
+        "first_new_quarter": "2022Q2",
+        "cusum": 42.64,
+        "segment": ["2021Q2", "2022Q3"],
+        "top_projection": {
+          "TD": 0.973,
+          "BNP": 0.194,
+          "WFC": -0.084,
+          "DB": -0.066
+        },
+        "share_change_pp": {
+          "JPM": -0.21,
+          "GS": -0.41,
+          "MS": -0.66,
+          "BAC": 1.76,
+          "C": -0.04,
+          "WFC": -0.11,
+          "Barclays": 0.04,
+          "UBS.CS": -0.2,
+          "DB": -0.12,
+          "BNP": 0.04,
+          "HSBC": -0.09,
+          "Mizuho": 0.09,
+          "RBC": -0.28,
+          "TD": 0.18
+        }
+      },
+      {
+        "break_after": "2022Q3",
+        "first_new_quarter": "2022Q4",
+        "cusum": 5.47,
+        "segment": ["2022Q2", "2024Q1"],
+        "top_projection": {
+          "RBC": -0.659,
+          "Mizuho": 0.595,
+          "HSBC": -0.365,
+          "C": 0.277
+        },
+        "share_change_pp": {
+          "JPM": 1.88,
+          "GS": -0.26,
+          "MS": 0.83,
+          "BAC": -2.28,
+          "C": 0.41,
+          "WFC": -0.68,
+          "Barclays": 0.39,
+          "UBS.CS": -0.66,
+          "DB": 0.02,
+          "BNP": 0.11,
+          "HSBC": -0.23,
+          "Mizuho": 0.48,
+          "RBC": -0.05,
+          "TD": 0.03
+        }
+      },
+      {
+        "break_after": "2024Q1",
+        "first_new_quarter": "2024Q2",
+        "cusum": 13.31,
+        "segment": ["2022Q4", "2025Q1"],
+        "top_projection": {
+          "GS": 0.63,
+          "HSBC": -0.574,
+          "BNP": 0.472,
+          "UBS.CS": -0.178
+        },
+        "share_change_pp": {
+          "JPM": 1.78,
+          "GS": 2.17,
+          "MS": -1.26,
+          "BAC": -1.91,
+          "C": -0.31,
+          "WFC": -0.05,
+          "Barclays": 0.08,
+          "UBS.CS": -0.34,
+          "DB": -0.03,
+          "BNP": 0.13,
+          "HSBC": -0.19,
+          "Mizuho": -0.05,
+          "RBC": 0.02,
+          "TD": -0.03
+        }
+      },
+      {
+        "break_after": "2025Q1",
+        "first_new_quarter": "2025Q2",
+        "cusum": 5.55,
+        "segment": ["2024Q2", "2026Q2"],
+        "top_projection": {
+          "MS": 0.879,
+          "WFC": 0.392,
+          "UBS.CS": -0.224,
+          "HSBC": -0.114
+        },
+        "share_change_pp": {
+          "JPM": 0.74,
+          "GS": -0.34,
+          "MS": 0.76,
+          "BAC": -1.17,
+          "C": 0.03,
+          "WFC": 0.45,
+          "Barclays": -0.01,
+          "UBS.CS": -0.09,
+          "DB": -0.16,
+          "BNP": 0.09,
+          "HSBC": -0.14,
+          "Mizuho": -0.09,
+          "RBC": 0,
+          "TD": -0.07
+        }
+      }
+    ],
+    "n_cp_raw": 12,
+    "n_cp_adj": 8
+  },
+  "B2_A": {
+    "observed_adj": 8,
+    "observed_raw": 12,
+    "nsim": 200,
+    "phi_hat": {
+      "JPM": 1.007,
+      "GS": 1.007,
+      "MS": 1.005,
+      "BAC": 1.001,
+      "C": 1.006,
+      "WFC": 1.013,
+      "Barclays": 0.972,
+      "UBS.CS": 1.015,
+      "DB": 1.009,
+      "BNP": 0.99,
+      "HSBC": 0.969,
+      "Mizuho": 0.962,
+      "RBC": 1,
+      "TD": 0.992
+    },
+    "shuffle": {
+      "mean": 0.76,
+      "p_ge_obs": 0,
+      "frac_zero": 0.635
+    },
+    "ar1_matched": {
+      "mean": 12.39,
+      "p_ge_obs": 1,
+      "frac_zero": 0
+    },
+    "random_walk": {
+      "mean": 13.28,
+      "p_ge_obs": 1,
+      "frac_zero": 0
+    }
+  },
+  "B3_A": {
+    "univariate_breaks": {
+      "JPM": ["2018Q4", "2022Q1", "2024Q1"],
+      "GS": ["2018Q4", "2019Q4", "2021Q2", "2023Q2"],
+      "MS": ["2020Q3", "2024Q4"],
+      "BAC": ["2018Q4", "2019Q4", "2020Q4", "2024Q4"],
+      "C": ["2018Q4", "2021Q1", "2023Q1"],
+      "WFC": ["2017Q2", "2021Q1", "2025Q2"],
+      "Barclays": ["2017Q2", "2023Q1"],
+      "UBS.CS": ["2017Q3", "2021Q2", "2022Q3", "2024Q1"],
+      "DB": ["2017Q2", "2022Q1", "2025Q1"],
+      "BNP": ["2017Q4", "2018Q4", "2022Q1", "2024Q2"],
+      "HSBC": ["2017Q4", "2020Q1", "2021Q3", "2024Q3"],
+      "Mizuho": ["2019Q1", "2021Q1", "2022Q3"],
+      "RBC": ["2018Q2", "2022Q1"],
+      "TD": ["2018Q4", "2022Q2"]
+    },
+    "n_univariate_total": 43,
+    "inspect_breaks": ["2017Q1", "2018Q4", "2019Q4", "2021Q1", "2022Q1", "2022Q3", "2024Q1", "2025Q1"],
+    "n_firms_with_univariate_break_within_1q": {
+      "2017Q1": 3,
+      "2018Q4": 7,
+      "2019Q4": 3,
+      "2021Q1": 6,
+      "2022Q1": 5,
+      "2022Q3": 3,
+      "2024Q1": 3,
+      "2025Q1": 4
+    },
+    "realtime_delay_quarters": {
+      "2017Q1": 2,
+      "2018Q4": 2,
+      "2019Q4": 2,
+      "2021Q1": 2,
+      "2022Q1": 2,
+      "2022Q3": 4,
+      "2024Q1": 3,
+      "2025Q1": 5
+    }
+  },
+  "B1_E4": {
+    "n": 62,
+    "p": 4,
+    "threshold": 5.86,
+    "raw": [
+      {
+        "break_after": "2011Q2",
+        "first_new_quarter": "2011Q3",
+        "cusum": 15.14,
+        "segment": ["2011Q1", "2011Q4"],
+        "top_projection": {
+          "MS": 0.944,
+          "GS": -0.313,
+          "BAC": 0.089,
+          "JPM": 0.049
+        },
+        "share_change_pp": {
+          "JPM": 6.32,
+          "GS": -23.3,
+          "MS": 12.7,
+          "BAC": 4.28
+        }
+      },
+      {
+        "break_after": "2011Q4",
+        "first_new_quarter": "2012Q1",
+        "cusum": 6.75,
+        "segment": ["2011Q3", "2012Q2"],
+        "top_projection": {
+          "GS": -0.901,
+          "MS": 0.377,
+          "BAC": 0.155,
+          "JPM": 0.15
+        },
+        "share_change_pp": {
+          "JPM": 3.1,
+          "GS": -10.05,
+          "MS": 5.21,
+          "BAC": 1.74
+        }
+      },
+      {
+        "break_after": "2012Q2",
+        "first_new_quarter": "2012Q3",
+        "cusum": 10.87,
+        "segment": ["2012Q1", "2012Q3"],
+        "top_projection": {
+          "MS": -0.896,
+          "BAC": -0.322,
+          "GS": 0.305,
+          "JPM": -0
+        },
+        "share_change_pp": {
+          "JPM": -4.43,
+          "GS": 25.22,
+          "MS": -15.26,
+          "BAC": -5.52
+        }
+      },
+      {
+        "break_after": "2012Q3",
+        "first_new_quarter": "2012Q4",
+        "cusum": 16.73,
+        "segment": ["2012Q3", "2013Q2"],
+        "top_projection": {
+          "MS": -0.999,
+          "BAC": 0.03,
+          "GS": 0.026,
+          "JPM": 0.006
+        },
+        "share_change_pp": {
+          "JPM": -0.03,
+          "GS": 4.78,
+          "MS": -6.19,
+          "BAC": 1.43
+        }
+      },
+      {
+        "break_after": "2013Q2",
+        "first_new_quarter": "2013Q3",
+        "cusum": 6.7,
+        "segment": ["2012Q4", "2016Q1"],
+        "top_projection": {
+          "JPM": -0.772,
+          "BAC": 0.636,
+          "MS": -0.013,
+          "GS": 0.009
+        },
+        "share_change_pp": {
+          "JPM": -4.26,
+          "GS": 1.22,
+          "MS": 0.9,
+          "BAC": 2.14
+        }
+      },
+      {
+        "break_after": "2016Q1",
+        "first_new_quarter": "2016Q2",
+        "cusum": 9.45,
+        "segment": ["2013Q3", "2017Q2"],
+        "top_projection": {
+          "JPM": 0.767,
+          "GS": -0.641,
+          "BAC": 0.029,
+          "MS": 0.003
+        },
+        "share_change_pp": {
+          "JPM": 6.08,
+          "GS": -10.89,
+          "MS": 3.3,
+          "BAC": 1.51
+        }
+      },
+      {
+        "break_after": "2017Q2",
+        "first_new_quarter": "2017Q3",
+        "cusum": 39.98,
+        "segment": ["2016Q2", "2018Q2"],
+        "top_projection": {
+          "MS": -0.743,
+          "JPM": 0.647,
+          "BAC": 0.168,
+          "GS": 0.002
+        },
+        "share_change_pp": {
+          "JPM": 4.68,
+          "GS": 1.36,
+          "MS": -6.81,
+          "BAC": 0.78
+        }
+      },
+      {
+        "break_after": "2018Q2",
+        "first_new_quarter": "2018Q3",
+        "cusum": 8.37,
+        "segment": ["2017Q3", "2018Q4"],
+        "top_projection": {
+          "BAC": 0.669,
+          "JPM": -0.661,
+          "GS": 0.334,
+          "MS": -0.052
+        },
+        "share_change_pp": {
+          "JPM": -8.34,
+          "GS": 4.77,
+          "MS": -1.44,
+          "BAC": 5
+        }
+      },
+      {
+        "break_after": "2018Q4",
+        "first_new_quarter": "2019Q1",
+        "cusum": 8.35,
+        "segment": ["2018Q3", "2019Q3"],
+        "top_projection": {
+          "GS": -0.993,
+          "JPM": 0.12,
+          "MS": -0.015,
+          "BAC": 0
+        },
+        "share_change_pp": {
+          "JPM": 13.01,
+          "GS": -11.76,
+          "MS": -1.63,
+          "BAC": 0.38
+        }
+      },
+      {
+        "break_after": "2019Q3",
+        "first_new_quarter": "2019Q4",
+        "cusum": 6.44,
+        "segment": ["2019Q1", "2019Q4"],
+        "top_projection": {
+          "GS": -0.894,
+          "JPM": 0.37,
+          "BAC": -0.248,
+          "MS": -0.045
+        },
+        "share_change_pp": {
+          "JPM": 15.07,
+          "GS": -5.98,
+          "MS": -3.28,
+          "BAC": -5.82
+        }
+      },
+      {
+        "break_after": "2019Q4",
+        "first_new_quarter": "2020Q1",
+        "cusum": 10.8,
+        "segment": ["2019Q4", "2020Q1"],
+        "top_projection": {
+          "JPM": -1,
+          "GS": 0,
+          "MS": 0,
+          "BAC": 0
+        },
+        "share_change_pp": {
+          "JPM": -34.38,
+          "GS": 19.01,
+          "MS": 4.9,
+          "BAC": 10.47
+        }
+      },
+      {
+        "break_after": "2020Q1",
+        "first_new_quarter": "2020Q2",
+        "cusum": 9.66,
+        "segment": ["2020Q1", "2020Q3"],
+        "top_projection": {
+          "MS": -0.908,
+          "BAC": -0.392,
+          "JPM": 0.149,
+          "GS": -0
+        },
+        "share_change_pp": {
+          "JPM": 12.62,
+          "GS": -4.42,
+          "MS": 0.37,
+          "BAC": -8.56
+        }
+      },
+      {
+        "break_after": "2020Q3",
+        "first_new_quarter": "2020Q4",
+        "cusum": 14.7,
+        "segment": ["2020Q2", "2021Q4"],
+        "top_projection": {
+          "BAC": -0.57,
+          "MS": -0.537,
+          "GS": 0.486,
+          "JPM": 0.387
+        },
+        "share_change_pp": {
+          "JPM": 8.16,
+          "GS": 1.05,
+          "MS": -4.25,
+          "BAC": -4.96
+        }
+      },
+      {
+        "break_after": "2021Q4",
+        "first_new_quarter": "2022Q1",
+        "cusum": 6.92,
+        "segment": ["2020Q4", "2022Q1"],
+        "top_projection": {
+          "JPM": -0.872,
+          "BAC": 0.488,
+          "MS": 0.027,
+          "GS": -0.01
+        },
+        "share_change_pp": {
+          "JPM": -9.58,
+          "GS": -0.09,
+          "MS": 5.06,
+          "BAC": 4.61
+        }
+      },
+      {
+        "break_after": "2022Q1",
+        "first_new_quarter": "2022Q2",
+        "cusum": 21.49,
+        "segment": ["2022Q1", "2022Q4"],
+        "top_projection": {
+          "BAC": 0.997,
+          "GS": -0.049,
+          "MS": 0.041,
+          "JPM": -0.04
+        },
+        "share_change_pp": {
+          "JPM": -11.33,
+          "GS": -4.18,
+          "MS": 7.29,
+          "BAC": 8.22
+        }
+      },
+      {
+        "break_after": "2022Q4",
+        "first_new_quarter": "2023Q1",
+        "cusum": 10.62,
+        "segment": ["2022Q2", "2023Q1"],
+        "top_projection": {
+          "GS": -0.806,
+          "BAC": -0.502,
+          "JPM": 0.263,
+          "MS": -0.172
+        },
+        "share_change_pp": {
+          "JPM": 17.27,
+          "GS": -9.93,
+          "MS": -6.25,
+          "BAC": -1.08
+        }
+      },
+      {
+        "break_after": "2023Q1",
+        "first_new_quarter": "2023Q2",
+        "cusum": 28.06,
+        "segment": ["2023Q1", "2025Q1"],
+        "top_projection": {
+          "MS": -0.905,
+          "JPM": 0.33,
+          "BAC": -0.265,
+          "GS": -0.031
+        },
+        "share_change_pp": {
+          "JPM": 14.92,
+          "GS": -4.88,
+          "MS": -5.28,
+          "BAC": -4.77
+        }
+      },
+      {
+        "break_after": "2025Q1",
+        "first_new_quarter": "2025Q2",
+        "cusum": 8.06,
+        "segment": ["2023Q2", "2026Q2"],
+        "top_projection": {
+          "BAC": -0.914,
+          "MS": 0.403,
+          "GS": 0.048,
+          "JPM": 0.03
+        },
+        "share_change_pp": {
+          "JPM": -0.79,
+          "GS": 1.37,
+          "MS": 2.93,
+          "BAC": -3.51
+        }
+      }
+    ],
+    "market_adjusted": [
+      {
+        "break_after": "2011Q2",
+        "first_new_quarter": "2011Q3",
+        "cusum": 9.78,
+        "segment": ["2011Q1", "2012Q2"],
+        "top_projection": {
+          "GS": -0.95,
+          "JPM": 0.259,
+          "BAC": 0.174,
+          "MS": -0.008
+        },
+        "share_change_pp": {
+          "JPM": 7.87,
+          "GS": -28.32,
+          "MS": 15.31,
+          "BAC": 5.15
+        }
+      },
+      {
+        "break_after": "2012Q2",
+        "first_new_quarter": "2012Q3",
+        "cusum": 10.67,
+        "segment": ["2011Q3", "2013Q1"],
+        "top_projection": {
+          "GS": 0.905,
+          "MS": -0.308,
+          "JPM": -0.28,
+          "BAC": -0.085
+        },
+        "share_change_pp": {
+          "JPM": -2.85,
+          "GS": 22.7,
+          "MS": -15.85,
+          "BAC": -4
+        }
+      },
+      {
+        "break_after": "2013Q1",
+        "first_new_quarter": "2013Q2",
+        "cusum": 16.28,
+        "segment": ["2012Q3", "2015Q4"],
+        "top_projection": {
+          "GS": 0.892,
+          "MS": -0.349,
+          "BAC": 0.265,
+          "JPM": -0.114
+        },
+        "share_change_pp": {
+          "JPM": -4.05,
+          "GS": 3.78,
+          "MS": -2.41,
+          "BAC": 2.69
+        }
+      },
+      {
+        "break_after": "2015Q4",
+        "first_new_quarter": "2016Q1",
+        "cusum": 7.85,
+        "segment": ["2013Q2", "2017Q2"],
+        "top_projection": {
+          "GS": -0.803,
+          "JPM": 0.501,
+          "MS": -0.31,
+          "BAC": -0.094
+        },
+        "share_change_pp": {
+          "JPM": 5,
+          "GS": -9.74,
+          "MS": 3.04,
+          "BAC": 1.7
+        }
+      },
+      {
+        "break_after": "2017Q2",
+        "first_new_quarter": "2017Q3",
+        "cusum": 41.3,
+        "segment": ["2016Q1", "2018Q2"],
+        "top_projection": {
+          "BAC": 0.98,
+          "MS": -0.187,
+          "GS": -0.065,
+          "JPM": 0.009
+        },
+        "share_change_pp": {
+          "JPM": 5.49,
+          "GS": -0.07,
+          "MS": -6.23,
+          "BAC": 0.81
+        }
+      },
+      {
+        "break_after": "2018Q2",
+        "first_new_quarter": "2018Q3",
+        "cusum": 9.37,
+        "segment": ["2017Q3", "2018Q4"],
+        "top_projection": {
+          "BAC": 0.911,
+          "JPM": -0.393,
+          "MS": -0.108,
+          "GS": 0.062
+        },
+        "share_change_pp": {
+          "JPM": -8.34,
+          "GS": 4.77,
+          "MS": -1.44,
+          "BAC": 5
+        }
+      },
+      {
+        "break_after": "2018Q4",
+        "first_new_quarter": "2019Q1",
+        "cusum": 9.08,
+        "segment": ["2018Q3", "2019Q4"],
+        "top_projection": {
+          "MS": -0.768,
+          "JPM": 0.467,
+          "GS": -0.432,
+          "BAC": -0.078
+        },
+        "share_change_pp": {
+          "JPM": 16.78,
+          "GS": -13.25,
+          "MS": -2.45,
+          "BAC": -1.08
+        }
+      },
+      {
+        "break_after": "2019Q4",
+        "first_new_quarter": "2020Q1",
+        "cusum": 6.62,
+        "segment": ["2019Q1", "2020Q2"],
+        "top_projection": {
+          "MS": 0.755,
+          "GS": 0.498,
+          "JPM": -0.423,
+          "BAC": -0.061
+        },
+        "share_change_pp": {
+          "JPM": -17.02,
+          "GS": 11.64,
+          "MS": 2.87,
+          "BAC": 2.51
+        }
+      },
+      {
+        "break_after": "2020Q2",
+        "first_new_quarter": "2020Q3",
+        "cusum": 10.93,
+        "segment": ["2020Q1", "2022Q1"],
+        "top_projection": {
+          "BAC": -0.844,
+          "JPM": 0.529,
+          "GS": -0.089,
+          "MS": -0.002
+        },
+        "share_change_pp": {
+          "JPM": 12.27,
+          "GS": -0.46,
+          "MS": -3.05,
+          "BAC": -8.76
+        }
+      },
+      {
+        "break_after": "2022Q1",
+        "first_new_quarter": "2022Q2",
+        "cusum": 6.02,
+        "segment": ["2020Q3", "2022Q3"],
+        "top_projection": {
+          "BAC": 0.975,
+          "JPM": -0.22,
+          "GS": -0.014,
+          "MS": -0.001
+        },
+        "share_change_pp": {
+          "JPM": -20.53,
+          "GS": -1.79,
+          "MS": 11.56,
+          "BAC": 10.77
+        }
+      },
+      {
+        "break_after": "2022Q3",
+        "first_new_quarter": "2022Q4",
+        "cusum": 22.92,
+        "segment": ["2022Q2", "2024Q4"],
+        "top_projection": {
+          "BAC": 0.713,
+          "MS": -0.531,
+          "JPM": 0.371,
+          "GS": -0.267
+        },
+        "share_change_pp": {
+          "JPM": 29.58,
+          "GS": -15.63,
+          "MS": -10.4,
+          "BAC": -3.55
+        }
+      },
+      {
+        "break_after": "2024Q4",
+        "first_new_quarter": "2025Q1",
+        "cusum": 11.24,
+        "segment": ["2022Q4", "2026Q2"],
+        "top_projection": {
+          "BAC": -0.931,
+          "MS": 0.362,
+          "JPM": 0.049,
+          "GS": 0.004
+        },
+        "share_change_pp": {
+          "JPM": 3.9,
+          "GS": -0.62,
+          "MS": 1.09,
+          "BAC": -4.38
+        }
+      }
+    ],
+    "n_cp_raw": 18,
+    "n_cp_adj": 12
+  },
+  "B2_E4": {
+    "observed_adj": 12,
+    "observed_raw": 18,
+    "nsim": 200,
+    "phi_hat": {
+      "JPM": 0.781,
+      "GS": 0.905,
+      "MS": 0.9,
+      "BAC": 0.957
+    },
+    "shuffle": {
+      "mean": 0.035,
+      "p_ge_obs": 0,
+      "frac_zero": 0.965
+    },
+    "ar1_matched": {
+      "mean": 7.63,
+      "p_ge_obs": 0.005,
+      "frac_zero": 0
+    },
+    "random_walk": {
+      "mean": 9.155,
+      "p_ge_obs": 0.075,
+      "frac_zero": 0
+    }
+  },
+  "B3_E4": {
+    "univariate_breaks": {
+      "JPM": ["2013Q1", "2015Q4", "2022Q3"],
+      "GS": ["2012Q2", "2016Q1", "2022Q3"],
+      "MS": ["2014Q1", "2018Q1", "2020Q1"],
+      "BAC": ["2013Q1", "2017Q4", "2020Q3", "2022Q1", "2024Q4"]
+    },
+    "n_univariate_total": 14,
+    "inspect_breaks": ["2011Q2", "2012Q2", "2013Q1", "2015Q4", "2017Q2", "2018Q2", "2018Q4", "2019Q4", "2020Q2", "2022Q1", "2022Q3", "2024Q4"],
+    "n_firms_with_univariate_break_within_1q": {
+      "2011Q2": 0,
+      "2012Q2": 1,
+      "2013Q1": 2,
+      "2015Q4": 2,
+      "2017Q2": 0,
+      "2018Q2": 1,
+      "2018Q4": 0,
+      "2019Q4": 1,
+      "2020Q2": 2,
+      "2022Q1": 1,
+      "2022Q3": 2,
+      "2024Q4": 1
+    },
+    "realtime_delay_quarters": {
+      "2011Q2": 3,
+      "2012Q2": 2,
+      "2013Q1": 3,
+      "2015Q4": 4,
+      "2017Q2": 4,
+      "2018Q2": 2,
+      "2018Q4": 2,
+      "2019Q4": 2,
+      "2020Q2": 2,
+      "2022Q1": 2,
+      "2022Q3": 2,
+      "2024Q4": 2
+    }
+  },
+  "B4_A": {
+    "n": 39,
+    "p": 14,
+    "observed": 0,
+    "breaks": [],
+    "phi_diff": {
+      "JPM": -0.453,
+      "GS": -0.252,
+      "MS": -0.412,
+      "BAC": -0.388,
+      "C": -0.447,
+      "WFC": -0.095,
+      "Barclays": -0.554,
+      "UBS.CS": -0.543,
+      "DB": -0.492,
+      "BNP": -0.397,
+      "HSBC": -0.528,
+      "Mizuho": -0.363,
+      "RBC": -0.496,
+      "TD": -0.366
+    },
+    "nsim": 300,
+    "null_shuffle": {
+      "mean": 0.25,
+      "p_ge_obs": 1
+    },
+    "null_block4": {
+      "mean": 0.0366666666666667,
+      "p_ge_obs": 1
+    },
+    "null_ar1": {
+      "mean": 0.00333333333333333,
+      "p_ge_obs": 1
+    }
+  },
+  "B4_E4": {
+    "n": 61,
+    "p": 4,
+    "observed": 1,
+    "breaks": [
+      {
+        "break_after": "2011Q3",
+        "cusum": 5.34,
+        "segment": ["2011Q2", "2026Q2"],
+        "top_projection": {
+          "GS": 0.972,
+          "MS": -0.183,
+          "JPM": -0.132,
+          "BAC": -0.061
+        },
+        "drift_change_clr_per_q": {
+          "JPM": -0.1986,
+          "GS": 0.3945,
+          "MS": -0.1386,
+          "BAC": -0.0572
+        },
+        "drift_before": {
+          "JPM": 0.205,
+          "GS": -0.3979,
+          "MS": 0.1294,
+          "BAC": 0.0635
+        },
+        "drift_after": {
+          "JPM": 0.0063,
+          "GS": -0.0034,
+          "MS": -0.0092,
+          "BAC": 0.0063
+        }
+      }
+    ],
+    "phi_diff": {
+      "JPM": -0.184,
+      "GS": -0.015,
+      "MS": -0.154,
+      "BAC": -0.061
+    },
+    "nsim": 300,
+    "null_shuffle": {
+      "mean": 0.37,
+      "p_ge_obs": 0.24
+    },
+    "null_block4": {
+      "mean": 0.286666666666667,
+      "p_ge_obs": 0.22
+    },
+    "null_ar1": {
+      "mean": 0.01,
+      "p_ge_obs": 0.01
+    }
+  },
+  "timing_ms_per_call_A": 9.6,
+  "meta": {
+    "InspectChangepoint": "1.2",
+    "strucchange": "1.6.0",
+    "run": "2026-11-11 14:26:12"
+  }
+}
