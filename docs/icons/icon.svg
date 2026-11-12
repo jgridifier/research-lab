@@ -1,0 +1,109 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" width="512" height="512">
+  <defs>
+    <radialGradient id="bg" cx="42%" cy="34%" r="74%">
+      <stop offset="0%" stop-color="#2C2622"/>
+      <stop offset="48%" stop-color="#161513"/>
+      <stop offset="100%" stop-color="#0A0908"/>
+    </radialGradient>
+    <linearGradient id="glass" x1="22%" y1="10%" x2="86%" y2="90%">
+      <stop offset="0%" stop-color="#FFFBF3" stop-opacity="0.28"/>
+      <stop offset="45%" stop-color="#E8DCC6" stop-opacity="0.10"/>
+      <stop offset="100%" stop-color="#C9B79A" stop-opacity="0.18"/>
+    </linearGradient>
+    <linearGradient id="liquid" x1="50%" y1="28%" x2="50%" y2="100%">
+      <stop offset="0%" stop-color="#E6B5A6"/>
+      <stop offset="35%" stop-color="#C97B6C"/>
+      <stop offset="100%" stop-color="#7A2C26"/>
+    </linearGradient>
+    <radialGradient id="liquidSheen" cx="38%" cy="42%" r="60%">
+      <stop offset="0%" stop-color="#FFF4EC" stop-opacity="0.35"/>
+      <stop offset="55%" stop-color="#E2B7A6" stop-opacity="0"/>
+      <stop offset="100%" stop-color="#6E1F1A" stop-opacity="0.25"/>
+    </radialGradient>
+    <linearGradient id="lip" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" stop-color="#FFFBF3"/>
+      <stop offset="100%" stop-color="#C9B79A"/>
+    </linearGradient>
+    <filter id="glow" x="-50%" y="-50%" width="200%" height="200%">
+      <feGaussianBlur stdDeviation="4" result="b"/>
+      <feMerge>
+        <feMergeNode in="b"/>
+        <feMergeNode in="SourceGraphic"/>
+      </feMerge>
+    </filter>
+    <filter id="soft" x="-30%" y="-30%" width="160%" height="160%">
+      <feGaussianBlur stdDeviation="2.4" result="b"/>
+      <feMerge>
+        <feMergeNode in="b"/>
+        <feMergeNode in="SourceGraphic"/>
+      </feMerge>
+    </filter>
+    <clipPath id="vessel">
+      <path d="M244 108 L244 232
+               C244 232 140 250 140 362
+               C140 432 188 438 256 438
+               C324 438 372 432 372 362
+               C372 250 268 232 268 232
+               L268 108
+               C268 100 262 96 256 96
+               C250 96 244 100 244 108 Z"/>
+    </clipPath>
+  </defs>
+
+  <rect width="512" height="512" fill="url(#bg)"/>
+
+  <ellipse cx="256" cy="452" rx="118" ry="14" fill="#000000" fill-opacity="0.45" filter="url(#soft)"/>
+
+  <g clip-path="url(#vessel)">
+    <path d="M120 176
+             C 200 176, 244 184, 256 184
+             C 268 184, 312 176, 392 176
+             L392 450 L120 450 Z" fill="url(#liquid)"/>
+    <path d="M120 176
+             C 200 176, 244 184, 256 184
+             C 268 184, 312 176, 392 176
+             L392 450 L120 450 Z" fill="url(#liquidSheen)"/>
+    <path d="M244 176 C 248 176, 252 184, 256 184 C 260 184, 264 176, 268 176"
+          fill="none" stroke="#FFF4EC" stroke-width="2.2" stroke-opacity="0.7"/>
+    <g fill="#FFF4EC" fill-opacity="0.55">
+      <ellipse cx="292" cy="348" rx="11" ry="9"/>
+      <ellipse cx="210" cy="386" rx="7" ry="6" fill-opacity="0.4"/>
+    </g>
+    <ellipse cx="292" cy="345" rx="5" ry="3.4" fill="#FFFFFF" fill-opacity="0.45"/>
+  </g>
+
+  <path d="M244 108 L244 232
+           C244 232 140 250 140 362
+           C140 432 188 438 256 438
+           C324 438 372 432 372 362
+           C372 250 268 232 268 232
+           L268 108
+           C268 100 262 96 256 96
+           C250 96 244 100 244 108 Z" fill="url(#glass)"/>
+
+  <path d="M244 108 L244 232
+           C244 232 140 250 140 362
+           C140 432 188 438 256 438
+           C324 438 372 432 372 362
+           C372 250 268 232 268 232
+           L268 108"
+        fill="none" stroke="#F3EFE4" stroke-width="6" stroke-linejoin="round" stroke-linecap="round"/>
+
+  <ellipse cx="256" cy="98" rx="38" ry="13" fill="none" stroke="url(#lip)" stroke-width="7"/>
+  <ellipse cx="256" cy="96" rx="26" ry="8" fill="#161513" fill-opacity="0.55"/>
+  <ellipse cx="256" cy="95" rx="18" ry="5" fill="none" stroke="#FFFBF3" stroke-width="2" stroke-opacity="0.55"/>
+
+  <g filter="url(#glow)">
+    <path d="M226 176 L286 176" fill="none" stroke="#E8C9B8" stroke-width="6" stroke-linecap="round" stroke-opacity="0.7"/>
+    <path d="M230 176 L282 176" fill="none" stroke="#C44532" stroke-width="3.6" stroke-linecap="round"/>
+    <path d="M226 170 L226 182" fill="none" stroke="#C44532" stroke-width="3.2" stroke-linecap="round"/>
+    <path d="M286 170 L286 182" fill="none" stroke="#C44532" stroke-width="3.2" stroke-linecap="round"/>
+  </g>
+
+  <path d="M178 318 C168 350, 176 400, 214 422"
+        fill="none" stroke="#FFFFFF" stroke-width="5" stroke-linecap="round" stroke-opacity="0.38" filter="url(#soft)"/>
+  <path d="M246 124 L246 210"
+        fill="none" stroke="#FFFFFF" stroke-width="3.2" stroke-linecap="round" stroke-opacity="0.32"/>
+  <path d="M360 330 C364 370, 348 418, 300 430"
+        fill="none" stroke="#C9B79A" stroke-width="2.4" stroke-linecap="round" stroke-opacity="0.35"/>
+</svg>

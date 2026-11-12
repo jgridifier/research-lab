@@ -1,0 +1,30 @@
+{
+  "name": "Research Lab",
+  "short_name": "Lab",
+  "description": "Independent quantitative research.",
+  "start_url": "/research-lab/",
+  "scope": "/research-lab/",
+  "display": "standalone",
+  "background_color": "#161513",
+  "theme_color": "#161513",
+  "icons": [
+    {
+      "src": "/research-lab/icons/icon-192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "/research-lab/icons/icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "/research-lab/icons/icon-512-maskable.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "maskable"
+    }
+  ]
+}
