@@ -1,8 +1,8 @@
 # Secret sauce plans
 
-*Edition 1 · 2026-11-12 · America/New_York (EST). Plans only.*
+*Edition 1 · 2026-11-12 · America/New_York (EST), four already-scouted methods. Edition 2 · same day, ad hoc exotic scout: codyn and Lovell proportionality, grounded in [2026-11-12-adhoc](2026-11-12-adhoc.html). Plans only.*
 
-This is a running file. Each daily methods scout should append plans for that day's methods in the same form. This first edition covers the four methods already scouted: changeforest and partykit ([2026-11-10](2026-11-10.html); [RESULTS](https://github.com/jgridifier/analysis-skills/blob/main/methods/changeforest/RESULTS.md) and [RESULTS](https://github.com/jgridifier/analysis-skills/blob/main/methods/partykit/RESULTS.md)) and MARSS and InspectChangepoint ([2026-11-11](2026-11-11.html), aimed at [Q1](QUESTIONS.md)). No new fits were run. Every number below is from those pages, their run JSON, or the RESULTS files. Nothing is being built, nothing is promoted, and no `APPROVAL.md` is written.
+This is a running file. Each daily methods scout should append plans for that day's methods in the same form. Edition 1 covers the four methods already scouted: changeforest and partykit ([2026-11-10](2026-11-10.html); [RESULTS](https://github.com/jgridifier/analysis-skills/blob/main/methods/changeforest/RESULTS.md) and [RESULTS](https://github.com/jgridifier/analysis-skills/blob/main/methods/partykit/RESULTS.md)) and MARSS and InspectChangepoint ([2026-11-11](2026-11-11.html), aimed at [Q1](QUESTIONS.md)). No new fits were run. Every number below is from those pages, their run JSON, or the RESULTS files. Nothing is being built, nothing is promoted, and no `APPROVAL.md` is written.
 
 **Jared's ask (2026-11-11):** a plan for secret sauce that could make each package truly extraordinary, ranging from engineering (for example a faithful Python or Rust port of an R-only package, validated against the original as oracle for parity, then speed) to a full theoretical math modification.
 
@@ -26,6 +26,8 @@ For each avenue: what it is in plain math, why it matters on our data (tied to a
 | partykit | **Math** | Conditional-inference and MOB split tests that stay valid under serial dependence and persistent state variables. |
 | MARSS | **Math** | A finite-sample test of "sticky vs slow mean reversion" that can label a single firm at 40 quarters, for the decomposition, not for a forecast. |
 | InspectChangepoint | **Math** | A sparse-projection "who moved" procedure whose size is right under persistent (near-unit-root) share levels, or under a change in drift. |
+| codyn | **Math** | A compositionally valid variance ratio in ilr (or clr) coordinates — official VR on shares is identically 0 — and a rank-shift null that does not wrap trending series. |
+| Lovell proportionality (ρ) | **Math** | A formal partial-ρ given market factors, with a persistence-aware null whose size is demonstrated at 40 and 62 quarters. |
 
 ---
 
@@ -267,6 +269,119 @@ Wang, T. & Samworth, R. J. (2018), "High dimensional change point estimation via
 
 ---
 
+
+
+---
+
+## codyn
+
+Hallett, Jones, MacDonald, Jones, Flynn, Ripplinger, Slaughter, Gries & Collins (2016), "codyn: An r package of community dynamics metrics", *Methods in Ecology and Evolution* 7(10):1146–1151, doi:10.1111/2041-210X.12569. Package v2.0.6 (2026-09-18, Apache-2.0). Scouted on the [2026-11-12 ad hoc](2026-11-12-adhoc.html) exotic run, aimed at [Q1](QUESTIONS.md). Novelty: niche, from community ecology. Status: recommended for the promote workflow — not promoted, no `APPROVAL.md`.
+
+**Found via.** Journal, *Methods in Ecology and Evolution* (named in the exotic-mandate venue list), 2026-11-12, field: community ecology. Paper: <https://besjournals.onlinelibrary.wiley.com/doi/10.1111/2041-210X.12569>. Also used: <https://cran.r-project.org/package=codyn>, the temporal-diversity vignette, and the NCEAS news note <https://www.nceas.ucsb.edu/news/new-r-code-helps-understand-community-dynamics>. An SSRN search did not surface this package. X was not searched for this edition.
+
+**What our runs showed.** On the PROXY Y-9C panels (same as 11-11; no raw private data), US dealer *volumes* co-move: Schluter VR = 4.45 on 14-dealer trading assets against a 999-draw cyclic-shift null of 0.44–2.00, and 2.36 on big-4 equity trading revenue against 0.57–1.66. The eight foreign IHCs, alone, do not (VR = 0.73, inside 0.29–2.19). Share composition walks in one direction (Collins rate of change 0.00138 and 0.00473, both p = 0.001 vs cyclic-shift). Incidence turnover is identically 0 (closed balanced panel). Mean rank shift is modest (0.385 and 0.238) and is *not* larger than the cyclic-shift null; on E4 it is significantly smaller (p≤ = 0.002), which we treat as a description of gradual change because the Hallett 2014 cyclic shift wraps a trending series and inflates that null. VR on shares is a numerical zero (4.07×10⁻¹⁷ on panel A), as the identity requires. Rank clocks make the GS→JPM equity-revenue swap (52.3% → 23.1% vs 14.5% → 43.4%) and the UBS+CS collapse (rank 7 → 14) visible next to the usual line plot.
+
+### Three avenues
+
+| # | Avenue | Pitch | Effort | Headline test | Pick |
+|---|---|---|---|---|---|
+| 1 | Engineering | A faithful Python or Rust port of rank clocks, VR with cyclic-shift, and rate-of-change, with codyn 2.0.6 as oracle, then speed for a Form ADV-scale panel. | M | Parity on today’s numbers (VR 4.4537 on A; rates 0.001379 and 0.004727; MRS 0.3846 and 0.2377), then 10×–100× wall time on a larger panel. | |
+| 2 | Math | A compositionally valid variance ratio in ilr (or clr) coordinates — official VR on shares is 0 — and a rank-shift null that does not wrap trending series. | L | On simulated 40-quarter panels, correct size under a market factor and power ≥ 0.80 on a planted sticky swap (official VR-on-shares stays 0; official cyclic-shift MRS is inflated by the wrap). | **Top** |
+| 3 | New use on our data | Rerun the same clocks, VR and rate-of-change on Form ADV Schedule D prime-broker client counts, once built, and colour the clock by market regime. | S | Whether the GS→JPM clock and a rate-of-change that beats the same null recur on actual prime-broker relationships. | |
+
+### 1 · Engineering: a port with the R package as oracle
+
+**What it is.** A faithful Python or Rust implementation of the metrics we actually ran — rank clocks (Collins et al. 2008), Schluter VR with the Hallett 2014 cyclic-shift null, Collins rate of change, mean rank shift, and turnover — with codyn 2.0.6 as the oracle, then a speed pass for a Form ADV-scale panel. The R package is maintained and small; the work is parity and scale, not a new statistic.
+
+**Why it matters on our data.** Today’s 14×40 and 4×62 panels ran in 129 seconds, mostly in 999-draw nulls. A Form ADV panel (many funds × brokers, longer histories) would feel that. We did not find a Python port of these exact temporal metrics with an oracle suite.
+
+**Closest prior.** Hallett et al. (2016) and the package itself. We did not find a published Python or Rust port with oracle parity on these functions.
+
+**Effort.** M.
+
+**How we would test it.** Pre-registered parity on this proxy: VR 4.453678 on panel A raw amounts (null interval 0.4376–2.0026 at seed 20261112, 999 draws); rate of change 0.001378931 and 0.004726503; mean rank shift 0.3846154 and 0.2377049; turnover identically 0. Then a wall-time comparison on a stated larger panel, 10×–100× as a target, not as a Q1 claim. No forecast metric.
+
+### 2 · Math, in detail (top pick)
+
+**What it is.** Two related gaps we actually hit. (i) Official VR on shares is identically zero, because the share total is 1. A Schluter-style ratio (or a related compensatory metric) in an ilr basis would be compositionally valid and would answer Q1 in share space, which is where the question lives. (ii) The Hallett 2014 cyclic shift is the right null for VR, but on a trending series it wraps the end onto the start and creates an artificial rank jump, so the MRS null is too high. A null that does not wrap — for example a stationary bootstrap of increments — is needed before MRS can be tested fairly.
+
+**Why it matters on our data.** We verified VR-on-shares = 4.07×10⁻¹⁷ on panel A, and we could not use the official tool to test compensatory *share* dynamics, only raw-volume synchrony. On E4, observed MRS 0.238 vs wrap-around null 0.367 (p≤ = 0.002) cannot be read as a formal rejection.
+
+**Closest prior.** Lovell et al. (2015) already refuse raw covariance on the simplex (that is method 2 of the same edition). We did not find a published Schluter-style VR in ilr coordinates with a cyclic-shift null, or a published rank-shift null that avoids wrap-around on trending series. Hallett et al. (2014) is the official VR null we would keep for volumes.
+
+**Effort.** L.
+
+**How we would test it.** Simulate 40-quarter share panels under a common market factor (no sticky swap) and under a planted GS→JPM-style swap. The new share-space metric has a false-positive rate in a pre-registered band around α, and power of at least 0.80 on the planted swap. Official VR-on-shares remains 0 and is reported as a negative control. Official cyclic-shift MRS is a baseline we already know is conservative in the wrap direction. No forecast metric.
+
+### 3 · New use, in detail
+
+**What it is.** The method is already pointed at Q1; the next data is the constraint. Rerun unchanged on Form ADV Schedule D §7.B.(1) prime-broker relationship counts, and colour clock rays by a VIX (or NFCI) high/low split.
+
+**Why it matters.** Zero turnover and a 14-firm closed panel are by construction. Real entry and exit, and real prime-broker relationships, are what Q1 asked for.
+
+**Closest prior.** Today’s 1a–1c pipeline, unchanged.
+
+**Effort.** S, once the panel exists; the data build is separate.
+
+**How we would test it.** The GS–JPM reordering and a rate-of-change above the cyclic-shift null, or an honest non-recurrence, on that panel. Plans only.
+
+**Why Math is the top pick.** A port of a VR that cannot be used on shares would only make today’s identity more convenient. The extraordinary step is a compensatory-share metric we can actually apply to Q1.
+
+---
+
+## Lovell proportionality (ρ)
+
+Lovell, Pawlowsky-Glahn, Egozcue, Marguerat & Bähler (2015), "Proportionality: A Valid Alternative to Correlation for Relative Data", *PLoS Computational Biology* 11(3):e1004075, doi:10.1371/journal.pcbi.1004075. Package paper: Quinn, Richardson, Lovell & Crowley (2017), "propr: An R-package for Identifying Proportionally Abundant Features Using Compositional Data Analysis", *Scientific Reports* 7:16520, doi:10.1038/s41598-017-16520-0. The CRAN package was archived on 2022-11-10 (last version 4.2.6); today’s numbers are from a from-paper implementation, identity-tested, not from propr as an oracle. Scouted on the [2026-11-12 ad hoc](2026-11-12-adhoc.html) exotic run, aimed at [Q1](QUESTIONS.md). Novelty: obscure, from compositional data analysis / genomics. Status: recommended for the promote workflow — not promoted, no `APPROVAL.md`.
+
+**Found via.** Journal, *PLoS Computational Biology*, 2026-11-12, field: compositional data analysis / genomics. Paper: <https://journals.plos.org/ploscompbiol/article?id=10.1371/journal.pcbi.1004075>. Found while looking for a compositional alternative to correlation, after the exotic mandate named chemometrics and compositional geochemistry and after `coda.base` was already on the 11-11 watchlist. Also used: Quinn et al. 2017, <https://www.nature.com/articles/s41598-017-16520-0>, and the CRAN archive record. An SSRN search turned up Greenacre’s compositional-data review (SSRN 3800686) but not this method. X was not searched for this edition.
+
+**What our runs showed.** Algebraic identity tests all passed (exact proportionality gives ρ = 1 and VLR = 0; VLR is identical on a composition and on the same amounts times a varying total; ρ is symmetric). On the four-firm equity-revenue proxy, JPM–GS ρ = −0.698 (cyclic-shift p = 0.007, BH q = 0.021) and JPM–MS ρ = −0.554 (p = 0.001, q = 0.006). After residualizing clr on VIX, 4-quarter Nasdaq return, the BAA–Treasury spread and industry growth, JPM–GS becomes *more* anti-proportional (−0.882, p = 0.006, q = 0.036), the only partial pair that survives BH; JPM–MS shrinks to −0.253 and is no longer significant (p = 0.172). JPM–GS is stable across windows (−0.63, −0.68, −0.64); JPM–MS flips from +0.62 in 2011–15 to about −0.52 later. On the 14-dealer panel, Pearson on raw shares often overstates association (Citi–UBS+CS −0.673 vs ρ −0.071; MS–RBC +0.745 vs +0.163); 28 of 91 pairs have raw cyclic-shift p ≤ 0.05 and none survive BH at 0.05. Clr R² on the market is 67% (MS), 62% (BAC), 52% (JPM), 29% (GS), in the same direction as the 11-11 MARSS split, under a different model.
+
+### Three avenues
+
+| # | Avenue | Pitch | Effort | Headline test | Pick |
+|---|---|---|---|---|---|
+| 1 | Engineering | A maintained Python or Rust library with identity tests, a cyclic-shift (not iid) permutation, and BH, validated against the published formulas. CRAN propr is archived. | M | The identity suite already run, plus parity on E4 JPM–GS ρ = −0.6976, then speed on a wider panel. | |
+| 2 | Math | A formal partial-ρ given market factors, with a persistence-aware null whose size is demonstrated at T = 40 and T = 62. Today’s 2c is the prototype. | L | On simulated panels, partial ρ is near 0 when a pair only co-moves through the market, and stays negative when they swap independently of it; raw ρ does not make that cut. | **Top** |
+| 3 | New use on our data | Once prime-broker or Form ADV shares exist, run market-partial ρ on a short, pre-registered pair list (JPM–GS, foreign vs US), not on all 91 pairs after the fact. | S | Recurrence of today’s signed, BH-surviving JPM–GS partial ρ, or an honest non-recurrence. | |
+
+### 1 · Engineering: a maintained library with the right null
+
+**What it is.** The formulas are a few lines; the product is a maintained Python or Rust package with identity tests, a cyclic-shift default null, and BH. Closest prior: Quinn et al. 2017 and the archived propr, which had an iid permutation and FDR. We did not find a maintained port whose default null is a cyclic shift.
+
+**Why it matters.** CRAN propr has been archived since 2022-11-10. Today’s numbers depend on a one-off implementation. A Form ADV panel would also want speed and a correct null, not an iid shuffle.
+
+**Effort.** M.
+
+**How we would test it.** The identity suite already in `m2_propr.py` must pass. Parity on this proxy: E4 JPM–GS ρ = −0.697629 (seed 20261112). Then a wall-time comparison on a stated wider panel. No forecast metric.
+
+### 2 · Math, in detail (top pick)
+
+**What it is.** Analysis 2c already draws the Q1 distinction — JPM–GS gets more anti-proportional after the market is removed (−0.698 → −0.882), JPM–MS less so (−0.554 → −0.253) — but it is a prototype, not a theorem. The sauce is a partial-ρ given market factors, with a cyclic-shift (or block) null whose size is demonstrated at T = 40 and T = 62.
+
+**Why it matters.** That distinction is the Q1 payoff of the edition. Without a size result, 2c is a pattern on one proxy.
+
+**Closest prior.** propr’s `pcor.bshrink` (partial correlation with basis shrinkage, recommended in the propr documentation for p ≫ n), which is partial *correlation* after a log-ratio, not partial ρ, and is not aimed at a short, persistent time series with a named covariate set. We did not find a formal “partial ρ given covariates” with a time-series null.
+
+**Effort.** L.
+
+**How we would test it.** Simulate share panels (i) with a common market factor and no residual swap, (ii) with a residual GS→JPM-style swap orthogonal to the market. At a pre-registered α, partial ρ’s false-positive rate on (i) is in a stated band, and power on (ii) is at least 0.80 at T = 62 and is reported honestly at T = 40. Raw ρ must not be allowed to pass (i). No forecast metric.
+
+### 3 · New use, in detail
+
+**What it is.** A short, pre-registered pair list on real prime-broker or Form ADV shares, using market-partial ρ and a cyclic-shift null.
+
+**Why it matters.** The 91-pair FDR on panel A already left no pair standing. Q1 is about named brokers, not a fishing expedition. The limiting ingredient is the data.
+
+**Closest prior.** Today’s 2c pipeline, with BH replaced by a pre-registered list.
+
+**Effort.** S, once the panel exists.
+
+**How we would test it.** JPM–GS partial ρ negative and BH-significant (or significant on the pre-registered list) on the real PB series, or a clear miss, reported as such. Plans only.
+
+**Why Math is the top pick.** A maintained port of raw ρ would still leave “is this the market or a sticky swap” as a prototype. The extraordinary step is a size-correct partial-ρ, which is what turned today’s JPM–GS and JPM–MS into opposite answers.
+
+
 ## Citations used (verified)
 
 Only papers we located with venue, year, and pages, plus the four method papers already cited on the scout pages. "Found via" links are only those recorded on the 11-10 and 11-11 pages or in the watchlist.
@@ -291,3 +406,13 @@ Only papers we located with venue, year, and pages, plus the four method papers 
 ## What this is not
 
 Plans only. Nothing here is being built. No new model fits were run for this edition. Nothing is promoted into analysis-skills. No `APPROVAL.md` is written. No raw private Drive rows are published. This file and its page live in research-lab, not in traceot. Research-lab PRs #25 and #21 are not touched.
+
+- Baselga, A. & Orme, C. D. L. (2012). betapart: an R package for the study of beta diversity. *Methods in Ecology and Evolution*, 3(5):808–812.
+- Collins, S. L., Micheli, F. & Hartt, L. (2000). A method to determine rates and patterns of variability in ecological communities. *Oikos*, 91(2):285–293.
+- Collins, S. L., Suding, K. N., Cleland, E. E., Batty, M., Pennings, S. C., Gross, K. L., Grace, J. B., Gough, L., Fargione, J. E. & Clark, C. M. (2008). Rank clocks and plant community dynamics. *Ecology*, 89(12):3534–3541.
+- Hallett, L. M., Hsu, J. S., Cleland, E. E., Collins, S. L., Dickson, T. L., Farrer, E. C., Gherardi, L., Gross, K. L., Hobbs, R. J., Turnbull, L. & Suding, K. N. (2014). Biotic mechanisms of community stability shift along a precipitation gradient. *Ecology*, 95(6):1693–1700.
+- Hallett, L. M., Jones, S. K., MacDonald, A. A. M., Jones, M. B., Flynn, D. F. B., Ripplinger, J., Slaughter, P., Gries, C. & Collins, S. L. (2016). codyn: An r package of community dynamics metrics. *Methods in Ecology and Evolution*, 7(10):1146–1151.
+- Lovell, D. R., Pawlowsky-Glahn, V., Egozcue, J. J., Marguerat, S. & Bähler, J. (2015). Proportionality: A Valid Alternative to Correlation for Relative Data. *PLoS Computational Biology*, 11(3):e1004075.
+- Malherbe, C. & Vayatis, N. (2017). Global optimization of Lipschitz functions. *Proceedings of the 34th International Conference on Machine Learning*, PMLR 70:2314–2323.
+- Quinn, T. P., Richardson, M. F., Lovell, D. R. & Crowley, T. M. (2017). propr: An R-package for Identifying Proportionally Abundant Features Using Compositional Data Analysis. *Scientific Reports*, 7:16520.
+- Schluter, D. (1984). A Variance Test for Detecting Species Associations, with Some Example Applications. *Ecology*, 65(3):998–1005.
