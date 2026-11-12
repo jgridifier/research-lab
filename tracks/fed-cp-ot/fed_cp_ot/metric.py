@@ -5,7 +5,10 @@ EDGES = [(1,4), (5,9), (10,20), (21,40), (41,80), (81,270)]
 X_LOG = np.array([math.log(math.sqrt(a*b)) for a,b in EDGES])
 X_RANK = np.arange(6, dtype=float)
 def q_from_p(p, x):
-    p = np.asarray(p, float); k = p > 0; c = np.cumsum(p[k]) / p[k].sum(); c[-1] = 1.0
+    p = np.asarray(p, float)
+    if not np.isfinite(p).all() or (p < 0).any() or p.sum() <= 0:  # PREREG v2 7(a); single-atom laws stay valid
+        raise ValueError('Expected finite nonnegative shares with positive total')
+    k = p > 0; c = np.cumsum(p[k]) / p[k].sum(); c[-1] = 1.0
     return (c, x[k].astype(float))
 def _merge(*qs):
     c = np.unique(np.concatenate([q[0] for q in qs])); c = c[c > 0]
@@ -34,3 +37,20 @@ def alr(p, ref=0):
     p[p == 0] = 1e-4
     p /= p.sum()
     return np.log(np.delete(p, ref) / p[ref])
+
+def project_qf(c, v, x=X_LOG):
+    """PREREG v2 1: the W2-nearest 6-point law on x. Quantile mass in each Voronoi cell of x (cut at the midpoints of x,
+    ties to the lower bucket) goes to that support point. (c, v) is a step quantile function as built by q_from_p."""
+    c, v, x = np.asarray(c, float), np.asarray(v, float), np.asarray(x, float)
+    if c.ndim != 1 or c.shape != v.shape or c.size == 0 or not np.isclose(c[-1], 1.0) or (np.diff(c) < 0).any():
+        raise ValueError('Expected a step quantile function')
+    bucket = np.searchsorted((x[:-1] + x[1:]) / 2, v, side='left')  # side=left: a value exactly on a midpoint goes low
+    p = np.zeros(len(x))
+    np.add.at(p, bucket, np.diff(c, prepend=0.0))
+    return p / p.sum()
+
+def softmax_alr(a, ref=0):
+    """Inverse of alr(): softmax with the reference logit 0; no clipping and no floor (PREREG v2 7c)."""
+    z = np.insert(np.asarray(a, float), ref, 0.0)
+    z = np.exp(z - z.max())
+    return z / z.sum()

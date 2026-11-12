@@ -17,10 +17,11 @@ PINS = {
  'PIN.txt':'65032235646fb984f2b0a0b66f100b5257b239f4e66ac7c4a9f2f079aab419da',
  'GATE_THRESHOLDS_fed_cp_ot.md':'c15eb60cbe1467090fcc920b8f4e311dd14f7b3bbfd0437e21809355721a6c8a',
  'DATA_SPEC_for_app.md':'9c50a16e994cdb04e2598b270800e2941d027e314b375e33cbf5caa98f102c6c',
- 'ENGINEERING_TICKET.md':'088d9f2e72a162daf25436b2c76c3b4cfe6b93abd0082d480b5f94befa86346d'}
+ 'ENGINEERING_TICKET.md':'088d9f2e72a162daf25436b2c76c3b4cfe6b93abd0082d480b5f94befa86346d',
+ 'PREREG_v2_fed_cp_ot.md':'70e570f346892d823d1372a7a78ea7087de8a3a9525fedf73731526d0a0c9bb2'}
 REQUIRED_PINNED = ('PIN.txt', 'test_design_fed_cp_ot_v1.json', 'PREREG_fed_cp_ot.md',
                    'fed_cp_ot_learning.html', 'GATE_THRESHOLDS_fed_cp_ot.md',
-                   'DATA_SPEC_for_app.md', 'ENGINEERING_TICKET.md')
+                   'DATA_SPEC_for_app.md', 'ENGINEERING_TICKET.md', 'PREREG_v2_fed_cp_ot.md')
 APPROVAL_PATH = PREREG_DIR / 'APPROVAL_fed_cp_ot.txt'
 APPROVAL_SHA256 = None
 _issued = {}

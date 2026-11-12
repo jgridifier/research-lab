@@ -6,7 +6,7 @@ from pathlib import Path
 from .paths import TRIALS_PATH, ROOT
 from .preflight import preflight, validate_provenance
 from .errors import ProvenanceError
-from .parse import load_vol
+from .parse import load_vol  # noqa: F401 (kept importable for tests that patch it)
 CONFIRMATORY_TRIALS = (
     ('WAR vs B*', {'family':'A','candidate':'WAR','comparator':'B*'}),
     ('TMAR vs B*', {'family':'A','candidate':'TMAR','comparator':'B*'}),
@@ -23,13 +23,13 @@ def git_head():
         raise ProvenanceError('No git checkout; a trial needs a git head. Nothing was logged.')
     return head
 
-def log_trial(config, label, provenance, path=TRIALS_PATH):
+def log_trial(config, label, provenance, path=TRIALS_PATH, extra=None):
     validate_provenance(provenance, require_oos=True)
     encoded = json.dumps(config, sort_keys=True, separators=(',',':'), allow_nan=False)
     record = {'timestamp_utc':datetime.now(timezone.utc).isoformat(),
               'git_head':git_head(),
               'config_hash':hashlib.sha256(encoded.encode()).hexdigest(), 'label':label,
-              'provenance':dict(provenance.file_hashes), 'counts_as_trial':True}
+              'provenance':dict(provenance.file_hashes), 'counts_as_trial':True, **(extra or {})}
     with Path(path).open('a') as f: f.write(json.dumps(record, sort_keys=True)+'\n')
     return record
 
@@ -37,11 +37,11 @@ def trial_count(path=TRIALS_PATH):
     p = Path(path)
     return sum(json.loads(s)['counts_as_trial'] is True for s in p.read_text().splitlines()) if p.exists() else 0
 
-def _assert_harness_implemented():
-    raise NotImplementedError('OOS harness is a later PR; no trial was logged')
+CONFIRMATORY_TRIALS_V2 = CONFIRMATORY_TRIALS + (
+    ('Kumo-best vs SEL', {'family':'K','candidate':'KUMO_best','comparator':'SEL'}),
+    ('Kumo-best vs P', {'family':'K','candidate':'KUMO_best','comparator':'P'}))
 
-def run_oos():
-    provenance = preflight('oos')
-    _assert_harness_implemented()
-    for label, config in CONFIRMATORY_TRIALS: log_trial(config, label, provenance)
-    return load_vol(provenance)
+def run_oos(*args, **kwargs):
+    """The OOS run itself lives in fed_cp_ot.harness (PREREG v2 12 T1); this keeps the old entry point."""
+    from . import harness
+    return harness.run_oos(*args, **kwargs)

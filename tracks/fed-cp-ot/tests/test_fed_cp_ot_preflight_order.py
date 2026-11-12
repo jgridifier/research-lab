@@ -63,20 +63,19 @@ def test_run_oos_order(pins,monkeypatch,tmp_path,broken_pin):
     with pytest.raises(ProvenanceError): trials.run_oos()
     assert calls==[] and not (tmp_path/'trials.jsonl').exists()
 
-def test_harness_stub_before_logging(approved,monkeypatch):
-    calls=[]
-    monkeypatch.setattr(trials,'preflight',lambda mode:approved)
-    monkeypatch.setattr(trials,'log_trial',lambda *a:calls.append('log'))
-    monkeypatch.setattr(trials,'load_vol',lambda *a:calls.append('load'))
-    with pytest.raises(NotImplementedError): trials.run_oos()
-    assert not calls
+def test_run_oos_is_the_harness_entry_point(approved,monkeypatch):
+    """trials.run_oos delegates to fed_cp_ot.harness.run_oos (T1); the NotImplementedError stub is gone."""
+    from fed_cp_ot import harness
+    got=[]
+    monkeypatch.setattr(harness,'run_oos',lambda *a,**k:got.append((a,k)) or 'ran')
+    assert trials.run_oos(1,x=2)=='ran' and got==[((1,),{'x':2})]
 
 def test_committed_preflight():
     from fed_cp_ot.paths import TRACK
     assert pf.PREREG_DIR == TRACK/'prereg'
     provenance = pf.preflight('burnin')
     assert provenance.prereg_dir == 'tracks/fed-cp-ot/prereg'
-    assert len(provenance.file_hashes) == 7
+    assert len(provenance.file_hashes) == 8
     with pytest.raises(OOSNotAuthorized): pf.preflight('oos')
 
 
