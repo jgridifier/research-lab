@@ -8,6 +8,33 @@ Ad-hoc quant research Pages — bank fundamentals forecasting, Y-9C panels, DFM 
 
 ---
 
+## The front page
+
+The home is a newspaper-style front page, driven by a single data file.
+
+**To add a story, add one entry to [`docs/stories.json`](docs/stories.json).** Do not hand-edit story cards in `docs/index.html` — `docs/assets/home.js` renders them.
+
+Each entry has:
+
+| Field | What it is |
+|-------|------------|
+| `id` | Stable slug, unique |
+| `title` | Headline |
+| `dek` | One- or two-sentence deck |
+| `section` | One of the `sections` ids in the same file (`banking`, `methods`, `nowcasting`, `markets`, `reviews`, `tools`, `other-research`, `other-sites`) |
+| `date` | `YYYY-MM-DD` (publication or first-commit date, not a later cosmetic edit) |
+| `url` | Lab-relative path (`vendors/conexus/index.html`) or an absolute URL for an external site or repo |
+| `external` | `true` if the URL is outside this repository’s Pages site |
+| `featured` | `"lead"` (one only), `"secondary"`, or `null` |
+| `kind` | `review`, `scout`, `track`, `results`, `teaching`, `learning`, `program`, `page`, `site`, or `repo` |
+| `kicker` | Optional small-caps label above the headline |
+
+Preview with `cd docs && python -m http.server 8000` and open http://localhost:8000/ — `stories.json` is fetched over HTTP, so opening the file directly (`file://`) will not render the front page.
+
+A longer checklist is in [`CONTRIBUTING.md`](CONTRIBUTING.md).
+
+---
+
 ## What is here
 
 | Track | Description |
@@ -73,22 +100,14 @@ For a lit memo, copy `docs/tracks/dfm-sinkhorn/lit-memo.html`.
 
 Both files reference `../../assets/site.css` — keep that relative path intact.
 
-### 4. Wire the nav
+### 4. Wire the front page, and the track nav
 
-Add the new track to the top `<nav>` in **every existing page** and the new pages:
+**To add a story, add one entry to `docs/stories.json`.** That is what puts the track on the lab home (lead, secondary, or Index-only, depending on `featured`). See [The front page](#the-front-page) for the fields.
+
+If the track uses the shared navy nav on its own pages, add it to the top `<nav>` in those pages:
 
 ```html
 <li><a href="../../tracks/<track-slug>/index.html">Track Name</a></li>
-```
-
-Also add a card to `docs/index.html`:
-
-```html
-<a class="track-card" href="tracks/<track-slug>/index.html">
-  <div class="track-card__label">Track N</div>
-  <div class="track-card__title">Track display name</div>
-  <p class="track-card__desc">One-paragraph description.</p>
-</a>
 ```
 
 ### 5. Commit and push
@@ -129,8 +148,8 @@ Lab plans and pinned pre-registrations that are not killed are rendered from Mar
 
 ## Local preview
 
-No build step needed — this is plain HTML/CSS. Open any file directly in a browser, or
-serve with Python:
+No build step is required. Individual track pages can be opened as files. The front page
+fetches `stories.json`, so serve the `docs/` folder over HTTP:
 
 ```bash
 cd docs

@@ -3,189 +3,175 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Research Lab — Ad-hoc Quant &amp; Bank-Fundamentals Research</title>
-  <meta name="description" content="Jared's independent ad-hoc quantitative research lab: statement forecasting, Y-9C bank panels, DFM×Sinkhorn nowcasting. Not investment advice." />
-  <link rel="stylesheet" href="assets/site.css" />
+  <title>Research Lab — Independent quantitative research</title>
+  <meta name="description" content="Jared’s independent research lab: bank-fundamentals forecasting, optimal transport, methods scouting, capability reviews, and linked research Pages sites. Not investment advice." />
+  <link rel="stylesheet" href="assets/home.css" />
 </head>
 <body>
+  <a class="skip" href="#front">Skip to stories</a>
 
-<nav class="site-nav" aria-label="Site navigation">
-  <div class="site-nav__inner">
-    <a class="site-nav__logo" href="index.html">Research Lab</a>
-    <ul class="site-nav__links">
-      <li><a href="index.html" class="active">Home</a></li>
-      <li><a href="tracks/statement-forecast/index.html">Statement Forecast</a></li>
-      <li><a href="tracks/y9c-panel/index.html">Y-9C Panel</a></li>
-      <li><a href="tracks/dfm-sinkhorn/index.html">DFM × Sinkhorn</a></li>
-    </ul>
-  </div>
-</nav>
-
-<header class="page-header">
-  <div class="page-header__inner">
-    <div class="page-header__eyebrow">Independent Research</div>
-    <h1>Ad-hoc Quant &amp; Bank-Fundamentals Research</h1>
-    <p class="page-header__sub">
-      A personal research notebook exploring non-embedding financial-statement forecasting,
-      FR Y-9C bank holding company panels, and DFM–Sinkhorn nowcasting methods.
-      Separate from any Portfolios or production pipeline work.
-    </p>
-  </div>
-</header>
-
-<main class="page-content">
-
-  <div class="callout">
-    <strong>What this lab is.</strong>
-    Ad-hoc quant research — lit synthesis, teaching notes, and method sketches — on bank
-    fundamentals forecasting and adjacent quantitative problems. All work is independently
-    motivated; no content here constitutes financial advice or employer output.
-  </div>
-
-  <p class="section-heading">Research Tracks</p>
-
-  <div class="track-grid">
-    <a class="track-card" href="tracks/statement-forecast/index.html">
-      <div class="track-card__label">Track 1</div>
-      <div class="track-card__title">Financial Statement Forecasting</div>
-      <p class="track-card__desc">
-        Non-embedding methods for joint multi-item forecasting of bank holding company
-        income statements and balance sheets — FR Y-9C panel with Yahoo smoke.
-        Covers empirical-Bayes panels, chained GBM, MIDAS, MinT reconciliation.
-      </p>
-    </a>
-    <a class="track-card" href="tracks/y9c-panel/index.html">
-      <div class="track-card__label">Track 2</div>
-      <div class="track-card__title">Y-9C / Yahoo Bank Panel</div>
-      <p class="track-card__desc">
-        Research data path for bank statement forecasting: FFIEC NIC FR Y-9C bulk
-        downloads and Yahoo Finance quarterly smoke. Panel assembly scripts, alignment
-        notes, and known quirks.
-      </p>
-    </a>
-    <a class="track-card" href="tracks/dfm-sinkhorn/index.html">
-      <div class="track-card__label">Track 3</div>
-      <div class="track-card__title">DFM × Sinkhorn Nowcasting</div>
-      <p class="track-card__desc">
-        Literature exploration at the intersection of dynamic factor models (ragged-edge
-        nowcasting) and Sinkhorn / entropic optimal transport as an observation or
-        imputation loss. Thin but real intersection; anchored by Spelta et al. (JRSS-A 2025).
-      </p>
-    </a>
-    <a class="track-card" href="tracks/y9c-trading-ot/index.html">
-      <div class="track-card__label">Track 4</div>
-      <div class="track-card__title">Y-9C Trading Revenue × OT</div>
-      <p class="track-card__desc">
-        Pre-registered forecasts of FR Y-9C trading revenue: per-bank baselines with
-        W₂-barycenter combination and Wasserstein autoregression of the cross-section.
-        One authorized out-of-sample run: primary FAIL on both hypotheses; run incomplete (stopped in a sensitivity).
-      </p>
-    </a>
-    <a class="track-card" href="tracks/cfpb-complaints-ot/index.html">
-      <div class="track-card__label">Track 5</div>
-      <div class="track-card__title">CFPB complaints × OT: killed at burn-in (negative result)</div>
-      <p class="track-card__desc">
-        Burn-in median next-month W₂² 0.0064 &lt; half-sample noise floor 0.0269: month-to-month change in the
-        cross-company shape of complaints is below sampling noise, so the pre-registered rule killed the object.
-        No out-of-sample run.
-      </p>
-    </a>
-    <a class="track-card" href="tracks/fdic-sod-ot/index.html">
-      <div class="track-card__label">Track 6</div>
-      <div class="track-card__title">FDIC branch deposits × OT: killed at burn-in (negative result)</div>
-      <p class="track-card__desc">
-        Next-year change in the within-state spread of branch deposits was below the half-sample noise floor in all 9
-        burn-in years (median W₂² 0.0078 vs 0.0196); planning power 0.07 with 22 test years. No out-of-sample run.
-      </p>
-    </a>
-  </div>
-
-  <p class="section-heading">Programs</p>
-
-  <div class="track-grid">
-    <div class="track-card">
-      <div class="track-card__label">Program</div>
-      <div class="track-card__title">CP funding forecasts</div>
-      <p class="track-card__desc">
-        Which forecasts of commercial paper issuance and maturity mix are best, whether any helps spot funding stress
-        early, and whether optimal transport earns a place against strong baselines. Fed CP maturity mix × OT:
-        passed burn-in, pinned, awaiting Jared's approval. Nothing held out has been scored.
-      </p>
-      <ul class="resource-list">
-        <li><a href="programs/cp-funding/plan.html">Lab plan (2026-10-09)</a></li>
-        <li><a href="tracks/fed-cp-ot/index.html">Fed CP maturity mix × OT: pre-registration and hashes</a></li>
-        <li><a href="tracks/fed-cp-ot/learning.html">Fed CP maturity mix: what the burn-in gate found (learning page)</a></li>
-      </ul>
-    </div>
-  </div>
-
-  <p class="section-heading">Methods scout</p>
-  <ul class="resource-list">
-    <li><a href="methods-scout/index.html">Daily methods scout: lesser-known, fast, interpretable methods run on our data (newest first)</a></li>
-  </ul>
-
-  <p class="section-heading">Learning guides</p>
-  <ul class="resource-list">
-    <li><a href="notes/kernel_ot_learning.html">Optimal transport on kernels: learning guide</a></li>
-    <li><a href="tracks/cfpb-complaints-ot/learning.html">CFPB complaints: what the forecast was going to test (learning page)</a></li>
-    <li><a href="tracks/fdic-sod-ot/learning.html">FDIC branch deposits: what the forecast was going to test (learning page)</a></li>
-    <li><a href="tracks/fed-cp-ot/learning.html">Fed CP maturity mix: what the burn-in gate found (learning page)</a></li>
-    <li><a href="notes/ot_classical_learning.html">Optimal transport for operations research, risk &amp; planning: classical methods</a></li>
-  </ul>
-
-  <p class="section-heading">Capability reviews</p>
-  <ul class="resource-list">
-    <li><a href="vendors/conexus/index.html">CQL (Conexus): a technical capability review, with a comparison to Google Pregel (12 November 2026)</a></li>
-  </ul>
-
-  <p class="section-heading">About this Lab</p>
-
-  <div style="max-width: var(--max-w-narrow);" class="prose">
-    <h3>Scope</h3>
-    <p>
-      This lab collects independent research on quantitative methods for bank fundamentals
-      and macroeconomic nowcasting. The primary application is the
-      <strong>FR Y-9C</strong> BHC consolidated reporting panel (FFIEC NIC bulk downloads),
-      with Yahoo Finance quarterly data as a cheap smoke-test path.
-    </p>
-
-    <h3>What is not here</h3>
-    <ul>
-      <li>Production Portfolios or ETF pipeline work (see <code>usa-etf-feature-pipeline</code>).</li>
-      <li>Raw panel CSVs, HF checkpoints, or secrets.</li>
-      <li>Gated data or paywalled assets.</li>
-      <li>Forma-release or proforma-20q production outputs.</li>
-    </ul>
-
-    <h3>How to navigate</h3>
-    <p>
-      Each <strong>track</strong> has an overview page, one or more
-      <strong>teaching pages</strong> (method intuition, worked sketches), and
-      <strong>lit memos</strong> (structured literature synthesis). Use the top nav to
-      jump between tracks.
-    </p>
-
-    <h3>Adding a new track</h3>
-    <p>See the <a href="https://github.com/jgridifier/research-lab#adding-a-new-track">README</a> for the one-page checklist.</p>
-  </div>
-
-</main>
-
-<footer class="site-footer">
-  <div class="site-footer__inner">
-    <p class="site-footer__disclaimer">
-      <strong>Independent research lab</strong> ·
-      Not affiliated with any employer or financial institution ·
-      Not investment advice.
-    </p>
-    <div class="site-footer__links">
+  <header class="mast">
+    <div class="mast-top">
+      <span class="mast-tag-full">Independent research · Not investment advice</span><span class="mast-tag-short">Independent research</span>
       <a href="https://github.com/jgridifier/research-lab">GitHub</a>
-      <a href="tracks/statement-forecast/index.html">Statement Forecast</a>
-      <a href="tracks/y9c-panel/index.html">Y-9C Panel</a>
-      <a href="tracks/dfm-sinkhorn/index.html">DFM × Sinkhorn</a>
     </div>
-  </div>
-</footer>
+    <div class="nameplate">
+      <div class="name"><a href="index.html">Research Lab</a></div>
+      <div class="motto">Quantitative research, in one place</div>
+    </div>
+    <div class="dateline">
+      <span id="mast-date">Thursday, November 12, 2026</span>
+      <span class="place">New York</span>
+      <span id="story-total"></span>
+    </div>
+  </header>
 
+  <div class="secnav-wrap">
+    <nav class="secnav" id="secnav" aria-label="Sections">
+      <a href="#section-banking">Banking</a>
+      <a href="#section-methods">Methods</a>
+      <a href="#section-nowcasting">Nowcasting</a>
+      <a href="#section-markets">Markets</a>
+      <a href="#section-reviews">Reviews</a>
+      <a href="#section-tools">Tools</a>
+      <a href="#index">Index</a>
+    </nav>
+  </div>
+
+  <main class="wrap">
+    <div class="front" id="front">
+      <p class="byline">Loading the front page…</p>
+    </div>
+
+    <section class="index" id="index">
+      <div class="index-head">
+        <div>
+          <h2>The Index</h2>
+          <p>Every Research Lab page, every other GitHub Pages site under this account, and public research repositories that do not yet have a Pages site. External destinations are marked.</p>
+        </div>
+      </div>
+      <div class="filters" role="search">
+        <input type="search" id="filter-q" placeholder="Search titles and deks…" aria-label="Search stories" />
+        <select id="filter-section" aria-label="Filter by section"></select>
+        <div class="chip-row" id="type-chips">
+          <button type="button" class="chip" data-type="all" aria-pressed="true">All</button>
+          <button type="button" class="chip" data-type="internal" aria-pressed="false">Lab pages</button>
+          <button type="button" class="chip" data-type="external" aria-pressed="false">External</button>
+        </div>
+        <span class="count" id="index-count"></span>
+      </div>
+      <div id="index-body"></div>
+    </section>
+
+    <noscript>
+      <p>JavaScript is off, so here is the full list. The designed front page needs JavaScript; this list is complete.</p>
+      <h2>Banking & Y-9C</h2>
+      <ul>
+        <li><a href="tracks/statement-forecast/index.html">Financial statement forecasting on the FR Y-9C panel</a></li>
+        <li><a href="tracks/statement-forecast/teaching.html">Teaching: non-embedding forecasting of financial statements</a></li>
+        <li><a href="tracks/statement-forecast/lit-memo.html">Lit memo: non-embedding financial-statement forecasting</a></li>
+        <li><a href="tracks/statement-forecast/results/index.html">Results: empirical-Bayes statement forecasts</a></li>
+        <li><a href="tracks/statement-forecast/combination-teaching.html">Teaching: naive / pooled-AR forecast combination</a></li>
+        <li><a href="tracks/statement-forecast/results-combination/index.html">Results: naive / pooled-AR forecast combination</a></li>
+        <li><a href="tracks/y9c-panel/index.html">Y-9C and Yahoo bank quarterly panels</a></li>
+        <li><a href="tracks/y9c-panel/results/index.html">Results: next-quarter net interest income</a></li>
+        <li><a href="tracks/y9c-trading-ot/index.html">Y-9C trading revenue × optimal transport</a></li>
+        <li><a href="tracks/y9c-trading-ot/results/index.html">Results: Y-9C trading revenue — primary FAIL, run incomplete</a></li>
+      </ul>
+      <h2>Methods & OT</h2>
+      <ul>
+        <li><a href="methods-scout/2026-11-12-adhoc.html">Ad hoc scout: ecological rank clocks and genomic proportionality, aimed at dealer-share dynamics</a></li>
+        <li><a href="methods-scout/secret-sauce.html">Secret-sauce plans for changeforest, partykit, MARSS and InspectChangepoint</a></li>
+        <li><a href="methods-scout/2026-11-11.html">Methods scout, 11 November: MARSS and InspectChangepoint on dealer-share dynamics</a></li>
+        <li><a href="methods-scout/2026-11-10.html">Methods scout, 10 November: partykit trees and changeforest</a></li>
+        <li><a href="methods-scout/index.html">Methods scout: lesser-known methods, run on our data</a></li>
+        <li><a href="https://jgridifier.github.io/traceot/">traceot: glass-box optimal-transport regression</a> (external)</li>
+        <li><a href="notes/kernel_ot_learning.html">Optimal transport on kernels: a learning guide</a></li>
+        <li><a href="notes/ot_classical_learning.html">Optimal transport for operations research, risk and planning: classical methods</a></li>
+        <li><a href="learn/bankgraph_benchmark.html">BankGraph: our own relational benchmark, from the Drive data</a></li>
+        <li><a href="learn/kumo_rfm_nim.html">KumoRFM on NVIDIA NIM: a learning note and an honest test</a></li>
+        <li><a href="tracks/cfpb-complaints-ot/index.html">CFPB complaints × OT: killed at burn-in (negative result)</a></li>
+        <li><a href="tracks/cfpb-complaints-ot/learning.html">CFPB complaints: what the forecast was going to test</a></li>
+        <li><a href="tracks/fdic-sod-ot/index.html">FDIC branch deposits × OT: killed at burn-in (negative result)</a></li>
+        <li><a href="tracks/fdic-sod-ot/learning.html">FDIC branch deposits: what the forecast was going to test</a></li>
+      </ul>
+      <h2>Nowcasting & Funding</h2>
+      <ul>
+        <li><a href="tracks/dfm-sinkhorn/index.html">DFM × Sinkhorn nowcasting</a></li>
+        <li><a href="tracks/dfm-sinkhorn/teaching.html">Teaching: dynamic-factor nowcasting meets Sinkhorn loss</a></li>
+        <li><a href="tracks/dfm-sinkhorn/lit-memo.html">Lit memo: DFM forecasting ∩ Sinkhorn-as-loss</a></li>
+        <li><a href="programs/cp-funding/plan.html">Lab plan: CP funding forecasts (9 October 2026)</a></li>
+        <li><a href="tracks/fed-cp-ot/index.html">Fed CP maturity mix × OT: passed burn-in, awaiting approval</a></li>
+        <li><a href="tracks/fed-cp-ot/learning.html">Commercial-paper maturity mix: what the burn-in gate found</a></li>
+        <li><a href="learn/fed_cp_ot_prereg_v2.html">Fed CP OT: what PREREG v2 pins, and why</a></li>
+        <li><a href="tracks/fed-cp-ot/app/index.html">Commercial-paper maturity mix: app placeholder</a></li>
+      </ul>
+      <h2>Markets & Portfolios</h2>
+      <ul>
+        <li><a href="https://jgridifier.github.io/usa-etf-feature-pipeline/">USA ETF Lab: a transparent feature-and-scoring pipeline</a> (external)</li>
+      </ul>
+      <h2>Capability Reviews</h2>
+      <ul>
+        <li><a href="vendors/conexus/index.html">CQL: what the mathematics can compute, and what it cannot</a></li>
+      </ul>
+      <h2>Tools & Software</h2>
+      <ul>
+        <li><a href="https://jgridifier.github.io/analysis-skills/">Analysis skills: a methods newsroom</a> (external)</li>
+        <li><a href="https://jgridifier.github.io/nitro-xml/">Nitro XML: Office files, read and viewed in the browser</a> (external)</li>
+        <li><a href="https://jgridifier.github.io/nitro-xml/demo/">Nitro XML: live demos</a> (external)</li>
+        <li><a href="https://github.com/jgridifier/jev-research-eval">Jev Ultrafast research-browser eval harness</a> (external)</li>
+      </ul>
+      <h2>Other Research</h2>
+      <ul>
+        <li><a href="https://github.com/jgridifier/ECM-Momentum-Graph">ECM Momentum Graph: equity-issuance economics from SEC filings</a> (external)</li>
+        <li><a href="https://github.com/jgridifier/MA-Financing-Graph">M&A Financing Graph: deals and debt underwriting from EDGAR</a> (external)</li>
+        <li><a href="https://github.com/jgridifier/FinancingPrivateCredit">Financing Private Credit: a NY Fed SR 1111 reproduction, extended</a> (external)</li>
+        <li><a href="https://github.com/jgridifier/Causal-Conditional-Flow-Matching">Causal Conditional Flow Matching</a> (external)</li>
+        <li><a href="https://github.com/jgridifier/Meistar-KG">Meistar-KG: papers into personalised audio learning sessions</a> (external)</li>
+      </ul>
+      <h2>Other Sites</h2>
+      <ul>
+        <li><a href="https://gridleyexcavatingllc.com/">Gridley Excavating</a> (external)</li>
+      </ul>
+    </noscript>
+  </main>
+
+  <footer class="site-foot">
+    <div class="inner">
+      <div>
+        <h2>About this lab</h2>
+        <p class="disclaimer">
+          <strong>Independent research lab.</strong>
+          Not affiliated with any employer or financial institution.
+          Nothing here is investment advice. The primary application on this
+          site is bank-fundamentals and nowcasting research on public data
+          (FR Y-9C, and related panels). Other Pages sites and repositories
+          linked from the Index are separate properties, clearly marked.
+        </p>
+      </div>
+      <div>
+        <h2>On this site</h2>
+        <ul>
+          <li><a href="#index">The Index</a></li>
+          <li><a href="tracks/statement-forecast/index.html">Statement Forecast</a></li>
+          <li><a href="methods-scout/index.html">Methods scout</a></li>
+          <li><a href="vendors/conexus/index.html">CQL capability review</a></li>
+          <li><a href="https://github.com/jgridifier/research-lab">GitHub repository</a></li>
+        </ul>
+      </div>
+      <div>
+        <h2>Other Pages sites</h2>
+        <ul>
+          <li><a href="https://jgridifier.github.io/usa-etf-feature-pipeline/">USA ETF Lab</a></li>
+          <li><a href="https://jgridifier.github.io/traceot/">traceot</a></li>
+          <li><a href="https://jgridifier.github.io/nitro-xml/">Nitro XML</a></li>
+          <li><a href="https://jgridifier.github.io/analysis-skills/">Analysis skills</a></li>
+          <li><a href="https://gridleyexcavatingllc.com/">Gridley Excavating</a></li>
+        </ul>
+      </div>
+    </div>
+  </footer>
+
+  <script src="assets/home.js"></script>
 </body>
 </html>
