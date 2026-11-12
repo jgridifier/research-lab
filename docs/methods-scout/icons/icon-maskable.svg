@@ -1,0 +1,99 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" width="512" height="512">
+  <defs>
+    <radialGradient id="bg" cx="46%" cy="38%" r="72%">
+      <stop offset="0%" stop-color="#1A4338"/>
+      <stop offset="55%" stop-color="#0F2A23"/>
+      <stop offset="100%" stop-color="#081614"/>
+    </radialGradient>
+    <linearGradient id="ring" x1="20%" y1="8%" x2="80%" y2="100%">
+      <stop offset="0%" stop-color="#FFE08A"/>
+      <stop offset="38%" stop-color="#F0B44A"/>
+      <stop offset="100%" stop-color="#C4842C"/>
+    </linearGradient>
+    <linearGradient id="curveFill" x1="0" y1="200" x2="0" y2="340" gradientUnits="userSpaceOnUse">
+      <stop offset="0%" stop-color="#5EE8C4" stop-opacity="0.42"/>
+      <stop offset="100%" stop-color="#5EE8C4" stop-opacity="0.02"/>
+    </linearGradient>
+    <filter id="glow" x="-40%" y="-40%" width="180%" height="180%">
+      <feGaussianBlur stdDeviation="4" result="b"/>
+      <feMerge>
+        <feMergeNode in="b"/>
+        <feMergeNode in="SourceGraphic"/>
+      </feMerge>
+    </filter>
+    <filter id="hitglow" x="-80%" y="-80%" width="260%" height="260%">
+      <feGaussianBlur stdDeviation="5" result="b"/>
+      <feMerge>
+        <feMergeNode in="b"/>
+        <feMergeNode in="SourceGraphic"/>
+      </feMerge>
+    </filter>
+  </defs>
+
+  <!-- full-bleed field -->
+  <rect width="512" height="512" fill="url(#bg)"/>
+
+  <g transform="translate(256,256) scale(0.78) translate(-256,-256)">
+  <!-- faint scope glass -->
+  <circle cx="256" cy="256" r="186" fill="#0C241E" fill-opacity="0.35"/>
+
+  <!-- compass / reticle ticks (cardinals + lighter midpoints) -->
+  <g stroke="url(#ring)" stroke-linecap="round" fill="none">
+    <!-- N (longer, the scout's heading) -->
+    <path d="M256 58 L256 98" stroke-width="14"/>
+    <path d="M256 58 L247 86 L265 86 Z" fill="#F0B44A" stroke="none"/>
+    <!-- E S W -->
+    <path d="M414 256 L454 256" stroke-width="12"/>
+    <path d="M256 414 L256 454" stroke-width="12"/>
+    <path d="M58 256 L98 256" stroke-width="12"/>
+    <!-- intercardinals, thinner -->
+    <path d="M368.8 143.2 L390.6 121.4" stroke-width="7" stroke-opacity="0.85"/>
+    <path d="M368.8 368.8 L390.6 390.6" stroke-width="7" stroke-opacity="0.85"/>
+    <path d="M143.2 368.8 L121.4 390.6" stroke-width="7" stroke-opacity="0.85"/>
+    <path d="M143.2 143.2 L121.4 121.4" stroke-width="7" stroke-opacity="0.85"/>
+  </g>
+
+  <!-- double scope ring -->
+  <circle cx="256" cy="256" r="198" fill="none" stroke="url(#ring)" stroke-width="15"/>
+  <circle cx="256" cy="256" r="176" fill="none" stroke="#F0B44A" stroke-width="3.2" stroke-opacity="0.42"/>
+
+  <!-- subtle lens highlight on the ring -->
+  <path d="M150 118 A198 198 0 0 1 362 118" fill="none" stroke="#FFF6C8" stroke-width="4" stroke-opacity="0.35" stroke-linecap="round"/>
+
+  <!-- density curve (Gaussian, mu=256, sigma=58, peak 214, baseline 334) -->
+  <path fill="url(#curveFill)" stroke="none"
+        d="M96,334
+           C120,333 138,328 156,318
+           C178,304 196,282 216,250
+           C230,226 242,214 256,214
+           C270,214 282,226 296,250
+           C316,282 334,304 356,318
+           C374,328 392,333 416,334
+           L416,334 L96,334 Z"/>
+  <path fill="none" stroke="#5EE8C4" stroke-width="9" stroke-linecap="round" stroke-linejoin="round" filter="url(#glow)"
+        d="M96,334
+           C120,333 138,328 156,318
+           C178,304 196,282 216,250
+           C230,226 242,214 256,214
+           C270,214 282,226 296,250
+           C316,282 334,304 356,318
+           C374,328 392,333 416,334"/>
+
+  <!-- scatter / observations (cream + gold), one locked "find" at the mode -->
+  <g fill="#F6EEDC">
+    <circle cx="152" cy="308" r="5.2" fill-opacity="0.7"/>
+    <circle cx="184" cy="286" r="6.2" fill-opacity="0.85"/>
+    <circle cx="214" cy="252" r="6.8"/>
+    <circle cx="300" cy="248" r="6.4"/>
+    <circle cx="332" cy="286" r="5.8" fill-opacity="0.85"/>
+    <circle cx="366" cy="312" r="5.0" fill-opacity="0.7"/>
+    <circle cx="198" cy="318" r="4.4" fill-opacity="0.55"/>
+    <circle cx="318" cy="322" r="4.6" fill-opacity="0.55"/>
+  </g>
+  <!-- the find: mode of the curve, target-locked -->
+  <g filter="url(#hitglow)">
+    <circle cx="256" cy="214" r="16" fill="none" stroke="#F0B44A" stroke-width="3.4"/>
+    <circle cx="256" cy="214" r="7.5" fill="#FFE08A"/>
+  </g>
+  </g>
+</svg>

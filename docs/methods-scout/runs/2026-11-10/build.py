@@ -75,6 +75,17 @@ KATEX='''<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.11
 <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.js"></script>
 <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/contrib/auto-render.min.js" onload="renderMathInElement(document.body,{delimiters:[{left:'$$',right:'$$',display:true},{left:'\\\\(',right:'\\\\)',display:false}]})"></script>'''
 FONTS='<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,400..800&family=Newsreader:ital,opsz,wght@0,6..72,400..600;1,6..72,400..500&family=JetBrains+Mono:wght@400;500;700&display=swap">'
+ICONS='''<!-- Methods Scout home-screen / PWA tags. Paste into <head> of every methods-scout page.
+     Paths are root-absolute so they resolve under https://jgridifier.github.io/research-lab/. -->
+<link rel="apple-touch-icon" sizes="180x180" href="/research-lab/methods-scout/icons/apple-touch-icon.png">
+<link rel="icon" type="image/png" sizes="32x32" href="/research-lab/methods-scout/icons/favicon-32.png">
+<link rel="icon" type="image/png" sizes="192x192" href="/research-lab/methods-scout/icons/icon-192.png">
+<link rel="manifest" href="/research-lab/methods-scout/manifest.webmanifest">
+<meta name="apple-mobile-web-app-title" content="Methods Scout">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="theme-color" content="#0F2A23">
+'''
 FIG='fig/2026-11-10/'
 gr_root=a['A4_gr_root']; cvl=sorted(a['A4_cv_leaves'],key=lambda l:l['mean_shock'])
 page=f'''<!doctype html>
@@ -84,7 +95,7 @@ page=f'''<!doctype html>
 {FONTS}
 <link rel="stylesheet" href="../assets/brief.css">
 {KATEX}
-</head><body><main>
+{ICONS}</head><body><main>
 <header class="mast">
   <div class="date">Tuesday · November 10, 2026 · first edition</div>
   <h1>Methods scout</h1>
@@ -217,7 +228,7 @@ page=f'''<!doctype html>
 open(S+'2026-11-10.html','w').write(page)
 idx=f'''<!doctype html>
 <html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Methods scout · research-lab</title>{FONTS}<link rel="stylesheet" href="../assets/brief.css"></head><body><main>
+<title>Methods scout · research-lab</title>{FONTS}<link rel="stylesheet" href="../assets/brief.css">{ICONS}</head><body><main>
 <header class="mast"><div class="date">Daily · newest first</div><h1>Methods scout</h1>
 <p class="dek">Lesser-known, fast, interpretable analytical methods, each run at least three ways on our own data.</p>
 <nav><a href="../index.html">Research lab home</a><a href="https://github.com/jgridifier/research-lab/blob/main/docs/methods-scout/watchlist.md">Watchlist</a></nav></header>
