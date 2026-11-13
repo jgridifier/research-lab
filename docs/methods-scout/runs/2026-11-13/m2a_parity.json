@@ -1,0 +1,57 @@
+{
+ "reference_commit": "083890c94a4d54d00362d3df0bb5259d30adf5b5",
+ "note": "Values transcribed from the run log of runs/m2a_parity.py (2026-11-13); the 50,000-series speed step was killed by the 15.6 GB memory limit before it finished, so the script did not write this file itself.",
+ "parity": [
+  {
+   "n": 100,
+   "same_nonzero_pixels": true,
+   "max_abs_diff": 8.63e-07,
+   "max_rel_diff": 1.79e-07,
+   "column_sums_equal_n": true,
+   "rust_compute_s": 0.0163,
+   "numpy_s": 0.179
+  },
+  {
+   "n": 1000,
+   "same_nonzero_pixels": true,
+   "max_abs_diff": 6.67e-06,
+   "max_rel_diff": 1.92e-07,
+   "column_sums_equal_n": true,
+   "rust_compute_s": 0.0834,
+   "numpy_s": 3.88
+  },
+  {
+   "n": 5000,
+   "same_nonzero_pixels": true,
+   "max_abs_diff": 3.35e-05,
+   "max_rel_diff": 2.1e-07,
+   "column_sums_equal_n": true,
+   "rust_compute_s": 0.324,
+   "numpy_s": 25.9
+  }
+ ],
+ "gap_case": {
+  "series": 50,
+  "series_stopping_at_col_300": 10,
+  "rust_nan_columns": 100,
+  "port_default_nan_columns": 100,
+  "gap_safe_nan_columns": 0,
+  "gap_safe_colsum_after_300": 40.0
+ },
+ "speed": [
+  {
+   "n": 1000,
+   "rust_compute_s": 0.111,
+   "numpy_s": 3.39
+  },
+  {
+   "n": 10000,
+   "rust_compute_s": 0.503,
+   "numpy_s": 62.2
+  },
+  {
+   "n": 50000,
+   "status": "killed: out of memory (15.6 GB) before finishing"
+  }
+ ]
+}

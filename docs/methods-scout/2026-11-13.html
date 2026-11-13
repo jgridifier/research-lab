@@ -1,0 +1,207 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Methods scout · 2026-11-13 · research-lab</title>
+<meta name="description" content="Methods scout 2026-11-13, aimed at Q2 (noisy program-level budgets): ebnm empirical-Bayes shrinkage and DenseLines density line charts, on SYNTHETIC mock ZBB datasets.">
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,400..800&family=Newsreader:ital,opsz,wght@0,6..72,400..600;1,6..72,400..500&family=JetBrains+Mono:wght@400;500;700&display=swap">
+<link rel="stylesheet" href="../assets/brief.css">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.css">
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.js"></script>
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/contrib/auto-render.min.js" onload="renderMathInElement(document.body,{delimiters:[{left:'$$',right:'$$',display:true},{left:'\\(',right:'\\)',display:false}]})"></script>
+<style>
+  .avenues { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 1rem; margin: 1.1rem 0 1.8rem; }
+  .avenues > .card { margin: 0; max-width: none; display: flex; flex-direction: column; }
+  .avenues > .card p, .avenues > .card li { max-width: none; }
+  .avenues .pitch { flex: 1 1 auto; margin: 0 0 .7rem; font-size: 1.02rem; }
+  .avenue-kicker { font-family: var(--f-mono); font-size: .72rem; letter-spacing: .14em; text-transform: uppercase; color: var(--muted); margin: 0 0 .35rem; }
+  .avenues h3 { margin: 0 0 .45rem; font-size: 1.15rem; letter-spacing: -.02em; line-height: 1.2; }
+  .badge-top { display: inline-block; font-family: var(--f-mono); font-weight: 700; font-size: .7rem; letter-spacing: .14em; text-transform: uppercase; padding: .22rem .55rem; background: var(--amber); border: 2px solid var(--ink); color: var(--ink); }
+  .card.top-pick { border-color: var(--ink); box-shadow: 8px 8px 0 var(--amber); }
+  .effort { font-family: var(--f-mono); font-size: .72rem; letter-spacing: .1em; text-transform: uppercase; color: var(--muted); }
+  .found-via { font-family: var(--f-mono); font-size: .82rem; line-height: 1.55; color: var(--body); background: var(--card); border: 2px solid var(--ink); border-left: 8px solid var(--teal); padding: .7rem 1rem; margin: .4rem 0 1rem; max-width: none; }
+  .found-via strong { font-family: var(--f-mono); letter-spacing: .08em; text-transform: uppercase; font-size: .75rem; }
+  figure { margin: 1.2rem 0 1.6rem; max-width: none; }
+  figure img { width: 100%; height: auto; border: 2px solid var(--ink); }
+  figcaption { font-family: var(--f-mono); font-size: .8rem; color: var(--muted); margin-top: .45rem; }
+  @media (max-width: 900px) { .avenues { grid-template-columns: 1fr; } }
+</style>
+<!-- Methods Scout home-screen / PWA tags. Paste into <head> of every methods-scout page.
+     Paths are root-absolute so they resolve under https://jgridifier.github.io/research-lab/. -->
+<link rel="apple-touch-icon" sizes="180x180" href="/research-lab/methods-scout/icons/apple-touch-icon.png">
+<link rel="icon" type="image/png" sizes="32x32" href="/research-lab/methods-scout/icons/favicon-32.png">
+<link rel="icon" type="image/png" sizes="192x192" href="/research-lab/methods-scout/icons/icon-192.png">
+<link rel="manifest" href="/research-lab/methods-scout/manifest.webmanifest">
+<meta name="apple-mobile-web-app-title" content="Methods Scout">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="theme-color" content="#0F2A23">
+</head>
+<body><main>
+<header class="mast">
+  <div class="date">Friday · November 13, 2026 · scheduled edition · aimed at Q2 · exotic · SYNTHETIC data</div>
+  <h1>Methods scout</h1>
+  <p class="dek">The first edition for Q2: hundreds to thousands of programs, each with a description, a few noisy years, and no long history. One method from statistical genetics answers “which of these moves are real?” One from visualization research answers “how do you look at a thousand short lines at once?” Both were run on the clearly labelled SYNTHETIC mock budgets built today, so every answer can be scored against a known truth.</p>
+  <nav><a href="index.html">All editions</a><a href="secret-sauce.html">Secret sauce</a><a href="https://github.com/jgridifier/research-lab/blob/main/docs/methods-scout/QUESTIONS.md">Research questions</a><a href="https://github.com/jgridifier/research-lab/blob/main/docs/methods-scout/watchlist.md">Watchlist</a><a href="../index.html">Research lab home</a></nav>
+</header>
+
+<div class="ticker">
+  <span><b>●</b> ebnm pooling cuts the error in each program’s 2025 level by 26% (Corning mock) and 21% (Morgan Stanley mock), with no tuning</span>
+  <span><b>●</b> “Is this year-on-year move real?” ebnm calls 91 Corning-mock programs, all with the right sign. BH calls only 14.</span>
+  <span><b>●</b> DenseLines port matches the authors’ Rust pixel for pixel, but the reference turns every column NaN once programs start or stop</span>
+  <span><b>●</b> A residual DenseLines brush plus a text keyword finds 94% of the hidden AI-demand group, but the brush is bandwidth-fragile</span>
+</div>
+
+<section class="tldr">
+<h2>The short version</h2>
+<ul>
+<li><strong>Data first.</strong> Everything below runs on <strong>SYNTHETIC mock data</strong>: the two zero-based-budgeting mocks built on 2026-11-13 (Drive folder “Q2 mock ZBB datasets (synthetic, 2026-11-13)”; seed 20261113). They are modeled on publicly reported totals for Corning Incorporated and Morgan Stanley. <strong>They are not either firm’s budgets.</strong> Corning mock: 1,079 programs, FY2020–25. Morgan Stanley mock: 1,840 programs, FY2021–25. Each mock has a planted answer key, used here only for scoring. No real program-level budget data exists yet.</li>
+<li><strong>ebnm</strong> (empirical Bayes normal means, Stephens lab, <em>Journal of Statistical Software</em> 2025) <span class="verdict adopt">recommend for promote workflow</span>. You give it one noisy number and a standard error per program. It learns the spread of the true values across programs from the data, then shrinks each program by the right amount. Results: (1) <em>Borrowing strength.</em> The 2025-level error falls from 0.146 to 0.108 (log RMSE) on the Corning mock and from 0.138 to 0.109 on the Morgan Stanley mock. The 90% intervals from the scale-mixture prior cover 89.5% of true levels on both mocks. The flexible scale-mixture prior beats the textbook normal prior (James–Stein style): 0.108 vs 0.119. (2) <em>Real change vs noise.</em> On the Corning mock, a local false sign rate below 0.05 calls 91 of 971 year-on-year moves real, and none has the wrong sign. A naive z-test calls 141, with 4.3% wrong; Benjamini–Hochberg calls 14. (3) <em>Text vs numbers.</em> ebnm does not help find “says growth, actually declining.” Comparing each program’s slope with its peers does: AUC 0.62 → 0.78 on the Morgan Stanley mock, with or without ebnm.</li>
+<li><strong>DenseLines</strong> (density line charts, Moritz &amp; Fisher, arXiv 2018) <span class="verdict interesting">interesting</span>. Each line gets a total weight of 1 per column, so a thousand series turn into one density instead of spaghetti. Results: (1) Our NumPy port is <em>faithful</em> to the authors’ Rust reference: the same nonzero pixels, and a relative difference of at most 2.1×10⁻⁷ (float32 rounding) at 100, 1,000 and 5,000 series. It is 10–120× slower. (2) The reference code fails on start/stop programs. One series that does not span a column makes that column NaN, so <em>every</em> column of both mocks is NaN (274 and 361 partial-span programs). The gap-safe fix is one line. (3) A residual DenseLines makes the hidden AI-demand group visible as an upper shoulder. A label-free valley brush recovers 75% of it at 51% precision; adding a text keyword lifts recall to 94%. The brush vanishes at smoothing ≥ 6 px, though, so it is a visual hint, not a test. Arc-length normalisation barely matters at 5–6 points per series.</li>
+</ul>
+<p class="meta">Data used: SYNTHETIC mock ZBB datasets only (box copy <code>/workspace/q2-mock-zbb/output/</code>, same files as the Drive folder). Only aggregate numbers, fitted structure and charts are shown. Program-level CSVs are not republished. Scripts and JSON: <code>docs/methods-scout/runs/2026-11-13/</code>. Descriptive work only. No forecasts, and nothing here touches the Q1 Y-9C panel or its sealed forecast window.</p>
+</section>
+
+<div class="sec-head"><span class="n">Q2</span><h2>Where the question stands</h2><span class="line"></span></div>
+<div class="card dark">
+<p><strong>Q2 (2026-11-13), refined and approved:</strong> “Suppose we have hundreds to thousands of programs. Each one has free-text descriptions plus tabular data, which we turn into categories and implied features, and each has only a few noisy periods of numbers. Past tracking trends and category mix over time, what can we reliably learn about each program and about the portfolio as a whole?” <a href="https://github.com/jgridifier/research-lab/blob/main/docs/methods-scout/QUESTIONS.md">Jared’s verbatim wording and the five sub-questions</a>.</p>
+<p><strong>Progress today, SYNTHETIC only.</strong> <em>Q2.1 borrowing strength:</em> yes, by a lot. Pooling by stated segment × function with an estimated prior cuts per-program level error by 21–26%. For programs in a real pooling family the cut is 37% (Corning mock, 0.161 → 0.101). Programs that are alone in their group lose a little (0.110 → 0.120). <em>Q2.2 text vs numbers:</em> the lift comes from the comparison design (slope against peers), not from shrinkage. <em>Q2.3 real change vs noise:</em> program-level calls are well calibrated: wrong-sign rate 0% at lfsr ≤ 0.05, 11–13% at 0.05–0.2 and 39–40% at 0.2–0.5. At portfolio level, noise is only about 2% of the total change in the answer key, and EB-denoised behaviour does not move the decomposition closer to the truth (Corning closer by $5.4M; Morgan Stanley further away by $88M). <em>Q2.4 structure:</em> residual DenseLines shows the hidden AI-demand co-movement, and text plus brush recovers 94% of it. <em>Q2.5 seeing it:</em> DenseLines works for a thousand short lines once it is made gap-safe. Status: <strong>in progress</strong>.</p>
+</div>
+<div class="card"><div class="card-top"><span class="tag">Data search</span><span class="tag red">Real program-level budgets: missing</span></div>
+<p>The SYNTHETIC mocks exist in Drive and on the box, and they were used as is. Real program-level budgets, actuals, headcount and decision packages are still missing for any firm. Q1’s missing data is unchanged; no Q1 analysis was run today.</p>
+</div>
+
+<!-- ================= METHOD 1 ================= -->
+<div class="sec-head" id="m1"><span class="n">Method 01</span><h2>ebnm: how much to trust each program’s own number</h2><span class="line"></span></div>
+<p class="meta">Willwerscheid, Carbonetto &amp; Stephens (2025), <em>Journal of Statistical Software</em> 114(3):1–33, doi:10.18637/jss.v114.i03 · CRAN ebnm 1.1-42 (2025-10-10), with ashr 2.2-63 and mixsqp 0.3-54 · statistical genetics (Stephens lab, University of Chicago) · niche outside genomics · recommend for the promote workflow — not promoted</p>
+<p class="found-via"><strong>Found via.</strong> Journal · <em>Journal of Statistical Software</em>, <a href="https://www.jstatsoft.org/article/view/v114i03">https://www.jstatsoft.org/article/view/v114i03</a> · found by web search on 2026-11-13 for an empirical-Bayes tool aimed at Q2.1/Q2.3 · field: statistical genetics (gene-expression and GWAS shrinkage). Also used: <a href="https://github.com/stephenslab/ebnm">https://github.com/stephenslab/ebnm</a> and <a href="https://cran.r-project.org/package=ebnm">https://cran.r-project.org/package=ebnm</a>. The adaptive-shrinkage idea behind the default prior is Stephens (2017), “False discovery rates: a new deal”, <em>Biostatistics</em> 18(2):275–294. X and SSRN were not the discovery path.</p>
+<p><strong>Target question.</strong> Q2.1 (borrowing strength) and Q2.3 (real change or noise), with one analysis on Q2.2 (text vs numbers).</p>
+<p><strong>What it is, and why it fits the bar.</strong> Each program gives an observation \(x_j\) with a standard error \(s_j\). The model is \(x_j \mid \theta_j \sim N(\theta_j, s_j^2)\) and \(\theta_j \sim g\). ebnm estimates the prior \(g\) itself by maximum marginal likelihood, from one of 15 families (normal, point-normal, scale mixtures, unimodal, NPMLE, …). It then returns posterior means, posterior SDs and the <em>local false sign rate</em> (lfsr): the posterior probability that you have the sign of \(\theta_j\) wrong. You choose no prior hyperparameters and no penalty. Each fit took 0.003–0.6 s on 1,000–1,700 programs. \(s_j\) comes from the observable spread of each program’s budget-minus-actual gaps, scaled by the dataset README’s stated budget/actual noise ratio. It is shrunk toward the group median. The scale-mixture 90% intervals cover 89.5% of true levels on both mocks, so these standard errors are not badly off.</p>
+
+<h3>1a · Borrowing strength: each program’s 2025 level (Q2.1)</h3>
+<p>Here \(x_j\) is the log 2025 actual minus the mean of its stated segment × function group. ebnm shrinks the deviation, and we add the group mean back. The comparison is against the answer-key true level.</p>
+<div class="table-wrap"><table><thead><tr><th>Estimator</th><th class="num">Corning mock RMSE</th><th class="num">in a pooling family</th><th class="num">not in a family</th><th class="num">Morgan Stanley mock RMSE</th><th class="num">in a family</th><th class="num">not in a family</th></tr></thead><tbody>
+<tr><td>Own 2025 actual (no pooling)</td><td class="num">0.146</td><td class="num">0.161</td><td class="num">0.110</td><td class="num">0.138</td><td class="num">0.149</td><td class="num">0.093</td></tr>
+<tr><td>Group mean (complete pooling)</td><td class="num">0.267</td><td class="num">0.084</td><td class="num">0.438</td><td class="num">0.261</td><td class="num">0.171</td><td class="num">0.451</td></tr>
+<tr><td>ebnm, normal prior (James–Stein-like)</td><td class="num">0.119</td><td class="num">0.123</td><td class="num">0.112</td><td class="num">0.114</td><td class="num">0.119</td><td class="num">0.096</td></tr>
+<tr><td>ebnm, point-normal</td><td class="num">0.109</td><td class="num">0.104</td><td class="num">0.120</td><td class="num">0.110</td><td class="num">0.114</td><td class="num">0.097</td></tr>
+<tr><td><strong>ebnm, scale mixture (ash)</strong></td><td class="num"><strong>0.108</strong></td><td class="num">0.101</td><td class="num">0.120</td><td class="num"><strong>0.109</strong></td><td class="num">0.113</td><td class="num">0.096</td></tr>
+<tr><td>ebnm, unimodal</td><td class="num">0.108</td><td class="num">0.101</td><td class="num">0.121</td><td class="num">0.110</td><td class="num">0.113</td><td class="num">0.097</td></tr>
+<tr><td>ebnm, NPMLE</td><td class="num">0.108</td><td class="num">0.101</td><td class="num">0.121</td><td class="num">0.110</td><td class="num">0.113</td><td class="num">0.098</td></tr>
+</tbody></table></div>
+<p>Corning mock: 998 programs active in 2025, 652 of them in a planted pooling family. Morgan Stanley mock: 1,702 and 1,320. The scale-mixture prior does what a single normal prior cannot. It shrinks hard where a group is tight (real families) and lightly where a group is a grab bag. It still loses a little on programs that have no family at all: 0.110 → 0.120 on Corning. That is the target for the Math avenue below. Complete pooling wins for real families on the Corning mock (0.084), but it is a disaster for everything else (0.438). ebnm never has to be told which case it is in. The deconvolver family was not run: it takes z-scores with \(s = 1\), not heteroskedastic standard errors.</p>
+<figure><img src="fig/2026-11-13/m1_shrink.png" alt="Left: one group of 39 programs showing raw 2025 actuals, ebnm-shrunk estimates and true levels. Right: RMSE of each estimator for family and non-family programs on both mocks.">
+<figcaption>Figure 1. Left: one stated group on the Corning mock. Arrows run from each program’s own number (amber) to the ebnm estimate (teal); black ticks are the true levels from the answer key. Right: error by estimator, split by whether a program belongs to a planted pooling family. SYNTHETIC.</figcaption></figure>
+
+<h3>1b · Real change or noise: 2024 → 2025 (Q2.3)</h3>
+<p>Here \(x_j\) is the change in log actual and \(s_j = \sqrt2\,\hat\sigma_j\). The prior is a scale mixture centred at 0. A program is called “really changed” when lfsr &lt; 0.05.</p>
+<div class="table-wrap"><table><thead><tr><th>Rule</th><th class="num">Corning calls</th><th class="num">wrong sign</th><th class="num">Morgan Stanley calls</th><th class="num">wrong sign</th></tr></thead><tbody>
+<tr><td>Naive |z| &gt; 1.96</td><td class="num">141</td><td class="num">4.3%</td><td class="num">292</td><td class="num">2.7%</td></tr>
+<tr><td>Naive + Benjamini–Hochberg q &lt; 0.05</td><td class="num">14</td><td class="num">0%</td><td class="num">28</td><td class="num">0%</td></tr>
+<tr><td><strong>ebnm (ash), lfsr &lt; 0.05</strong></td><td class="num"><strong>91</strong></td><td class="num"><strong>0%</strong></td><td class="num"><strong>200</strong></td><td class="num"><strong>1.5%</strong></td></tr>
+<tr><td>ebnm (point-normal), lfsr &lt; 0.05</td><td class="num">104</td><td class="num">0%</td><td class="num">199</td><td class="num">1.5%</td></tr>
+<tr><td>Relative to the typical change (+7.7% / +9.2%): naive |z| &gt; 1.96</td><td class="num">108</td><td class="num">10.2%</td><td class="num">190</td><td class="num">8.4%</td></tr>
+<tr><td>Relative to the typical change: ebnm lfsr &lt; 0.05</td><td class="num">45</td><td class="num">2.2%</td><td class="num">68</td><td class="num">0%</td></tr>
+</tbody></table></div>
+<p>ebnm finds 6.5× (Corning) and 7× (Morgan Stanley) as many real moves as BH, at a wrong-sign rate of at most 1.5% (wrong-sign is against the true change in the answer key). lfsr is also calibrated across its range: in the 0.05–0.2 bin, 11% (Corning) and 13% (Morgan Stanley) of signs are wrong; in the 0.2–0.5 bin, 40% and 39%. Shrunk changes are also closer to the truth: RMSE 0.200 → 0.079 (Corning) and 0.196 → 0.099 (Morgan Stanley). A plain normal prior is slightly better on RMSE here (0.070, 0.080), because true changes cluster tightly around a common drift.</p>
+<p><strong>Portfolio-level mix vs behaviour.</strong> In the answer key, noise is −2.25% of the Corning total change. Summing EB-denoised levels for the 971 continuing programs moves the behaviour term from $340.1M (raw) to $345.5M, against a true $359.6M: slightly closer. On the Morgan Stanley mock it moves from $5.064B to $5.151B, against a true $4.980B: further away. Shrinking in logs and summing in dollars does not fix an aggregate that was already 98% right. The method is for programs, not totals.</p>
+<figure><img src="fig/2026-11-13/m1_lfsr.png" alt="Scatter of observed vs true 2024-25 change with programs called real by ebnm in teal, and bar chart of calls and wrong-sign rates for naive, BH and ebnm on both mocks.">
+<figcaption>Figure 2. Observed vs true year-on-year change. Teal = ebnm says the move is real. Right: number of calls and their wrong-sign rate (vs the answer key). SYNTHETIC.</figcaption></figure>
+
+<h3>1c · Text vs numbers: “stated growth, actually declining” (Q2.2)</h3>
+<p>Here \(x_j\) is the OLS slope of log actual over a program’s years (at least 3), and \(s_j = \hat\sigma_j/\sqrt{S_{xx}}\). We take programs whose description says <em>grow</em> or <em>transform</em> (268 Corning, 201 Morgan Stanley) and rank them by how strongly the numbers decline. The answer key plants 6 and 27 such mismatches.</p>
+<div class="table-wrap"><table><thead><tr><th>Design</th><th class="num">Corning AUC: raw / naive z / ebnm</th><th class="num">Morgan Stanley AUC: raw / naive z / ebnm</th></tr></thead><tbody>
+<tr><td>Absolute slope</td><td class="num">0.731 / 0.715 / 0.741</td><td class="num">0.620 / 0.623 / 0.624</td></tr>
+<tr><td>Slope minus the median slope of the same segment × function</td><td class="num">0.762 / 0.777 / 0.768</td><td class="num">0.752 / 0.775 / 0.777</td></tr>
+</tbody></table></div>
+<p>On the Morgan Stanley mock, the top 27 by ebnm’s peer-relative posterior mean contain 11 of the 27 planted programs (precision 0.41, the same as naive z). Flagging by lfsr &lt; 0.05 is too strict: 4 flags, 2 hits. <strong>Honest status:</strong> shrinkage adds nothing over a z-score here. The gain comes from comparing a program with its peers. A covariate-moderated prior (Math avenue) is the version that could use the text.</p>
+<figure><img src="fig/2026-11-13/m1_text.png" alt="Bar chart of AUC for detecting planted stated-growth-actually-declining programs, absolute vs peer-relative slope, raw vs naive z vs ebnm.">
+<figcaption>Figure 3. AUC for ranking the planted “stated grow, actually declining” programs. The dotted line is chance. SYNTHETIC.</figcaption></figure>
+
+<div class="avenues">
+  <article class="card teal">
+    <div class="card-top"><span class="avenue-kicker">1 · Engineering</span><span class="effort">Effort M</span></div>
+    <h3>A Rust core for the ash and point-normal fits, with R ebnm as the oracle</h3>
+    <p class="pitch">A thousand programs × categories × cycles × bootstraps means thousands of fits. Port the mixture-weight solve (mixsqp’s SQP) and the posterior summaries to Rust, with a thin Python binding.</p>
+    <div class="foot"><strong>Test.</strong> Parity with today’s inputs: log-likelihood −145.7808 (Corning, ash) and −238.8506 (Morgan Stanley), posterior means within 1e-6. Then wall time against R’s 0.03 s per fit.</div>
+  </article>
+  <article class="card green">
+    <div class="card-top"><span class="avenue-kicker">2 · Math</span><span class="effort">Effort M–L</span></div>
+    <h3>Let the description set the prior</h3>
+    <p class="pitch">Make \(g\) depend on text-derived features (stated category, intent, driver), as in covariate-powered empirical Bayes. Today one global prior made lone programs slightly worse than their own number.</p>
+    <div class="foot"><strong>Test.</strong> On non-family programs, beat both the own number (0.110 / 0.093) and global ash (0.120 / 0.096) on both mocks, with no loss on families.</div>
+  </article>
+  <article class="card top-pick">
+    <div class="card-top"><span class="avenue-kicker">3 · New use on our data</span><span class="badge-top">Top pick</span></div>
+    <h3>“Is this move real?” flags for every program in a budget cycle</h3>
+    <p class="pitch">One column per program, per cycle: shrunk change, interval, lfsr. It gives 6–7× the calls of BH at ≤ 1.5% wrong sign, needs no tuning, and runs in milliseconds. Effort S.</p>
+    <div class="foot"><strong>Test.</strong> On a mock regenerated with a new seed (and later on real data), a wrong-sign rate ≤ 5% among lfsr &lt; 0.05 calls, at least 3× BH’s calls, and lfsr bins calibrated within ±5 points.</div>
+  </article>
+</div>
+
+<!-- ================= METHOD 2 ================= -->
+<div class="sec-head" id="m2"><span class="n">Method 02</span><h2>DenseLines: a thousand short lines as one density</h2><span class="line"></span></div>
+<p class="meta">Moritz &amp; Fisher (2018), “Visualizing a Million Time Series with the Density Line Chart”, arXiv:1808.06019 (cs.HC) · reference implementations in Rust (line-density-rust, BSD-3) and JavaScript/WebGL by the first author · visualization / HCI · obscure outside visualization research · interesting — not promoted</p>
+<p class="found-via"><strong>Found via.</strong> arXiv · <a href="https://arxiv.org/abs/1808.06019">https://arxiv.org/abs/1808.06019</a> · found by web search on 2026-11-13 for a Q2.5 chart (“one chart for a thousand short noisy series”) · field: visualization research (UW Interactive Data Lab; now CMU Data Interaction Group). Code: the author’s own repo, <a href="https://github.com/domoritz/line-density-rust">https://github.com/domoritz/line-density-rust</a> (commit 083890c, 2025-04-24), and the WebGL demo <a href="https://github.com/domoritz/line-density">https://github.com/domoritz/line-density</a>. This is the library-author route the MD asked for. X and SSRN were not the discovery path.</p>
+<p><strong>Target question.</strong> Q2.5 (seeing it), with Q2.4 (hidden structure) as the second use.</p>
+<p><strong>What it is.</strong> Draw each series into its own binary raster. Divide each column by that series’ pixel count in that column, so a steep, noisy line spreads one unit of weight over many pixels instead of painting them all. Then sum over series. The result is a density with exactly \(n\) units per column. Trends show up as dense ridges and outliers as faint isolated strands. The method has no parameters beyond canvas size; colour scale and display blur are presentation choices. Three analyses: (2a) a faithful port and parity check against the authors’ code, plus speed; (2b) the Q2.5 picture on 1,052 Corning-mock programs, with a test of whether normalisation matters at our series length; (2c) residual DenseLines for hidden groups (Q2.4), and the start/stop problem.</p>
+
+<h3>2a · Faithful port, checked against the original</h3>
+<p><code>denselines.py</code> reproduces imageproc 0.25’s Bresenham iterator (float32 error term, truncating casts), set-to-1 pixel semantics and per-series column normalisation. We used the authors’ <code>run_series</code> and <code>sum_images</code> unchanged in a small Rust harness that only adds file I/O, and fed both sides the reference’s own demo generator (sine + N(0, 12) noise, 400 × 300 canvas).</p>
+<div class="table-wrap"><table><thead><tr><th>Series</th><th>Same nonzero pixels</th><th class="num">Max relative difference</th><th class="num">Rust (8 threads), s</th><th class="num">NumPy port, s</th></tr></thead><tbody>
+<tr><td>100</td><td>yes</td><td class="num">1.8×10⁻⁷</td><td class="num">0.016</td><td class="num">0.18</td></tr>
+<tr><td>1,000</td><td>yes</td><td class="num">1.9×10⁻⁷</td><td class="num">0.083</td><td class="num">3.9</td></tr>
+<tr><td>5,000</td><td>yes</td><td class="num">2.1×10⁻⁷</td><td class="num">0.32</td><td class="num">25.9</td></tr>
+<tr><td>10,000 (speed only)</td><td>—</td><td class="num">—</td><td class="num">0.50</td><td class="num">62.2</td></tr>
+</tbody></table></div>
+<p>Parity is exact up to float32 summation order. The port is correct but slow, and a 50,000-series run was killed by the box’s 15.6 GB memory limit before it finished. <strong>Bug found in the reference:</strong> if any series does not cover a column, that column is 0/0 = NaN, and NaN poisons the summed column. With 50 series, 10 of which stop at column 300, the reference returns 100 NaN columns out of 400. The port reproduces this by default and has a <code>gap_safe</code> switch that drops it (0 NaN columns).</p>
+<figure><img src="fig/2026-11-13/m2_parity.png" alt="Parity of the NumPy port vs Rust reference (max relative difference around 2e-7) and run time by number of series.">
+<figcaption>Figure 4. Left: max relative difference against the Rust reference. Right: run time. Rust is 8-threaded; the port is single-threaded NumPy.</figcaption></figure>
+
+<h3>2b · The Q2.5 picture: 1,052 programs, each indexed to its own mean</h3>
+<figure><img src="fig/2026-11-13/m2_hero.png" alt="Three panels: spaghetti plot of 1,052 program paths, unnormalised line-count density, and DenseLines density with the median program path.">
+<figcaption>Figure 5. Corning mock. Spaghetti (left), line count without normalisation (middle), DenseLines (right) with the median program dashed. Display uses a 1.6-px blur and a power colour scale. SYNTHETIC.</figcaption></figure>
+<p>The DenseLines panel shows the common 2022–2024 dip and the split of programs in 2025, which the spaghetti hides. <strong>Does arc-length normalisation matter at our length?</strong> Hardly. The noisiest 10% of programs (by \(\hat\sigma\)) take 12.0% of the ink without normalisation and 10.7% with it (Morgan Stanley mock: 10.7% vs 10.1%). Each chart is about equally far from the same chart drawn from the answer-key true paths: mean column total variation 0.690 vs 0.687, Wasserstein 0.055 vs 0.053 log (Morgan Stanley mock: 0.596 vs 0.593 and 0.036 vs 0.035). With 5–6 points across 500 pixels, lines are rarely steep, so normalisation has little to do. The paper’s gain shows up with long, high-frequency series. The real gain here is the density view itself and the gap-safe fix. Noise, not line steepness, is what separates our chart from the truth, which is why the Math avenue below pairs DenseLines with ebnm.</p>
+
+<h3>2c · Hidden structure (Q2.4) and start/stop programs</h3>
+<p>Subtract the median path from every program, then draw DenseLines of the residuals. Small multiples by <em>stated segment</em> do not show the planted co-moving groups, which cut across segments. The same panels by <em>answer-key cluster</em>, shown only as a reveal, do: AI-demand programs rise together after 2023, and auto aftertreatment falls.</p>
+<figure><img src="fig/2026-11-13/m2_residual_corning.png" alt="Residual DenseLines for the Corning mock with a label-free brush line, and small multiples by stated segment and by answer-key cluster.">
+<figcaption>Figure 6. Corning mock residual DenseLines. Top row: by stated segment. Bottom row: by answer-key cluster (reveal only; not used to draw the main panel or the brush). SYNTHETIC.</figcaption></figure>
+<p><strong>A label-free brush.</strong> Find the valley between the main ridge and the upper shoulder in the last column, and select every program that ends above it.</p>
+<div class="table-wrap"><table><thead><tr><th>Hidden group (answer key)</th><th class="num">Members</th><th>Text keyword only</th><th>DenseLines brush only</th><th>Brush OR keyword</th></tr></thead><tbody>
+<tr><td>Corning mock: AI / datacenter demand</td><td class="num">205</td><td>recall 66%, precision 100%</td><td>recall 75%, precision 51%</td><td><strong>recall 94%</strong>, precision 56%</td></tr>
+<tr><td>Morgan Stanley mock: equity-market activity</td><td class="num">194</td><td>recall 26%, precision 23%</td><td>recall 75%, precision 23%</td><td>recall 81%, precision 21%</td></tr>
+<tr><td>Morgan Stanley mock: wealth fee-based growth</td><td class="num">308</td><td>recall 55%, precision 77%</td><td>recall 29%, precision 14%</td><td>recall 65%, precision 27%</td></tr>
+</tbody></table></div>
+<p>Two-column brushing (2024 and 2025) raises Corning precision to 63% but cuts recall to 46%. <strong>Fragility:</strong> the valley exists at 2–4 px of profile smoothing and disappears at 6–8 px, on both mocks. Read it as a picture that points at a group, not as a test. Text and numbers find different members. The keyword finds the programs whose descriptions mention the driver; the chart finds the ones that move without saying so. That is Q2.2 and Q2.4 meeting.</p>
+<figure><img src="fig/2026-11-13/m2_startstop.png" alt="Morgan Stanley mock gap-safe DenseLines of 1,765 programs, entrant programs layered in amber, and live-program and entrant-weight strips.">
+<figcaption>Figure 7. Morgan Stanley mock: gap-safe DenseLines of all programs (left), entrants layered over the rest (right), and strips for live programs and entrant weight. The reference code would return NaN in all 500 columns for this panel. SYNTHETIC.</figcaption></figure>
+<p>Start/stop is the normal case in a budget portfolio: 274 of 1,052 Corning-mock and 361 of 1,765 Morgan Stanley-mock series do not span the full period, and the reference renders both panels as entirely NaN. With the gap-safe rule, each program still carries one unit per column it is alive. A live-count strip keeps entry waves from being misread as density changes.</p>
+
+<div class="avenues">
+  <article class="card top-pick">
+    <div class="card-top"><span class="avenue-kicker">1 · Engineering</span><span class="badge-top">Top pick</span></div>
+    <h3>Gap-safe, weighted DenseLines in Rust with a Python binding</h3>
+    <p class="pitch">The reference NaNs out on start/stop programs, and the exact NumPy port is 10–120× slower. Build a Rust core (parity first, then speed) with gap-safe columns, per-series weights and a live-count channel. Effort S–M.</p>
+    <div class="foot"><strong>Test.</strong> Relative difference ≤ 1e-6 vs commit 083890c on full-span inputs (today’s port: 2.1e-7), zero NaN columns on both mocks, and ≤ 2× the reference’s time at 10,000 series.</div>
+  </article>
+  <article class="card green">
+    <div class="card-top"><span class="avenue-kicker">2 · Math</span><span class="effort">Effort M</span></div>
+    <h3>Posterior DenseLines: draw what the program probably is, not what it reported</h3>
+    <p class="pitch">Replace each noisy path with ebnm posterior draws (weight 1/draws). Noise, not steepness, is what separates today’s chart from the truth chart.</p>
+    <div class="foot"><strong>Test.</strong> Lower Wasserstein distance to the true-path chart than today’s 0.053 (Corning) and 0.035 (Morgan Stanley), and no false branch on a mock with the clusters switched off.</div>
+  </article>
+  <article class="card teal">
+    <div class="card-top"><span class="avenue-kicker">3 · New use on our data</span><span class="effort">Effort S</span></div>
+    <h3>Residual brush plus text keyword as a hidden-group finder</h3>
+    <p class="pitch">Text and chart find different members. Together they reach 94% recall on the AI-demand group. The brush needs a bandwidth-free branch test.</p>
+    <div class="foot"><strong>Test.</strong> A dip-style test with a year-shuffle null that keeps recall ≥ 0.7 at precision ≥ 0.5 on both mocks, at any smoothing from 2 to 8 px.</div>
+  </article>
+</div>
+
+<div class="sec-head"><span class="n">Watch</span><h2>Watchlist additions</h2><span class="line"></span></div>
+<p>Both methods are added as trialed on the <a href="https://github.com/jgridifier/research-lab/blob/main/docs/methods-scout/watchlist.md">watchlist</a>. New watch items: <strong>flashier</strong> (empirical Bayes matrix factorization, Wang &amp; Stephens, JMLR 2021) for Q2.4 groups that co-move or trade off; <strong>deconvolveR</strong> (Efron’s g-modeling, Narasimhan &amp; Efron, JSS 2020) as a smooth nonparametric prior; <strong>covariate-powered empirical Bayes</strong> (Ignatiadis &amp; Wager, arXiv:1906.01611) for the text-moderated prior; and <strong>lasagna plots</strong> (Swihart et al., <em>Epidemiology</em> 2010) as a second Q2.5 chart. Nothing already trialed was rerun. MaxLIPO stays on the watchlist as the MD’s example. Research-lab PRs #20, #21 and #25 were not touched. No <code>APPROVAL.md</code> was written; nothing is promoted.</p>
+
+<footer>
+<p>Scheduled edition of 2026-11-13, America/New_York (EST). SYNTHETIC mock data only (seed 20261113); not any firm’s actual budget. Theme: <code>docs/assets/brief.css</code>. Scripts: <code>docs/methods-scout/runs/2026-11-13/</code>.</p>
+</footer>
+</main></body></html>
