@@ -7,6 +7,21 @@ Status: `open` · `in progress` · `answered` · `parked`.
 | ID | Added | Question (verbatim) | Status | Scout pages | Data located | Data missing |
 |---|---|---|---|---|---|---|
 | Q1 | 2026-11-10 | "How have prime broker revenue/activity share dynamics changed among the top 25 brokers and how can we gain insight into market based ones vs real sticky share migration?" | in progress | [2026-11-11](2026-11-11.html), [2026-11-12 ad hoc](2026-11-12-adhoc.html), [2026-11-12 scheduled](2026-11-12.html) | PROXY only: FR Y-9C trading panel 2008Q1–2026Q2 (public FFIEC/NIC BHCF; trading assets BHCK3545 and equity trading revenue BHCK8759 for US dealer BHCs and foreign-bank IHCs); FRED VIXCLS, NASDAQCOM. In Drive but not per-firm prime-brokerage data: GS/MS filings 2023–26 (2 firms), Form PF aggregates (Tab 8.28 prime-broker borrowing, aggregate only), SCOOS text, NY Fed fails, OFR repo, OCC quarterly derivatives PDFs 2016–26 (not parsed yet). | Per-firm prime-brokerage revenue for the top 25 (quarterly, 2010+); per-firm client financing balances (margin debits, synthetic/swap notional, shorts); hedge-fund relationship counts per prime broker (free route: SEC Form ADV Schedule D §7.B.(1) private-fund prime-broker entries, not yet built). Coalition Greenwich league tables are paywalled and not in Drive. |
+| Q2 | 2026-11-13 | "Want to add a guiding question about like let’s say you have a ton of decriptions, and we extract out some classifications and then get some implied features, understanding the trends and composition over time but like what else would be really interesting to look at -think ok like a budgeting use case where the rest hundreds or thousands of program all with their own noise and not that much history" | open | — | SYNTHETIC mocks only (built 2026-11-13): program-level zero-based-budgeting datasets modeled on publicly reported figures for a manufacturer like Corning Incorporated and a financial firm like Morgan Stanley, in the Drive folder "Q2 mock ZBB datasets (synthetic, 2026-11-13)". Clearly labelled synthetic; they are not either firm's actual budgets and contain no private data. | Real program-level budgets, actuals, headcount and decision packages for any firm. The mocks are a stand-in so methods can be tried before any real data arrives. |
+
+## Q2 — refined statement (approved 2026-11-13)
+
+Jared's original wording is in the table above, kept verbatim (including "decriptions" and "the rest hundreds"). On 2026-11-13 he approved the refined question, all five sub-questions, and the addition of tabular data alongside the free-text descriptions. Status is `open`. Nothing has been run against this question yet.
+
+**Refined question.** Suppose we have hundreds to thousands of programs. Each one has free-text descriptions plus tabular data, which we turn into categories and implied features, and each has only a few noisy periods of numbers. Past tracking trends and category mix over time, what can we reliably learn about each program and about the portfolio as a whole?
+
+**Sub-questions.**
+
+1. **Borrowing strength.** If we pool similar programs, how much better do we estimate each one's real level and trend than by looking at it alone, given how short its history is?
+2. **Text versus numbers.** Which programs' spending doesn't match what their descriptions say, and which ones quietly change category over time?
+3. **Real change or noise.** When a total moves, how much comes from the program mix changing, how much from programs actually behaving differently, and how much is just noise?
+4. **Structure.** Do programs form groups that rise and fall together, or trade off against each other, in ways the categories don't show?
+5. **Seeing it.** How can one chart show a thousand short, noisy series without turning into spaghetti?
 
 ## Q1 progress log
 
