@@ -1,6 +1,6 @@
 # Secret sauce plans
 
-*Edition 1 · 2026-11-12 · America/New_York (EST), four already-scouted methods. Edition 2 · same day, ad hoc exotic scout: codyn and Lovell proportionality, grounded in [2026-11-12-adhoc](2026-11-12-adhoc.html). Plans only.*
+*Edition 1 · 2026-11-12 · America/New_York (EST), four already-scouted methods. Edition 2 · same day, ad hoc exotic scout: codyn and Lovell proportionality, grounded in [2026-11-12-adhoc](2026-11-12-adhoc.html). Edition 3 · scheduled 2026-11-12 scout (catch-up published 2026-11-13): ecotraj and lphom, grounded in [2026-11-12](2026-11-12.html). Plans only.*
 
 This is a running file. Each daily methods scout should append plans for that day's methods in the same form. Edition 1 covers the four methods already scouted: changeforest and partykit ([2026-11-10](2026-11-10.html); [RESULTS](https://github.com/jgridifier/analysis-skills/blob/main/methods/changeforest/RESULTS.md) and [RESULTS](https://github.com/jgridifier/analysis-skills/blob/main/methods/partykit/RESULTS.md)) and MARSS and InspectChangepoint ([2026-11-11](2026-11-11.html), aimed at [Q1](QUESTIONS.md)). No new fits were run. Every number below is from those pages, their run JSON, or the RESULTS files. Nothing is being built, nothing is promoted, and no `APPROVAL.md` is written.
 
@@ -28,6 +28,8 @@ For each avenue: what it is in plain math, why it matters on our data (tied to a
 | InspectChangepoint | **Math** | A sparse-projection "who moved" procedure whose size is right under persistent (near-unit-root) share levels, or under a change in drift. |
 | codyn | **Math** | A compositionally valid variance ratio in ilr (or clr) coordinates — official VR on shares is identically 0 — and a rank-shift null that does not wrap trending series. |
 | Lovell proportionality (ρ) | **Math** | A formal partial-ρ given market factors, with a persistence-aware null whose size is demonstrated at 40 and 62 quarters. |
+| ecotraj | **Math** | An increment-level market/residual trajectory split with a sign-flip test whose size is right — level residualization hid the sticky walk. |
+| lphom | **New use** | Form ADV Schedule D filers as the voting units, so the transfer matrix can actually be identified. |
 
 ---
 
@@ -382,6 +384,52 @@ Lovell, Pawlowsky-Glahn, Egozcue, Marguerat & Bähler (2015), "Proportionality: 
 **Why Math is the top pick.** A maintained port of raw ρ would still leave “is this the market or a sticky swap” as a prototype. The extraordinary step is a size-correct partial-ρ, which is what turned today’s JPM–GS and JPM–MS into opposite answers.
 
 
+
+## ecotraj
+
+De Cáceres, Coll, Legendre, Allen, Wiser, Fortin, Condit & Hubbell (2019), "Trajectory analysis in community ecology", *Ecological Monographs* 89:e01350. Sturbois et al. (2021), *Ecological Modelling* 440:109400. Djeghri et al. (2026), *Ecological Monographs* 96(2):e70058. CRAN ecotraj 1.2.2. Scouted on the [2026-11-12 scheduled edition](2026-11-12.html). Novelty: niche. Status: recommended for the promote workflow — not promoted. Plans only; grounded in that run; no further fits were run to write these plans.
+
+**Found via.** Journal, *Ecological Monographs* / the ecotraj package documentation, 2026-11-12 scheduled exotic scout, field: community ecology. Paper: [https://doi.org/10.1002/ecm.1350](https://doi.org/10.1002/ecm.1350). Also used: [https://emf-creaf.github.io/ecotraj/](https://emf-creaf.github.io/ecotraj/), [https://cran.r-project.org/package=ecotraj](https://cran.r-project.org/package=ecotraj), Sturbois et al. 2021 ([doi:10.1016/j.ecolmodel.2020.109400](https://doi.org/10.1016/j.ecolmodel.2020.109400)), Djeghri et al. 2026 ([doi:10.1002/ecm.70058](https://doi.org/10.1002/ecm.70058)). Not codyn. X and SSRN were not the discovery path.
+
+**What our runs showed.** On 14-dealer trading-asset shares, directionality 0.577 beats a sign-flip null (p = 0.027) and a persistence-matched AR(1) (p = 0.001). Residualizing clr *levels* on market covariates hid the sticky walk (residual sign-flip p = 0.994). Residualizing *increments* finds it: residual dir 0.595, p = 0.008; residual net 3.81 vs market 0.54; market steps explain 16% of step energy. On equity revenue, residual net is a GS→JPM swap (GS −1.16, JPM +1.03 clr) but residual directionality is not significant (p = 0.365) and the overall path fails a sign-flip null (p = 0.664). The built-in random-order null is too weak (p = 0.001 on both panels). DSPD clusters of 13 stress episodes put Lehman in a class of its own; 9- vs 15-month window Spearman 0.96.
+
+### 1 · Engineering (effort M)
+
+A faithful Python or Rust port of `trajectoryDirectionality`, the increment sign-flip null, and DSPD, with ecotraj 1.2.2 as oracle, then a speed pass for a Form ADV-scale panel. We did not find a published Python port with an oracle suite. **Test:** parity on A dir 0.577301, E4 dir 0.431413, A residual-increment dir 0.595092 (seed 20261112, 999 draws), then a wall-time comparison on a stated larger panel. No forecast metric.
+
+### 2 · Math (top pick, effort L)
+
+An increment-level market/residual trajectory split that is compositionally valid and whose sign-flip test has the right size. Closest prior: De Cáceres et al. (2019) define directionality on a single trajectory; they do not split steps into covariate and residual sub-trajectories. We did not find a published increment-level market/residual ETA procedure with a demonstrated size at T = 40 and 62. **Test:** simulate share panels (i) with a common market factor and no residual walk, (ii) with a planted sticky swap orthogonal to the market. Residual directionality’s false-positive rate on (i) is in a pre-registered band around α; power on (ii) is at least 0.80 at T = 62 and is reported honestly at T = 40. The level-residualization procedure must not be allowed to pass (ii) if it fails (i) the way it did today. No forecast metric.
+
+**Why Math is the top pick.** A port of today’s tool would still leave the increment vs level split as a prototype, and that split is what made the sticky walk visible.
+
+### 3 · New use on our data (effort S)
+
+Keep the stress-episode DSPD map as a recurring graph, and rerun the increment split unchanged on Form ADV prime-broker counts. **Test:** recurrence of a directional residual path on activity-like counts, and of a wiggly-but-sticky GS→JPM residual net on revenue-like counts, or an honest miss. Plans only.
+
+## lphom
+
+Pavía & Romero (2024), "Improving Estimates Accuracy of Voter Transitions. Two New Algorithms for Ecological Inference Based on Linear Programming", *Sociological Methods & Research* 53(3):1491–1533 (online 2022), doi:10.1177/00491241221092725. Romero, Pavía, Martín & Romero (2020), *Journal of Applied Statistics* 47:2711–2736. CRAN lphom 0.3.5.7. Scouted on the [2026-11-12 scheduled edition](2026-11-12.html). Novelty: obscure. Status: interesting — not promoted. Plans only; grounded in that run; no further fits were run to write these plans.
+
+**Found via.** Journal, *Sociological Methods & Research*, 2026-11-12 scheduled exotic scout, field: ecological inference. Paper: [https://doi.org/10.1177/00491241221092725](https://doi.org/10.1177/00491241221092725). Also used: [https://cran.r-project.org/package=lphom](https://cran.r-project.org/package=lphom), Romero et al. 2020 ([doi:10.1080/02664763.2020.1804842](https://doi.org/10.1080/02664763.2020.1804842)). This run used baseline `lphom()`, not the 2024 tslphom/nslphom estimators. X and SSRN were not the discovery path.
+
+**What our runs showed.** On a single closed panel of consecutive quarters the transfer matrix is not identified: deterministic bounds have median width 0.88 on the big-4 equity-revenue panel (63% of cells wider than 0.80). The implied GS→JPM cell is 0, which contradicts MARSS, residual Lovell ρ, and ecotraj’s residual net. A no-migration AR(1) already looks like ~20% quarterly churn (observed migration 10.3% is *lower* than that null, p = 0.992). A planted 1% GS→JPM flow is not recovered (499 sims, n = 200 steps, median L1 error 0.68; lphom better than least squares in 60% of draws). Product-year units (54) are a better design but homogeneity error stays high (HETe 28) and the GS→JPM cell is not significant against a shuffle (p = 0.116). High- vs low-VIX splits of P are not significant.
+
+### 1 · Engineering (effort M)
+
+Wrap tslphom and nslphom, the deterministic bounds, and a planted-truth harness so an unidentified run fails loudly instead of returning a tidy heatmap. **Test:** replicate today’s vacuous E4 bounds (median width 0.88) and planted L1 error (median 0.68), then show tighter bounds once real units are supplied. No forecast metric.
+
+### 2 · Math (effort L)
+
+A transfer estimator whose null accounts for persistence, and whose interval is not [0, 1] on a single compositional path. Closest prior: Romero et al. (2020) give deterministic bounds; Pavía & Romero (2024) improve accuracy when many units exist. We did not find a published LP (or Bayesian) transfer estimator designed for one persistent compositional time series. **Test:** on simulated persistent panels with no true flow, coverage of a pre-registered interval for off-diagonal cells; power on a planted 1% GS→JPM flow at T = 62. No forecast metric.
+
+### 3 · New use on our data (top pick, effort M once the panel exists)
+
+Form ADV Schedule D filers as the voting units: each fund’s prime-broker affiliation is a real unit, which is the design lphom is built for and the free route to Q1’s missing data. The blocker is the panel build, not a new statistic. **Test:** informative bounds (median width clearly below 0.5) and a pre-registered GS→JPM (or foreign vs US) flow that either recurs or honestly does not. Plans only.
+
+**Why New use is the top pick.** Today’s failure is a missing-units problem. A better estimator on the same single path will still be weakly identified. The extraordinary step is to give the method the data it was designed for.
+
+
 ## Citations used (verified)
 
 Only papers we located with venue, year, and pages, plus the four method papers already cited on the scout pages. "Found via" links are only those recorded on the 11-10 and 11-11 pages or in the watchlist.
@@ -405,7 +453,7 @@ Only papers we located with venue, year, and pages, plus the four method papers 
 
 ## What this is not
 
-Plans only. Nothing here is being built. No new model fits were run for this edition. Nothing is promoted into analysis-skills. No `APPROVAL.md` is written. No raw private Drive rows are published. This file and its page live in research-lab, not in traceot. Research-lab PRs #25 and #21 are not touched.
+Plans only. Nothing here is being built. Edition 3’s plans are grounded in the 11-12 scheduled scout runs already published on that edition’s page; no further fits were run to write these plans. Nothing is promoted into analysis-skills. No `APPROVAL.md` is written. No raw private Drive rows are published. This file and its page live in research-lab, not in traceot. Research-lab PRs #25 and #21 are not touched.
 
 - Baselga, A. & Orme, C. D. L. (2012). betapart: an R package for the study of beta diversity. *Methods in Ecology and Evolution*, 3(5):808–812.
 - Collins, S. L., Micheli, F. & Hartt, L. (2000). A method to determine rates and patterns of variability in ecological communities. *Oikos*, 91(2):285–293.
@@ -416,3 +464,8 @@ Plans only. Nothing here is being built. No new model fits were run for this edi
 - Malherbe, C. & Vayatis, N. (2017). Global optimization of Lipschitz functions. *Proceedings of the 34th International Conference on Machine Learning*, PMLR 70:2314–2323.
 - Quinn, T. P., Richardson, M. F., Lovell, D. R. & Crowley, T. M. (2017). propr: An R-package for Identifying Proportionally Abundant Features Using Compositional Data Analysis. *Scientific Reports*, 7:16520.
 - Schluter, D. (1984). A Variance Test for Detecting Species Associations, with Some Example Applications. *Ecology*, 65(3):998–1005.
+- De Cáceres, M., Coll, L., Legendre, P., Allen, R. B., Wiser, S. K., Fortin, M.-J., Condit, R. & Hubbell, S. (2019). Trajectory analysis in community ecology. *Ecological Monographs*, 89:e01350.
+- Djeghri, N., Sturbois, A., Hélaouët, P., Geissmann, Q., Rimmelin-Maury, P., Boyé, A., Gauthier, O. & De Cáceres, M. (2026). Going round in cycles but going somewhere: Deciphering cyclical dynamics using Ecological Trajectory Analysis. *Ecological Monographs*, 96(2):e70058.
+- Pavía, J. M. & Romero, R. (2024). Improving estimates accuracy of voter transitions. Two new algorithms for ecological inference based on linear programming. *Sociological Methods & Research*, 53(3):1491–1533.
+- Romero, R., Pavía, J. M., Martín, J. & Romero, G. (2020). Assessing uncertainty of voter transitions estimated from aggregated data. Application to the 2017 French presidential election. *Journal of Applied Statistics*, 47:2711–2736.
+- Sturbois, A., De Cáceres, M., Sánchez-Pinillos, M., Schaal, G., Gauthier, O., Le Mao, P., Ponsero, A. & Desroy, N. (2021). Extending community trajectory analysis: New metrics and representation. *Ecological Modelling*, 440:109400.
