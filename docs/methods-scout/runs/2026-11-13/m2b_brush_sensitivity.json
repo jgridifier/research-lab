@@ -1,0 +1,266 @@
+[
+ {
+  "firm": "Corning_mock",
+  "cluster": "ai_datacenter_demand",
+  "smooth_px": 2,
+  "cols": [
+   5
+  ],
+  "branch_found": true,
+  "selected": 304,
+  "precision": 0.506578947368421,
+  "recall": 0.751219512195122
+ },
+ {
+  "firm": "Corning_mock",
+  "cluster": "ai_datacenter_demand",
+  "smooth_px": 2,
+  "cols": [
+   4,
+   5
+  ],
+  "branch_found": true,
+  "selected": 151,
+  "precision": 0.6291390728476821,
+  "recall": 0.4634146341463415
+ },
+ {
+  "firm": "Corning_mock",
+  "cluster": "ai_datacenter_demand",
+  "smooth_px": 4,
+  "cols": [
+   5
+  ],
+  "branch_found": true,
+  "selected": 304,
+  "precision": 0.506578947368421,
+  "recall": 0.751219512195122
+ },
+ {
+  "firm": "Corning_mock",
+  "cluster": "ai_datacenter_demand",
+  "smooth_px": 4,
+  "cols": [
+   4,
+   5
+  ],
+  "branch_found": true,
+  "selected": 149,
+  "precision": 0.6308724832214765,
+  "recall": 0.4585365853658537
+ },
+ {
+  "firm": "Corning_mock",
+  "cluster": "ai_datacenter_demand",
+  "smooth_px": 6,
+  "cols": [
+   5
+  ],
+  "branch_found": false
+ },
+ {
+  "firm": "Corning_mock",
+  "cluster": "ai_datacenter_demand",
+  "smooth_px": 6,
+  "cols": [
+   4,
+   5
+  ],
+  "branch_found": false
+ },
+ {
+  "firm": "Corning_mock",
+  "cluster": "ai_datacenter_demand",
+  "smooth_px": 8,
+  "cols": [
+   5
+  ],
+  "branch_found": false
+ },
+ {
+  "firm": "Corning_mock",
+  "cluster": "ai_datacenter_demand",
+  "smooth_px": 8,
+  "cols": [
+   4,
+   5
+  ],
+  "branch_found": false
+ },
+ {
+  "firm": "MorganStanley_mock",
+  "cluster": "equity_market_activity",
+  "smooth_px": 2,
+  "cols": [
+   4
+  ],
+  "branch_found": true,
+  "selected": 640,
+  "precision": 0.228125,
+  "recall": 0.7525773195876289
+ },
+ {
+  "firm": "MorganStanley_mock",
+  "cluster": "equity_market_activity",
+  "smooth_px": 2,
+  "cols": [
+   3,
+   4
+  ],
+  "branch_found": true,
+  "selected": 330,
+  "precision": 0.3575757575757576,
+  "recall": 0.6082474226804123
+ },
+ {
+  "firm": "MorganStanley_mock",
+  "cluster": "equity_market_activity",
+  "smooth_px": 4,
+  "cols": [
+   4
+  ],
+  "branch_found": true,
+  "selected": 627,
+  "precision": 0.23285486443381181,
+  "recall": 0.7525773195876289
+ },
+ {
+  "firm": "MorganStanley_mock",
+  "cluster": "equity_market_activity",
+  "smooth_px": 4,
+  "cols": [
+   3,
+   4
+  ],
+  "branch_found": true,
+  "selected": 325,
+  "precision": 0.3630769230769231,
+  "recall": 0.6082474226804123
+ },
+ {
+  "firm": "MorganStanley_mock",
+  "cluster": "equity_market_activity",
+  "smooth_px": 6,
+  "cols": [
+   4
+  ],
+  "branch_found": false
+ },
+ {
+  "firm": "MorganStanley_mock",
+  "cluster": "equity_market_activity",
+  "smooth_px": 6,
+  "cols": [
+   3,
+   4
+  ],
+  "branch_found": false
+ },
+ {
+  "firm": "MorganStanley_mock",
+  "cluster": "equity_market_activity",
+  "smooth_px": 8,
+  "cols": [
+   4
+  ],
+  "branch_found": false
+ },
+ {
+  "firm": "MorganStanley_mock",
+  "cluster": "equity_market_activity",
+  "smooth_px": 8,
+  "cols": [
+   3,
+   4
+  ],
+  "branch_found": false
+ },
+ {
+  "firm": "MorganStanley_mock",
+  "cluster": "wealth_fee_based_growth",
+  "smooth_px": 2,
+  "cols": [
+   4
+  ],
+  "branch_found": true,
+  "selected": 640,
+  "precision": 0.1484375,
+  "recall": 0.30844155844155846
+ },
+ {
+  "firm": "MorganStanley_mock",
+  "cluster": "wealth_fee_based_growth",
+  "smooth_px": 2,
+  "cols": [
+   3,
+   4
+  ],
+  "branch_found": true,
+  "selected": 330,
+  "precision": 0.10303030303030303,
+  "recall": 0.11038961038961038
+ },
+ {
+  "firm": "MorganStanley_mock",
+  "cluster": "wealth_fee_based_growth",
+  "smooth_px": 4,
+  "cols": [
+   4
+  ],
+  "branch_found": true,
+  "selected": 627,
+  "precision": 0.14354066985645933,
+  "recall": 0.2922077922077922
+ },
+ {
+  "firm": "MorganStanley_mock",
+  "cluster": "wealth_fee_based_growth",
+  "smooth_px": 4,
+  "cols": [
+   3,
+   4
+  ],
+  "branch_found": true,
+  "selected": 325,
+  "precision": 0.09846153846153846,
+  "recall": 0.1038961038961039
+ },
+ {
+  "firm": "MorganStanley_mock",
+  "cluster": "wealth_fee_based_growth",
+  "smooth_px": 6,
+  "cols": [
+   4
+  ],
+  "branch_found": false
+ },
+ {
+  "firm": "MorganStanley_mock",
+  "cluster": "wealth_fee_based_growth",
+  "smooth_px": 6,
+  "cols": [
+   3,
+   4
+  ],
+  "branch_found": false
+ },
+ {
+  "firm": "MorganStanley_mock",
+  "cluster": "wealth_fee_based_growth",
+  "smooth_px": 8,
+  "cols": [
+   4
+  ],
+  "branch_found": false
+ },
+ {
+  "firm": "MorganStanley_mock",
+  "cluster": "wealth_fee_based_growth",
+  "smooth_px": 8,
+  "cols": [
+   3,
+   4
+  ],
+  "branch_found": false
+ }
+]

@@ -1,6 +1,6 @@
 # Secret sauce plans
 
-*Edition 1 · 2026-11-12 · America/New_York (EST), four already-scouted methods. Edition 2 · same day, ad hoc exotic scout: codyn and Lovell proportionality, grounded in [2026-11-12-adhoc](2026-11-12-adhoc.html). Edition 3 · scheduled 2026-11-12 scout (catch-up published 2026-11-13): ecotraj and lphom, grounded in [2026-11-12](2026-11-12.html). Plans only.*
+*Edition 1 · 2026-11-12 · America/New_York (EST), four already-scouted methods. Edition 2 · same day, ad hoc exotic scout: codyn and Lovell proportionality, grounded in [2026-11-12-adhoc](2026-11-12-adhoc.html). Edition 3 · scheduled 2026-11-12 scout (catch-up published 2026-11-13): ecotraj and lphom, grounded in [2026-11-12](2026-11-12.html). Edition 4 · scheduled 2026-11-13 scout: ebnm and DenseLines, aimed at Q2, grounded in [2026-11-13](2026-11-13.html) (SYNTHETIC mock data). Plans only.*
 
 This is a running file. Each daily methods scout should append plans for that day's methods in the same form. Edition 1 covers the four methods already scouted: changeforest and partykit ([2026-11-10](2026-11-10.html); [RESULTS](https://github.com/jgridifier/analysis-skills/blob/main/methods/changeforest/RESULTS.md) and [RESULTS](https://github.com/jgridifier/analysis-skills/blob/main/methods/partykit/RESULTS.md)) and MARSS and InspectChangepoint ([2026-11-11](2026-11-11.html), aimed at [Q1](QUESTIONS.md)). No new fits were run. Every number below is from those pages, their run JSON, or the RESULTS files. Nothing is being built, nothing is promoted, and no `APPROVAL.md` is written.
 
@@ -30,6 +30,8 @@ For each avenue: what it is in plain math, why it matters on our data (tied to a
 | Lovell proportionality (ρ) | **Math** | A formal partial-ρ given market factors, with a persistence-aware null whose size is demonstrated at 40 and 62 quarters. |
 | ecotraj | **Math** | An increment-level market/residual trajectory split with a sign-flip test whose size is right — level residualization hid the sticky walk. |
 | lphom | **New use** | Form ADV Schedule D filers as the voting units, so the transfer matrix can actually be identified. |
+| ebnm | **New use** | "Is this move real?" lfsr flags for every program in a budget cycle: 6–7× BH's calls at ≤ 1.5% wrong sign on the Q2 mocks. |
+| DenseLines | **Engineering** | A gap-safe, weighted Rust core with a Python binding. The reference returns NaN on start/stop programs, and the exact NumPy port is 10–120× slower. |
 
 ---
 
@@ -430,6 +432,54 @@ Form ADV Schedule D filers as the voting units: each fund’s prime-broker affil
 **Why New use is the top pick.** Today’s failure is a missing-units problem. A better estimator on the same single path will still be weakly identified. The extraordinary step is to give the method the data it was designed for.
 
 
+## ebnm
+
+Willwerscheid, Carbonetto & Stephens (2025), "ebnm: An R Package for Solving the Empirical Bayes Normal Means Problem Using a Variety of Prior Families", *Journal of Statistical Software* 114(3):1–33, doi:10.18637/jss.v114.i03. CRAN ebnm 1.1-42 (ashr 2.2-63, mixsqp 0.3-54). Scouted on the [2026-11-13 scheduled edition](2026-11-13.html), aimed at [Q2](QUESTIONS.md). Novelty: niche outside genomics. Status: recommended for the promote workflow — not promoted. Plans only. They are grounded in that run on SYNTHETIC mock ZBB data, and no further fits were run to write them.
+
+**Found via.** Journal, *Journal of Statistical Software*, [https://www.jstatsoft.org/article/view/v114i03](https://www.jstatsoft.org/article/view/v114i03), web search 2026-11-13, field: statistical genetics. Also used: [https://github.com/stephenslab/ebnm](https://github.com/stephenslab/ebnm), [https://cran.r-project.org/package=ebnm](https://cran.r-project.org/package=ebnm). X and SSRN were not the discovery path.
+
+**What our runs showed.** Pooling deviations from segment × function means cuts 2025-level log RMSE from 0.146 to 0.108 (Corning mock) and from 0.138 to 0.109 (Morgan Stanley mock). The normal prior does worse (0.119 / 0.114). Programs that are alone in their group get slightly worse (0.110 → 0.120 Corning; 0.093 → 0.096 Morgan Stanley). For year-on-year change, lfsr < 0.05 calls 91 and 200 programs at 0% and 1.5% wrong sign, versus BH's 14 and 28; lfsr is calibrated. For "stated growth, actually declining", shrinkage adds nothing over a z-score (peer-relative AUC 0.768 vs 0.777 Corning; 0.777 vs 0.775 Morgan Stanley). Fits take 0.003–0.6 s.
+
+### 1 · Engineering (effort M)
+
+A Rust core for the scale-mixture (ash) and point-normal fits: the mixsqp mixture-weight solve, posterior means and SDs, and lfsr, with a thin Python binding. R ebnm 1.1-42 is the oracle. We did not find a maintained Rust port. **Test:** on today's inputs, log-likelihood −145.7808 (Corning, ash) and −238.8506 (Morgan Stanley, ash), and posterior means within 1e-6. Then wall time against R's 0.03 s per fit, at a stated 10,000-fit bootstrap.
+
+### 2 · Math (effort M–L)
+
+A covariate-moderated prior: \(\theta_j \sim g(\cdot \mid z_j)\), where \(z_j\) are text-derived features (stated category, intent, driver). Closest prior work: Ignatiadis & Wager, "Covariate-Powered Empirical Bayes Estimation", arXiv:1906.01611. **Why:** one global prior made programs alone in their group slightly worse than their own number. **Test:** on non-family programs, beat both the own number (0.110 / 0.093) and global ash (0.120 / 0.096) on both mocks, with no loss on families (0.101 / 0.113).
+
+### 3 · New use on our data (top pick, effort S)
+
+Each budget cycle, publish one column per program: the shrunk change, its interval, and its lfsr. That turns "which of these 1,000 moves are real?" into a ranked, calibrated list. **Test:** on a mock regenerated with a new seed (and later on real data), a wrong-sign rate ≤ 5% among lfsr < 0.05 calls, at least 3× BH's call count, and lfsr bins calibrated within ±5 points.
+
+**Why New use is the top pick.** It is the strongest result today: 6–7× BH's calls at ≤ 1.5% wrong sign, with no tuning and millisecond fits. It needs no new math to be useful.
+
+---
+
+## DenseLines
+
+Moritz & Fisher (2018), "Visualizing a Million Time Series with the Density Line Chart", arXiv:1808.06019 (cs.HC). Reference code by the first author: [line-density-rust](https://github.com/domoritz/line-density-rust) (BSD-3, commit 083890c) and [line-density](https://github.com/domoritz/line-density) (JS/WebGL). Scouted on the [2026-11-13 scheduled edition](2026-11-13.html), aimed at Q2.5 and Q2.4. Novelty: obscure outside visualization research. Status: interesting — not promoted. Plans only, grounded in that run.
+
+**Found via.** arXiv, [https://arxiv.org/abs/1808.06019](https://arxiv.org/abs/1808.06019), web search 2026-11-13, field: visualization / HCI. Code from the author's own GitHub (the library-author route). X and SSRN were not the discovery path.
+
+**What our runs showed.** The NumPy port matches the Rust reference pixel for pixel: max relative difference 2.1e-7 at 5,000 series, which is float32 rounding. It is 10–120× slower (62.2 s vs 0.50 s at 10,000 series). The reference makes a column NaN whenever any series does not cover it, so both mocks render as entirely NaN (274 and 361 partial-span programs). Arc-length normalisation barely matters at 5–6 points per series: noisy-decile ink is 12.0% vs 10.7%, and Wasserstein distance to the true-path chart is 0.055 vs 0.053. A residual brush recovers 75% of the hidden AI-demand group at 51% precision, and 94% recall with a text keyword. The brush disappears at ≥ 6 px smoothing.
+
+### 1 · Engineering (top pick, effort S–M)
+
+A Rust core with gap-safe columns, per-series weights and a live-count channel, plus a Python binding. The reference's rasteriser and normalisation are kept exactly. **Test:** relative difference ≤ 1e-6 against commit 083890c on full-span inputs (today's port: 2.1e-7), zero NaN columns on both mocks, and ≤ 2× the reference's time at 10,000 series.
+
+**Why Engineering is the top pick.** Start/stop is the normal case in a budget portfolio, and today the reference cannot draw it at all. The fix is small and fully testable against the original.
+
+### 2 · Math (effort M)
+
+Posterior DenseLines: replace each noisy path with ebnm posterior draws (weight 1 / number of draws), so the density shows where programs probably are, not where noise put them. No published prior work found for this combination. **Test:** a lower Wasserstein distance to the true-path chart than today's 0.053 (Corning) and 0.035 (Morgan Stanley), and no false branch on a mock with clusters switched off.
+
+### 3 · New use on our data (effort S)
+
+Residual DenseLines plus a text keyword as a hidden-group finder. Text and chart find different members of the same group. **Test:** a bandwidth-free branch test (dip-style, with a year-shuffle null) that keeps recall ≥ 0.7 at precision ≥ 0.5 on both mocks at any smoothing from 2 to 8 px.
+
+---
+
 ## Citations used (verified)
 
 Only papers we located with venue, year, and pages, plus the four method papers already cited on the scout pages. "Found via" links are only those recorded on the 11-10 and 11-11 pages or in the watchlist.
@@ -453,7 +503,7 @@ Only papers we located with venue, year, and pages, plus the four method papers 
 
 ## What this is not
 
-Plans only. Nothing here is being built. Edition 3’s plans are grounded in the 11-12 scheduled scout runs already published on that edition’s page; no further fits were run to write these plans. Nothing is promoted into analysis-skills. No `APPROVAL.md` is written. No raw private Drive rows are published. This file and its page live in research-lab, not in traceot. Research-lab PRs #25 and #21 are not touched.
+Plans only. Nothing here is being built. Edition 3’s plans are grounded in the 11-12 scheduled scout runs already published on that edition’s page; no further fits were run to write these plans. Edition 4’s plans (ebnm, DenseLines) are grounded in the 2026-11-13 scheduled run on SYNTHETIC mock ZBB data. Nothing is promoted into analysis-skills. No `APPROVAL.md` is written. No raw private Drive rows are published. This file and its page live in research-lab, not in traceot. Research-lab PRs #25 and #21 are not touched.
 
 - Baselga, A. & Orme, C. D. L. (2012). betapart: an R package for the study of beta diversity. *Methods in Ecology and Evolution*, 3(5):808–812.
 - Collins, S. L., Micheli, F. & Hartt, L. (2000). A method to determine rates and patterns of variability in ecological communities. *Oikos*, 91(2):285–293.
@@ -469,3 +519,10 @@ Plans only. Nothing here is being built. Edition 3’s plans are grounded in the
 - Pavía, J. M. & Romero, R. (2024). Improving estimates accuracy of voter transitions. Two new algorithms for ecological inference based on linear programming. *Sociological Methods & Research*, 53(3):1491–1533.
 - Romero, R., Pavía, J. M., Martín, J. & Romero, G. (2020). Assessing uncertainty of voter transitions estimated from aggregated data. Application to the 2017 French presidential election. *Journal of Applied Statistics*, 47:2711–2736.
 - Sturbois, A., De Cáceres, M., Sánchez-Pinillos, M., Schaal, G., Gauthier, O., Le Mao, P., Ponsero, A. & Desroy, N. (2021). Extending community trajectory analysis: New metrics and representation. *Ecological Modelling*, 440:109400.
+- Ignatiadis, N. & Wager, S. Covariate-Powered Empirical Bayes Estimation. arXiv:1906.01611.
+- Moritz, D. & Fisher, D. (2018). Visualizing a Million Time Series with the Density Line Chart. arXiv:1808.06019.
+- Narasimhan, B. & Efron, B. (2020). deconvolveR: A G-Modeling Program for Deconvolution and Empirical Bayes Estimation. *Journal of Statistical Software*, 94(11):1–20.
+- Stephens, M. (2017). False discovery rates: a new deal. *Biostatistics*, 18(2):275–294.
+- Swihart, B. J., Caffo, B., James, B. D., Strand, M., Schwartz, B. S. & Punjabi, N. M. (2010). Lasagna plots: a saucy alternative to spaghetti plots. *Epidemiology*, 21(5):621–625.
+- Wang, W. & Stephens, M. (2021). Empirical Bayes Matrix Factorization. *Journal of Machine Learning Research*, 22(120):1–40.
+- Willwerscheid, J., Carbonetto, P. & Stephens, M. (2025). ebnm: An R Package for Solving the Empirical Bayes Normal Means Problem Using a Variety of Prior Families. *Journal of Statistical Software*, 114(3):1–33.

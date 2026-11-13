@@ -1,0 +1,207 @@
+{
+ "Corning_mock": {
+  "n_series": 1052,
+  "years": [
+   2020,
+   2021,
+   2022,
+   2023,
+   2024,
+   2025
+  ],
+  "y_range_log": [
+   -0.4337106612048467,
+   0.46946421480698297
+  ],
+  "D1": {
+   "noisy_decile_share_of_series": 0.10076045627376426,
+   "noisy_decile_share_of_covered_columns": 0.1065400404601853,
+   "noisy_decile_ink_unnormalised": 0.12008364422883551,
+   "noisy_decile_ink_denselines": 0.1065400404601853,
+   "tv_to_truth_unnormalised": 0.6903127963446648,
+   "tv_to_truth_denselines": 0.6870105164937728,
+   "w1_to_truth_unnormalised": 0.055498140333297544,
+   "w1_to_truth_denselines": 0.05264011437767893
+  },
+  "D2": {
+   "peaks_px": [
+    28,
+    42,
+    83,
+    113,
+    138,
+    157,
+    179,
+    189,
+    219,
+    254
+   ],
+   "main_px": 157,
+   "brush_threshold_log": 0.08304229547448233,
+   "keyword_regex": "generative-ai|datacenter|data center|hyperscale",
+   "clusters": {
+    "ai_datacenter_demand": {
+     "n_members": 205,
+     "keyword_text": {
+      "selected": 136,
+      "hits": 136,
+      "precision": 1.0,
+      "recall": 0.6634146341463415
+     },
+     "brush": {
+      "selected": 304,
+      "hits": 154,
+      "precision": 0.506578947368421,
+      "recall": 0.751219512195122
+     },
+     "brush_or_text": {
+      "selected": 342,
+      "hits": 192,
+      "precision": 0.5614035087719298,
+      "recall": 0.9365853658536586
+     },
+     "top_k_by_residual": {
+      "selected": 205,
+      "hits": 111,
+      "precision": 0.5414634146341464,
+      "recall": 0.5414634146341464
+     }
+    },
+    "auto_ice_aftertreatment": {
+     "n_members": 50,
+     "keyword_text": {
+      "selected": 136,
+      "hits": 0,
+      "precision": 0.0,
+      "recall": 0.0
+     },
+     "brush": {
+      "selected": 304,
+      "hits": 2,
+      "precision": 0.006578947368421052,
+      "recall": 0.04
+     },
+     "brush_or_text": {
+      "selected": 342,
+      "hits": 2,
+      "precision": 0.005847953216374269,
+      "recall": 0.04
+     },
+     "top_k_by_residual": {
+      "selected": 50,
+      "hits": 0,
+      "precision": 0.0,
+      "recall": 0.0
+     }
+    }
+   }
+  },
+  "D3": {
+   "partial_span_series": 274,
+   "reference_nan_columns": 500,
+   "width": 500,
+   "live_min": 859,
+   "live_max": 995
+  }
+ },
+ "MorganStanley_mock": {
+  "n_series": 1765,
+  "years": [
+   2021,
+   2022,
+   2023,
+   2024,
+   2025
+  ],
+  "y_range_log": [
+   -0.7362363369346726,
+   0.5286432434282184
+  ],
+  "D1": {
+   "noisy_decile_share_of_series": 0.10028328611898017,
+   "noisy_decile_share_of_covered_columns": 0.10139284690698877,
+   "noisy_decile_ink_unnormalised": 0.10703621422045453,
+   "noisy_decile_ink_denselines": 0.10139284690698877,
+   "tv_to_truth_unnormalised": 0.5960629674026994,
+   "tv_to_truth_denselines": 0.5929378243558752,
+   "w1_to_truth_unnormalised": 0.03554886594675127,
+   "w1_to_truth_denselines": 0.03485836279980995
+  },
+  "D2": {
+   "peaks_px": [
+    48,
+    59,
+    86,
+    141,
+    158,
+    173
+   ],
+   "main_px": 158,
+   "brush_threshold_log": 0.05134920300740131,
+   "keyword_regex": "equity market|market activity|trading volume|fee-based|advisory asset|managed account",
+   "clusters": {
+    "equity_market_activity": {
+     "n_members": 194,
+     "keyword_text": {
+      "selected": 220,
+      "hits": 51,
+      "precision": 0.2318181818181818,
+      "recall": 0.26288659793814434
+     },
+     "brush": {
+      "selected": 627,
+      "hits": 146,
+      "precision": 0.23285486443381181,
+      "recall": 0.7525773195876289
+     },
+     "brush_or_text": {
+      "selected": 747,
+      "hits": 157,
+      "precision": 0.2101740294511379,
+      "recall": 0.8092783505154639
+     },
+     "top_k_by_residual": {
+      "selected": 194,
+      "hits": 62,
+      "precision": 0.31958762886597936,
+      "recall": 0.31958762886597936
+     }
+    },
+    "wealth_fee_based_growth": {
+     "n_members": 308,
+     "keyword_text": {
+      "selected": 220,
+      "hits": 169,
+      "precision": 0.7681818181818182,
+      "recall": 0.5487012987012987
+     },
+     "brush": {
+      "selected": 627,
+      "hits": 90,
+      "precision": 0.14354066985645933,
+      "recall": 0.2922077922077922
+     },
+     "brush_or_text": {
+      "selected": 747,
+      "hits": 199,
+      "precision": 0.26639892904953144,
+      "recall": 0.6461038961038961
+     },
+     "top_k_by_residual": {
+      "selected": 308,
+      "hits": 23,
+      "precision": 0.07467532467532467,
+      "recall": 0.07467532467532467
+     }
+    }
+   }
+  },
+  "D3": {
+   "partial_span_series": 361,
+   "reference_nan_columns": 500,
+   "width": 500,
+   "live_min": 1542,
+   "live_max": 1708
+  }
+ }
+}
