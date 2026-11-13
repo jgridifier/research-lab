@@ -69,6 +69,18 @@
       "external": false
     },
     {
+      "id": "scout-2026-11-12",
+      "title": "Scheduled scout (catch-up): ecotraj share trajectories and lphom transfer matrices, aimed at dealer-share dynamics",
+      "dek": "Ecological trajectory analysis and linear-programming voter-transfer matrices, run on the FR Y-9C trading panel. Residual trading-asset increments are directional; a quarterly flow matrix from this single panel is not identified. ecotraj is recommended for the promote workflow; lphom is interesting.",
+      "section": "methods",
+      "date": "2026-11-12",
+      "url": "methods-scout/2026-11-12.html",
+      "featured": "secondary",
+      "kind": "scout",
+      "kicker": "Methods scout",
+      "external": false
+    },
+    {
       "id": "scout-2026-11-12-adhoc",
       "title": "Ad hoc scout: ecological rank clocks and genomic proportionality, aimed at dealer-share dynamics",
       "dek": "codyn rank clocks and Lovell proportionality, run on the FR Y-9C trading panel. US dealer volumes co-move; a JPM–GS proportionality signal strengthens after the market is removed. Both methods are recommended for the promote workflow.",
@@ -83,7 +95,7 @@
     {
       "id": "scout-secret-sauce",
       "title": "Secret-sauce plans for changeforest, partykit, MARSS and InspectChangepoint",
-      "dek": "Exactly three avenues per method — Engineering, Math, and a new use on our data. Plans only; nothing is being built. A second edition the same day appends codyn and Lovell proportionality.",
+      "dek": "Exactly three avenues per method — Engineering, Math, and a new use on our data. Plans only; nothing is being built. Later editions the same day append codyn, Lovell proportionality, ecotraj and lphom.",
       "section": "methods",
       "date": "2026-11-12",
       "url": "methods-scout/secret-sauce.html",

@@ -1,0 +1,176 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Methods scout · 2026-11-12 · research-lab</title>
+<meta name="description" content="Scheduled methods scout (catch-up), aimed at Q1 (dealer share: market-driven vs sticky migration): ecotraj ecological trajectory analysis and lphom voter-transfer matrices, on a PROXY Y-9C dealer panel.">
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,400..800&family=Newsreader:ital,opsz,wght@0,6..72,400..600;1,6..72,400..500&family=JetBrains+Mono:wght@400;500;700&display=swap">
+<link rel="stylesheet" href="../assets/brief.css">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.css">
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.js"></script>
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/contrib/auto-render.min.js" onload="renderMathInElement(document.body,{delimiters:[{left:'$$',right:'$$',display:true},{left:'\\(',right:'\\)',display:false}]})"></script>
+<style>
+  .avenues { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 1rem; margin: 1.1rem 0 1.8rem; }
+  .avenues > .card { margin: 0; max-width: none; display: flex; flex-direction: column; }
+  .avenues > .card p, .avenues > .card li { max-width: none; }
+  .avenues .pitch { flex: 1 1 auto; margin: 0 0 .7rem; font-size: 1.02rem; }
+  .avenue-kicker { font-family: var(--f-mono); font-size: .72rem; letter-spacing: .14em; text-transform: uppercase; color: var(--muted); margin: 0 0 .35rem; }
+  .avenues h3 { margin: 0 0 .45rem; font-size: 1.15rem; letter-spacing: -.02em; line-height: 1.2; }
+  .badge-top { display: inline-block; font-family: var(--f-mono); font-weight: 700; font-size: .7rem; letter-spacing: .14em; text-transform: uppercase; padding: .22rem .55rem; background: var(--amber); border: 2px solid var(--ink); color: var(--ink); }
+  .card.top-pick { border-color: var(--ink); box-shadow: 8px 8px 0 var(--amber); }
+  .effort { font-family: var(--f-mono); font-size: .72rem; letter-spacing: .1em; text-transform: uppercase; color: var(--muted); }
+  .found-via { font-family: var(--f-mono); font-size: .82rem; line-height: 1.55; color: var(--body); background: var(--card); border: 2px solid var(--ink); border-left: 8px solid var(--teal); padding: .7rem 1rem; margin: .4rem 0 1rem; max-width: none; }
+  .found-via strong { font-family: var(--f-mono); letter-spacing: .08em; text-transform: uppercase; font-size: .75rem; }
+  figure { margin: 1.2rem 0 1.6rem; max-width: none; }
+  figure img { width: 100%; height: auto; border: 2px solid var(--ink); }
+  figcaption { font-family: var(--f-mono); font-size: .8rem; color: var(--muted); margin-top: .45rem; }
+  @media (max-width: 900px) { .avenues { grid-template-columns: 1fr; } }
+</style>
+<!-- Methods Scout home-screen / PWA tags. Paste into <head> of every methods-scout page.
+     Paths are root-absolute so they resolve under https://jgridifier.github.io/research-lab/. -->
+<link rel="apple-touch-icon" sizes="180x180" href="/research-lab/methods-scout/icons/apple-touch-icon.png">
+<link rel="icon" type="image/png" sizes="32x32" href="/research-lab/methods-scout/icons/favicon-32.png">
+<link rel="icon" type="image/png" sizes="192x192" href="/research-lab/methods-scout/icons/icon-192.png">
+<link rel="manifest" href="/research-lab/methods-scout/manifest.webmanifest">
+<meta name="apple-mobile-web-app-title" content="Methods Scout">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="theme-color" content="#0F2A23">
+</head><body><main>
+<header class="mast">
+  <div class="date">Thursday · November 12, 2026 · scheduled edition · catch-up published Friday morning ET · aimed at Q1 · exotic</div>
+  <h1>Methods scout</h1>
+  <p class="dek">Two new exotic methods for the same question: when a dealer’s share moves, is it the market, or a sticky walk in one direction — and can we see, or even recover, the flows? Run on a clearly labelled PROXY panel. A same-day <a href="2026-11-12-adhoc.html">ad hoc edition</a> already covered codyn and Lovell proportionality; these two are different.</p>
+  <nav><a href="index.html">All editions</a><a href="secret-sauce.html">Secret sauce</a><a href="https://github.com/jgridifier/research-lab/blob/main/docs/methods-scout/QUESTIONS.md">Research questions</a><a href="https://github.com/jgridifier/research-lab/blob/main/docs/methods-scout/watchlist.md">Watchlist</a><a href="../index.html">Research lab home</a></nav>
+</header>
+
+<div class="ticker">
+  <span><b>●</b> Catch-up: the 2:12 PM ET run finished the analyses, then stopped before this page was published</span>
+  <span><b>●</b> ecotraj: residual (sticky) increments on 14-dealer trading-asset shares are directional (dir 0.595, sign-flip p = 0.008)</span>
+  <span><b>●</b> Equity-revenue path is a wiggly GS→JPM swap: overall directionality fails a sign-flip null (p = 0.664)</span>
+  <span><b>●</b> lphom transfer matrices on consecutive quarters are not identified (cell bounds typically 0–1); planted 1% GS→JPM flow is not recovered</span>
+</div>
+
+<section class="tldr">
+<h2>The short version</h2>
+<ul>
+<li><strong>This page.</strong> The scheduled 12 November 2:12 PM ET methods scout was interrupted after ecotraj and lphom had been run, and before figures and this page were published. This is the Friday 13 November morning catch-up of that edition, not a second daily scout and not a redo of the <a href="2026-11-12-adhoc.html">ad hoc exotic run</a>.</li>
+<li><strong>Data first.</strong> Q1 still has no per-firm prime-brokerage revenue or balances for the top 25. Everything here is a <strong>PROXY</strong>: public FR Y-9C trading assets (14 dealers, 2016Q3–2026Q2) and big-4 equity trading revenue (2011Q1–2026Q2), plus FRED market series. Descriptive only; no forecasts.</li>
+<li><strong>ecotraj</strong> (ecological trajectory analysis, <em>Ecological Monographs</em> 2019) <span class="verdict adopt">recommend for promote workflow</span>. It plots a composition as a path in Aitchison (clr) space and tests whether that path has a preferred direction. On trading-asset shares the path is directional (0.577) against a sign-flip null (p = 0.027) and a persistence-matched AR(1) (p = 0.001). After splitting each clr step into a market-explained part and a residual, the residual path carries almost all of the net displacement (3.81 vs 0.54) and itself beats a sign-flip null (dir 0.595, p = 0.008). On equity revenue the picture is different: the GS→JPM swap is almost entirely in the residual net (GS −1.16, JPM +1.03 clr), but the residual path is not significantly directional (p = 0.365), and the overall path fails a sign-flip null (p = 0.664). The visual pick is a map of 13 macro-financial stress episodes as trajectories, clustered by DSPD distance: Lehman is in a class of its own; 9/11 never came back.</li>
+<li><strong>lphom</strong> (linear-programming voter-transfer matrices, <em>Sociological Methods &amp; Research</em> 2024) <span class="verdict interesting">interesting</span>. The idea is to recover a share-flow matrix \(P\) — who kept share, who it moved to — the thing Q1 actually wants. On a single closed panel of consecutive quarters the matrix is not identified: Duncan–Davis-style bounds are typically 0–1 (median width 0.88 on the big-4 panel). A planted 1% GS→JPM quarterly flow is not recovered. The implied GS→JPM cell on equity revenue is 0, which contradicts the sticky swap already seen by MARSS, proportionality, and ecotraj’s residual net. Using product-year lines as “voting units” (54 units) is a better design, but homogeneity error stays high. The natural next data for this method is Form ADV Schedule D, where each fund is a real unit.</li>
+</ul>
+<p class="meta">Data used (all public regulatory data, aggregated): FR Y-9C trading panel 2008Q1–2026Q2 built from FFIEC/NIC BHCF bulk files; FRED VIXCLS, NASDAQCOM and BAA10Y; a monthly macro-financial stress state used only for the episode map. Only shares, fitted structure and charts are shown. Scripts and JSON outputs: <code>docs/methods-scout/runs/2026-11-12/</code>. <strong>Pre-registration note:</strong> this panel also feeds the pre-registered Y-9C trading-OT forecast track, whose out-of-sample run is not authorized. Today’s work is descriptive and runs none of that track’s forecasts, but it does look at 2014–2026 data inside that track’s OOS window.</p>
+</section>
+
+<div class="sec-head"><span class="n">Q1</span><h2>Where the question stands</h2><span class="line"></span></div>
+<div class="card dark">
+<p><strong>Q1 (2026-11-10):</strong> “How have prime broker revenue/activity share dynamics changed among the top 25 brokers and how can we gain insight into market based ones vs real sticky share migration?”</p>
+<p><strong>Progress (PROXY only), building on 11-11 and the 11-12 ad hoc.</strong> (1) The 11-11 MARSS split and the ad hoc residual proportionality already said the GS→JPM equity-revenue swap is sticky, and that foreign IHC trading-asset share fell from 13.8% to 5.9% with almost none of that net shift in the market. ecotraj adds a path geometry test: on trading assets, the residual (non-market) increments themselves walk in one direction (p = 0.008). On equity revenue, the same residual net is a GS→JPM swap, but the path is not a straight walk — it wiggles, and directionality does not beat a sign-flip. That is why a rate-of-change can be significant (ad hoc, p = 0.001) while a directionality test is not: the composition gets from here to there without pointing the same way each quarter. (2) lphom tried to go one step further and name the flows. On this panel it cannot: the transfer matrix from consecutive quarters is unidentified, and a planted flow is missed. The method is still the right shape of answer once we have many units (Form ADV filers). (3) Missing data is unchanged. Status: <strong>in progress</strong>.</p>
+</div>
+
+<div class="card"><div class="card-top"><span class="tag">Data search</span><span class="tag red">Top-25 PB data: missing</span></div>
+<p>No new top-25 per-firm prime-brokerage series was found today. The PROXY and the free Form ADV Schedule D build option are the same as on 11-11 and the ad hoc edition. lphom makes that build more urgent: the method needs many “voting units,” and each fund’s prime-broker affiliation is exactly that.</p>
+</div>
+
+<!-- ================= METHOD 1 ================= -->
+<div class="sec-head" id="m1"><span class="n">Method 01</span><h2>ecotraj: share change as a trajectory, with a test for direction</h2><span class="line"></span></div>
+<p class="meta">De Cáceres et al. (2019), <em>Ecological Monographs</em> 89:e01350 · Sturbois et al. (2021), <em>Ecological Modelling</em> 440:109400 · Djeghri et al. (2026), <em>Ecological Monographs</em> 96(2):e70058 · CRAN ecotraj 1.2.2 · community ecology · recommend for the promote workflow — not promoted</p>
+<p class="found-via"><strong>Found via.</strong> Journal · <em>Ecological Monographs</em> / the ecotraj package documentation · 2026-11-12 scheduled exotic scout · field: community ecology. Paper: <a href="https://doi.org/10.1002/ecm.1350">https://doi.org/10.1002/ecm.1350</a>. Also used: the package site <a href="https://emf-creaf.github.io/ecotraj/">https://emf-creaf.github.io/ecotraj/</a>, the CRAN page <a href="https://cran.r-project.org/package=ecotraj">https://cran.r-project.org/package=ecotraj</a>, Sturbois et al. 2021 (<a href="https://doi.org/10.1016/j.ecolmodel.2020.109400">doi:10.1016/j.ecolmodel.2020.109400</a>), and the 2026 cyclical-trajectory extension (<a href="https://doi.org/10.1002/ecm.70058">doi:10.1002/ecm.70058</a>). This is not codyn (that was the ad hoc edition). X and SSRN were not used as the discovery path for this method.</p>
+<p><strong>Target question.</strong> Q1, in trajectory language: does the share composition walk with a preferred direction (sticky migration), or does it wander like a persistent random path, and how much of that walk is just the market?</p>
+<p><strong>Why it is a visual, MaxLIPO-style find, and fast enough.</strong> The usual chart is a stacked-area plot of shares, which hides direction. ecotraj gives a no-tuning path in a resemblance space, a directionality number, and a way to compare whole trajectories (DSPD). Three analyses: (1a) directionality of the clr path vs a built-in random-order null, a sign-flip-increments null, and a persistence-matched AR(1); (1b) market vs residual sub-trajectories, on both levels and increments; (1c) 13 stress episodes as trajectories in a z-scored macro state, clustered by DSPD. Runtime for 1a–1c was 8.0 minutes (R 4.5.3, ecotraj 1.2.2, seed 20261112, 999 draws). The built-in permutation (random survey order) is too weak on a trending composition — the same lesson as InspectChangepoint — so the sign-flip and AR(1) nulls are the ones we trust.</p>
+
+<figure>
+  <img src="fig/2026-11-12/m1_traj.png" alt="Stacked share plots next to ecotraj trajectories in Aitchison principal-component space for the 14-dealer trading-asset panel and the big-4 equity-revenue panel">
+  <figcaption>Figure 1. The stacked areas (left) are the standard plot. The paths (right) are the same compositions in clr principal-component space. Colour runs from the first quarter (purple) to the last (yellow).</figcaption>
+</figure>
+<figure>
+  <img src="fig/2026-11-12/m1_nulls.png" alt="Histograms of sign-flip and AR(1) null directionality versus the observed directionality on both panels">
+  <figcaption>Figure 2. Observed directionality (black line) against 999 sign-flip paths (teal) and 999 persistence-matched AR(1) paths (amber). Panel A beats both; panel E4 beats AR(1) but sits inside the sign-flip cloud.</figcaption>
+</figure>
+<figure>
+  <img src="fig/2026-11-12/m1_market_resid.png" alt="Bar charts of total, market, and residual net clr change by dealer on both panels">
+  <figcaption>Figure 3. Increment-level split: each clr step is regressed on VIX, four-quarter Nasdaq return, the BAA spread, and industry growth. Market steps explain 16% of step energy on panel A and 45% on E4. Residual net displacement dominates both.</figcaption>
+</figure>
+<figure>
+  <img src="fig/2026-11-12/m1_episodes.png" alt="Stress-episode trajectories in PCA space, DSPD dendrogram, overlaid VIX paths, recovery ratios, and length versus directionality">
+  <figcaption>Figure 4. Thirteen stress episodes as 15-month trajectories (onset −2 to +12) in a six-series macro state (log VIX, NFCI, STLFSI4, T10Y2Y, GZ spread, EBP). Colour is the DSPD cluster. The overlaid VIX paths (lower left) are the chart this replaces.</figcaption>
+</figure>
+
+<p><strong>1a. Directionality vs three nulls.</strong> Panel A (40 quarters, 14 dealers): directionality 0.577, straightness 0.204. Built-in random-order p = 0.001; sign-flip p = 0.027 (null 95% band 0.42–0.58); AR(1) p = 0.001 (band 0.37–0.49). Panel E4 (62 quarters, big-4 equity revenue): directionality 0.431, straightness 0.081. Built-in p = 0.001, AR(1) p = 0.013, but sign-flip p = 0.664 (band 0.33–0.67). The equity-revenue composition does move (JPM 14.5% → 43.4%, GS 52.3% → 23.1%), but quarter to quarter it does not keep a heading. A directionality test and a rate-of-change test (ad hoc Collins p = 0.001) are asking different things.</p>
+<p><strong>1b. Market vs residual, and why the increment split matters.</strong> Residualizing clr <em>levels</em> on the same market covariates hid the sticky walk: on panel A the residual path’s sign-flip p was 0.994. Residualizing <em>increments</em> reverses that. Market steps explain 16% of step energy on A and 45% on E4. Residual net displacement is 3.81 vs market 0.54 on A (UBS+CS residual net −2.70, Mizuho +1.49, JPM +0.83), and 1.65 vs 0.23 on E4 (GS −1.16, JPM +1.03). Residual directionality beats a sign-flip on A (0.595, p = 0.008) and does not on E4 (0.513, p = 0.365). Market sub-paths are not directional on either panel (p = 0.92 and 0.93). This agrees with MARSS and with residual Lovell ρ: the net GS→JPM equity swap is sticky; the trading-asset reordering is also sticky, and here it is directional as a path.</p>
+<p><strong>1c. Stress episodes as trajectories (the visual pick; not a Q1 forecast).</strong> DSPD clusters put Lehman in a class of its own (longest path, 26.5; recovery ratio 0.29 — most of the excursion came back). COVID is long (17.9) and also snaps back (0.30), but sits in the short/snap-back group. 9/11 never came back (ratio 1.0); SVB almost stayed put (0.94). Window stability: 9-month vs 15-month DSPD Spearman 0.96 (permutation p ≤ 0.001). DSPD vs lockstep distance, Spearman 0.93. This is a graph, not a forecast, and it does not use the sealed TRACE holdout or the coverage study.</p>
+
+<div class="avenues">
+  <article class="card teal">
+    <div class="card-top"><span class="avenue-kicker">1 · Engineering</span><span class="effort">Effort M</span></div>
+    <h3>A faithful Python or Rust port of directionality and DSPD</h3>
+    <p class="pitch">ecotraj is R-only. Port trajectoryDirectionality, the increment sign-flip null, and DSPD, with v1.2.2 as the oracle, then run it on a Form ADV-scale panel.</p>
+    <div class="foot"><strong>Test.</strong> Parity on today’s numbers (A dir 0.577301, E4 dir 0.431413, A residual-increment dir 0.595092), then a wall-time comparison on a larger panel.</div>
+  </article>
+  <article class="card top-pick">
+    <div class="card-top"><span class="avenue-kicker">2 · Math</span><span class="badge-top">Top pick</span></div>
+    <h3>An increment-level market/residual split whose size is right</h3>
+    <p class="pitch">Today’s level residualization hid a directional residual walk (A, p = 0.994) that the increment split finds (p = 0.008). The sauce is to make that split a formal, composition-valid procedure with a sign-flip test that has the right size. Effort L.</p>
+    <div class="foot"><strong>Test.</strong> On simulated share panels, residual directionality stays inside a pre-registered band under a market factor alone, and has power of at least 0.80 on a planted sticky swap at T = 62.</div>
+  </article>
+  <article class="card green">
+    <div class="card-top"><span class="avenue-kicker">3 · New use on our data</span><span class="effort">Effort S</span></div>
+    <h3>Episode maps, and the same path, on real PB shares</h3>
+    <p class="pitch">Keep the stress-episode DSPD map as a recurring graph, and rerun the increment split unchanged on Form ADV prime-broker counts once that panel exists.</p>
+    <div class="foot"><strong>Test.</strong> Recurrence of a directional residual path on trading-asset-like counts, and of a wiggly-but-sticky GS→JPM residual net on revenue-like counts — or an honest miss.</div>
+  </article>
+</div>
+
+<!-- ================= METHOD 2 ================= -->
+<div class="sec-head" id="m2"><span class="n">Method 02</span><h2>lphom: a share-flow matrix, when the units can identify it</h2><span class="line"></span></div>
+<p class="meta">Pavía &amp; Romero (2024), <em>Sociological Methods &amp; Research</em> 53(3):1491–1533 (online 2022) · Romero, Pavía, Martín &amp; Romero (2020), <em>Journal of Applied Statistics</em> 47:2711–2736 · CRAN lphom 0.3.5.7 · political science / ecological inference · interesting — not promoted</p>
+<p class="found-via"><strong>Found via.</strong> Journal · <em>Sociological Methods &amp; Research</em> · 2026-11-12 scheduled exotic scout · field: ecological inference (voter-transition matrices). Paper: <a href="https://doi.org/10.1177/00491241221092725">https://doi.org/10.1177/00491241221092725</a>. Also used: the CRAN page <a href="https://cran.r-project.org/package=lphom">https://cran.r-project.org/package=lphom</a>, and Romero et al. 2020 (<a href="https://doi.org/10.1080/02664763.2020.1804842">doi:10.1080/02664763.2020.1804842</a>) for the baseline lphom algorithm and the deterministic bounds. The 2024 paper’s improved algorithms are tslphom and nslphom; this run used the baseline <code>lphom()</code>, which is the honest first try and already shows the identification problem. X and SSRN were not the discovery path.</p>
+<p><strong>Target question.</strong> Q1’s second half, taken literally: can we recover a transfer matrix that says, of last quarter’s share, how much each dealer kept and where the rest went — and does that matrix change with the market?</p>
+<p><strong>Three analyses, plus a better-units check.</strong> (2a) Fit \(P\) on E4 and on a six-bloc version of panel A, against a constrained least-squares (Lee–Judge–Zellner) baseline, with half-sample and annual cuts. (2b) High-VIX vs low-VIX quarter pairs, with a random-split null. (2c) A no-migration persistence null, and a planted-truth recovery (true GS→JPM flow 1% per quarter). Extra: treat product-year lines as voting units (54 units). Runtime 3.3 minutes (seed 20261112).</p>
+
+<figure>
+  <img src="fig/2026-11-12/m2_flows.png" alt="Five heatmaps of implied quarterly or annual share-transfer matrices for the big-4 equity-revenue panel">
+  <figcaption>Figure 5. Implied transfer matrices on big-4 equity trading revenue. Rows are the origin dealer, columns the destination; entries are percent of origin share per step. These are point estimates. The deterministic bounds behind them are typically 0–1 (median width 0.88), so the cells are not identified.</figcaption>
+</figure>
+<figure>
+  <img src="fig/2026-11-12/m2_vix.png" alt="Scatter of per-quarter churn against VIX, and a high-minus-low VIX migration contrast versus a random-split null">
+  <figcaption>Figure 6. Per-quarter implied churn vs VIX, and the high-VIX minus low-VIX pooled migration contrast (red) against a random-split 95% band (grey). Neither contrast is significant (E4 p = 0.123, A6 p = 0.53).</figcaption>
+</figure>
+<figure>
+  <img src="fig/2026-11-12/m2_products_planted.png" alt="Transfer matrices using product-year units, and planted-truth recovery error bars for a 1% GS to JPM flow">
+  <figcaption>Figure 7. Left: product-year units (54 rows) give a better-posed ecological-inference table; GS→JPM is 21% in the pooled point estimate, 0% in equity-only units, 37% in non-equity units. Right: planted-truth recovery on E4-like paths. The true 1% GS→JPM flow (red) and 0.3% MS→BAC flow (blue) are not recovered; median lphom L1 error 0.68.</figcaption>
+</figure>
+
+<p><strong>2a. Point estimates look tidy; the bounds are not.</strong> On E4, lphom retention is JPM 87%, GS 95%, MS 94%, BAC 74% (half-lives 5, 15, 11.6, 2.3 quarters). Implied migration is 10.3% of share per quarter, versus 20.1% for least squares. The GS→JPM cell is 0. That already conflicts with every other Q1 method we have trusted. The reason is identification: deterministic bounds have median width 0.88 on E4 and 0.97 on the six-bloc trading-asset panel; 63% and 67% of cells are wider than 0.80. A single closed time series, even with 61 quarter pairs, is one “election,” not many voting units.</p>
+<p><strong>2b. High vs low VIX.</strong> E4 implied migration is 10.8% in high-VIX quarters and 22.6% in low-VIX quarters, difference −12 pp, two-sided p = 0.123 against a random split (null band −15 to +16 pp). A6: p = 0.53. Per-quarter churn vs VIX has Spearman +0.36 on E4 (p = 0.005), but the pooled split test does not confirm a regime in \(P\). We do not treat that Spearman as a Q1 finding.</p>
+<p><strong>2c. Persistence null and planted truth.</strong> Observed E4 migration (10.3%) is <em>lower</em> than a no-migration AR(1) null (median 20%, p = 0.992): persistence alone already looks like churn to this estimator. Observed GS→JPM = 0 sits at the bottom of that null (p = 1). In 200 planted simulations with a true 1% GS→JPM flow and a 0.3% MS→BAC flow, lphom’s median recovered GS→JPM is 1.7% with a 90% band of 0–8%, and the median L1 error on \(P\) is 0.68 (least squares 0.76; lphom is better in 60% of draws). The method does not recover a small planted flow on this design.</p>
+<p><strong>Product-year units.</strong> Treating each product line in each year as a unit (54 units, 2009–2024) is closer to what ecological inference needs. Pooled GS→JPM is 21%, but a shuffle null does not flag that cell (p = 0.116). Mean retention is unusually low and the largest off-diagonal is unusually large against that null (both p = 0.001), and homogeneity error is high (HETe 28). Equity-only units put GS→JPM at 0 again. This is a design improvement, not a finding we would act on.</p>
+<p><strong>Honest status.</strong> Recommended as interesting, not for the promote workflow, until it is run on data with real units. The 2024 paper’s tslphom / nslphom estimators are the ones to try then; they were not needed to see that today’s design fails.</p>
+
+<div class="avenues">
+  <article class="card teal">
+    <div class="card-top"><span class="avenue-kicker">1 · Engineering</span><span class="effort">Effort M</span></div>
+    <h3>tslphom / nslphom in a maintained library, with bounds as first-class output</h3>
+    <p class="pitch">Wrap the 2024 estimators, the deterministic bounds, and a planted-truth harness, so a run that is unidentified fails loudly instead of returning a tidy heatmap.</p>
+    <div class="foot"><strong>Test.</strong> Replicate today’s vacuous E4 bounds (median width 0.88) and the planted L1 error (median 0.68), then show tighter bounds once real units are supplied.</div>
+  </article>
+  <article class="card green">
+    <div class="card-top"><span class="avenue-kicker">2 · Math</span><span class="effort">Effort L</span></div>
+    <h3>A transfer estimator that knows the series is persistent</h3>
+    <p class="pitch">A no-migration AR(1) already produces ~20% apparent quarterly churn. The sauce is an estimator whose null accounts for persistence, and whose interval is not [0, 1] on a single compositional path.</p>
+    <div class="foot"><strong>Test.</strong> On simulated persistent panels with no true flow, coverage of a pre-registered interval for off-diagonal cells, and power on a planted 1% GS→JPM flow at T = 62.</div>
+  </article>
+  <article class="card top-pick">
+    <div class="card-top"><span class="avenue-kicker">3 · New use on our data</span><span class="badge-top">Top pick</span></div>
+    <h3>Form ADV filers as the voting units</h3>
+    <p class="pitch">Each fund’s prime-broker affiliation in Schedule D is a real unit. That is the design lphom is built for, and it is the free route to Q1’s missing data. Effort M once the panel exists; the blocker is the build, not the math.</p>
+    <div class="foot"><strong>Test.</strong> Informative bounds (median width clearly below 0.5) and a pre-registered GS→JPM (or foreign vs US) flow that either recurs or honestly does not.</div>
+  </article>
+</div>
+
+<div class="sec-head"><span class="n">Watch</span><h2>Watchlist additions</h2><span class="line"></span></div>
+<p>Both methods are added as trialed on the <a href="https://github.com/jgridifier/research-lab/blob/main/docs/methods-scout/watchlist.md">watchlist</a>. tslphom and nslphom stay with the lphom row as the estimators to use if the method is retried on Form ADV units. Nothing already marked trialed was rerun. MaxLIPO remains on the watchlist as the MD’s example, not a pick. Research-lab PRs #21 and #25 were not touched. No <code>APPROVAL.md</code> was written; nothing is promoted.</p>
+
+<footer>
+<p>Scheduled edition of 2026-11-12, published as a catch-up on 2026-11-13 morning, America/New_York (EST). Same-day ad hoc edition: <a href="2026-11-12-adhoc.html">2026-11-12-adhoc</a>. Theme: <code>docs/assets/brief.css</code>. Scripts: <code>docs/methods-scout/runs/2026-11-12/</code>.</p>
+</footer>
+</main></body></html>
