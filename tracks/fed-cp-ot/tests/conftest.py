@@ -37,7 +37,7 @@ def real_zip():
     for path in candidates:
         if path.exists() and sha256(path) == PINNED_RESEARCH_ZIP_SHA256:
             return path
-    pytest.skip('Pinned zip absent (set FED_CP_OT_RAW_DIR or seed data/vintages)')
+    pytest.skip('Pinned zip absent (place it in data/raw/ or seed data/vintages)')
 
 @pytest.fixture(scope='session')
 def real_vol(real_zip):

@@ -10,6 +10,7 @@ from urllib.request import Request, urlopen
 from zoneinfo import ZoneInfo
 import zipfile
 import xml.etree.ElementTree as ET
+from .manifest_chain import append_chained
 from .paths import DATA_DIR, SOURCE_URL, PINNED_RESEARCH_ZIP_SHA256
 
 def _manifest(cache_dir):
@@ -49,8 +50,7 @@ def _store(blob, cache_dir, metadata):
                   etag=None, content_length=None, zip_member_sha256=h.hexdigest(),
                   xml_prepared=prepared, unchanged_from_previous=same, path=name)
     record.update(metadata)
-    with (cache_dir/'manifest.jsonl').open('a') as f: f.write(json.dumps(record, sort_keys=True)+'\n')
-    return record
+    return append_chained(cache_dir/'manifest.jsonl', record)
 
 def fetch_vintage(cache_dir=DATA_DIR, url=SOURCE_URL, opener=None, retries=3, backoff_s=1, timeout_s=60):
     opener = opener or urlopen
