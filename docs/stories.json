@@ -57,13 +57,37 @@
   ],
   "stories": [
     {
+      "id": "q2-mock-zbb",
+      "title": "What the Q2 mock budget datasets are doing",
+      "dek": "A teaching page for the two synthetic zero-based-budgeting datasets built on 13 November 2026: how the generator works, what is in each file, the planted answer key for Q2, the public sources, and the self-checks. Modeled on published totals for Corning and Morgan Stanley. Not either firm's actual budget.",
+      "section": "methods",
+      "date": "2026-11-13",
+      "url": "methods-scout/q2-mock-zbb.html",
+      "featured": "lead",
+      "kind": "teaching",
+      "kicker": "Teaching note",
+      "external": false
+    },
+    {
+      "id": "scout-2026-11-13",
+      "title": "Methods scout, 13 November: ebnm shrinkage and DenseLines charts on synthetic mock budgets (Q2)",
+      "dek": "The first Q2 run, on clearly labelled SYNTHETIC mock ZBB datasets. ebnm pooling cuts each program's 2025-level error by 21–26%. DenseLines can show a thousand short start-and-stop series once made gap-safe. ebnm is recommended for the promote workflow; DenseLines is interesting.",
+      "section": "methods",
+      "date": "2026-11-13",
+      "url": "methods-scout/2026-11-13.html",
+      "featured": "secondary",
+      "kind": "scout",
+      "kicker": "Methods scout",
+      "external": false
+    },
+    {
       "id": "conexus-cql",
       "title": "CQL: what the mathematics can compute, and what it cannot",
       "dek": "Conexus’s core is a language in which database schemas are equational theories, migrations are adjoint functors, and a theorem prover refuses programs that would break stated constraints. A technical capability review — guarantees, limits, scale — and a comparison with Google Pregel, data-exchange chase engines, and closer Google systems.",
       "section": "reviews",
       "date": "2026-11-12",
       "url": "vendors/conexus/index.html",
-      "featured": "lead",
+      "featured": "secondary",
       "kind": "review",
       "kicker": "Capability review",
       "external": false
