@@ -16,6 +16,19 @@
 <p class="dek">Lesser-known, fast, interpretable analytical methods, each run at least three ways on our own data.</p>
 <nav><a href="../index.html">Research lab home</a><a href="q2-mock-zbb.html">Q2 mock datasets</a><a href="secret-sauce.html">Secret sauce</a><a href="https://github.com/jgridifier/research-lab/blob/main/docs/methods-scout/watchlist.md">Watchlist</a><a href="https://github.com/jgridifier/research-lab/blob/main/docs/methods-scout/QUESTIONS.md">Research questions</a></nav></header>
 
+
+<div class="sec-head"><span class="n">Questions</span><h2>Open questions</h2><span class="line"></span></div>
+<div class="card"><div class="card-top"><span class="tag">updated 2026-11-14 · scout targets only</span></div>
+<h3><a href="QUESTIONS.md">Research questions</a></h3>
+<p>Only questions with status <code>open</code> or <code>in progress</code> are scout targets. Retired questions stay on the page for the record and must not be targeted again.</p>
+<ul>
+<li><a href="QUESTIONS.md#q1">Q1</a> (open, approved 2026-11-14). Connection between Form PF aggregate prime-broker borrowings and OFR repo and NY Fed settlement fails, with CFTC TFF and FINRA margin as optional companions. Aggregate only; no firm-level prime-broker shares.</li>
+<li><a href="QUESTIONS.md#q2">Q2</a> (in progress, approved 2026-11-13). Noisy program-level budgets: classifications, implied features, and short histories. Synthetic mocks only so far. Teaching page: <a href="q2-mock-zbb.html">What the Q2 mock budget datasets are doing</a>.</li>
+<li><a href="QUESTIONS.md#q3">Q3</a> (open, approved 2026-11-14). Connection between supervisory stress-test projections (severely adverse earnings, losses, capital drawdowns, SCB) and realized FR Y-9C payout ratios. No firm-level baseline earnings are published.</li>
+</ul>
+<p>The 2026-11-10 prime-broker top-25 share question is <a href="QUESTIONS.md#retired-q1-2026-11-10">retired</a>. The 11–12 November editions below were aimed at that retired question, using a Y-9C proxy.</p>
+<div class="foot"><a href="QUESTIONS.md">QUESTIONS.md</a> · approved Q1 and Q3 on 2026-11-14 (“Number 1 and 4.”)</div></div>
+
 <div class="sec-head"><span class="n">Plans</span><h2>Secret sauce</h2><span class="line"></span></div>
 <div class="card"><div class="card-top"><span class="tag">2026-11-12 · Thu · plans only</span><span class="verdict interesting">3 avenues × 4 methods</span></div>
 <h3><a href="secret-sauce.html">First secret-sauce plans for changeforest, partykit, MARSS and InspectChangepoint</a></h3>
@@ -26,26 +39,26 @@
 <div class="card"><div class="card-top"><span class="tag">2026-11-13 · teaching note · SYNTHETIC</span></div>
 <h3><a href="q2-mock-zbb.html">What the Q2 mock budget datasets are doing</a></h3>
 <p>A walk-through of the two synthetic zero-based-budgeting mocks: how the generator builds programs, descriptions, histories and packages; what is in each file; the planted answer key for Q2’s five sub-questions; the public sources; and the self-checks against published totals. Modeled on Corning and Morgan Stanley filings. Not either firm’s actual budget.</p>
-<div class="foot">Drive folder: Q2 mock ZBB datasets (synthetic, 2026-11-13) · seed 20261113 · <a href="QUESTIONS.md">Q2</a></div></div>
+<div class="foot">Drive folder: Q2 mock ZBB datasets (synthetic, 2026-11-13) · seed 20261113 · <a href="QUESTIONS.md#q2">Q2</a></div></div>
 
 <div class="sec-head"><span class="n">Editions</span><h2>All editions</h2><span class="line"></span></div>
 <!-- EDITIONS:START -->
 <div class="card teal"><div class="card-top"><span class="tag teal">2026-11-13 · Fri · scheduled · Q2 · exotic · SYNTHETIC</span><span><span class="verdict adopt">recommend for promote workflow</span> <span class="verdict interesting">interesting</span></span></div>
 <h3><a href="2026-11-13.html">First Q2 run: ebnm empirical-Bayes shrinkage (statistical genetics) and DenseLines density charts (visualization), on mock budgets</a></h3>
 <p>Run on the SYNTHETIC Corning- and Morgan Stanley-modeled ZBB mocks (not real budgets), scored against their answer keys. ebnm pooling cuts each program’s 2025-level error by 21–26%. Its lfsr calls 6–7× as many real year-on-year moves as BH, at ≤ 1.5% wrong sign. The DenseLines port matches the authors’ Rust pixel for pixel; the reference renders start/stop portfolios as all-NaN, and the port fixes that. A residual brush plus a text keyword finds 94% of a hidden AI-demand group.</p>
-<div class="foot">Data: Q2 mock ZBB datasets (synthetic, 2026-11-13) · <a href="q2-mock-zbb.html">teaching page</a> · <a href="QUESTIONS.md">Q2</a> · <a href="secret-sauce.html">secret sauce</a></div></div>
+<div class="foot">Data: Q2 mock ZBB datasets (synthetic, 2026-11-13) · <a href="q2-mock-zbb.html">teaching page</a> · <a href="QUESTIONS.md#q2">Q2</a> · <a href="secret-sauce.html">secret sauce</a></div></div>
 <div class="card teal"><div class="card-top"><span class="tag teal">2026-11-12 · Thu · scheduled · catch-up · Q1 · exotic</span><span><span class="verdict adopt">recommend for promote workflow</span> <span class="verdict interesting">interesting</span></span></div>
-<h3><a href="2026-11-12.html">Scheduled run: ecotraj share trajectories (ecology) and lphom transfer matrices (ecological inference), aimed at Q1</a></h3>
+<h3><a href="2026-11-12.html">Scheduled run: ecotraj share trajectories (ecology) and lphom transfer matrices (ecological inference), aimed at retired Q1</a></h3>
 <p>PROXY Y-9C, same panel as 11-11. Published Friday morning as a catch-up of the interrupted 2:12 PM edition; not a redo of the same-day ad hoc. Residual increments on 14-dealer trading-asset shares are directional (dir 0.595, sign-flip p = 0.008). The equity-revenue GS→JPM swap sits in residual net, but the path is not directional (p = 0.664). lphom flow matrices on consecutive quarters are not identified (median bound width 0.88); a planted 1% flow is missed. Form ADV filers are the units this method needs.</p>
-<div class="foot">Data: FR Y-9C trading panel (public), FRED VIX/Nasdaq/BAA · <a href="QUESTIONS.md">Q1</a> · <a href="secret-sauce.html">secret sauce</a></div></div>
+<div class="foot">Data: FR Y-9C trading panel (public), FRED VIX/Nasdaq/BAA · <a href="QUESTIONS.md#retired-q1-2026-11-10">retired Q1</a> · <a href="secret-sauce.html">secret sauce</a></div></div>
 <div class="card teal"><div class="card-top"><span class="tag teal">2026-11-12 · Thu · ad hoc · Q1 · exotic</span><span><span class="verdict adopt">recommend for promote workflow</span> <span class="verdict adopt">recommend for promote workflow</span></span></div>
-<h3><a href="2026-11-12-adhoc.html">Ad hoc exotic run: codyn rank clocks (ecology) and Lovell proportionality (compositional genomics), aimed at Q1</a></h3>
+<h3><a href="2026-11-12-adhoc.html">Ad hoc exotic run: codyn rank clocks (ecology) and Lovell proportionality (compositional genomics), aimed at retired Q1</a></h3>
 <p>PROXY Y-9C, same panel as 11-11. US dealer volumes co-move (Schluter VR = 4.45 vs a cyclic-shift null of 0.44–2.00); foreign IHC volumes do not (VR = 0.73, inside the null). Rank clocks make the GS→JPM equity-revenue swap visible. JPM–GS proportionality is −0.698 and gets stronger after the market is removed (−0.882, BH q = 0.036); JPM–MS does not. MaxLIPO is on the watchlist as the MD’s example, not a pick.</p>
-<div class="foot">Data: FR Y-9C trading panel (public), FRED VIX/Nasdaq/BAA · <a href="QUESTIONS.md">Q1</a> · <a href="secret-sauce.html">secret sauce</a></div></div>
+<div class="foot">Data: FR Y-9C trading panel (public), FRED VIX/Nasdaq/BAA · <a href="QUESTIONS.md#retired-q1-2026-11-10">retired Q1</a> · <a href="secret-sauce.html">secret sauce</a></div></div>
 <div class="card teal"><div class="card-top"><span class="tag teal">2026-11-11 · Wed · Q1</span><span><span class="verdict adopt">recommend for promote workflow</span> <span class="verdict interesting">interesting</span></span></div>
-<h3><a href="2026-11-11.html">MARSS state-space share decomposition and InspectChangepoint sparse change points, aimed at Q1 (dealer share: market vs sticky)</a></h3>
+<h3><a href="2026-11-11.html">MARSS state-space share decomposition and InspectChangepoint sparse change points, aimed at retired Q1 (dealer share: market vs sticky)</a></h3>
 <p>PROXY data (Y-9C), because top-25 prime-broker data isn't in Drive. Foreign-bank IHCs' share of 14-dealer trading assets fell from 13.8% to 5.9% since 2016, almost all of it sticky. In big-4 equity trading revenue, market factors drive most quarterly swings, except a sticky GS→JPM shift (corr −0.79). No share "break" survives a persistence-matched null.</p>
-<div class="foot">Data: FR Y-9C trading panel (public), FRED VIX/Nasdaq · <a href="QUESTIONS.md">Q1</a></div></div>
+<div class="foot">Data: FR Y-9C trading panel (public), FRED VIX/Nasdaq · <a href="QUESTIONS.md#retired-q1-2026-11-10">retired Q1</a></div></div>
 <div class="card teal"><div class="card-top"><span class="tag teal">2026-11-10 · Tue</span><span><span class="verdict adopt">adopt-candidate</span> <span class="verdict interesting">interesting</span></span></div>
 <h3><a href="2026-11-10.html">partykit trees (ctree + MOB) and changeforest change points</a></h3>
 <p>The VIX→credit-spread link roughly doubles when NFCI &gt; 0.06, and calendar time stops mattering. Regime trees did not forecast 6-month spread changes out of sample. changeforest finds volatility and correlation regimes that mean-change methods miss, including the 2022 stock–rate correlation flip, but its break count is seed-sensitive.</p>
