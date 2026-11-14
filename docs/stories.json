@@ -69,6 +69,18 @@
       "external": false
     },
     {
+      "id": "scout-questions-2026-11-14",
+      "title": "Methods scout questions: new Q1 and Q3, old prime-broker Q1 retired",
+      "dek": "Jared approved two data-supported questions on 14 November 2026. New Q1 asks how Form PF aggregate prime-broker borrowings connect to OFR repo and NY Fed settlement fails. New Q3 asks how supervisory stress-test projections connect to realized Y-9C payouts. The 2026-11-10 prime-broker top-25 share question is retired; only open and in-progress questions are scout targets. Q2 is unchanged.",
+      "section": "methods",
+      "date": "2026-11-14",
+      "url": "methods-scout/QUESTIONS.md",
+      "featured": "secondary",
+      "kind": "scout",
+      "kicker": "Methods scout",
+      "external": false
+    },
+    {
       "id": "scout-2026-11-13",
       "title": "Methods scout, 13 November: ebnm shrinkage and DenseLines charts on synthetic mock budgets (Q2)",
       "dek": "The first Q2 run, on clearly labelled SYNTHETIC mock ZBB datasets. ebnm pooling cuts each program's 2025-level error by 21–26%. DenseLines can show a thousand short start-and-stop series once made gap-safe. ebnm is recommended for the promote workflow; DenseLines is interesting.",
