@@ -1,0 +1,531 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>What the Q2 mock budget datasets are doing · research-lab</title>
+<meta name="description" content="Teaching page for the synthetic Q2 zero-based-budgeting mock datasets: how the generator works, file schemas, the planted answer key, public sources, and self-checks. Not real company budgets.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,400..800&family=Newsreader:ital,opsz,wght@0,6..72,400..600;1,6..72,400..500&family=JetBrains+Mono:wght@400;500;700&display=swap">
+<link rel="stylesheet" href="../assets/brief.css">
+<link rel="apple-touch-icon" sizes="180x180" href="/research-lab/methods-scout/icons/apple-touch-icon.png">
+<link rel="icon" type="image/png" sizes="32x32" href="/research-lab/methods-scout/icons/favicon-32.png">
+<link rel="icon" type="image/png" sizes="192x192" href="/research-lab/methods-scout/icons/icon-192.png">
+<link rel="manifest" href="/research-lab/methods-scout/manifest.webmanifest">
+<meta name="apple-mobile-web-app-title" content="Methods Scout">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="theme-color" content="#0F2A23">
+<style>
+  .toc { display: flex; flex-wrap: wrap; gap: .45rem .7rem; margin: .6rem 0 1.4rem; font-family: var(--f-mono); font-size: .78rem; letter-spacing: .06em; text-transform: uppercase; }
+  .toc a { border: 2px solid var(--ink); background: var(--card); padding: .28rem .55rem; color: var(--ink); text-decoration: none; }
+  .toc a:hover { background: var(--amber); }
+  .warn { background: var(--card); border: 3px solid var(--ink); border-left: 10px solid var(--red); padding: .85rem 1rem; margin: .8rem 0 1.3rem; max-width: none; }
+  .warn strong { font-family: var(--f-mono); letter-spacing: .08em; text-transform: uppercase; font-size: .78rem; }
+  figure.flow { margin: 1.1rem 0 1.6rem; max-width: none; }
+  figure.flow svg { width: 100%; height: auto; border: 2px solid var(--ink); background: var(--card); display: block; }
+  figcaption { font-family: var(--f-mono); font-size: .8rem; color: var(--muted); margin-top: .45rem; }
+  .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; margin: 1rem 0 1.4rem; }
+  .grid-2 > .card { margin: 0; max-width: none; }
+  .grid-2 > .card p, .grid-2 > .card li { max-width: none; }
+  ol.steps { max-width: none; }
+  ol.steps > li { margin: 0 0 1rem; }
+  .sample { font-size: .86rem; }
+  .clip { font-family: var(--f-mono); font-size: .78rem; line-height: 1.45; background: var(--card); border: 2px solid var(--ink); padding: .7rem .85rem; overflow-x: auto; }
+  @media (max-width: 800px) { .grid-2 { grid-template-columns: 1fr; } }
+</style>
+</head>
+<body>
+<main>
+<header class="mast">
+  <div class="date">Friday · November 13, 2026 · teaching note · Q2 · SYNTHETIC data</div>
+  <h1>What the Q2 mock budget datasets are doing</h1>
+  <p class="dek">Two synthetic program-level zero-based-budgeting datasets, built so methods for Q2 can be tried before any real program-level budget exists. They are modeled on publicly reported totals for Corning Incorporated and Morgan Stanley. They are not either firm’s actual budgets, program lists, or headcount files. This page walks through the generator, the files, the planted answer key, the public sources, and the self-checks.</p>
+  <nav>
+    <a href="../index.html">Research lab home</a>
+    <a href="index.html">Methods scout</a>
+    <a href="QUESTIONS.md">Q2 questions</a>
+    <a href="2026-11-13.html">13 Nov scout</a>
+    <a href="https://drive.google.com/drive/folders/1afht8lWO1j6O_pwcXEB-iT2qvuRdwTVO">Drive folder</a>
+  </nav>
+</header>
+
+<div class="ticker">
+  <span><b>●</b> SYNTHETIC only — seed 20261113 — not a real Corning or Morgan Stanley budget</span>
+  <span><b>●</b> Corning mock: 1,079 programs, FY2020–2025, 2,994 FY2026 decision-package rows</span>
+  <span><b>●</b> Morgan Stanley mock: 1,840 programs, FY2021–2025, 5,106 package rows</span>
+  <span><b>●</b> Actuals rake to published totals; the answer key lives only in ground_truth.json</span>
+</div>
+
+<section class="tldr">
+<h2>The short version</h2>
+<ul>
+<li><strong>What it is.</strong> A pair of made-up budgeting workbooks that look like a zero-based-budgeting exercise: hundreds to a few thousand programs, a free-text request narrative plus tabular labels, a short noisy budget-versus-actual history, programs that start and stop, and three decision packages for the FY2026 cycle. They exist so Q2 methods can be scored against a known truth. Real program-level budgets are still missing.</li>
+<li><strong>What it is not.</strong> It is not an internal file from either company. No private or internal data was used. Public 10-Ks and financial supplements informed the <em>totals</em> (SG&amp;A, RD&amp;E, segment non-interest expense, employee counts). The programs themselves, their descriptions, and their year-by-year dollars are generated.</li>
+<li><strong>How it was built.</strong> The script <code>generate_q2_mock_zbb.py</code> (seed <code>20261113</code>) instantiates programs from archetypes at publicly known sites, plants pooling families and hidden clusters, writes a noiseless true path, draws noisy budgets and actuals, then <em>rakes</em> those dollars to the public totals. Descriptions are stitched from the <em>stated</em> labels only. The answer key is written last, in a separate file.</li>
+<li><strong>How to use it.</strong> Fit methods on <code>programs.csv</code>, <code>history.csv</code> and <code>decision_packages.csv</code>. Score them with <code>ground_truth.json</code>. Do not use the answer key as a feature file — that would leak the answers to Q2.1–Q2.4. The first methods run on these files is the <a href="2026-11-13.html">13 November scout</a> (ebnm and DenseLines).</li>
+<li><strong>Where the files live.</strong> Drive folder <a href="https://drive.google.com/drive/folders/1afht8lWO1j6O_pwcXEB-iT2qvuRdwTVO">Q2 mock ZBB datasets (synthetic, 2026-11-13)</a>. This page does not republish the CSVs.</li>
+</ul>
+</section>
+
+<nav class="toc" aria-label="On this page">
+  <a href="#what">What and why</a>
+  <a href="#how">How it is built</a>
+  <a href="#files">Files and columns</a>
+  <a href="#truth">Planted truth</a>
+  <a href="#sources">Sources</a>
+  <a href="#limits">Limits</a>
+  <a href="#check">Self-check</a>
+  <a href="#drive">Drive</a>
+</nav>
+
+<div class="warn" id="what">
+  <strong>Synthetic mock data.</strong>
+  Modeled on publicly reported figures. This is not an actual budget, program list, or headcount file of Corning Incorporated, Morgan Stanley, or any of their affiliates. No private or internal data was used. Rows shown below are illustrative samples from the generated files.
+</div>
+
+<div class="sec-head"><span class="n">01</span><h2>What this is, and why it exists</h2><span class="line"></span></div>
+
+<p>Q2 is a standing research question, added and refined on 13 November 2026. Jared’s original wording, kept verbatim in <a href="QUESTIONS.md">QUESTIONS.md</a>, asked what is interesting to learn when you have a lot of free-text descriptions, turn them into classifications and implied features, and then face a budgeting use case: hundreds or thousands of programs, each with its own noise and not much history. He then approved a refined statement, all five sub-questions, and the addition of tabular data alongside the text.</p>
+
+<div class="card dark">
+<p><strong>Refined Q2.</strong> Suppose we have hundreds to thousands of programs. Each one has free-text descriptions plus tabular data, which we turn into categories and implied features, and each has only a few noisy periods of numbers. Past tracking trends and category mix over time, what can we reliably learn about each program and about the portfolio as a whole?</p>
+<ol>
+<li><strong>Borrowing strength.</strong> If we pool similar programs, how much better do we estimate each one’s real level and trend than by looking at it alone, given how short its history is?</li>
+<li><strong>Text versus numbers.</strong> Which programs’ spending doesn’t match what their descriptions say, and which ones quietly change category over time?</li>
+<li><strong>Real change or noise.</strong> When a total moves, how much comes from the program mix changing, how much from programs actually behaving differently, and how much is just noise?</li>
+<li><strong>Structure.</strong> Do programs form groups that rise and fall together, or trade off against each other, in ways the categories don’t show?</li>
+<li><strong>Seeing it.</strong> How can one chart show a thousand short, noisy series without turning into spaghetti?</li>
+</ol>
+</div>
+
+<p>The mocks were built the same day so those sub-questions can be tried on something that has the right shape: a manufacturer-like firm and a financial-firm-like firm, internet-informed at the total level, with a hidden answer key. Status is <strong>in progress</strong>. Real program-level budgets, actuals, headcount and decision packages for any firm are still missing.</p>
+
+<div class="grid-2">
+  <div class="card teal">
+    <div class="card-top"><span class="tag teal">Corning_mock</span><span class="tag">modeled on Corning Incorporated</span></div>
+    <h3>1,079 programs</h3>
+    <ul>
+      <li>998 still active in 2025; 81 exited</li>
+      <li>5,640 history rows, FY2020–2025</li>
+      <li>2,994 FY2026 package rows (three levels × 998 active programs)</li>
+      <li>Descriptions average about 210 words (range 169–279)</li>
+      <li>2025 actuals rake exactly to 10-K SG&amp;A $2,122m, RD&amp;E $1,110m, and 67,200 FTE</li>
+      <li>Plant-indirect is assumed at 20% of GAAP cost of sales ($2,001.6m in 2025)</li>
+    </ul>
+  </div>
+  <div class="card">
+    <div class="card-top"><span class="tag">MorganStanley_mock</span><span class="tag">modeled on Morgan Stanley</span></div>
+    <h3>1,840 programs</h3>
+    <ul>
+      <li>1,702 still active in 2025; 138 exited</li>
+      <li>8,231 history rows, FY2021–2025</li>
+      <li>5,106 FY2026 package rows (three levels × 1,702 active programs)</li>
+      <li>Descriptions average about 198 words (range 162–252)</li>
+      <li>2025 segment non-interest expense matches the 4Q25 supplement: Institutional Securities $21,541m, Wealth Management $22,414m, Investment Management $5,047m</li>
+      <li>The three-segment sum exceeds firm NIE by the official $660m intersegment elimination</li>
+    </ul>
+  </div>
+</div>
+
+<div class="sec-head" id="how"><span class="n">02</span><h2>How the generator works</h2><span class="line"></span></div>
+
+<p>Everything below is what <code>generate_q2_mock_zbb.py</code> actually does when run with seed <code>20261113</code>. Regenerate with <code>python3 generate_q2_mock_zbb.py --out &lt;dir&gt;</code>. The same script is stored in the Drive folder next to the outputs.</p>
+
+<figure class="flow" role="img" aria-label="Data-flow diagram of the mock generator, from public totals through programs, planted structure, noisy history, raking, descriptions, packages, and output files.">
+<svg viewBox="0 0 820 980" xmlns="http://www.w3.org/2000/svg" font-family="ui-monospace, SFMono-Regular, Menlo, Consolas, monospace">
+  <rect width="820" height="980" fill="#fffdf7"/>
+  <defs>
+    <marker id="arrow" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="8" markerHeight="8" orient="auto-start-reverse">
+      <path d="M 0 0 L 10 5 L 0 10 z" fill="#1c150d"/>
+    </marker>
+  </defs>
+  <g font-size="15" fill="#1c150d">
+    <rect x="70" y="24" width="680" height="70" fill="#fffdf7" stroke="#1c150d" stroke-width="2.5"/>
+    <text x="410" y="54" text-anchor="middle" font-size="16" font-weight="700">Public 10-Ks and supplements</text>
+    <text x="410" y="76" text-anchor="middle" font-size="13">SG&amp;A, RD&amp;E, segment NIE, employee counts, known sites</text>
+
+    <line x1="410" y1="94" x2="410" y2="128" stroke="#1c150d" stroke-width="2" marker-end="url(#arrow)"/>
+
+    <rect x="70" y="130" width="680" height="70" fill="#fffdf7" stroke="#1c150d" stroke-width="2.5"/>
+    <text x="410" y="160" text-anchor="middle" font-size="16" font-weight="700">1. Instantiate programs from archetypes</text>
+    <text x="410" y="182" text-anchor="middle" font-size="13">Segments, functions, sites, entry and exit, family and cluster tags</text>
+
+    <line x1="410" y1="200" x2="410" y2="234" stroke="#1c150d" stroke-width="2" marker-end="url(#arrow)"/>
+
+    <rect x="70" y="236" width="680" height="70" fill="#fffdf7" stroke="#1c150d" stroke-width="2.5"/>
+    <text x="410" y="266" text-anchor="middle" font-size="16" font-weight="700">2. Plant mismatches and category drift</text>
+    <text x="410" y="288" text-anchor="middle" font-size="13">Stated labels diverge from true labels; some true categories shift later</text>
+
+    <line x1="410" y1="306" x2="410" y2="340" stroke="#1c150d" stroke-width="2" marker-end="url(#arrow)"/>
+
+    <rect x="70" y="342" width="680" height="86" fill="#fffdf7" stroke="#1c150d" stroke-width="2.5"/>
+    <text x="410" y="372" text-anchor="middle" font-size="16" font-weight="700">3. Simulate a true path, then noisy budget and actual</text>
+    <text x="410" y="394" text-anchor="middle" font-size="13">Walk back from a 2025 run-rate; add cluster shocks and lognormal noise</text>
+    <text x="410" y="414" text-anchor="middle" font-size="13">Years outside a program’s life are simply absent</text>
+
+    <line x1="410" y1="428" x2="410" y2="462" stroke="#1c150d" stroke-width="2" marker-end="url(#arrow)"/>
+
+    <rect x="70" y="464" width="680" height="70" fill="#fffdf7" stroke="#1c150d" stroke-width="2.5"/>
+    <text x="410" y="494" text-anchor="middle" font-size="16" font-weight="700">4. Rake actuals (and trues and budgets by the same factor)</text>
+    <text x="410" y="516" text-anchor="middle" font-size="13">Hit published dollar and FTE totals; preserve actual-to-true ratios</text>
+
+    <line x1="410" y1="534" x2="410" y2="568" stroke="#1c150d" stroke-width="2" marker-end="url(#arrow)"/>
+
+    <rect x="70" y="570" width="680" height="70" fill="#fffdf7" stroke="#1c150d" stroke-width="2.5"/>
+    <text x="410" y="600" text-anchor="middle" font-size="16" font-weight="700">5. Write the free-text description from stated labels only</text>
+    <text x="410" y="622" text-anchor="middle" font-size="13">No true_* , cluster, or family leaks into the narrative</text>
+
+    <line x1="410" y1="640" x2="410" y2="674" stroke="#1c150d" stroke-width="2" marker-end="url(#arrow)"/>
+
+    <rect x="70" y="676" width="680" height="70" fill="#fffdf7" stroke="#1c150d" stroke-width="2.5"/>
+    <text x="410" y="706" text-anchor="middle" font-size="16" font-weight="700">6. Build FY2026 minimum / current / enhanced packages</text>
+    <text x="410" y="728" text-anchor="middle" font-size="13">Sized off 2025 actuals, with a planted approval policy</text>
+
+    <line x1="410" y1="746" x2="410" y2="780" stroke="#1c150d" stroke-width="2" marker-end="url(#arrow)"/>
+
+    <rect x="70" y="782" width="680" height="160" fill="#1f1912" stroke="#1c150d" stroke-width="2.5"/>
+    <text x="410" y="816" text-anchor="middle" font-size="16" font-weight="700" fill="#fffdf7">Output, one folder per firm</text>
+    <text x="410" y="842" text-anchor="middle" font-size="13" fill="#fffdf7">programs.csv · history.csv · decision_packages.csv</text>
+    <text x="410" y="866" text-anchor="middle" font-size="13" fill="#fffdf7">ground_truth.json  (answer key — do not use as features)</text>
+    <text x="410" y="890" text-anchor="middle" font-size="13" fill="#fffdf7">README.md · self_check.json · self_check.md</text>
+    <text x="410" y="916" text-anchor="middle" font-size="13" fill="#fffdf7">Plus top-level SOURCES.md and the generator itself</text>
+  </g>
+</svg>
+<figcaption>The eight-step flow implemented in generate_q2_mock_zbb.py. Public totals inform the rake; they do not invent the program list.</figcaption>
+</figure>
+
+<ol class="steps">
+<li>
+  <strong>Program hierarchy and taxonomy.</strong>
+  Each firm is built from archetypes — plants, desks, functions — at publicly known cities and sites. The assignment of a given program to a site is synthetic. Archetype counts are scaled into the “hundreds to a few thousand” range (×1.30 for the Corning mock, ×2.00 for the Morgan Stanley mock). Identifiers look like <code>GLW-OC-0001</code> or <code>MS-IS-0001</code>.
+  <ul>
+    <li>Corning mock segments follow the 2025 official reporting lines, including Automotive (Environmental Technologies and Automotive Glass Solutions, combined 1 January 2025) and Display (renamed from Display Technologies), plus a Corporate bucket: Optical Communications (349 programs), Corporate (161), Specialty Materials (128), Automotive (128), Display (123), Life Sciences (99), Hemlock and Emerging Growth Businesses (91).</li>
+    <li>Morgan Stanley mock segments are Institutional Securities (648), Wealth Management (520), Firm Functions (384) and Investment Management (288). Firm Functions is visible in the mock; public filings fold those costs into the three business segments. Each Firm Functions program therefore also has a <code>reported_segment</code> (IS, WM or IM), drawn with weights proportional to 2025 segment NIE ($21,541m / $22,414m / $5,047m), and that field is what the rake uses.</li>
+    <li>Each program also has a subsegment, an operational function, a ZBB bucket (Corning: <code>sga</code>, <code>rde</code>, <code>plant_indirect</code>; Morgan Stanley: <code>compensation</code>, <code>noncomp</code>), and, for MS non-comp, one of the official category labels: brokerage_clearing, info_processing, professional, occupancy, marketing, other.</li>
+    <li>Some archetypes share a <code>family_id</code> (pooling family). Some carry a latent <code>cluster_id</code>. A few off-archetype “surprise” members are added to each cluster so a cluster is not just a restatement of the subsegment label, and those surprise members never mention the common driver in the text.</li>
+  </ul>
+</li>
+<li>
+  <strong>Entry and exit, so histories are short and unbalanced.</strong>
+  Growth archetypes (for example AI capacity, digital wealth, alternatives) often start in 2022–2025. Declining archetypes (idle display, some automotive substrate, branch occupancy) exit with probability 0.35. Independently, about 10% of ordinary programs start late and about 7% exit early. Years outside <code>[start_year, end_year]</code> are omitted from <code>history.csv</code>, not filled with zeros. In the Corning mock, 778 of 1,079 programs have all six years; 27 have only 2025. In the Morgan Stanley mock, 1,404 of 1,840 have all five years; 75 have only 2025. That short, start-and-stop panel is the Q2.5 visualization problem.
+</li>
+<li>
+  <strong>Stated labels, true labels, and the free-text description.</strong>
+  Each program is born with cost type, discretionary flag, intent and driver. Those begin as the true labels. Then a planted mismatch step (about 6.5% of active programs; at least 40) rewrites the <em>stated</em> labels for five mismatch types: stated mandatory / actually discretionary; stated transform / actually run; stated growth / actually declining; stated people / actually vendor; stated run / actually transform. A further drift step (about 4% of active programs; at least 28) changes a true field in 2023 or 2024 — or later, if the program had not started yet — while the description is written to lag, still speaking in the old language. The narrative itself is a stitched budget-request paragraph: opener, scope, people, a cost-type beat, optional cluster language only when <code>text_reveals_cluster</code> is true (a coin flip at probability 0.55, except surprise members, who never reveal), mismatch color language or a why-this-spend beat, a history clause, a risk, and a close. It uses stated labels only. There are no <code>true_*</code>, cluster, family or mismatch columns in <code>programs.csv</code>.
+</li>
+<li>
+  <strong>History, noise, and hidden structure.</strong>
+  Members of a pooling family are re-anchored around a shared 2025 family mean with a between-program log-sigma of 0.07, then given generous observation noise (σ = 0.18, or 0.085 if the program is also in a cluster) so that short-history pooling should beat estimating each program alone. The true path is walked back from that 2025 run-rate with a mild generic drift of about 2% a year, times a latent cluster factor <code>1 + loading × F_t</code>. “Stated growth, actually declining” programs also get a −11% idiosyncratic decline near the end of the window. True dollars are floored at $25,000. Actuals are a mean-one lognormal around true: <code>actual = true × exp(N(−0.5σ², σ))</code>, with a base σ of about 0.065–0.15 depending on size and the discretionary flag. Budgets use a slight conservative bias (β = −0.02) and smaller noise (η = 0.70σ). Headcount roughly tracks the true path, with less noise, and is raked later to the official employee count. Contractor FTE is entirely synthetic.
+</li>
+<li>
+  <strong>Raking to public totals.</strong>
+  After the noisy draws, each year’s actuals are scaled so that published totals are hit. The same factor is applied to the true dollars and the budget, which preserves actual-to-true ratios and slightly reshapes year totals. FTE is raked separately to the official employee count (full- and part-time combined; the mock does not split part-time).
+  <ul>
+    <li>Corning mock, every year 2020–2025: SG&amp;A and RD&amp;E actuals match the 10-K exactly. Plant-indirect is scaled to 20% of that year’s GAAP cost of sales — a documented assumption, not a disclosed split.</li>
+    <li>Morgan Stanley mock, 2022–2025: compensation actuals are one-way raked to official segment compensation. Non-comp actuals are raked by iterative proportional fitting to official segment non-comp and official firm-level category shares. Category dollar targets are scaled so they sum to the segment-gross non-comp total (official firm categories plus that year’s intersegment elimination). 2021 is firm-level and category-level only; 2021 segment subtotals are not rake targets.</li>
+  </ul>
+</li>
+<li>
+  <strong>FY2026 decision packages.</strong>
+  Every active program gets three rows, built off 2025 actuals: a minimum (84–92% of actual if the program is stated mandatory, otherwise 70–84%), a current (98–105%), and an enhanced (112–132% if stated grow or transform, otherwise 107–118%). Requested FTE is 0.82×, 1.0× and 1.10× of 2025 FTE. Justifications are short template paragraphs. The approval outcome is planted, not a real committee: mismatch programs of the first three types are cut more often; growth or transform members of the AI, digital and wealth-fee clusters are enhanced more often; stated-mandatory programs are usually approved at current. <code>approval_outcome</code> and <code>approved_usd</code> are repeated on all three level rows because they are program-level decisions.
+</li>
+</ol>
+
+<p class="note">The answer key records <code>family_and_cluster_observation_sigma</code> as 0.095. The generator code itself sets cluster-member observation σ to 0.085 (and family-only members to 0.18). Treat 0.085 as the value that was actually drawn.</p>
+
+<div class="sec-head" id="files"><span class="n">03</span><h2>Each file, and its columns</h2><span class="line"></span></div>
+
+<p>Each firm folder contains the same set of files. Currency is USD throughout (local-currency spend is assumed already translated). <code>is_synthetic</code> is always true.</p>
+
+<div class="card">
+<div class="card-top"><span class="tag">programs.csv</span><span class="tag">one row per program, including exited</span></div>
+<p>The working file for text and stated classifications. There are no true labels, cluster ids, family ids or mismatch flags here on purpose.</p>
+<div class="table-wrap">
+<table>
+  <thead><tr><th>Column</th><th>Meaning</th></tr></thead>
+  <tbody>
+    <tr><td><code>program_id</code></td><td>Stable synthetic id (<code>GLW-SEG-NNNN</code> or <code>MS-SEG-NNNN</code>).</td></tr>
+    <tr><td><code>program_name</code></td><td>Short title, unique within the firm.</td></tr>
+    <tr><td><code>firm</code>, <code>firm_modeled_on</code>, <code>is_synthetic</code></td><td>Mock tag, the public company whose published totals informed the rake, and a constant <code>true</code>.</td></tr>
+    <tr><td><code>segment</code>, <code>subsegment</code>, <code>function</code></td><td>Reporting segment (plus Corporate or Firm Functions), a synthetic line inside it, and an operational family.</td></tr>
+    <tr><td><code>reported_segment</code></td><td>Roll-up segment for the rake. Equals <code>segment</code> except MS Firm Functions, which are attributed to IS, WM or IM.</td></tr>
+    <tr><td><code>location</code>, <code>country</code>, <code>region</code></td><td>Publicly known cities or sites; the assignment is synthetic.</td></tr>
+    <tr><td><code>stated_cost_type</code></td><td>people / tech / vendor / capex-like / occupancy / mixed. Follows the description.</td></tr>
+    <tr><td><code>stated_discretionary</code></td><td>mandatory / discretionary / mixed. Follows the description.</td></tr>
+    <tr><td><code>stated_intent</code></td><td>run / grow / transform. Follows the description.</td></tr>
+    <tr><td><code>stated_driver</code></td><td>Stated planning driver, in the description’s language.</td></tr>
+    <tr><td><code>zbb_bucket</code></td><td>Corning: sga, rde, plant_indirect. MS: compensation, noncomp.</td></tr>
+    <tr><td><code>noncomp_category</code></td><td>MS non-comp only: the six official supplement categories.</td></tr>
+    <tr><td><code>start_year</code>, <code>end_year</code>, <code>status</code></td><td>Programs enter and leave. <code>end_year</code> is blank if still active.</td></tr>
+    <tr><td><code>owner_title</code></td><td>A synthetic role, not a named person.</td></tr>
+    <tr><td><code>currency</code>, <code>union_share</code></td><td>USD. Union share is used on Corning plant programs, informed by the public “more than 66% represented” figure, assigned synthetically.</td></tr>
+    <tr><td><code>description</code></td><td>Budget-request narrative. Uses stated labels only.</td></tr>
+  </tbody>
+</table>
+</div>
+</div>
+
+<div class="card">
+<div class="card-top"><span class="tag">history.csv</span><span class="tag">long format, only years the program existed</span></div>
+<div class="table-wrap">
+<table>
+  <thead><tr><th>Column</th><th>Meaning</th></tr></thead>
+  <tbody>
+    <tr><td><code>program_id</code>, <code>fiscal_year</code></td><td>Key. Years outside the program’s life are absent, not zero.</td></tr>
+    <tr><td><code>budget_usd</code>, <code>actual_usd</code></td><td>US dollars (not millions). After raking, actuals sum to the public targets in the self-check.</td></tr>
+    <tr><td><code>headcount_fte</code></td><td>Raked each year to the official employee count.</td></tr>
+    <tr><td><code>contractor_fte</code></td><td>Entirely synthetic.</td></tr>
+    <tr><td><code>is_synthetic</code></td><td>Always true.</td></tr>
+  </tbody>
+</table>
+</div>
+<p>The noiseless true dollar path is not in this file. It is only in <code>ground_truth.json</code>, under <code>true_levels_by_program_year</code>.</p>
+</div>
+
+<div class="card">
+<div class="card-top"><span class="tag">decision_packages.csv</span><span class="tag">three rows per active program, FY2026</span></div>
+<div class="table-wrap">
+<table>
+  <thead><tr><th>Column</th><th>Meaning</th></tr></thead>
+  <tbody>
+    <tr><td><code>program_id</code>, <code>cycle_year</code></td><td>Program and the cycle (always 2026).</td></tr>
+    <tr><td><code>package_level</code></td><td>minimum, current, or enhanced.</td></tr>
+    <tr><td><code>requested_usd</code>, <code>requested_fte</code></td><td>The ask at that level, sized off 2025 actuals and FTE.</td></tr>
+    <tr><td><code>justification</code></td><td>A short budget-request paragraph for that level.</td></tr>
+    <tr><td><code>approval_outcome</code>, <code>approved_level</code>, <code>approved_usd</code></td><td>Planted program-level decision, repeated on all three rows.</td></tr>
+    <tr><td><code>is_synthetic</code></td><td>Always true.</td></tr>
+  </tbody>
+</table>
+</div>
+</div>
+
+<div class="card dark">
+<div class="card-top"><span class="tag">ground_truth.json</span><span class="tag red">answer key</span></div>
+<p>True labels, latent clusters, pooling families, mismatches, drift paths, true dollar levels, the 2024→2025 mix-versus-behavior decomposition, the planted approval policy, rake notes, and recoverability diagnostics. Using this file as a feature set would leak the answers to Q2.1–Q2.4.</p>
+</div>
+
+<p>Each firm folder also has a data-dictionary <code>README.md</code> and a <code>self_check.json</code> / <code>self_check.md</code> comparing totals to the public figures. The parent folder has <code>SOURCES.md</code>, a copy of the generator, and a short top-level README.</p>
+
+<h3>Illustrative synthetic rows</h3>
+<p class="sample">These are generated rows, shown so the schema is concrete. They are not real programs.</p>
+
+<p><strong>A Corning-mock program and its history</strong> — <code>GLW-OC-0001</code>, “Fiber Draw Operations — Hainan — unit 01”. Optical Communications, Carrier and Enterprise Fiber, location Hainan, China. Stated: people, mandatory, run, driver “regulation”. Bucket: plant_indirect. Status: active, start 2020. Owner title: Maintenance Superintendent. The description opens: “Standing ZBB package for Fiber Draw Operations — Hainan — unit 01 (Hainan). Within Optical Communications (Carrier and Enterprise Fiber), this is proposed as a run program; the operating driver we are planning to is regulation.” (216 words in full.)</p>
+
+<div class="table-wrap">
+<table>
+  <thead><tr><th>Year</th><th class="num">Budget, USD</th><th class="num">Actual, USD</th><th class="num">FTE</th><th class="num">Contractor FTE</th></tr></thead>
+  <tbody>
+    <tr><td>2020</td><td class="num">4,487,093.39</td><td class="num">4,757,377.77</td><td class="num">307.27</td><td class="num">0.00</td></tr>
+    <tr><td>2021</td><td class="num">5,031,763.32</td><td class="num">5,082,066.56</td><td class="num">400.73</td><td class="num">0.00</td></tr>
+    <tr><td>2022</td><td class="num">5,171,438.88</td><td class="num">4,611,828.24</td><td class="num">348.62</td><td class="num">0.00</td></tr>
+    <tr><td>2023</td><td class="num">4,570,105.57</td><td class="num">4,391,897.59</td><td class="num">309.92</td><td class="num">0.00</td></tr>
+    <tr><td>2024</td><td class="num">4,671,172.00</td><td class="num">4,985,593.10</td><td class="num">390.37</td><td class="num">0.00</td></tr>
+    <tr><td>2025</td><td class="num">5,719,481.58</td><td class="num">5,753,930.93</td><td class="num">515.46</td><td class="num">0.00</td></tr>
+  </tbody>
+</table>
+</div>
+
+<p>Its three FY2026 packages, and the planted decision <code>approved_minimum</code>:</p>
+<div class="table-wrap">
+<table>
+  <thead><tr><th>Level</th><th class="num">Requested, USD</th><th class="num">Requested FTE</th><th class="num">Approved, USD</th></tr></thead>
+  <tbody>
+    <tr><td>minimum</td><td class="num">4,927,428.66</td><td class="num">422.67</td><td class="num">4,927,428.66</td></tr>
+    <tr><td>current</td><td class="num">5,869,808.19</td><td class="num">515.46</td><td class="num">4,927,428.66</td></tr>
+    <tr><td>enhanced</td><td class="num">6,423,486.93</td><td class="num">567.00</td><td class="num">4,927,428.66</td></tr>
+  </tbody>
+</table>
+</div>
+
+<p><strong>A Morgan Stanley-mock program</strong> — <code>MS-IS-0001</code>, “IBD Coverage — Chemicals — Milan — unit 01”. Institutional Securities, Investment Banking — Coverage, location Milan, Italy. Stated: people, discretionary, run, driver “advisory and underwriting activity”. Bucket: compensation. Active since 2021. Description (189 words) opens: “Request for ongoing funding of IBD Coverage — Chemicals — Milan — unit 01, based at Milan. The work belongs to the Institutional Securities Investment Banking — Coverage organization and is framed here as run spending…” 2025 budget $22,521,822.36, actual $21,765,799.81, 12.21 FTE. The planted package outcome is also <code>approved_minimum</code>, with requested current $22,754,960.74 against an approved $17,745,649.09.</p>
+
+<div class="sec-head" id="truth"><span class="n">04</span><h2>The planted answer key, and how to test each Q2 sub-question</h2><span class="line"></span></div>
+
+<p><code>ground_truth.json</code> is the score sheet. A method that reads it on the way in is cheating. The block below is what is planted, and a fair way to test against it.</p>
+
+<div class="card teal">
+<div class="card-top"><span class="tag teal">Q2.1</span><span class="tag">Borrowing strength</span></div>
+<p><strong>What’s planted.</strong> Pooling families of similar programs that share a true 2025 mean, with tight between-program dispersion (designed log-sigma 0.07) and generous observation noise, plus short histories. Corning mock: 36 families, 717 member programs, family sizes 10–42. Morgan Stanley mock: 40 families, 1,440 members, sizes 16–96. Not every program is in a family.</p>
+<p><strong>How to test.</strong> Estimate each program’s 2025 level (or trend) from its own short noisy history, then again with shrinkage or partial pooling toward the family — or toward an observable grouping such as segment × function, if you are not allowed to peek at <code>family_id</code>. Score both against <code>true_levels_by_program_year</code>. A built-in James–Stein check in the answer key already shrinks 2025 actuals 45% of the way to the family mean of actuals and compares MSE to 2025 true levels: mean improvement 0.580 on the Corning mock and 0.407 on the Morgan Stanley mock, so pooling is designed to help. The 13 November scout found the same direction with ebnm.</p>
+</div>
+
+<div class="card">
+<div class="card-top"><span class="tag">Q2.2</span><span class="tag">Text versus numbers</span></div>
+<p><strong>What’s planted.</strong> Programs whose stated (description) labels disagree with their true labels or spending path, and programs whose true category drifts while the description lags.</p>
+<div class="table-wrap">
+<table>
+  <thead><tr><th>Planted structure</th><th class="num">Corning mock</th><th class="num">Morgan Stanley mock</th></tr></thead>
+  <tbody>
+    <tr><td>Text/number mismatches, all types</td><td class="num">65</td><td class="num">111</td></tr>
+    <tr><td>stated mandatory, actually discretionary</td><td class="num">15</td><td class="num">23</td></tr>
+    <tr><td>stated transform, actually run</td><td class="num">18</td><td class="num">22</td></tr>
+    <tr><td>stated growth, actually declining</td><td class="num">7</td><td class="num">27</td></tr>
+    <tr><td>stated people, actually vendor</td><td class="num">14</td><td class="num">21</td></tr>
+    <tr><td>stated run, actually transform</td><td class="num">11</td><td class="num">18</td></tr>
+    <tr><td>Category drift (description lags)</td><td class="num">40</td><td class="num">68</td></tr>
+  </tbody>
+</table>
+</div>
+<p>Drift fields are intent, cost type or discretionary. Most drift years are 2023 or 2024; a few late-starting programs drift in 2025 or 2026 (the planter bumps the year to <code>start_year + 1</code> when needed). The standing <code>true_*</code> record is the terminal, post-drift value; the drift block has the path.</p>
+<p><strong>How to test.</strong> From descriptions and histories alone, flag mismatches and dating of category change. Score against <code>mismatch_text_vs_numbers</code> and <code>category_drift</code>. “Stated growth, actually declining” is the cleanest path-versus-text test, because those programs also have a declining true path.</p>
+</div>
+
+<div class="card">
+<div class="card-top"><span class="tag">Q2.3</span><span class="tag">Real change or noise</span></div>
+<p><strong>What’s planted.</strong> A documented 2024→2025 shift-share, computed after raking. Behavior is the change in continuing programs. Mix is entrant spend in 2025 minus exiter spend in 2024. On true (noiseless) levels, behavior + mix equals the total change. On actuals, residual = actual change − true change, which equals the change in the noise draws.</p>
+<div class="table-wrap">
+<table>
+  <thead><tr><th>2024 → 2025, after raking</th><th class="num">Corning mock</th><th class="num">Morgan Stanley mock</th></tr></thead>
+  <tbody>
+    <tr><td>Continuing / entrants / exiters</td><td class="num">971 / 27 / 24</td><td class="num">1,627 / 75 / 81</td></tr>
+    <tr><td>Actual total, 2024 → 2025</td><td class="num">$4,788.4m → $5,233.6m</td><td class="num">$44,471m → $49,002m</td></tr>
+    <tr><td>Actual change</td><td class="num">$445.2m</td><td class="num">$4,531.0m</td></tr>
+    <tr><td>True behavior (continuing)</td><td class="num">$359.6m</td><td class="num">$4,980.0m</td></tr>
+    <tr><td>True mix (entrants − exiters)</td><td class="num">$95.7m</td><td class="num">−$456.3m</td></tr>
+    <tr><td>Noise (actual change − true change)</td><td class="num">−$10.0m (−2.25%)</td><td class="num">$7.2m (0.16%)</td></tr>
+  </tbody>
+</table>
+</div>
+<p>The Morgan Stanley totals here are the three-segment sum, so they already sit $570m (2024) and $660m (2025) above official firm NIE. <strong>How to test.</strong> Decompose the observed 2024→2025 actual change into mix, behavior and noise without reading the answer key, then compare. The 13 November scout found that portfolio-level noise really is only about 2% (Corning) to well under 1% (Morgan Stanley) of the change, so most of the work is separating mix from behavior, not subtracting noise.</p>
+</div>
+
+<div class="card">
+<div class="card-top"><span class="tag">Q2.4</span><span class="tag">Hidden structure</span></div>
+<p><strong>What’s planted.</strong> Three latent clusters per firm. The model is <code>true_t *= (1 + loading × F_t)</code>, then idiosyncratic log-noise, then raking. About half the members mention the common driver in the description (<code>text_reveals_cluster</code>); the rest, including all surprise members, do not. Clusters are not identical to segment or stated-category labels.</p>
+<div class="table-wrap">
+<table>
+  <thead><tr><th>Cluster</th><th>Type</th><th class="num">Members</th><th>Who</th><th>Factor path, selected years</th></tr></thead>
+  <tbody>
+    <tr><td><code>ai_datacenter_demand</code></td><td>co-move</td><td class="num">216 (120 reveal)</td><td>Mostly Optical Communications, plus some Specialty Materials and Corporate</td><td>2023 0.12, 2024 0.28, 2025 0.52</td></tr>
+    <tr><td><code>display_specialty_tradeoff</code></td><td>tradeoff</td><td class="num">99 (55 reveal)</td><td>Display (+) versus Specialty cover-glass (−)</td><td>2023 −0.05, 2024 0.06, 2025 −0.14</td></tr>
+    <tr><td><code>auto_ice_aftertreatment</code></td><td>co-move</td><td class="num">51 (27 reveal)</td><td>Automotive, plus a few Corporate</td><td>2023 −0.05, 2024 −0.07, 2025 −0.11</td></tr>
+    <tr><td><code>equity_market_activity</code></td><td>co-move</td><td class="num">198 (100 reveal)</td><td>Mostly Institutional Securities</td><td>2021 0.30, 2022 −0.32, 2025 0.32</td></tr>
+    <tr><td><code>wealth_fee_based_growth</code></td><td>co-move</td><td class="num">316 (164 reveal)</td><td>Mostly Wealth Management, some IM and Firm Functions</td><td>Gentle climb to 0.13 in 2025</td></tr>
+    <tr><td><code>branch_vs_digital</code></td><td>tradeoff</td><td class="num">134 (52 reveal)</td><td>Branch occupancy (−) versus digital / self-directed (+)</td><td>Rises to 0.28 in 2025</td></tr>
+  </tbody>
+</table>
+</div>
+<p><strong>How to test.</strong> Recover co-moving or trade-off groups from the histories, with or without the text, and score against <code>latent_clusters</code>. A recoverability diagnostic in the answer key reports year-on-year actual-percent-change correlations. Same-sign pairs sit clearly above a random-pair control (Corning random-pair mean 0.12; AI-demand same-sign mean 0.36; auto aftertreatment 0.68. Morgan Stanley random-pair mean 0.02; wealth-fee 0.30; branch-versus-digital same-sign 0.34). The design note says opposite-sign pairs on a tradeoff cluster should be negative. In the realized actuals they were not: Display/Specialty cross-sign mean +0.15, branch-versus-digital cross-sign mean +0.12. Noise and raking have made the tradeoff harder to see in actual year-on-year changes than the co-moving groups. That is a property of this seed, not a reason to ignore the planted loadings.</p>
+</div>
+
+<div class="card">
+<div class="card-top"><span class="tag">Q2.5</span><span class="tag">Seeing it</span></div>
+<p><strong>What’s planted.</strong> The panel itself: about a thousand (Corning) or eighteen hundred (Morgan Stanley) short, differently scaled, start-and-stop series. That is the visualization problem. There is no extra hidden label for Q2.5; a method works if a reader can see structure — including the Q2.4 clusters — without spaghetti.</p>
+<p><strong>How to test.</strong> Chart the histories (log levels, residuals, densities) and ask whether a hidden co-moving group is visible, especially the members whose text does not mention the driver. The 13 November scout used DenseLines for this and had to make the method gap-safe, because programs that start or stop made the reference implementation return NaN in every column.</p>
+</div>
+
+<details>
+<summary>FY2026 planted approval counts (not a real committee)</summary>
+<div class="table-wrap">
+<table>
+  <thead><tr><th>Outcome</th><th class="num">Corning mock</th><th class="num">Morgan Stanley mock</th></tr></thead>
+  <tbody>
+    <tr><td>approved_current</td><td class="num">592</td><td class="num">990</td></tr>
+    <tr><td>approved_minimum</td><td class="num">176</td><td class="num">300</td></tr>
+    <tr><td>approved_enhanced</td><td class="num">157</td><td class="num">268</td></tr>
+    <tr><td>deferred</td><td class="num">39</td><td class="num">61</td></tr>
+    <tr><td>approved_partial</td><td class="num">20</td><td class="num">40</td></tr>
+    <tr><td>rejected</td><td class="num">14</td><td class="num">43</td></tr>
+  </tbody>
+</table>
+</div>
+</details>
+
+<div class="sec-head" id="sources"><span class="n">05</span><h2>Public sources</h2><span class="line"></span></div>
+
+<p>Citations are from the dataset’s <code>SOURCES.md</code>, all accessed 13 November 2026. The mocks are internet-informed at the total level, not leaked at the program level.</p>
+
+<h3>Corning Incorporated</h3>
+<ul>
+  <li><a href="https://www.sec.gov/Archives/edgar/data/24741/000002474126000124/glw-20251231.htm">Form 10-K for the year ended 31 December 2025</a> (GLW-10K-2025; accession 0000024741-26-000124). Consolidated income statement, segment net sales, SG&amp;A, RD&amp;E, employees (about 67,200 full- and part-time in 44 countries; 68% production and maintenance; more than 66% represented). As of 1 January 2025, Automotive Glass Solutions was combined with Environmental Technologies into Automotive; Display Technologies was renamed Display. Segment net sales are on the company’s constant-currency segment basis (2025 segment $16,408m versus GAAP $15,629m).</li>
+  <li><a href="https://s203.q4cdn.com/212458750/files/doc_financials/2025/q4/Corning-Incorporated-Fourth-Quarter-2025-Earnings-Release-with-Financials-2026-01-28.pdf">Fourth Quarter 2025 Earnings Release, 28 January 2026</a> (GLW-Q4-2025). Confirms FY2025/2024 segment net sales, SG&amp;A, RD&amp;E, capex.</li>
+  <li>Prior 10-Ks, used for historical SG&amp;A, RD&amp;E, cost of sales and employees:
+    <a href="https://www.sec.gov/Archives/edgar/data/24741/000162828025005347/glw-20241231.htm">2024</a> (56,300 employees),
+    <a href="https://www.sec.gov/Archives/edgar/data/24741/000143774924003735/glw20231231_10k.htm">2023</a> (49,800),
+    <a href="https://www.sec.gov/Archives/edgar/data/24741/000143774923003123/glw20221231_10k.htm">2022</a> (57,500; net sales $14.189b, SG&amp;A $1.898b, RD&amp;E $1.047b, COGS $9.683b),
+    <a href="https://www.sec.gov/Archives/edgar/data/24741/000143774922003247/glw20211231_10k.htm">2021</a> (61,200; net sales $14.082b, SG&amp;A $1.827b, RD&amp;E $0.995b, COGS $9.019b),
+    <a href="https://www.sec.gov/Archives/edgar/data/24741/000156276221000023/glw-20201231x10k.htm">2020</a> (50,110 employees in 45 countries; net sales $11.303b, SG&amp;A $1.747b, RD&amp;E $1.154b, COGS $7.772b).</li>
+</ul>
+
+<h3>Morgan Stanley</h3>
+<ul>
+  <li><a href="https://www.morganstanley.com/content/dam/msdotcom/en/about-us-ir/shareholder/10k2025/10k1225.pdf">Form 10-K for the year ended 31 December 2025</a> (MS-10K-2025). Net revenues $70,645m (IS $33,080m, WM $31,754m, IM $6,525m, intersegment eliminations $(714)m). Non-interest expenses $48,342m (compensation $29,216m, non-compensation $19,126m). About 83 thousand employees across 42 countries. March 2025 workforce action: severance $144m, roughly 2% of the global workforce.</li>
+  <li><a href="https://www.morganstanley.com/about-us-ir/finsup4q2025/finsup4q2025.pdf">Financial Supplement, 4Q 2025</a> (MS-FINSUP-4Q25). Segment NIE and compensation 2025/2024; firm non-comp categories; worldwide employees 82,992 (31 December 2025) and 80,478 (31 December 2024). The 2025 financial-advisor headcount is not disclosed in this supplement.</li>
+  <li><a href="https://www.morganstanley.com/content/dam/msdotcom/en/about-us-ir/finsup4q2023/finsup4q2023.pdf">Financial Supplement, 4Q 2023</a> (MS-FINSUP-4Q23). 2023/2022 segment NIE and compensation; employees 80,006 and 82,427; firm NIE $41,798m (2023) and $39,299m (2022).</li>
+  <li><a href="https://www.morganstanley.com/content/dam/msdotcom/en/about-us-ir/finsup4q2022/finsup4q2022.pdf">Financial Supplement, 4Q 2022</a> (MS-FINSUP-4Q22). 2022/2021 firm NIE $39,299m and $40,083m; compensation $23,053m and $24,628m; employees 82,427 and 74,814. 2021 segment NIE is not used as a rake target.</li>
+</ul>
+
+<div class="sec-head" id="limits"><span class="n">06</span><h2>Assumptions and limitations</h2><span class="line"></span></div>
+
+<p>These are the documented gaps from each firm’s <code>self_check.md</code>, plus two generator notes a reviewer should know.</p>
+<ul>
+  <li><strong>It is a mock.</strong> Segment spend splits that the companies do not publish are synthetic. Descriptions are generated and will have a family resemblance no real budget office would produce at this scale. Do not present these files as actual firm data.</li>
+  <li><strong>Plant-indirect is an assumption.</strong> 20% of GAAP cost of sales. Corning does not disclose manufacturing overhead separately. Direct materials and most direct labor are outside the ZBB universe, so official COGS is much larger than plant-indirect actuals.</li>
+  <li><strong>SG&amp;A and RD&amp;E are not disclosed by segment.</strong> Segment program spend in the Corning mock is a synthetic allocation informed by segment sales and by the known RD&amp;E intensity of Specialty Materials and Optical Communications. It is not an official split. 2023 Automotive / Life Sciences / Hemlock restated sales were not all separately available in the sources used, so they are not rake targets.</li>
+  <li><strong>Capex is not a ZBB-universe total</strong> ($1,282m in 2025, $965m in 2024). Some programs are flagged capex-like (furnace campaigns, capacity) but their dollars live in plant-indirect or SG&amp;A and will not roll to official capex.</li>
+  <li><strong>The 2025 Corning employee count</strong> (67,200) is a large increase from 2024 (56,300). The mock follows the official path; there was no public explanation to plant into program-level hiring beyond Optical Communications growth.</li>
+  <li><strong>Intersegment eliminations are a documented gap, not a program.</strong> The Morgan Stanley mock has no negative “elimination” rows. The sum of IS + WM + IM NIE exceeds firm NIE by the official item ($660m in 2025, $570m in 2024, $520m in 2023, $501m in 2022). Firm-level non-comp category <em>shares</em> match the supplement; category <em>dollars</em> are scaled to the segment-gross non-comp total, so they also overshoot official firm categories by that elimination.</li>
+  <li><strong>2021 Morgan Stanley segment totals are not matched.</strong> That year is firm-level and category-level only. Do not treat 2021 segment subtotals as matching a filing.</li>
+  <li><strong>Financial-advisor headcount is not disclosed</strong> in the 2025 10-K or 4Q25 supplement. FA Compensation programs are a synthetic disaggregation of official WM compensation, not a count of advisors.</li>
+  <li><strong>The March 2025 workforce action</strong> (severance $144m, about 2% of staff) is cited in the 10-K but is not modelled as a one-off program; it is absorbed into the 2025 compensation totals.</li>
+  <li><strong>Brokerage, clearing and exchange fees</strong> are volume-driven and mostly mandatory. They are in the ZBB universe because they are official NIE, but they are not a classic decision package in the same sense as a discretionary desk.</li>
+  <li><strong>FTE and contractors.</strong> FTE is raked to the official employee count, which includes full- and part-time staff. The mock does not distinguish part-time. Contractor FTE is entirely synthetic.</li>
+  <li><strong>Two generator notes.</strong> The answer key lists cluster-member observation σ as 0.095; the code draws 0.085. And the realized year-on-year correlations of actuals for opposite-sign members of the two tradeoff clusters came out slightly positive, so a method that looks only at actual changes will find the tradeoffs weaker than the planted loadings suggest.</li>
+</ul>
+
+<div class="sec-head" id="check"><span class="n">07</span><h2>Self-check results</h2><span class="line"></span></div>
+
+<p>The self-check compares raked actuals to the public figures. Gaps of $0.00 (or a few thousand dollars on a tens-of-billions total, from rounding) mean the rake hit its target. The Morgan Stanley firm-NIE and category gaps from 2022 onward are the intersegment-elimination design, not a miss.</p>
+
+<h3>Corning mock — every listed total matches</h3>
+<div class="table-wrap">
+<table>
+  <thead>
+    <tr><th>Year</th><th class="num">SG&amp;A actual = official</th><th class="num">RD&amp;E actual = official</th><th class="num">Plant-indirect (20% of COGS)</th><th class="num">FTE = employees</th></tr>
+  </thead>
+  <tbody>
+    <tr><td>2020</td><td class="num">$1,747m</td><td class="num">$1,154m</td><td class="num">$1,554.4m</td><td class="num">50,110</td></tr>
+    <tr><td>2021</td><td class="num">$1,827m</td><td class="num">$995m</td><td class="num">$1,803.8m</td><td class="num">61,200</td></tr>
+    <tr><td>2022</td><td class="num">$1,898m</td><td class="num">$1,047m</td><td class="num">$1,936.6m</td><td class="num">57,500</td></tr>
+    <tr><td>2023</td><td class="num">$1,843m</td><td class="num">$1,076m</td><td class="num">$1,731.4m</td><td class="num">49,800</td></tr>
+    <tr><td>2024</td><td class="num">$1,931m</td><td class="num">$1,089m</td><td class="num">$1,768.4m</td><td class="num">56,300</td></tr>
+    <tr><td>2025</td><td class="num">$2,122m</td><td class="num">$1,110m</td><td class="num">$2,001.6m</td><td class="num">67,200</td></tr>
+  </tbody>
+</table>
+</div>
+<p>Every SG&amp;A, RD&amp;E and FTE gap in the self-check is $0.0. Plant-indirect matches the 20% assumption exactly each year, and is flagged <code>plant_indirect_is_assumption: true</code>.</p>
+
+<h3>Morgan Stanley mock — segment NIE hits; firm NIE trails by the official elimination</h3>
+<div class="table-wrap">
+<table>
+  <thead>
+    <tr><th>Year</th><th class="num">IS NIE (official)</th><th class="num">WM NIE (official)</th><th class="num">IM NIE (official)</th><th class="num">Segment sum</th><th class="num">Firm NIE official</th><th class="num">Gap</th><th class="num">FTE</th></tr>
+  </thead>
+  <tbody>
+    <tr><td>2021</td><td class="num">not a rake target</td><td class="num">not a rake target</td><td class="num">not a rake target</td><td class="num">$40,083m</td><td class="num">$40,083m</td><td class="num">$0m</td><td class="num">74,814</td></tr>
+    <tr><td>2022</td><td class="num">$17,467m</td><td class="num">$17,765m</td><td class="num">$4,568m</td><td class="num">$39,800m</td><td class="num">$39,299m</td><td class="num">$501m</td><td class="num">82,427</td></tr>
+    <tr><td>2023</td><td class="num">$18,183m</td><td class="num">$19,607m</td><td class="num">$4,528m</td><td class="num">$42,318m</td><td class="num">$41,798m</td><td class="num">$520m</td><td class="num">80,006</td></tr>
+    <tr><td>2024</td><td class="num">$19,129m</td><td class="num">$20,618m</td><td class="num">$4,724m</td><td class="num">$44,471m</td><td class="num">$43,901m</td><td class="num">$570m</td><td class="num">80,478</td></tr>
+    <tr><td>2025</td><td class="num">$21,541m</td><td class="num">$22,414m</td><td class="num">$5,047m</td><td class="num">$49,002m</td><td class="num">$48,342m</td><td class="num">$660m</td><td class="num">82,992</td></tr>
+  </tbody>
+</table>
+</div>
+<p>For 2022–2025, each segment’s compensation matches the official figure exactly, and non-comp is within about $3,000 of the official million-dollar total (IPF rounding). FTE matches the official employee count exactly every year. 2021 firm NIE and the six official non-comp categories also match exactly; 2021 segment subtotals should not be compared to a filing. From 2022 onward, each official firm non-comp category is overshot in proportion to that year’s elimination — for example 2025 brokerage/clearing $4,840.5m versus official $4,679m.</p>
+
+<div class="sec-head" id="drive"><span class="n">08</span><h2>Where to get the files</h2><span class="line"></span></div>
+
+<div class="card teal">
+<div class="card-top"><span class="tag teal">Drive</span><span class="tag">synthetic, 2026-11-13</span></div>
+<p>The dataset lives in the Google Drive folder <a href="https://drive.google.com/drive/folders/1afht8lWO1j6O_pwcXEB-iT2qvuRdwTVO">Q2 mock ZBB datasets (synthetic, 2026-11-13)</a>. Each firm folder has the CSVs, the answer key, the README and the self-check. The parent folder has <code>SOURCES.md</code> and <code>generate_q2_mock_zbb.py</code>.</p>
+<p>For research on Q2 methods, inside the research lab. Do not present these files as actual firm data. This Pages site does not republish the program-level CSVs.</p>
+<p>First methods run: <a href="2026-11-13.html">Methods scout, 13 November 2026</a>. Standing question: <a href="QUESTIONS.md">QUESTIONS.md</a>.</p>
+</div>
+
+<footer>
+  <p>Teaching note for the Q2 synthetic mock ZBB datasets · 13 November 2026 · Independent research · Not investment advice · <a href="../index.html">Research lab home</a></p>
+</footer>
+</main>
+</body>
+</html>
