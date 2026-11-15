@@ -530,6 +530,54 @@ Q3.4 and Q3.5: the same LOYO IDR on dividends/RWA and net buybacks/RWA separatel
 
 ---
 
+## Convergent cross mapping (pyEDM)
+
+Sugihara, G., May, R., Ye, H., Hsieh, C., Deyle, E., Fogarty, M. & Munch, S. (2012), "Detecting causality in complex ecosystems", *Science* 338:496–500; Ye, H., Deyle, E. R., Gilarranz, L. J. & Sugihara, G. (2015), "Distinguishing time-delayed causal interactions using convergent cross mapping", *Scientific Reports* 5:14750, doi:10.1038/srep14750. pyEDM 2.5.7 (Sugihara Lab). Scouted on the [2026-11-15 scheduled edition](2026-11-15.html), aimed at [Q1](QUESTIONS.md#q1) (Q1.5, Q1.1). Novelty: exotic-transfer (fisheries and population ecology). Status: interesting — not promoted. Plans only.
+
+**Found via.** Chosen from the ecology causal-inference literature; package located by web search on 2026-11-15: GitHub [https://github.com/SugiharaLab/pyEDM](https://github.com/SugiharaLab/pyEDM) and [https://sugiharalab.github.io/EDM_Documentation/ccm_/](https://sugiharalab.github.io/EDM_Documentation/ccm_/). Field: ecology.
+
+**What our run showed.** Weekly 2019-01–2025-12 (n = 364). Fails → DVP−tri-party spread ρ = 0.33 and TFF leveraged-fund net short → spread ρ = 0.25, both converging, shift-null p = 0.005 (the floor with 200 surrogates), Holm 0.05, stable across halves. Positioning ↔ fails: no cross-map skill (p = 0.21/0.47) while linear Granger rejects both ways (p = 0.001/0.004). Links into DVP volume only after mid-2022. Full run 148 s single-threaded; one curve 1.36 s.
+
+### 1 · Engineering (top pick, effort S–M)
+
+Neighbour reuse for surrogate nulls. In a driver-shift test the responder's shadow manifold \(M_Y\) is fixed; only the predicted values \(x_{t_i}\) move. Compute the \(E+1\) neighbours and weights of every library point once, then each surrogate is a weighted gather, \(O(nk)\) instead of a neighbour search. Rust core, thin Python binding, pyEDM 2.5.7 as oracle (parity, then speed). Closest prior work: cppEDM (Sugihara Lab, C++) recomputes neighbours per call; we found no implementation that reuses them across surrogates. **Why it matters here:** today's two best links sit exactly at the 200-surrogate floor (Holm 0.05); 10,000 surrogates would settle them. **Test:** ρ parity ≤ 1e-12 on all 10 directions at full library (sample-free), and the 10 × 200 null in < 1 s (today 148 s).
+
+### 2 · Math (effort M)
+
+A familywise partial-CCM network: partial cross mapping (condition the cross-map estimate on the part of the driver transmitted through the other legs), with persistence-preserving surrogates and max-T control over all edges of the 4-node Q1 graph. Closest prior work: Leng et al. (2020), *Nature Communications* 11:2632 (partial cross mapping; R implementation in tEDM). **Test:** on simulated 4-node chains at our persistence, size 5% ± 1.5 points and indirect edges removed ≥ 80% of the time; then whether positioning → spread survives conditioning on fails.
+
+### 3 · New use on our data (effort S)
+
+Rolling 2-year CCM across the late-2025 fails–spread switch-off seen by CRQA (Q1.2–Q1.3): does fails → spread fade first, or does positioning → spread take over? **Test:** pre-registered windows and episodes, surrogate null per window, Holm across windows; an honest miss counts.
+
+**Why Engineering is the top pick.** The method's two best results are limited by the cost of the null, not by data; making surrogates nearly free changes what we can claim tomorrow.
+
+---
+
+## Seriation and event dates (kairos + tabula)
+
+Frerebeau, N. (2026), *kairos* (R, CRAN 2.3.0), doi:10.5281/zenodo.5653896; *tabula* 3.3.2, JOSS doi:10.21105/joss.01821; Bellanger, L. & Husi, P. (2012), *Journal of Archaeological Science* 39(4):777–790, doi:10.1016/j.jas.2011.06.031; Porčić, M. (2013), *Journal of Archaeological Science* 40(12):4552–4559, doi:10.1016/j.jas.2013.07.013; Desachy, B. (2004), *Revue archéologique de Picardie* 3(1):39–56. Scouted on the [2026-11-15 scheduled edition](2026-11-15.html), aimed at [Q1](QUESTIONS.md#q1) (Q1.4). Novelty: exotic-transfer / obscure (archaeology, tesselle project). Status: recommended for the promote workflow — not promoted. Plans only.
+
+**Found via.** Web search for archaeological seriation software on 2026-11-15: [https://packages.tesselle.org/kairos/](https://packages.tesselle.org/kairos/) (Codeberg: [codeberg.org/tesselle/kairos](https://codeberg.org/tesselle/kairos)) and [https://joss.theoj.org/papers/10.21105/joss.01821.pdf](https://joss.theoj.org/papers/10.21105/joss.01821.pdf). Field: archaeology.
+
+**What our run showed.** 101 months × 9 OFR venue × tenor segments. Seriated order vs calendar Spearman −0.96; Porčić 248 modes vs random 5th percentile 286 (p < 0.001), coefficient 0.52; CA axis 1 = 69% inertia. Walk-forward event-date clock (train ≤ 2022) MAE 1.06 y vs 1.92 naive. Form PF total borrowing growth leads mix speed 3–6 months, r = 0.56/0.54, Holm p = 0.009. Segment order across halves Kendall 0.28. The clock jumps ~1 year at OFR's 2025-08-14 tenor-bucket split.
+
+### 1 · Engineering (effort S)
+
+A faithful NumPy port of CA seriation, the Porčić mode-count test and the Bellanger–Husi event model, with the permutation test in Rust; kairos 2.3.0 as oracle (parity, then speed). Closest prior work: the R packages themselves; IDSS (Lipo, Madsen & Dunnell 2015, Python) is a different, deterministic seriation, not a port. **Test:** CA coordinates ≤ 1e-10 up to sign, event dates ≤ 1e-8, identical mode counts under shared permutations; then a 10,000-permutation test on 2,000 daily rows in < 1 s.
+
+### 2 · Math (top pick, effort M)
+
+A taxonomy-robust mix clock with a time-series null. Treat re-defined categories (OFR's ≤30-day bucket → 2–7 + 8–30 days) as supplementary CA columns linked by an aggregation constraint \(\sum_{j\in g} F_{\cdot j}\) so the clock is defined on a common coarsening, and replace the event model's independent-deposit intervals with a moving-block bootstrap over months. Closest prior work: supplementary-row/column CA (dimensio `sup_col`); Bellanger & Husi (2012) intervals assume independent assemblages; we found no event-date model handling taxonomy changes. **Test (pre-registered):** the 2025-08 jump (−0.51 → +0.50 y) falls below 0.15 y, and walk-forward MAE does not exceed 1.06 y.
+
+### 3 · New use on our data (effort S)
+
+Collateral-mix (tri-party Treasury / agency / corporate / other) and positioning-mix (TFF open interest by trader type) clocks for Q1.4–Q1.5: is the Form PF lead specific to venue and tenor? **Test:** Form PF lead 3 and 6 vs clock speed, circular-shift p < 0.05 after Holm, stated in advance; today's venue × tenor result as reference.
+
+**Why Math is the top pick.** The clock is the useful output, and both known failure points (taxonomy change, dependent months) are in its math, not its code.
+
+---
+
 ## Citations used (verified)
 
 Only papers we located with venue, year, and pages, plus the four method papers already cited on the scout pages. "Found via" links are only those recorded on the 11-10 and 11-11 pages or in the watchlist.
@@ -551,9 +599,16 @@ Only papers we located with venue, year, and pages, plus the four method papers 
 - Zeileis, A. & Hothorn, T. (2013). A toolbox of permutation tests for structural change. *Statistical Papers*, 54(4):931–954.
 - Zeileis, A., Hothorn, T. & Hornik, K. (2008). Model-Based Recursive Partitioning. *Journal of Computational and Graphical Statistics*, 17(2):492–514.
 
+- Leng, S., Ma, H., Kurths, J., Lai, Y.-C., Lin, W., Aihara, K. & Chen, L. (2020). Partial cross mapping eliminates indirect causal influences. *Nature Communications*, 11:2632.
+- Sugihara, G., May, R., Ye, H., Hsieh, C., Deyle, E., Fogarty, M. & Munch, S. (2012). Detecting causality in complex ecosystems. *Science*, 338:496–500.
+- Ye, H., Deyle, E. R., Gilarranz, L. J. & Sugihara, G. (2015). Distinguishing time-delayed causal interactions using convergent cross mapping. *Scientific Reports*, 5:14750.
+- Bellanger, L. & Husi, P. (2012). Statistical tool for dating and interpreting archaeological contexts using pottery. *Journal of Archaeological Science*, 39(4):777–790.
+- Porčić, M. (2013). The goodness of fit and statistical significance of seriation solutions. *Journal of Archaeological Science*, 40(12):4552–4559.
+- Lipo, C. P., Madsen, M. E. & Dunnell, R. C. (2015). A theoretically-sufficient and computationally-practical technique for deterministic frequency seriation. *PLOS ONE*, 10(4):e0124942.
+
 ## What this is not
 
-Plans only. Nothing here is being built. Edition 3’s plans are grounded in the 11-12 scheduled scout runs already published on that edition’s page; no further fits were run to write these plans. Edition 4’s plans (ebnm, DenseLines) are grounded in the 2026-11-13 scheduled run on SYNTHETIC mock ZBB data. Edition 5’s plans (CRQA, IDR) are grounded in the 2026-11-14 scheduled run, completed 2026-11-15, on public data. Nothing is promoted into analysis-skills. No `APPROVAL.md` is written. No raw private Drive rows are published. This file and its page live in research-lab, not in traceot. Research-lab PRs #25 and #21 are not touched.
+Plans only. Nothing here is being built. Edition 3’s plans are grounded in the 11-12 scheduled scout runs already published on that edition’s page; no further fits were run to write these plans. Edition 4’s plans (ebnm, DenseLines) are grounded in the 2026-11-13 scheduled run on SYNTHETIC mock ZBB data. Edition 5’s plans (CRQA, IDR) are grounded in the 2026-11-14 scheduled run, completed 2026-11-15, on public data. Edition 6’s plans (CCM, kairos/tabula) are grounded in the 2026-11-15 scheduled run on public data. Nothing is promoted into analysis-skills. No `APPROVAL.md` is written. No raw private Drive rows are published. This file and its page live in research-lab, not in traceot. Research-lab PRs #25 and #21 are not touched.
 
 - Baselga, A. & Orme, C. D. L. (2012). betapart: an R package for the study of beta diversity. *Methods in Ecology and Evolution*, 3(5):808–812.
 - Collins, S. L., Micheli, F. & Hartt, L. (2000). A method to determine rates and patterns of variability in ecological communities. *Oikos*, 91(2):285–293.
