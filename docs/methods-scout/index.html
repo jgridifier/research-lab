@@ -22,9 +22,9 @@
 <h3><a href="QUESTIONS.md">Research questions</a></h3>
 <p>Only questions with status <code>open</code> or <code>in progress</code> are scout targets. Retired questions stay on the page for the record and must not be targeted again.</p>
 <ul>
-<li><a href="QUESTIONS.md#q1">Q1</a> (open, approved 2026-11-14). Connection between Form PF aggregate prime-broker borrowings and OFR repo and NY Fed settlement fails, with CFTC TFF and FINRA margin as optional companions. Aggregate only; no firm-level prime-broker shares.</li>
+<li><a href="QUESTIONS.md#q1">Q1</a> (in progress, approved 2026-11-14; first run <a href="2026-11-14.html">2026-11-14</a>). Connection between Form PF aggregate prime-broker borrowings and OFR repo and NY Fed settlement fails, with CFTC TFF and FINRA margin as optional companions. Aggregate only; no firm-level prime-broker shares.</li>
 <li><a href="QUESTIONS.md#q2">Q2</a> (in progress, approved 2026-11-13). Noisy program-level budgets: classifications, implied features, and short histories. Synthetic mocks only so far. Teaching page: <a href="q2-mock-zbb.html">What the Q2 mock budget datasets are doing</a>.</li>
-<li><a href="QUESTIONS.md#q3">Q3</a> (open, approved 2026-11-14). Connection between supervisory stress-test projections (severely adverse earnings, losses, capital drawdowns, SCB) and realized FR Y-9C payout ratios. No firm-level baseline earnings are published.</li>
+<li><a href="QUESTIONS.md#q3">Q3</a> (in progress, approved 2026-11-14; first run <a href="2026-11-14.html">2026-11-14</a>). Connection between supervisory stress-test projections (severely adverse earnings, losses, capital drawdowns, SCB) and realized FR Y-9C payout ratios. No firm-level baseline earnings are published.</li>
 </ul>
 <p>The 2026-11-10 prime-broker top-25 share question is <a href="QUESTIONS.md#retired-q1-2026-11-10">retired</a>. The 11–12 November editions below were aimed at that retired question, using a Y-9C proxy.</p>
 <div class="foot"><a href="QUESTIONS.md">QUESTIONS.md</a> · approved Q1 and Q3 on 2026-11-14 (“Number 1 and 4.”)</div></div>
@@ -43,6 +43,10 @@
 
 <div class="sec-head"><span class="n">Editions</span><h2>All editions</h2><span class="line"></span></div>
 <!-- EDITIONS:START -->
+<div class="card teal"><div class="card-top"><span class="tag teal">2026-11-14 · Sat · scheduled · completed 11-15 · Q1 + Q3 · exotic</span><span><span class="verdict interesting">interesting</span> <span class="verdict adopt">recommend for promote workflow</span></span></div>
+<h3><a href="2026-11-14.html">First runs on the new Q1 and Q3: cross-recurrence (CRQA, cognitive science) on Form PF, repo and fails; isotonic distributional regression (IDR, weather forecasting) on stress tests vs payouts</a></h3>
+<p>Public data only. The run was interrupted on 11-14 and completed on 11-15. Weekly Treasury financing fails and the DVP–tri-party spread are anti-recurrent in the same week: on from late 2018 to mid-2025, off in the late-2025 fails spike. Form PF prime-broker borrowings show no familywise lead or lag with repo or fails. Form PF “reverse repo” borrowings lead DVP volume growth by about 4 months. Projected severely adverse pre-tax income describes the next payout ranks best (CRPS skill 15%); the SCB alone has none.</p>
+<div class="foot">Data: SEC Form PF tab 8.27, OFR repo, NY Fed fails, Fed stress-test results, FR Y-9C, LBCR PDFs (all public) · <a href="QUESTIONS.md#q1">Q1</a> · <a href="QUESTIONS.md#q3">Q3</a> · <a href="secret-sauce.html">secret sauce</a></div></div>
 <div class="card teal"><div class="card-top"><span class="tag teal">2026-11-13 · Fri · scheduled · Q2 · exotic · SYNTHETIC</span><span><span class="verdict adopt">recommend for promote workflow</span> <span class="verdict interesting">interesting</span></span></div>
 <h3><a href="2026-11-13.html">First Q2 run: ebnm empirical-Bayes shrinkage (statistical genetics) and DenseLines density charts (visualization), on mock budgets</a></h3>
 <p>Run on the SYNTHETIC Corning- and Morgan Stanley-modeled ZBB mocks (not real budgets), scored against their answer keys. ebnm pooling cuts each program’s 2025-level error by 21–26%. Its lfsr calls 6–7× as many real year-on-year moves as BH, at ≤ 1.5% wrong sign. The DenseLines port matches the authors’ Rust pixel for pixel; the reference renders start/stop portfolios as all-NaN, and the port fixes that. A residual brush plus a text keyword finds 94% of a hidden AI-demand group.</p>
