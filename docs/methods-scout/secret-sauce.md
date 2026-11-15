@@ -1,6 +1,6 @@
 # Secret sauce plans
 
-*Edition 1 · 2026-11-12 · America/New_York (EST), four already-scouted methods. Edition 2 · same day, ad hoc exotic scout: codyn and Lovell proportionality, grounded in [2026-11-12-adhoc](2026-11-12-adhoc.html). Edition 3 · scheduled 2026-11-12 scout (catch-up published 2026-11-13): ecotraj and lphom, grounded in [2026-11-12](2026-11-12.html). Edition 4 · scheduled 2026-11-13 scout: ebnm and DenseLines, aimed at Q2, grounded in [2026-11-13](2026-11-13.html) (SYNTHETIC mock data). Plans only.*
+*Edition 1 · 2026-11-12 · America/New_York (EST), four already-scouted methods. Edition 2 · same day, ad hoc exotic scout: codyn and Lovell proportionality, grounded in [2026-11-12-adhoc](2026-11-12-adhoc.html). Edition 3 · scheduled 2026-11-12 scout (catch-up published 2026-11-13): ecotraj and lphom, grounded in [2026-11-12](2026-11-12.html). Edition 4 · scheduled 2026-11-13 scout: ebnm and DenseLines, aimed at Q2, grounded in [2026-11-13](2026-11-13.html) (SYNTHETIC mock data). Edition 5 · scheduled 2026-11-14 scout (interrupted, completed 2026-11-15): CRQA and IDR, aimed at Q1 and Q3, grounded in [2026-11-14](2026-11-14.html) (public data). Plans only.*
 
 This is a running file. Each daily methods scout should append plans for that day's methods in the same form. Edition 1 covers the four methods already scouted: changeforest and partykit ([2026-11-10](2026-11-10.html); [RESULTS](https://github.com/jgridifier/analysis-skills/blob/main/methods/changeforest/RESULTS.md) and [RESULTS](https://github.com/jgridifier/analysis-skills/blob/main/methods/partykit/RESULTS.md)) and MARSS and InspectChangepoint ([2026-11-11](2026-11-11.html), aimed at [Q1](QUESTIONS.md)). No new fits were run. Every number below is from those pages, their run JSON, or the RESULTS files. Nothing is being built, nothing is promoted, and no `APPROVAL.md` is written.
 
@@ -32,6 +32,8 @@ For each avenue: what it is in plain math, why it matters on our data (tied to a
 | lphom | **New use** | Form ADV Schedule D filers as the voting units, so the transfer matrix can actually be identified. |
 | ebnm | **New use** | "Is this move real?" lfsr flags for every program in a budget cycle: 6–7× BH's calls at ≤ 1.5% wrong sign on the Q2 mocks. |
 | DenseLines | **Engineering** | A gap-safe, weighted Rust core with a Python binding. The reference returns NaN on start/stop programs, and the exact NumPy port is 10–120× slower. |
+| CRQA (crqa) | **Math** | An order-aware cross-recurrence test: alignment-dependent statistics, max-T over lags and windows, persistence-matched surrogates — full-plot RR on categorical states is shift-invariant. |
+| IDR (isodistrreg) | **Math** | A monotone stress index (distributional single index) so several stress covariates can be combined without the weak 2-D partial order that lost to OLS. |
 
 ---
 
@@ -480,6 +482,54 @@ Residual DenseLines plus a text keyword as a hidden-group finder. Text and chart
 
 ---
 
+## CRQA (crqa)
+
+Coco, M. I. & Dale, R. (2014), "Cross-recurrence quantification analysis of categorical and continuous time series: an R package", *Frontiers in Psychology* 5:510, doi:10.3389/fpsyg.2014.00510; Coco, M. I., Mønster, D., Leonardi, G., Dale, R. & Wallot, S. (2021), "Unidimensional and Multidimensional Methods for Recurrence Quantification Analysis with crqa", *The R Journal* 13(1):112–130, doi:10.32614/RJ-2021-062. CRAN crqa 2.1.0. Scouted on the [2026-11-14 scheduled edition](2026-11-14.html) (interrupted, completed 2026-11-15), aimed at [Q1](QUESTIONS.md#q1). Novelty: niche outside cognitive science and nonlinear dynamics. Status: interesting — not promoted. Plans only, grounded in that run on public aggregates.
+
+**Found via.** Package registry, CRAN, [https://cran.r-project.org/package=crqa](https://cran.r-project.org/package=crqa), and *The R Journal*, [https://journal.r-project.org/articles/RJ-2021-062/](https://journal.r-project.org/articles/RJ-2021-062/). Picked 2026-11-14 (installed from CRAN 2:18–2:21 PM EST per install logs); the discovery path before that was not recorded by the interrupted run; links re-verified 2026-11-15. Field: cognitive science.
+
+**What our runs showed.** Weekly financing fails and the DVP−tri-party spread are anti-recurrent in the same week (0.287 vs a 0.19–0.25 shift band, p = 0.011; familywise over 27 lags 0.085; no lead/lag asymmetry). Rolling: significant in 52/96 windows from late 2018 to mid-2025, none of the 15 windows ending after July 2025. Form PF prime-broker growth: no familywise link in 8 tests. Form PF "reverse repo" growth leads DVP volume growth by ~4 months (p = 0.001). The interrupted run's windowed test used full-plot RR, which is \(\sum_s \hat p^a_s \hat p^b_s\) for categorical states and therefore identical under every shift (20.0006 observed and shifted; p = 1 in all windows). DET barely exceeds its null (10/96 windows, by < 1 point). A full CRQA costs 8.4 s at n = 4,000; the weekly nulls took 143 s on 8 workers.
+
+### 1 · Engineering (effort S)
+
+A Rust lag-profile engine: \(\mathrm{DRP}(k)=\frac{1}{n-|k|}\sum_t \mathbf 1[a_t=b_{t+k}]\) is \(O(nL)\), so the 999-shift null can be done in one pass instead of rebuilding an \(n\times n\) plot per shift; thin Python binding; crqa 2.1.0 `drpfromts` as the oracle. Closest prior work: PyRQA (Rawald et al., OpenCL) computes full plots and RQA measures, not shift-null lag profiles. **Test:** exact parity (difference 0) on the 8 weekly and 12 monthly profiles from the 11-14 page, and the full weekly null in < 1 s (R: 143 s on 8 workers).
+
+### 2 · Math (top pick, effort M)
+
+An order-aware CRQA test. Use only alignment-dependent statistics (\(rr_0\), the lag profile, a lead−lag contrast), control the family over lags and rolling windows with max-T, and replace the wrap-around circular shift with stationary-bootstrap or AR-matched surrogates so trending, persistent series keep their dependence without the end-to-start splice. Closest prior work: surrogate testing for recurrence measures in the nonlinear-dynamics literature (e.g. twin surrogates), and Coco & Dale's shuffled baselines; we found no categorical CRQA test with familywise lag control and a persistence-matched null. **Why:** the interrupted run fell into the shift-invariant-RR trap, and DET added almost nothing. **Test:** size 5% ± 1.5 points on 2,000 simulated independent AR(1) pairs at the persistence of our weekly series, and power ≥ 0.8 for a planted same-week coupling of the 2021–22 size; circular shift as the baseline.
+
+### 3 · New use on our data (effort M)
+
+Joint "stress-state" recurrence across the four Q1 legs: top-quintile states of financing fails, the DVP−tri-party spread, Form PF "reverse repo" growth and CFTC TFF leveraged-fund Treasury positioning, with multidimensional CRQA (crqa 2.x) or joint recurrence. **Test:** on a pre-registered episode list (March 2020, March 2023, late 2025), joint recurrence above a block-shift null at p < 0.05, or an honest miss (fails and the spread already came apart in late 2025).
+
+**Why Math is the top pick.** The method's value here depends entirely on a null that is right; today's first pass shows how easily it is not.
+
+---
+
+## IDR (isodistrreg)
+
+Henzi, A., Ziegel, J. F. & Gneiting, T. (2021), "Isotonic distributional regression", *Journal of the Royal Statistical Society Series B* 83(5):963–993, doi:10.1111/rssb.12450 (arXiv:1909.03725). CRAN isodistrreg 0.6.0 (2026-08-21; Rust core). Scouted on the [2026-11-14 scheduled edition](2026-11-14.html) (interrupted, completed 2026-11-15), aimed at [Q3](QUESTIONS.md#q3). Novelty: niche outside forecast verification. Status: recommended for the promote workflow — not promoted. Plans only.
+
+**Found via.** Package registry, CRAN, [https://cran.r-project.org/package=isodistrreg](https://cran.r-project.org/package=isodistrreg), and arXiv, [https://arxiv.org/abs/1909.03725](https://arxiv.org/abs/1909.03725). Picked 2026-11-14 (installed from CRAN per install logs); discovery path before that not recorded; links re-verified 2026-11-15. Field: probabilistic weather forecasting.
+
+**What our runs showed.** Leave-one-test-year-out CRPS skill vs climatology (360 firm-years, 40 firms): projected pre-tax income rank 15.0%, drawdown rank 3.9% (both p = 0.003 vs a within-year shuffle). 2021–2025: SCB −1.9% (37.9% at the 2.5% floor; Spearman 0.92 with drawdown), drawdown 7.0%, pre-tax 11.3%, SCB + drawdown as a 2-D partial order 5.4% vs OLS 10.6%. Raw payout/RWA: IDR beats OLS-normal (5.8% vs −2.2%; 9.5% vs 0.3%). A 2013–19 fit transfers forward (7.0%), not back (−6.1%). Timing: 1-D 1.0 s at n = 6,000; 2-D 13.2 s at n = 1,000. The rerun reproduced the 11-14 partial output exactly.
+
+### 1 · Engineering (effort M)
+
+A Python binding (PyO3) to the package's own Rust core, with R isodistrreg 0.6.0 as the oracle, and a faster 2-D partial-order solve. Closest prior work: a separate Python IDR by E.-M. Walz ([github.com/evwalz/isodisreg](https://github.com/evwalz/isodisreg)), not checked for parity. **Test:** CRPS parity ≤ 1e-10 on all 13 leave-one-year-out folds from the 11-14 page; 2-D fits at n = 1,000 under 1 s.
+
+### 2 · Math (top pick, effort M)
+
+A monotone stress index: learn \(\theta(x)=\alpha^\top x\) over projected pre-tax income, drawdown, loan losses and SCB, then IDR on the index (a distributional single index model), with a firm-block permutation null instead of the within-year shuffle. Closest prior work: Henzi, Kleger & Ziegel (2023), *JASA* 118(541):489–503; Balabdaoui, Henzi & Looser, arXiv:2310.13973. **Why:** with two covariates the partial order is too weak at n = 132, and IDR lost to OLS (5.4% vs 10.6%). **Test:** LOYO CRPS skill above both the best single-covariate IDR (15.0% full sample; 11.3% in 2021–25) and OLS on the same covariates, firm-block p < 0.05.
+
+### 3 · New use on our data (effort S)
+
+Q3.4 and Q3.5: the same LOYO IDR on dividends/RWA and net buybacks/RWA separately, and, for 2014–2019, the Adverse-minus-Severely-Adverse drawdown gap as a covariate. **Test:** skill > 0 and above the shuffle 95th percentile per response, with a stated prediction that buybacks carry the stress gradient and dividends do not.
+
+**Why Math is the top pick.** The SCB-vs-path answer is already clear; the open problem is combining several stress outputs without losing IDR's tuning-free calibration.
+
+---
+
 ## Citations used (verified)
 
 Only papers we located with venue, year, and pages, plus the four method papers already cited on the scout pages. "Found via" links are only those recorded on the 11-10 and 11-11 pages or in the watchlist.
@@ -503,7 +553,7 @@ Only papers we located with venue, year, and pages, plus the four method papers 
 
 ## What this is not
 
-Plans only. Nothing here is being built. Edition 3’s plans are grounded in the 11-12 scheduled scout runs already published on that edition’s page; no further fits were run to write these plans. Edition 4’s plans (ebnm, DenseLines) are grounded in the 2026-11-13 scheduled run on SYNTHETIC mock ZBB data. Nothing is promoted into analysis-skills. No `APPROVAL.md` is written. No raw private Drive rows are published. This file and its page live in research-lab, not in traceot. Research-lab PRs #25 and #21 are not touched.
+Plans only. Nothing here is being built. Edition 3’s plans are grounded in the 11-12 scheduled scout runs already published on that edition’s page; no further fits were run to write these plans. Edition 4’s plans (ebnm, DenseLines) are grounded in the 2026-11-13 scheduled run on SYNTHETIC mock ZBB data. Edition 5’s plans (CRQA, IDR) are grounded in the 2026-11-14 scheduled run, completed 2026-11-15, on public data. Nothing is promoted into analysis-skills. No `APPROVAL.md` is written. No raw private Drive rows are published. This file and its page live in research-lab, not in traceot. Research-lab PRs #25 and #21 are not touched.
 
 - Baselga, A. & Orme, C. D. L. (2012). betapart: an R package for the study of beta diversity. *Methods in Ecology and Evolution*, 3(5):808–812.
 - Collins, S. L., Micheli, F. & Hartt, L. (2000). A method to determine rates and patterns of variability in ecological communities. *Oikos*, 91(2):285–293.
@@ -526,3 +576,9 @@ Plans only. Nothing here is being built. Edition 3’s plans are grounded in the
 - Swihart, B. J., Caffo, B., James, B. D., Strand, M., Schwartz, B. S. & Punjabi, N. M. (2010). Lasagna plots: a saucy alternative to spaghetti plots. *Epidemiology*, 21(5):621–625.
 - Wang, W. & Stephens, M. (2021). Empirical Bayes Matrix Factorization. *Journal of Machine Learning Research*, 22(120):1–40.
 - Willwerscheid, J., Carbonetto, P. & Stephens, M. (2025). ebnm: An R Package for Solving the Empirical Bayes Normal Means Problem Using a Variety of Prior Families. *Journal of Statistical Software*, 114(3):1–33.
+- Coco, M. I. & Dale, R. (2014). Cross-recurrence quantification analysis of categorical and continuous time series: an R package. *Frontiers in Psychology*, 5:510.
+- Coco, M. I., Mønster, D., Leonardi, G., Dale, R. & Wallot, S. (2021). Unidimensional and Multidimensional Methods for Recurrence Quantification Analysis with crqa. *The R Journal*, 13(1):112–130.
+- Henzi, A., Ziegel, J. F. & Gneiting, T. (2021). Isotonic distributional regression. *Journal of the Royal Statistical Society Series B*, 83(5):963–993.
+- Henzi, A., Kleger, G.-R. & Ziegel, J. F. (2023). Distributional (single) index models. *Journal of the American Statistical Association*, 118(541):489–503.
+- Balabdaoui, F., Henzi, A. & Looser, L. Estimation and convergence rates in the distributional single index model. arXiv:2310.13973.
+- Walz, E.-M., Henzi, A., Ziegel, J. & Gneiting, T. (2024). Easy Uncertainty Quantification (EasyUQ): Generating Predictive Distributions from Single-Valued Model Output. *SIAM Review*, 66(1):91–122.
