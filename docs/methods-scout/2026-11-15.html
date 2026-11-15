@@ -1,0 +1,228 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Methods scout · 2026-11-15 · research-lab</title>
+<meta name="description" content="Methods scout 2026-11-15, aimed at Q1.4 and Q1.5: convergent cross mapping (ecology) on CFTC TFF positioning, repo and settlement fails; archaeological seriation, battleship plots and event-date clocks (kairos/tabula) on the OFR repo venue and tenor mix.">
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,400..800&family=Newsreader:ital,opsz,wght@0,6..72,400..600;1,6..72,400..500&family=JetBrains+Mono:wght@400;500;700&display=swap">
+<link rel="stylesheet" href="../assets/brief.css">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.css">
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.js"></script>
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/contrib/auto-render.min.js" onload="renderMathInElement(document.body,{delimiters:[{left:'$$',right:'$$',display:true},{left:'\\(',right:'\\)',display:false}]})"></script>
+<style>
+  .avenues { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 1rem; margin: 1.1rem 0 1.8rem; }
+  .avenues > .card { margin: 0; max-width: none; display: flex; flex-direction: column; }
+  .avenues > .card p, .avenues > .card li { max-width: none; }
+  .avenues .pitch { flex: 1 1 auto; margin: 0 0 .7rem; font-size: 1.02rem; }
+  .avenue-kicker { font-family: var(--f-mono); font-size: .72rem; letter-spacing: .14em; text-transform: uppercase; color: var(--muted); margin: 0 0 .35rem; }
+  .avenues h3 { margin: 0 0 .45rem; font-size: 1.15rem; letter-spacing: -.02em; line-height: 1.2; }
+  .badge-top { display: inline-block; font-family: var(--f-mono); font-weight: 700; font-size: .7rem; letter-spacing: .14em; text-transform: uppercase; padding: .22rem .55rem; background: var(--amber); border: 2px solid var(--ink); color: var(--ink); }
+  .card.top-pick { border-color: var(--ink); box-shadow: 8px 8px 0 var(--amber); }
+  .effort { font-family: var(--f-mono); font-size: .72rem; letter-spacing: .1em; text-transform: uppercase; color: var(--muted); }
+  .found-via { font-family: var(--f-mono); font-size: .82rem; line-height: 1.55; color: var(--body); background: var(--card); border: 2px solid var(--ink); border-left: 8px solid var(--teal); padding: .7rem 1rem; margin: .4rem 0 1rem; max-width: none; }
+  .found-via strong { font-family: var(--f-mono); letter-spacing: .08em; text-transform: uppercase; font-size: .75rem; }
+  figure { margin: 1.2rem 0 1.6rem; max-width: none; }
+  figure img { width: 100%; height: auto; border: 2px solid var(--ink); }
+  figcaption { font-family: var(--f-mono); font-size: .8rem; color: var(--muted); margin-top: .45rem; }
+  @media (max-width: 900px) { .avenues { grid-template-columns: 1fr; } }
+</style>
+<!-- Methods Scout home-screen / PWA tags. Paste into <head> of every methods-scout page.
+     Paths are root-absolute so they resolve under https://jgridifier.github.io/research-lab/. -->
+<link rel="apple-touch-icon" sizes="180x180" href="/research-lab/methods-scout/icons/apple-touch-icon.png">
+<link rel="icon" type="image/png" sizes="32x32" href="/research-lab/methods-scout/icons/favicon-32.png">
+<link rel="icon" type="image/png" sizes="192x192" href="/research-lab/methods-scout/icons/icon-192.png">
+<link rel="manifest" href="/research-lab/methods-scout/manifest.webmanifest">
+<meta name="apple-mobile-web-app-title" content="Methods Scout">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="theme-color" content="#0F2A23">
+</head>
+<body><main>
+<header class="mast">
+  <div class="date">Sunday · November 15, 2026 · scheduled edition · aimed at Q1.4 and Q1.5 · exotic · public aggregate data</div>
+  <h1>Methods scout</h1>
+  <p class="dek">Two tools from fields that study systems they can’t experiment on. From fisheries ecology: convergent cross mapping, which asks whether one series’ dynamics carry a fingerprint of another. From archaeology: seriation, battleship plots and pottery-style “event dates”, which here put a date on the repo market’s venue-and-tenor mix. Together they cover the two Q1 sub-questions nobody had run yet: tenor and venue mix (Q1.4) and positioning versus funding (Q1.5).</p>
+  <nav><a href="index.html">All editions</a><a href="secret-sauce.html">Secret sauce</a><a href="https://github.com/jgridifier/research-lab/blob/main/docs/methods-scout/QUESTIONS.md">Research questions</a><a href="https://github.com/jgridifier/research-lab/blob/main/docs/methods-scout/watchlist.md">Watchlist</a><a href="../index.html">Research lab home</a></nav>
+</header>
+
+<div class="ticker">
+  <span><b>●</b> The repo mix runs like a clock. Ordering 101 months by venue × tenor mix alone recovers calendar order (Spearman −0.96; Porčić seriation test p &lt; 0.001). Fitted on 2018–2022 only, the “mix clock” dates 2023–2026 months with a 1.06-year mean error, against 1.92 years for the naive baseline.</span>
+  <span><b>●</b> Form PF total hedge-fund borrowing growth leads the mix clock’s speed by 3–6 months (r = 0.56, shift-null p = 0.0005, Holm p = 0.009 over 18 tests). It holds in 2019–22 (r = 0.53) and 2023–25 (r = 0.42).</span>
+  <span><b>●</b> Weekly financing fails cross-map the DVP–tri-party spread (ρ = 0.33), and so do leveraged-fund Treasury-futures position changes (ρ = 0.25). Both pass a surrogate null (p = 0.005), both are stable across halves, and both reach Holm p = 0.05, the floor with 200 surrogates.</span>
+  <span><b>●</b> Leveraged-fund positioning and fails show no cross-map link in either direction (p = 0.21, 0.47), but linear Granger rejects both ways (p = 0.004, 0.001). The two tests disagree.</span>
+</div>
+
+<section class="tldr">
+<h2>The short version</h2>
+<ul>
+<li><strong>Data.</strong> Public aggregates only, from the lab’s copies of the public files. Q1.5: CFTC Traders in Financial Futures (leveraged-fund net short in 2y, 5y and 10y Treasury note futures), NY Fed primary-dealer Treasury financing fails, and the OFR DVP outstanding volume and DVP–tri-party overnight spread. Weekly, 2019-01-16 to 2025-12-31, n = 364. Q1.4: OFR repo volumes for 9 venue × tenor segments (DVP, GCF and the OFR “TRIV1” tri-party series, which does not show the Fed reverse-repo balloon that the all-in tri-party series shows; overnight/open, ≤30 days, &gt;30 days), monthly averages 2018-05 to 2026-09; plus SEC Form PF tab 8.27 monthly borrowings (to 2025-12). No private Drive rows.</li>
+<li><strong>Method 1, convergent cross mapping (pyEDM; ecology).</strong> Two Holm-borderline directed links into the DVP–tri-party spread: fails → spread and leveraged-fund positioning → spread. No positioning–fails link. Verdict: <span class="verdict interesting">interesting</span>.</li>
+<li><strong>Method 2, seriation and event dates (kairos/tabula; archaeology).</strong> The 9-segment mix drifts almost monotonically toward DVP overnight and short-term DVP. The battleship (EPPM) plot shows a three-stage hand-off that the stacked-area chart hides. Form PF borrowing growth leads how fast that drift happens. Verdict: <span class="verdict adopt">recommend for promote workflow</span> (nothing promoted; Jared approves).</li>
+<li><strong>Not repeated.</strong> CRQA, IDR, ebnm, DenseLines, codyn, Lovell ρ, ecotraj, lphom and the earlier picks were not re-run. No overlap with the <a href="https://github.com/jgridifier/research-lab/blob/main/docs/methods-scout/watchlist.md">watchlist</a>.</li>
+</ul>
+</section>
+
+<div class="sec-head"><span class="n">Questions</span><h2>Where each question stands</h2><span class="line"></span></div>
+<div class="card"><div class="card-top"><span class="tag teal">Q1 · in progress</span></div>
+<p><strong>Q1.4 (tenor and venue mix): first run today.</strong> The mix has a strong one-way drift. CA axis 1 holds 69% of inertia and tracks time (ρ = −0.96). Form PF total borrowing growth leads the drift’s speed by 3–6 months. <strong>Q1.5 (positioning vs funding): first run today.</strong> Leveraged-fund positioning changes leave a cross-map fingerprint in the DVP–tri-party spread, not in fails. Q1.1–Q1.3 build on the <a href="2026-11-14.html">11-14 CRQA</a>: CCM gives the fails–spread link a direction (fails → spread, ρ = 0.33, versus 0.16 the other way).</p></div>
+<div class="card"><div class="card-top"><span class="tag">Q2 · in progress · not targeted today</span></div><p>No Q2 analysis today. Synthetic mocks only; nothing new on data.</p></div>
+<div class="card"><div class="card-top"><span class="tag">Q3 · in progress · not targeted today</span></div><p>No Q3 analysis today. The <a href="2026-11-14.html">11-14 IDR</a> results stand.</p></div>
+
+<!-- ================= METHOD 1 ================= -->
+<div class="sec-head" id="m1"><span class="n">Method 01</span><h2>Convergent cross mapping: whose fingerprint is in whose dynamics?</h2><span class="line"></span></div>
+<p class="meta">Sugihara, May, Ye, Hsieh, Deyle, Fogarty &amp; Munch (2012), “Detecting causality in complex ecosystems”, <em>Science</em> 338:496–500 · Ye, Deyle, Gilarranz &amp; Sugihara (2015), “Distinguishing time-delayed causal interactions using convergent cross mapping”, <em>Scientific Reports</em> 5:14750, doi:10.1038/srep14750 · pyEDM 2.5.7 (Sugihara Lab, UCSD license; cppEDM C++ core for 1.x, NumPy/SciPy for 2.x) · field: fisheries and population ecology · novelty: <strong>exotic-transfer</strong> · <span class="verdict interesting">interesting</span></p>
+<p class="found-via"><strong>Found via.</strong> Chosen from the ecology causal-inference literature (Sugihara et al. 2012). Package located by web search on 2026-11-15: GitHub, <a href="https://github.com/SugiharaLab/pyEDM">https://github.com/SugiharaLab/pyEDM</a> (148 stars), and the lab’s documentation, <a href="https://sugiharalab.github.io/EDM_Documentation/ccm_/">https://sugiharalab.github.io/EDM_Documentation/ccm_/</a>. Installed from PyPI on 2026-11-15. The lag-scan paper was verified at <a href="https://www.nature.com/articles/srep14750">nature.com/articles/srep14750</a>. Not found via X or SSRN.</p>
+
+<div class="avenues">
+  <article class="card top-pick">
+    <div class="card-top"><span class="avenue-kicker">1 · Engineering</span><span class="badge-top">Top pick</span></div>
+    <h3>Surrogate nulls for free: reuse the neighbour sets</h3>
+    <p class="pitch">In a shift-surrogate test, the responder’s shadow manifold never changes. Only the driver values being predicted move. Neighbours can be found once, and each surrogate then costs \(O(nk)\). A Rust core with this reuse, checked against pyEDM, would make 10,000 surrogates cheap and lift today’s p-value floor (1/201). Effort S–M.</p>
+    <div class="foot"><strong>Test.</strong> ρ parity ≤ 1e-12 with pyEDM 2.5.7 on all 10 directions at full library. The 10 × 200 null in &lt; 1 s (today: 148 s).</div>
+  </article>
+  <article class="card teal">
+    <div class="card-top"><span class="avenue-kicker">2 · Math</span><span class="effort">Effort M</span></div>
+    <h3>A familywise partial-CCM network</h3>
+    <p class="pitch">Condition each cross map on the third and fourth legs (partial cross mapping) to separate direct links from indirect ones. Add persistence-preserving surrogates and max-T control over every edge of the 4-node graph.</p>
+    <div class="foot"><strong>Test.</strong> On simulated 4-node chains at our persistence: size 5% ± 1.5 points, and indirect edges removed ≥ 80% of the time. Then: does positioning → spread survive conditioning on fails?</div>
+  </article>
+  <article class="card green">
+    <div class="card-top"><span class="avenue-kicker">3 · New use on our data</span><span class="effort">Effort S</span></div>
+    <h3>Rolling CCM on the late-2025 switch-off (Q1.2–Q1.3)</h3>
+    <p class="pitch">CRQA showed the fails–spread coupling turning off after July 2025. Rolling 2-year CCM would show whether the direction (fails → spread) faded first, or positioning → spread took over.</p>
+    <div class="foot"><strong>Test.</strong> Windows and episodes fixed in advance, with a surrogate null per window and Holm across windows. An honest miss counts.</div>
+  </article>
+</div>
+
+<p><strong>Target question.</strong> Q1.5 (positioning vs funding), plus direction for Q1.1 (lead/lag).</p>
+<p><strong>What it is.</strong> Build a “shadow manifold” for a series \(Y\) from its own lags, \(\mathbf{y}_t = (y_t, y_{t-1}, \dots, y_{t-E+1})\). If \(X\) drives \(Y\), then \(Y\)’s history contains information about \(X\) (Takens’ theorem). So the \(E+1\) nearest neighbours of \(\mathbf{y}_t\) predict \(x_t\):
+$$\hat x_t = \sum_{i=1}^{E+1} w_i\, x_{t_i},\qquad w_i \propto e^{-d_i/d_1},\qquad \rho_L = \mathrm{cor}(x_t, \hat x_t).$$
+“X drives Y” is read when \(\rho_L\) is positive and <em>rises with the library size</em> \(L\) (convergence). The direction is the opposite of Granger’s: the effect’s manifold recovers the cause. \(E\) is chosen per series by simplex skill (first half to fit, second half to test). Every cross map uses a 4-week exclusion radius. <strong>Null:</strong> 200 circular shifts of the driver by at least 26 weeks, with \(\rho\) recomputed at \(L = 350\). This keeps the driver’s persistence and breaks the alignment.</p>
+<p><strong>Why this, not Granger.</strong> Granger asks whether \(X\)’s past improves a linear forecast of \(Y\). It can be fooled by shared cycles and by state-dependent links. CCM needs no model and reads state-dependent (nonlinear) coupling. It does assume the system is close to deterministic, so we check that first.</p>
+
+<h3>1a · Positioning, funding and fails: who cross-maps whom (Q1.5, Q1.1)</h3>
+<figure><img src="fig/2026-11-15/ccm_convergence.png" alt="Six CCM convergence curves. Fails to spread and leveraged-fund positioning to spread rise clearly above the surrogate band; positioning to fails and the reverse stay flat inside the band."><figcaption>Cross-map skill vs library size. The grey band is below the 95th percentile of the driver-shift null at L = 350. Data: CFTC TFF, NY Fed fails, OFR repo; weekly 2019-01 → 2025-12.</figcaption></figure>
+<div class="table-wrap"><table><thead><tr><th>Direction (driver → responder)</th><th class="num">E</th><th class="num">ρ at L=20</th><th class="num">ρ at L=350</th><th class="num">Null 95th</th><th class="num">p (shift)</th><th class="num">Holm p</th><th class="num">Granger min p</th></tr></thead><tbody>
+<tr><td>Financing fails → DVP–tri-party spread</td><td class="num">8</td><td class="num">0.092</td><td class="num"><strong>0.332</strong></td><td class="num">0.148</td><td class="num">0.005</td><td class="num">0.050</td><td class="num">0.017</td></tr>
+<tr><td>TFF lev-fund net short → spread</td><td class="num">8</td><td class="num">0.056</td><td class="num"><strong>0.246</strong></td><td class="num">0.173</td><td class="num">0.005</td><td class="num">0.050</td><td class="num">0.027</td></tr>
+<tr><td>Fails → DVP volume</td><td class="num">6</td><td class="num">0.100</td><td class="num">0.237</td><td class="num">0.157</td><td class="num">0.010</td><td class="num">0.080</td><td class="num">0.103</td></tr>
+<tr><td>TFF lev-fund net short → DVP volume</td><td class="num">6</td><td class="num">0.057</td><td class="num">0.185</td><td class="num">0.139</td><td class="num">0.020</td><td class="num">0.139</td><td class="num">0.188</td></tr>
+<tr><td>Spread → fails</td><td class="num">5</td><td class="num">0.076</td><td class="num">0.157</td><td class="num">0.134</td><td class="num">0.040</td><td class="num">0.239</td><td class="num">&lt; 0.001</td></tr>
+<tr><td>DVP volume → fails</td><td class="num">5</td><td class="num">0.055</td><td class="num">0.160</td><td class="num">0.159</td><td class="num">0.055</td><td class="num">0.274</td><td class="num">0.174</td></tr>
+<tr><td>Fails → TFF lev-fund</td><td class="num">2</td><td class="num">0.037</td><td class="num">0.058</td><td class="num">0.098</td><td class="num">0.214</td><td class="num">0.856</td><td class="num">0.004</td></tr>
+<tr><td>DVP volume → TFF lev-fund</td><td class="num">2</td><td class="num">−0.006</td><td class="num">0.040</td><td class="num">0.115</td><td class="num">0.284</td><td class="num">0.856</td><td class="num">0.003</td></tr>
+<tr><td>TFF lev-fund → fails</td><td class="num">5</td><td class="num">0.007</td><td class="num">0.011</td><td class="num">0.116</td><td class="num">0.468</td><td class="num">0.935</td><td class="num">0.001</td></tr>
+<tr><td>Spread → TFF lev-fund</td><td class="num">2</td><td class="num">0.010</td><td class="num">0.010</td><td class="num">0.078</td><td class="num">0.468</td><td class="num">0.935</td><td class="num">0.016</td></tr>
+</tbody></table></div>
+<p><strong>Reading.</strong> The spread is the series whose dynamics remember the others. Its shadow manifold recovers both weekly fails (ρ = 0.33) and leveraged-fund position changes (ρ = 0.25). Both curves converge (+0.24 and +0.19 from L = 20 to 350). The reverse directions are weaker: spread → fails reaches 0.16 (p = 0.04, not Holm-significant), and spread → positioning is 0.01. This gives a direction to the 11-14 CRQA same-week anti-recurrence between fails and the spread: fails drive the spread more than the reverse. Positioning and fails do not cross-map at all, either way. <strong>The 0.005 p-values are the smallest possible with 200 surrogates.</strong> After Holm they sit exactly at 0.05, so treat them as borderline until the Engineering avenue allows more surrogates.</p>
+
+<h3>1b · Lag scan, nonlinearity, and Granger as the plain baseline</h3>
+<figure><img src="fig/2026-11-15/ccm_lag.png" alt="Lag scan: fails to spread peaks at minus one week, positioning to spread at zero, fails to DVP volume at zero, positioning to DVP volume at plus one."><figcaption>Cross-map skill at L = 350 for lags Tp = −4…+4 (Ye et al. 2015). A peak at a negative lag means the driver’s past is best recovered, which fits a delayed effect.</figcaption></figure>
+<div class="table-wrap"><table><thead><tr><th>Series (own dynamics)</th><th class="num">E</th><th class="num">Simplex ρ</th><th class="num">S-map ρ, θ = 0 (linear)</th><th class="num">Best S-map ρ (θ)</th></tr></thead><tbody>
+<tr><td>Financing fails (Δlog)</td><td class="num">5</td><td class="num">0.368</td><td class="num">0.410</td><td class="num">0.453 (1.5)</td></tr>
+<tr><td>DVP–tri-party spread (Δ)</td><td class="num">8</td><td class="num">0.430</td><td class="num">0.451</td><td class="num">0.542 (1.5)</td></tr>
+<tr><td>DVP volume (Δlog)</td><td class="num">6</td><td class="num">0.261</td><td class="num">0.195</td><td class="num">0.307 (9)</td></tr>
+<tr><td>TFF lev-fund net short (Δ)</td><td class="num">2</td><td class="num">0.069</td><td class="num">0.048</td><td class="num">0.076 (5)</td></tr>
+</tbody></table></div>
+<p>Fails → spread peaks at −1 week. Positioning → spread and fails → DVP volume peak at 0. The spread, fails and DVP volume all predict better with state-dependent (θ &gt; 0) S-maps than with a linear map (+0.09, +0.04 and +0.11). That is the regime where CCM can see what Granger cannot. Weekly leveraged-fund position changes are close to unpredictable from their own past (ρ ≈ 0.07), so they work only as a driver, never as a responder manifold. <strong>Baseline disagreement:</strong> linear Granger rejects positioning ↔ fails in both directions (p = 0.001 and 0.004), and positioning ↔ DVP volume too (p = 0.003). CCM finds nothing for either pair. Granger significant both ways with no CCM skill is the classic sign of a shared linear cycle, such as month-end and quarter-end timing, rather than coupling. That is a hypothesis, not tested here.</p>
+
+<h3>1c · Stability: two halves (2019-01 → 2022-06, 2022-07 → 2025-12)</h3>
+<div class="table-wrap"><table><thead><tr><th>Direction</th><th class="num">ρ, first half (L = 172)</th><th class="num">ρ, second half (L = 172)</th><th>Reading</th></tr></thead><tbody>
+<tr><td>Fails → spread</td><td class="num">0.271</td><td class="num">0.261</td><td>Stable</td></tr>
+<tr><td>TFF lev-fund → spread</td><td class="num">0.179</td><td class="num">0.143</td><td>Stable, a bit weaker</td></tr>
+<tr><td>Fails → DVP volume</td><td class="num">0.020</td><td class="num">0.379</td><td>Second half only</td></tr>
+<tr><td>TFF lev-fund → DVP volume</td><td class="num">0.025</td><td class="num">0.190</td><td>Second half only</td></tr>
+</tbody></table></div>
+<p>The two links into the spread hold in both halves. The two links into DVP volume exist only after mid-2022, when DVP outstanding roughly doubled (from about $1.4tn in 2022 to $3.3tn in 2025, yearly means). That is a regime change in the relationship itself (Q1.3), and a natural place for the rolling-window avenue.</p>
+
+<h3>Speed, limitations and verdict</h3>
+<p><strong>Speed.</strong> One 10-point convergence curve (100 random libraries per point) takes 1.36 s. The full run (4 embeddings, 10 directions × 200 surrogates, lag scans, Granger, halves) took 148 s single-threaded.</p>
+<p><strong>Limitations.</strong> CCM assumes weakly noisy deterministic dynamics. These are noisy weekly differences with ρ values of 0.2–0.3: real but modest. The positioning series is an unweighted sum of 2y, 5y and 10y contracts, not DV01-weighted. The lab’s TFF copy stops at 2025-12-30 (one more row on 2026-09-29), so the panel ends there. Two holiday weeks without a fails release were interpolated. The circular shift wraps the end of each series onto its start. Descriptive only; not a trading signal.</p>
+<p><strong>Verdict: interesting.</strong> It gives a direction to the fails–spread link and a clean “no” on positioning vs fails, where Granger says “yes”. Results are Holm-borderline until the null is cheaper.</p>
+
+<!-- ================= METHOD 2 ================= -->
+<div class="sec-head" id="m2"><span class="n">Method 02</span><h2>Seriation, battleship plots and a mix clock: dating the repo market like pottery</h2><span class="line"></span></div>
+<p class="meta">Frerebeau, N. (2026), <em>kairos: Analysis of Chronological Patterns from Archaeological Count Data</em>, R package (CRAN 2.3.0; site lists 2.4.0), doi:10.5281/zenodo.5653896 · <em>tabula</em> 3.3.2 (JOSS, doi:10.21105/joss.01821) · Bellanger &amp; Husi (2012), <em>Journal of Archaeological Science</em> 39(4):777–790, doi:10.1016/j.jas.2011.06.031 · Porčić (2013), <em>Journal of Archaeological Science</em> 40(12):4552–4559, doi:10.1016/j.jas.2013.07.013 · Desachy (2004), EPPM seriograph, <em>Revue archéologique de Picardie</em> 3(1):39–56 · field: archaeology (ceramic chronology) · novelty: <strong>exotic-transfer · obscure</strong> (tesselle project, Université Bordeaux Montaigne; development on Codeberg) · GPL-3 · <span class="verdict adopt">recommend for promote workflow</span></p>
+<p class="found-via"><strong>Found via.</strong> Web search for archaeological seriation software on 2026-11-15. It turned up the tesselle package site, <a href="https://packages.tesselle.org/kairos/">https://packages.tesselle.org/kairos/</a> (with the Codeberg repo <a href="https://codeberg.org/tesselle/kairos">codeberg.org/tesselle/kairos</a>), and the tabula paper in JOSS, <a href="https://joss.theoj.org/papers/10.21105/joss.01821.pdf">joss.theoj.org/papers/10.21105/joss.01821</a>. The method references (Bellanger &amp; Husi 2012; Porčić 2013; Desachy 2004) were taken from the kairos reference list. Installed from CRAN on 2026-11-15. Not found via X or SSRN.</p>
+
+<div class="avenues">
+  <article class="card teal">
+    <div class="card-top"><span class="avenue-kicker">1 · Engineering</span><span class="effort">Effort S</span></div>
+    <h3>A Python port of CA seriation, the Porčić test and event dates</h3>
+    <p class="pitch">The three pieces are small linear-algebra routines: CA by SVD, a mode count over permutations, and a regression on CA coordinates. A faithful NumPy port, with Rust for the permutation test, would run them inside the lab’s Python pipelines and on daily data with bootstrap bands. kairos 2.3.0 is the oracle.</p>
+    <div class="foot"><strong>Test.</strong> CA coordinates ≤ 1e-10 (up to sign), event dates ≤ 1e-8, identical mode counts under shared permutations. Then 10,000-permutation assess on 2,000 days in &lt; 1 s.</div>
+  </article>
+  <article class="card top-pick">
+    <div class="card-top"><span class="avenue-kicker">2 · Math</span><span class="badge-top">Top pick</span></div>
+    <h3>A taxonomy-robust mix clock with a time-series null</h3>
+    <p class="pitch">The event model treats months like independent pottery deposits and assumes the type list never changes. Both fail here: OFR split its ≤30-day bucket in August 2025, and the clock jumped a full year. Make re-defined buckets supplementary CA columns tied by an aggregation constraint, and bootstrap the event intervals in blocks. Effort M.</p>
+    <div class="foot"><strong>Test.</strong> The 2025-08 jump (−0.51 → +0.50 years) shrinks below 0.15 years, and the walk-forward MAE (1.06 years) does not get worse. Pre-registered.</div>
+  </article>
+  <article class="card green">
+    <div class="card-top"><span class="avenue-kicker">3 · New use on our data</span><span class="effort">Effort S</span></div>
+    <h3>Collateral-mix and positioning-mix clocks (Q1.4, Q1.5)</h3>
+    <p class="pitch">Build the same clock on tri-party collateral (Treasury, agency, corporate, other) and on TFF open interest by trader type. Then ask whether Form PF borrowing growth leads them too, or whether the lead is specific to venue and tenor.</p>
+    <div class="foot"><strong>Test.</strong> Form PF lead 3 and lead 6 vs clock speed, with circular-shift p &lt; 0.05 after Holm, stated in advance. Today’s venue × tenor result is the reference.</div>
+  </article>
+</div>
+
+<p><strong>Target question.</strong> Q1.4: does the repo venue and tenor mix change when Form PF borrowings rise?</p>
+<p><strong>What it is.</strong> Archaeologists date graves by the mix of pottery types in them (Petrie 1899). Types come into and go out of fashion, so ordering deposits to make every type’s frequency rise and then fall (unimodal, a “battleship”) recovers time. Here a <em>deposit</em> is a month and the <em>types</em> are 9 repo segments, with monthly-average dollar volume (in $bn) as the counts.</p>
+<ul>
+<li><strong>Seriation</strong> orders months and segments by their first correspondence-analysis axis.</li>
+<li><strong>Porčić’s test</strong> counts the total number of modes across types after seriation, then compares it with randomly permuted orders (fewer modes means a better fit to the seriation model). It reports a coefficient from 0 to 1.</li>
+<li>The <strong>event date</strong> (Bellanger &amp; Husi) regresses known dates on the leading CA row coordinates, \(\hat t_i = \beta_0 + \sum_k \beta_k F_{ik}\). Any mix then gets a date. We read \(\hat t_i - t_i\) as “how old or new the mix looks”, and 12-month changes in \(\hat t\) as the <em>mix speed</em>, in mix-years per calendar year.</li>
+<li>The <strong>EPPM seriograph</strong> (Desachy) blackens each type’s share above its column mean, so hand-offs between types stand out.</li>
+</ul>
+
+<h3>2a · The mix is a clock: seriation vs calendar, battleship plots vs stacked areas (Q1.4)</h3>
+<figure><img src="fig/2026-11-15/kairos_eppm.png" alt="EPPM seriograph of 101 months by 9 repo segments, ordered by seriation. Above-average shares (black) move from DVP term over 30 days and tri-party overnight in 2018 to 2022, to GCF term in 2023 to 2024, to DVP overnight and short-term DVP from late 2024."><figcaption>EPPM seriograph (tabula). Rows are months in seriated order, which is close to calendar order. Grey bars are shares; black marks the share above that segment’s average. Read it as a three-stage hand-off.</figcaption></figure>
+<figure><img src="fig/2026-11-15/kairos_stacked_baseline.png" alt="Standard stacked-area chart of the 9 segment shares over calendar time; the DVP overnight share widens slowly and the other changes are hard to see."><figcaption>The standard view of the same data. The DVP-overnight widening shows; the mid-period GCF-term episode and the end of the tri-party-overnight excess are hard to see.</figcaption></figure>
+<div class="table-wrap"><table><thead><tr><th>Statistic</th><th class="num">Value</th></tr></thead><tbody>
+<tr><td>CA inertia, axes 1–4</td><td class="num">69.3% · 12.5% · 7.7% · 4.4%</td></tr>
+<tr><td>Spearman, seriated month order vs calendar order</td><td class="num">−0.964 (sign is arbitrary)</td></tr>
+<tr><td>Porčić test: observed total modes vs random 5th percentile (1,000 permutations)</td><td class="num">248 vs 286; 0/1000 random orders as low (p &lt; 0.001)</td></tr>
+<tr><td>Seriation coefficient (0 = none, 1 = perfect)</td><td class="num">0.52</td></tr>
+<tr><td>Segment scores on axis 1 (oldest → newest)</td><td class="num">DVP &gt;30d 0.36 · GCF ≤30d 0.26 · GCF &gt;30d 0.16 · TRI ON 0.10 · GCF ON 0.06 · TRI &gt;30d −0.06 · TRI ≤30d −0.08 · DVP ≤30d −0.15 · DVP ON −0.16</td></tr>
+</tbody></table></div>
+<p><strong>Reading.</strong> A single direction, from “term DVP and tri-party overnight” to “overnight and short-term DVP”, explains 69% of the mix variation and orders months almost exactly by date. The EPPM plot shows the path. Above-average DVP &gt;30d and tri-party overnight shares dominate 2018–2022. GCF term (&gt;30d) is above average in 2023–mid-2024. DVP overnight takes over from late 2024. The coefficient of 0.52 says the drift is real but not purely “one fashion after another”: some segments, like GCF overnight, go up and down more than once.</p>
+
+<h3>2b · The mix clock, walk-forward, and its link to Form PF borrowings (Q1.4 direct)</h3>
+<figure><img src="fig/2026-11-15/kairos_mixclock.png" alt="Left: event dates implied by the mix track calendar time, with a jump at the August 2025 bucket change; the walk-forward line trained through 2022 lags behind from 2023. Right: scatter of Form PF borrowing growth three months earlier against mix speed, positive slope."><figcaption>Left: the mix clock (event model on 101 months) and an honest walk-forward version (trained on 2018-05 → 2022-12, predicting 2023-01 → 2026-09). The dashed line marks OFR’s tenor-bucket split. Right: Form PF tab 8.27 total borrowing growth (12-month log change, 3 months earlier) vs mix speed, 2019–2025.</figcaption></figure>
+<div class="table-wrap"><table><thead><tr><th>Test</th><th class="num">Result</th></tr></thead><tbody>
+<tr><td>Event model fit, mix date vs calendar (all months)</td><td class="num">R² = 0.93</td></tr>
+<tr><td>Walk-forward (train ≤ 2022, 56 months; test 45 months): MAE</td><td class="num"><strong>1.06 years</strong> vs 1.92 for “last training date”; cor 0.95</td></tr>
+<tr><td>Form PF total borrowing growth, lead 3 months → mix speed</td><td class="num">r = <strong>0.56</strong>, shift p = 0.0005, Holm p = 0.009 (18 tests), n = 77</td></tr>
+<tr><td>Same, lead 6 months</td><td class="num">r = 0.54, shift p = 0.0005, Holm p = 0.009, n = 74</td></tr>
+<tr><td>Robustness: drop months from 2025-08 (bucket change)</td><td class="num">lead 3: r = 0.56 (p = 0.0005, n = 72); lead 6: r = 0.54 (n = 69)</td></tr>
+<tr><td>Robustness: sub-periods 2019–22 / 2023–25 (lead 3)</td><td class="num">r = 0.53 (n = 41) / 0.42 (n = 36)</td></tr>
+<tr><td>Robustness: 3-month changes of both series</td><td class="num">r = 0.28 (n = 74)</td></tr>
+<tr><td>Prime-broker borrowing growth alone (leads 0/3/6) → mix speed</td><td class="num">r = −0.07 / 0.26 / 0.35; all p ≥ 0.14</td></tr>
+<tr><td>“Reverse repo” borrowing growth alone (leads 0/3/6) → mix speed</td><td class="num">r = 0.53 / 0.48 / 0.41; all p ≥ 0.15</td></tr>
+</tbody></table></div>
+<p><strong>Reading.</strong> When hedge-fund borrowing in total grows faster, the repo mix moves faster toward overnight and short-term DVP 3–6 months later. The link holds inside both sub-periods, so it is not just the shared rise of 2023–25. The prime-broker line alone does not carry it, which matches the 11-14 CRQA finding of no familywise prime-broker link. Reverse-repo borrowing points the same way but is not significant alone under the shift null. The walk-forward clock lags reality from 2023: trained on 2018–22, it sees the 2023–26 mix as “2023–2025”. That is shrinkage in a linear extrapolation, and it says the post-2022 drift is faster than the earlier one (mix speed 1.05–1.34 mix-years per year in 2023–25, against 0.45–0.89 in 2020–22).</p>
+
+<h3>2c · Stability across windows, and timing</h3>
+<div class="table-wrap"><table><thead><tr><th>Window</th><th class="num">Seriated order vs calendar (Spearman)</th><th>Segment order on axis 1 (oldest → newest)</th></tr></thead><tbody>
+<tr><td>2018-05 → 2022-06 (50 months)</td><td class="num">−0.87</td><td>GCF ON · GCF &gt;30d · DVP &gt;30d · DVP ≤30d · TRI ON · GCF ≤30d · TRI &gt;30d · TRI ≤30d · DVP ON</td></tr>
+<tr><td>2022-07 → 2026-09 (51 months)</td><td class="num">−0.92</td><td>GCF &gt;30d · GCF ≤30d · DVP &gt;30d · TRI ON · TRI &gt;30d · GCF ON · DVP ON · TRI ≤30d · DVP ≤30d</td></tr>
+</tbody></table></div>
+<p>Each half is still a clock (−0.87 and −0.92). The <em>order of segments</em> is only loosely stable (Kendall τ = 0.28 between halves): DVP overnight is “new” in both, but which term segments are fading changes. So the clock is robust and the type sequence is not. Read individual segments from the EPPM plot, not from one axis score. <strong>Timing:</strong> one seriation takes 1.5 ms; the 1,000-permutation Porčić test takes 1.8 s; the full R script runs in 2.5 s.</p>
+
+<h3>Limitations and verdict</h3>
+<p><strong>Limitations.</strong> Dollar volumes are not artifact counts, so CA weights months by size. Tri-party is transaction volume while DVP and GCF are outstanding volume, so the shares compare like with like only within each venue. OFR split ≤30 days into 2–7 and 8–30 days on 2025-08-14 (summed back here), and the clock jumps about a year at that point. The event model’s intervals assume independent deposits, which months are not. The Form PF tests are on overlapping 12-month changes; the circular-shift null keeps their persistence. Form PF dates are reference months, not publication dates. Descriptive only.</p>
+<p><strong>Verdict: recommend for promote workflow</strong> (Jared decides; nothing is promoted). It is a new graph for a compositional time series, and it gives one honest out-of-sample check and a Holm-surviving Q1.4 link. It needs the taxonomy fix before anything else is built on it.</p>
+
+<div class="sec-head"><span class="n">Watch</span><h2>Watchlist additions</h2><span class="line"></span></div>
+<p>Both picks are added to the <a href="https://github.com/jgridifier/research-lab/blob/main/docs/methods-scout/watchlist.md">watchlist</a> as trialed. New watch items, all seen on 2026-11-15 and not run:</p>
+<ul>
+<li><strong>tEDM: partial cross mapping</strong> (R; Leng et al., “Partial cross mapping eliminates indirect causal influences”, <em>Nature Communications</em> 11:2632, 2020). Exotic-transfer from nonlinear dynamics. Found via web search, <a href="https://stscl.github.io/tEDM/reference/pcm.html">stscl.github.io/tEDM/reference/pcm.html</a> and <a href="https://www.nature.com/articles/s41467-020-16238-0">nature.com/articles/s41467-020-16238-0</a>. Closest prior work for the CCM Math avenue.</li>
+<li><strong>IDSS: Iterative Deterministic Seriation Solutions</strong> (Python; Lipo, Madsen &amp; Dunnell, <em>PLOS ONE</em> 10(4):e0124942, 2015). Archaeology, obscure (4 GitHub stars). Finds all valid unimodal orders, including branching ones. Found via web search, <a href="https://github.com/clipo/idss-seriation">github.com/clipo/idss-seriation</a>. Would test whether the repo mix has more than one valid sequence.</li>
+<li><strong>statcomp</strong> (R; Sippel, Lange &amp; Gans; ordinal-pattern entropy–complexity plane, after Bandt &amp; Pompe 2002). Climate and biogeochemistry, niche (v0.1.0, 2019). Found via web search, <a href="https://cran.r-project.org/web/packages/statcomp/refman/statcomp.html">CRAN statcomp</a>. Separates noise from structured dynamics: a pre-check for CCM.</li>
+<li><strong>seriation</strong> (R; Hahsler, Hornik &amp; Buchta, <em>Journal of Statistical Software</em> 25(3), 2008). Combinatorial data analysis and archaeology. Found via web search, <a href="https://www.jstatsoft.org/article/view/v025i03">jstatsoft.org/article/view/v025i03</a>. Candidate for Q2: seriated lasagna plots of hundreds of short program histories (combines with the Lasagna-plot watch item).</li>
+</ul>
+<p>Nothing already trialed was rerun. Research-lab PRs #20, #21 and #25 were not touched. No <code>APPROVAL.md</code> was written; nothing is promoted.</p>
+
+<footer>
+<p>Scheduled edition of 2026-11-15, America/New_York (EST). Seed 20261115. Public data only. Theme: <code>docs/assets/brief.css</code>. Scripts and outputs: <code>docs/methods-scout/runs/2026-11-15/</code>.</p>
+</footer>
+</main></body></html>

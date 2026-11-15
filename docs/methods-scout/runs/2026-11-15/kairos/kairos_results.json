@@ -1,0 +1,54 @@
+{
+  "n_months": 101,
+  "segments": ["DVP_ON", "DVP_T30", "DVP_G30", "GCF_ON", "GCF_T30", "GCF_G30", "TRI_ON", "TRI_T30", "TRI_G30"],
+  "first": "2018-05",
+  "last": "2026-09",
+  "A1": {
+    "spearman_seriated_vs_calendar": -0.964054,
+    "column_order": ["DVP_ON", "DVP_T30", "TRI_T30", "TRI_G30", "GCF_ON", "TRI_ON", "GCF_G30", "GCF_T30", "DVP_G30"],
+    "ca_inertia_pct": [69.322857, 12.504871, 7.708522, 4.425912],
+    "row_axis1_spearman_time": -0.964054,
+    "col_axis1": {
+      "DVP_ON": -0.156,
+      "DVP_T30": -0.146,
+      "DVP_G30": 0.361,
+      "GCF_ON": 0.061,
+      "GCF_T30": 0.259,
+      "GCF_G30": 0.163,
+      "TRI_ON": 0.099,
+      "TRI_T30": -0.084,
+      "TRI_G30": -0.056
+    },
+    "assess_seconds": 1.760499,
+    "assess": {
+      "observed": 248,
+      "expected": 9,
+      "maximum": 505,
+      "coef": 0.518145,
+      "random_q05": 286,
+      "p_lower": 0
+    }
+  },
+  "A2": {
+    "event_cols": ["date", "lower", "upper", "error"],
+    "r2_event_vs_time": 0.929289,
+    "oos": {
+      "n_train": 56,
+      "n_test": 45,
+      "mae_years": 1.058701,
+      "mae_naive_last_train": 1.916667,
+      "cor_pred_actual": 0.948277,
+      "pred_first_test": 2022.595224,
+      "pred_last_test": 2024.984567
+    }
+  },
+  "A3": {
+    "w1_order": ["GCF_ON", "GCF_G30", "DVP_G30", "DVP_T30", "TRI_ON", "GCF_T30", "TRI_G30", "TRI_T30", "DVP_ON"],
+    "w2_order": ["GCF_G30", "GCF_T30", "DVP_G30", "TRI_ON", "TRI_G30", "GCF_ON", "DVP_ON", "TRI_T30", "DVP_T30"],
+    "kendall": 0.277778,
+    "w1_ser_spearman": -0.869388,
+    "w2_ser_spearman": -0.918462
+  },
+  "runtime_seconds": 2.017435,
+  "seriate_ms": 1.437283
+}
