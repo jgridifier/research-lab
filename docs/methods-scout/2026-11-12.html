@@ -5,6 +5,7 @@
 <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,400..800&family=Newsreader:ital,opsz,wght@0,6..72,400..600;1,6..72,400..500&family=JetBrains+Mono:wght@400;500;700&display=swap">
 <link rel="stylesheet" href="../assets/brief.css">
+<link rel="stylesheet" href="feedback.css">
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.css">
 <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.js"></script>
 <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/contrib/auto-render.min.js" onload="renderMathInElement(document.body,{delimiters:[{left:'$$',right:'$$',display:true},{left:'\\(',right:'\\)',display:false}]})"></script>
@@ -40,7 +41,7 @@
   <div class="date">Thursday · November 12, 2026 · scheduled edition · catch-up published Friday morning ET · aimed at Q1 · exotic</div>
   <h1>Methods scout</h1>
   <p class="dek">Two new exotic methods for the same question: when a dealer’s share moves, is it the market, or a sticky walk in one direction — and can we see, or even recover, the flows? Run on a clearly labelled PROXY panel. A same-day <a href="2026-11-12-adhoc.html">ad hoc edition</a> already covered codyn and Lovell proportionality; these two are different.</p>
-  <nav><a href="index.html">All editions</a><a href="secret-sauce.html">Secret sauce</a><a href="https://github.com/jgridifier/research-lab/blob/main/docs/methods-scout/QUESTIONS.md">Research questions</a><a href="https://github.com/jgridifier/research-lab/blob/main/docs/methods-scout/watchlist.md">Watchlist</a><a href="../index.html">Research lab home</a></nav>
+  <nav><a href="index.html">All editions</a><a href="board.html">Feedback board</a><a href="secret-sauce.html">Secret sauce</a><a href="https://github.com/jgridifier/research-lab/blob/main/docs/methods-scout/QUESTIONS.md">Research questions</a><a href="https://github.com/jgridifier/research-lab/blob/main/docs/methods-scout/watchlist.md">Watchlist</a><a href="../index.html">Research lab home</a></nav>
 </header>
 
 <div class="ticker">
@@ -72,9 +73,14 @@
 </div>
 
 <!-- ================= METHOD 1 ================= -->
-<div class="sec-head" id="m1"><span class="n">Method 01</span><h2>ecotraj: share change as a trajectory, with a test for direction</h2><span class="line"></span></div>
+<div class="sec-head" id="m1"><span class="n">Method 01</span><h2 id="ecotraj">ecotraj: share change as a trajectory, with a test for direction</h2><span class="line"></span></div>
 <p class="meta">De Cáceres et al. (2019), <em>Ecological Monographs</em> 89:e01350 · Sturbois et al. (2021), <em>Ecological Modelling</em> 440:109400 · Djeghri et al. (2026), <em>Ecological Monographs</em> 96(2):e70058 · CRAN ecotraj 1.2.2 · community ecology · recommend for the promote workflow — not promoted</p>
 <p class="found-via"><strong>Found via.</strong> Journal · <em>Ecological Monographs</em> / the ecotraj package documentation · 2026-11-12 scheduled exotic scout · field: community ecology. Paper: <a href="https://doi.org/10.1002/ecm.1350">https://doi.org/10.1002/ecm.1350</a>. Also used: the package site <a href="https://emf-creaf.github.io/ecotraj/">https://emf-creaf.github.io/ecotraj/</a>, the CRAN page <a href="https://cran.r-project.org/package=ecotraj">https://cran.r-project.org/package=ecotraj</a>, Sturbois et al. 2021 (<a href="https://doi.org/10.1016/j.ecolmodel.2020.109400">doi:10.1016/j.ecolmodel.2020.109400</a>), and the 2026 cyclical-trajectory extension (<a href="https://doi.org/10.1002/ecm.70058">doi:10.1002/ecm.70058</a>). This is not codyn (that was the ad hoc edition). X and SSRN were not used as the discovery path for this method.</p>
+<aside class="scout-respond" data-issue="50" data-slug="ecotraj">
+  <span class="scout-chip status-in-progress">In progress</span>
+  <a class="scout-respond-btn" href="https://github.com/jgridifier/research-lab/issues/50">Respond on GitHub</a>
+  <p class="scout-respond-hint">👍 go ahead with the top pick · 👎 drop it · 👀 park for later · or comment <code>go engineering</code>, <code>go math</code>, <code>go new use</code>, <code>go all</code>, <code>refine: &lt;what to change&gt;</code>, <code>promote</code>, <code>park</code>, <code>drop</code>.</p>
+</aside>
 <p><strong>Target question.</strong> Q1, in trajectory language: does the share composition walk with a preferred direction (sticky migration), or does it wander like a persistent random path, and how much of that walk is just the market?</p>
 <p><strong>Why it is a visual, MaxLIPO-style find, and fast enough.</strong> The usual chart is a stacked-area plot of shares, which hides direction. ecotraj gives a no-tuning path in a resemblance space, a directionality number, and a way to compare whole trajectories (DSPD). Three analyses: (1a) directionality of the clr path vs a built-in random-order null, a sign-flip-increments null, and a persistence-matched AR(1); (1b) market vs residual sub-trajectories, on both levels and increments; (1c) 13 stress episodes as trajectories in a z-scored macro state, clustered by DSPD. Runtime for 1a–1c was 8.0 minutes (R 4.5.3, ecotraj 1.2.2, seed 20261112, 999 draws). The built-in permutation (random survey order) is too weak on a trending composition — the same lesson as InspectChangepoint — so the sign-flip and AR(1) nulls are the ones we trust.</p>
 
@@ -121,9 +127,14 @@
 </div>
 
 <!-- ================= METHOD 2 ================= -->
-<div class="sec-head" id="m2"><span class="n">Method 02</span><h2>lphom: a share-flow matrix, when the units can identify it</h2><span class="line"></span></div>
+<div class="sec-head" id="m2"><span class="n">Method 02</span><h2 id="lphom">lphom: a share-flow matrix, when the units can identify it</h2><span class="line"></span></div>
 <p class="meta">Pavía &amp; Romero (2024), <em>Sociological Methods &amp; Research</em> 53(3):1491–1533 (online 2022) · Romero, Pavía, Martín &amp; Romero (2020), <em>Journal of Applied Statistics</em> 47:2711–2736 · CRAN lphom 0.3.5.7 · political science / ecological inference · interesting — not promoted</p>
 <p class="found-via"><strong>Found via.</strong> Journal · <em>Sociological Methods &amp; Research</em> · 2026-11-12 scheduled exotic scout · field: ecological inference (voter-transition matrices). Paper: <a href="https://doi.org/10.1177/00491241221092725">https://doi.org/10.1177/00491241221092725</a>. Also used: the CRAN page <a href="https://cran.r-project.org/package=lphom">https://cran.r-project.org/package=lphom</a>, and Romero et al. 2020 (<a href="https://doi.org/10.1080/02664763.2020.1804842">doi:10.1080/02664763.2020.1804842</a>) for the baseline lphom algorithm and the deterministic bounds. The 2024 paper’s improved algorithms are tslphom and nslphom; this run used the baseline <code>lphom()</code>, which is the honest first try and already shows the identification problem. X and SSRN were not the discovery path.</p>
+<aside class="scout-respond" data-issue="51" data-slug="lphom">
+  <span class="scout-chip status-proposed">Proposed</span>
+  <a class="scout-respond-btn" href="https://github.com/jgridifier/research-lab/issues/51">Respond on GitHub</a>
+  <p class="scout-respond-hint">👍 go ahead with the top pick · 👎 drop it · 👀 park for later · or comment <code>go engineering</code>, <code>go math</code>, <code>go new use</code>, <code>go all</code>, <code>refine: &lt;what to change&gt;</code>, <code>promote</code>, <code>park</code>, <code>drop</code>.</p>
+</aside>
 <p><strong>Target question.</strong> Q1’s second half, taken literally: can we recover a transfer matrix that says, of last quarter’s share, how much each dealer kept and where the rest went — and does that matrix change with the market?</p>
 <p><strong>Three analyses, plus a better-units check.</strong> (2a) Fit \(P\) on E4 and on a six-bloc version of panel A, against a constrained least-squares (Lee–Judge–Zellner) baseline, with half-sample and annual cuts. (2b) High-VIX vs low-VIX quarter pairs, with a random-split null. (2c) A no-migration persistence null, and a planted-truth recovery (true GS→JPM flow 1% per quarter). Extra: treat product-year lines as voting units (54 units). Runtime 3.3 minutes (seed 20261112).</p>
 

@@ -34,6 +34,8 @@ Examples: `[Scout 2026-11-15] Convergent cross mapping — Q1`, `[Scout 2026-11-
 
 The date in the title is the scout edition the method was first presented on, not the date the issue was opened.
 
+Methods scouted before the Q framing (partykit and changeforest, 2026-11-10) omit the `— Q<n>` suffix and have no `scout:Q*` label.
+
 ### Labels (create if missing; names are exact)
 
 | Label | Use |

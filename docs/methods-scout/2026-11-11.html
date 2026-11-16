@@ -4,6 +4,7 @@
 <meta name="description" content="Daily methods scout, aimed at Q1 (dealer share dynamics: market-driven vs sticky): MARSS state-space decomposition and InspectChangepoint sparse-projection change points, on a PROXY Y-9C dealer panel.">
 <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,400..800&family=Newsreader:ital,opsz,wght@0,6..72,400..600;1,6..72,400..500&family=JetBrains+Mono:wght@400;500;700&display=swap">
 <link rel="stylesheet" href="../assets/brief.css">
+<link rel="stylesheet" href="feedback.css">
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.css">
 <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.js"></script>
 <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/contrib/auto-render.min.js" onload="renderMathInElement(document.body,{delimiters:[{left:'$$',right:'$$',display:true},{left:'\\(',right:'\\)',display:false}]})"></script>
@@ -22,7 +23,7 @@
   <div class="date">Wednesday · November 11, 2026 · edition 2 · aimed at Q1</div>
   <h1>Methods scout</h1>
   <p class="dek">Two lesser-known, fast, interpretable methods for one question: when a dealer's share moves, is it the market or a sticky migration? Run on a clearly labelled PROXY panel, because top-25 prime-broker data isn't in Drive.</p>
-  <nav><a href="index.html">All editions</a><a href="https://github.com/jgridifier/research-lab/blob/main/docs/methods-scout/QUESTIONS.md">Research questions</a><a href="https://github.com/jgridifier/research-lab/blob/main/docs/methods-scout/watchlist.md">Watchlist</a><a href="../index.html">Research lab home</a></nav>
+  <nav><a href="index.html">All editions</a><a href="board.html">Feedback board</a><a href="https://github.com/jgridifier/research-lab/blob/main/docs/methods-scout/QUESTIONS.md">Research questions</a><a href="https://github.com/jgridifier/research-lab/blob/main/docs/methods-scout/watchlist.md">Watchlist</a><a href="../index.html">Research lab home</a></nav>
 </header>
 
 <div class="ticker"><span><b>●</b> PROXY: foreign-bank US IHCs' share of 14-dealer trading assets fell from 13.8% to 5.9% (2016Q3→2026Q2)</span><span><b>●</b> MARSS: market covariates explain 74% (BAC), 62% (MS), 59% (JPM) of quarterly equity-revenue-share changes, but only 22% for GS</span><span><b>●</b> GS's sticky losses mirror JPM's sticky gains: corr -0.79 (BH q = 0.038)</span><span><b>●</b> Inspect: every "break" in share levels is matched by persistence-only nulls; 0 significant drift breaks</span></div>
@@ -47,7 +48,13 @@
 <p><strong>Used as PROXY:</strong> the FR Y-9C trading panel (BHCK3545 trading assets; BHCK8759 equity trading revenue), aggregated to dealer shares.</p></div>
 
 <!-- ================= METHOD 1 ================= -->
-<div class="sec-head" id="m1"><span class="n">Method 01</span><h2>MARSS: market vs sticky vs transient share moves, as a state-space model</h2><span class="line"></span></div>
+<div class="sec-head" id="m1"><span class="n">Method 01</span><h2 id="marss">MARSS: market vs sticky vs transient share moves, as a state-space model</h2><span class="line"></span></div>
+<aside class="scout-respond" data-issue="48" data-slug="marss">
+  <span class="scout-chip status-proposed">Proposed</span>
+  <a class="scout-respond-btn" href="https://github.com/jgridifier/research-lab/issues/48">Respond on GitHub</a>
+  <p class="scout-respond-hint">👍 go ahead with the top pick · 👎 drop it · 👀 park for later · or comment <code>go engineering</code>, <code>go math</code>, <code>go new use</code>, <code>go all</code>, <code>refine: &lt;what to change&gt;</code>, <code>promote</code>, <code>park</code>, <code>drop</code>.</p>
+</aside>
+
 <div class="card teal">
 <div class="card-top"><span class="tag teal">R · CRAN · v3.11.10 · GPL-2 · novelty: niche</span><span class="verdict adopt">recommend for promote workflow</span></div>
 <p><strong>Citation.</strong> Holmes, E. E., Ward, E. J. &amp; Wills, K. (2012), “MARSS: Multivariate Autoregressive State-space Models for Analyzing Time-series Data”, <em>The R Journal</em> 4(1):11–19. Package: <a href="https://cran.r-project.org/package=MARSS">cran.r-project.org/package=MARSS</a> (v3.11.10, 2025-09; ~1.5k downloads/month; NOAA fisheries authors; long user guide with worked examples and a test suite). It comes from ecology, where it's used to split population counts into process and observation noise, and it's rarely used in finance.</p>
@@ -96,7 +103,13 @@
 <p><strong>Verdict: recommend for promote workflow</strong> (recommendation only; nothing is promoted without Jared's approval). It's the right shape for Q1, fast, readable, and it carries its own falsification test. Required in any skill: the matched-persistence null and a minimum sample length.</p></div>
 
 <!-- ================= METHOD 2 ================= -->
-<div class="sec-head" id="m2"><span class="n">Method 02</span><h2>InspectChangepoint: which dealers moved, and when?</h2><span class="line"></span></div>
+<div class="sec-head" id="m2"><span class="n">Method 02</span><h2 id="inspectchangepoint">InspectChangepoint: which dealers moved, and when?</h2><span class="line"></span></div>
+<aside class="scout-respond" data-issue="49" data-slug="inspectchangepoint">
+  <span class="scout-chip status-proposed">Proposed</span>
+  <a class="scout-respond-btn" href="https://github.com/jgridifier/research-lab/issues/49">Respond on GitHub</a>
+  <p class="scout-respond-hint">👍 go ahead with the top pick · 👎 drop it · 👀 park for later · or comment <code>go engineering</code>, <code>go math</code>, <code>go new use</code>, <code>go all</code>, <code>refine: &lt;what to change&gt;</code>, <code>promote</code>, <code>park</code>, <code>drop</code>.</p>
+</aside>
+
 <div class="card">
 <div class="card-top"><span class="tag">R · CRAN · v1.2 · GPL-3 · novelty: obscure</span><span class="verdict interesting">interesting</span></div>
 <p><strong>Citation.</strong> Wang, T. &amp; Samworth, R. J. (2018), “High dimensional change point estimation via sparse projection”, <em>Journal of the Royal Statistical Society: Series B</em> 80(1):57–83. Package: <a href="https://cran.r-project.org/package=InspectChangepoint">cran.r-project.org/package=InspectChangepoint</a> (v1.2, 2022-05; ~450 downloads/month; pure R, imports only MASS; the authors' own implementation).</p>

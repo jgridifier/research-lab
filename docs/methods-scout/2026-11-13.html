@@ -5,6 +5,7 @@
 <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,400..800&family=Newsreader:ital,opsz,wght@0,6..72,400..600;1,6..72,400..500&family=JetBrains+Mono:wght@400;500;700&display=swap">
 <link rel="stylesheet" href="../assets/brief.css">
+<link rel="stylesheet" href="feedback.css">
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.css">
 <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.js"></script>
 <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/contrib/auto-render.min.js" onload="renderMathInElement(document.body,{delimiters:[{left:'$$',right:'$$',display:true},{left:'\\(',right:'\\)',display:false}]})"></script>
@@ -41,7 +42,7 @@
   <div class="date">Friday · November 13, 2026 · scheduled edition · aimed at Q2 · exotic · SYNTHETIC data</div>
   <h1>Methods scout</h1>
   <p class="dek">The first edition for Q2: hundreds to thousands of programs, each with a description, a few noisy years, and no long history. One method from statistical genetics answers “which of these moves are real?” One from visualization research answers “how do you look at a thousand short lines at once?” Both were run on the clearly labelled SYNTHETIC mock budgets built today, so every answer can be scored against a known truth.</p>
-  <nav><a href="index.html">All editions</a><a href="q2-mock-zbb.html">Q2 mock datasets</a><a href="secret-sauce.html">Secret sauce</a><a href="https://github.com/jgridifier/research-lab/blob/main/docs/methods-scout/QUESTIONS.md">Research questions</a><a href="https://github.com/jgridifier/research-lab/blob/main/docs/methods-scout/watchlist.md">Watchlist</a><a href="../index.html">Research lab home</a></nav>
+  <nav><a href="index.html">All editions</a><a href="board.html">Feedback board</a><a href="q2-mock-zbb.html">Q2 mock datasets</a><a href="secret-sauce.html">Secret sauce</a><a href="https://github.com/jgridifier/research-lab/blob/main/docs/methods-scout/QUESTIONS.md">Research questions</a><a href="https://github.com/jgridifier/research-lab/blob/main/docs/methods-scout/watchlist.md">Watchlist</a><a href="../index.html">Research lab home</a></nav>
 </header>
 
 <div class="ticker">
@@ -71,9 +72,14 @@
 </div>
 
 <!-- ================= METHOD 1 ================= -->
-<div class="sec-head" id="m1"><span class="n">Method 01</span><h2>ebnm: how much to trust each program’s own number</h2><span class="line"></span></div>
+<div class="sec-head" id="m1"><span class="n">Method 01</span><h2 id="ebnm">ebnm: how much to trust each program’s own number</h2><span class="line"></span></div>
 <p class="meta">Willwerscheid, Carbonetto &amp; Stephens (2025), <em>Journal of Statistical Software</em> 114(3):1–33, doi:10.18637/jss.v114.i03 · CRAN ebnm 1.1-42 (2025-10-10), with ashr 2.2-63 and mixsqp 0.3-54 · statistical genetics (Stephens lab, University of Chicago) · niche outside genomics · recommend for the promote workflow — not promoted</p>
 <p class="found-via"><strong>Found via.</strong> Journal · <em>Journal of Statistical Software</em>, <a href="https://www.jstatsoft.org/article/view/v114i03">https://www.jstatsoft.org/article/view/v114i03</a> · found by web search on 2026-11-13 for an empirical-Bayes tool aimed at Q2.1/Q2.3 · field: statistical genetics (gene-expression and GWAS shrinkage). Also used: <a href="https://github.com/stephenslab/ebnm">https://github.com/stephenslab/ebnm</a> and <a href="https://cran.r-project.org/package=ebnm">https://cran.r-project.org/package=ebnm</a>. The adaptive-shrinkage idea behind the default prior is Stephens (2017), “False discovery rates: a new deal”, <em>Biostatistics</em> 18(2):275–294. X and SSRN were not the discovery path.</p>
+<aside class="scout-respond" data-issue="55" data-slug="ebnm">
+  <span class="scout-chip status-approved">Approved</span>
+  <a class="scout-respond-btn" href="https://github.com/jgridifier/research-lab/issues/55">Respond on GitHub</a>
+  <p class="scout-respond-hint">👍 go ahead with the top pick · 👎 drop it · 👀 park for later · or comment <code>go engineering</code>, <code>go math</code>, <code>go new use</code>, <code>go all</code>, <code>refine: &lt;what to change&gt;</code>, <code>promote</code>, <code>park</code>, <code>drop</code>.</p>
+</aside>
 <p><strong>Target question.</strong> Q2.1 (borrowing strength) and Q2.3 (real change or noise), with one analysis on Q2.2 (text vs numbers).</p>
 <p><strong>What it is, and why it fits the bar.</strong> Each program gives an observation \(x_j\) with a standard error \(s_j\). The model is \(x_j \mid \theta_j \sim N(\theta_j, s_j^2)\) and \(\theta_j \sim g\). ebnm estimates the prior \(g\) itself by maximum marginal likelihood, from one of 15 families (normal, point-normal, scale mixtures, unimodal, NPMLE, …). It then returns posterior means, posterior SDs and the <em>local false sign rate</em> (lfsr): the posterior probability that you have the sign of \(\theta_j\) wrong. You choose no prior hyperparameters and no penalty. Each fit took 0.003–0.6 s on 1,000–1,700 programs. \(s_j\) comes from the observable spread of each program’s budget-minus-actual gaps, scaled by the dataset README’s stated budget/actual noise ratio. It is shrunk toward the group median. The scale-mixture 90% intervals cover 89.5% of true levels on both mocks, so these standard errors are not badly off.</p>
 
@@ -139,9 +145,14 @@
 </div>
 
 <!-- ================= METHOD 2 ================= -->
-<div class="sec-head" id="m2"><span class="n">Method 02</span><h2>DenseLines: a thousand short lines as one density</h2><span class="line"></span></div>
+<div class="sec-head" id="m2"><span class="n">Method 02</span><h2 id="denselines">DenseLines: a thousand short lines as one density</h2><span class="line"></span></div>
 <p class="meta">Moritz &amp; Fisher (2018), “Visualizing a Million Time Series with the Density Line Chart”, arXiv:1808.06019 (cs.HC) · reference implementations in Rust (line-density-rust, BSD-3) and JavaScript/WebGL by the first author · visualization / HCI · obscure outside visualization research · interesting — not promoted</p>
 <p class="found-via"><strong>Found via.</strong> arXiv · <a href="https://arxiv.org/abs/1808.06019">https://arxiv.org/abs/1808.06019</a> · found by web search on 2026-11-13 for a Q2.5 chart (“one chart for a thousand short noisy series”) · field: visualization research (UW Interactive Data Lab; now CMU Data Interaction Group). Code: the author’s own repo, <a href="https://github.com/domoritz/line-density-rust">https://github.com/domoritz/line-density-rust</a> (commit 083890c, 2025-04-24), and the WebGL demo <a href="https://github.com/domoritz/line-density">https://github.com/domoritz/line-density</a>. This is the library-author route the MD asked for. X and SSRN were not the discovery path.</p>
+<aside class="scout-respond" data-issue="56" data-slug="denselines">
+  <span class="scout-chip status-approved">Approved</span>
+  <a class="scout-respond-btn" href="https://github.com/jgridifier/research-lab/issues/56">Respond on GitHub</a>
+  <p class="scout-respond-hint">👍 go ahead with the top pick · 👎 drop it · 👀 park for later · or comment <code>go engineering</code>, <code>go math</code>, <code>go new use</code>, <code>go all</code>, <code>refine: &lt;what to change&gt;</code>, <code>promote</code>, <code>park</code>, <code>drop</code>.</p>
+</aside>
 <p><strong>Target question.</strong> Q2.5 (seeing it), with Q2.4 (hidden structure) as the second use.</p>
 <p><strong>What it is.</strong> Draw each series into its own binary raster. Divide each column by that series’ pixel count in that column, so a steep, noisy line spreads one unit of weight over many pixels instead of painting them all. Then sum over series. The result is a density with exactly \(n\) units per column. Trends show up as dense ridges and outliers as faint isolated strands. The method has no parameters beyond canvas size; colour scale and display blur are presentation choices. Three analyses: (2a) a faithful port and parity check against the authors’ code, plus speed; (2b) the Q2.5 picture on 1,052 Corning-mock programs, with a test of whether normalisation matters at our series length; (2c) residual DenseLines for hidden groups (Q2.4), and the start/stop problem.</p>
 

@@ -104,8 +104,11 @@ def page_url(page: str, anchor: str = "") -> str:
     return f"{PAGES_BASE}/{page}{anchor or ''}"
 
 
-def title_for(scout_date: str, method: str, question: str) -> str:
-    suffix = "watchlist" if question == "watchlist" else question
+def title_for(scout_date: str, method: str, question: str | None) -> str:
+    if not question:
+        return f"[Scout {scout_date}] {method}"
+    # Retirement is carried by the scout:Q1-retired label, not the title suffix.
+    suffix = "watchlist" if question == "watchlist" else ("Q1" if question == "Q1-retired" else question)
     return f"[Scout {scout_date}] {method} — {suffix}"
 
 

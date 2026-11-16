@@ -5,6 +5,7 @@
 <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,400..800&family=Newsreader:ital,opsz,wght@0,6..72,400..600;1,6..72,400..500&family=JetBrains+Mono:wght@400;500;700&display=swap">
 <link rel="stylesheet" href="../assets/brief.css">
+<link rel="stylesheet" href="feedback.css">
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.css">
 <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.js"></script>
 <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/contrib/auto-render.min.js" onload="renderMathInElement(document.body,{delimiters:[{left:'$$',right:'$$',display:true},{left:'\\(',right:'\\)',display:false}]})"></script>
@@ -41,7 +42,7 @@
   <div class="date">Saturday · November 14, 2026 · scheduled edition · completed Sunday, November 15 after an interruption · aimed at Q1 and Q3 · exotic · public aggregate data</div>
   <h1>Methods scout</h1>
   <p class="dek">The first edition for the two questions approved on 14 November. A coupling measure from cognitive science asks whether hedge-fund borrowing, repo and settlement fails “visit the same states” at the same time, or with a lag. A distribution-free regression from probabilistic weather forecasting asks how much of the cross-firm spread in realized payouts the stress test describes. Both run on public data only.</p>
-  <nav><a href="index.html">All editions</a><a href="secret-sauce.html">Secret sauce</a><a href="https://github.com/jgridifier/research-lab/blob/main/docs/methods-scout/QUESTIONS.md">Research questions</a><a href="https://github.com/jgridifier/research-lab/blob/main/docs/methods-scout/watchlist.md">Watchlist</a><a href="../index.html">Research lab home</a></nav>
+  <nav><a href="index.html">All editions</a><a href="board.html">Feedback board</a><a href="secret-sauce.html">Secret sauce</a><a href="https://github.com/jgridifier/research-lab/blob/main/docs/methods-scout/QUESTIONS.md">Research questions</a><a href="https://github.com/jgridifier/research-lab/blob/main/docs/methods-scout/watchlist.md">Watchlist</a><a href="../index.html">Research lab home</a></nav>
 </header>
 
 <div class="card"><div class="card-top"><span class="tag red">Completion note</span></div>
@@ -75,9 +76,14 @@
 </div>
 
 <!-- ================= METHOD 1 ================= -->
-<div class="sec-head" id="m1"><span class="n">Method 01</span><h2>CRQA: do two series visit the same states, and when?</h2><span class="line"></span></div>
+<div class="sec-head" id="m1"><span class="n">Method 01</span><h2 id="crqa">CRQA: do two series visit the same states, and when?</h2><span class="line"></span></div>
 <p class="meta">Coco, M. I. &amp; Dale, R. (2014), “Cross-recurrence quantification analysis of categorical and continuous time series: an R package”, <em>Frontiers in Psychology</em> 5:510, doi:10.3389/fpsyg.2014.00510 · Coco, Mønster, Leonardi, Dale &amp; Wallot (2021), <em>The R Journal</em> 13(1):112–130, doi:10.32614/RJ-2021-062 · CRAN crqa 2.1.0 (2026-05-26) · field: cognitive science (dialogue and interpersonal coordination) · novelty: niche outside cognitive science and nonlinear dynamics · interesting — not promoted</p>
 <p class="found-via"><strong>Found via.</strong> Package registry · CRAN, <a href="https://cran.r-project.org/package=crqa">https://cran.r-project.org/package=crqa</a>, and the method paper in <em>The R Journal</em>, <a href="https://journal.r-project.org/articles/RJ-2021-062/">https://journal.r-project.org/articles/RJ-2021-062/</a> · picked on 2026-11-14 (crqa 2.1.0 installed from CRAN at 2:18–2:21 PM EST per the run’s install logs) · <strong>discovery path before that was not recorded by the interrupted run</strong>; both links were re-opened and verified on 2026-11-15 · field: cognitive science. Also used: Coco &amp; Dale (2014), <a href="https://www.frontiersin.org/articles/10.3389/fpsyg.2014.00510/full">Frontiers in Psychology</a>. X and SSRN were not the discovery path.</p>
+<aside class="scout-respond" data-issue="57" data-slug="crqa">
+  <span class="scout-chip status-proposed">Proposed</span>
+  <a class="scout-respond-btn" href="https://github.com/jgridifier/research-lab/issues/57">Respond on GitHub</a>
+  <p class="scout-respond-hint">👍 go ahead with the top pick · 👎 drop it · 👀 park for later · or comment <code>go engineering</code>, <code>go math</code>, <code>go new use</code>, <code>go all</code>, <code>refine: &lt;what to change&gt;</code>, <code>promote</code>, <code>park</code>, <code>drop</code>.</p>
+</aside>
 <p><strong>Target question.</strong> Q1.1 (lead/lag), Q1.2 (co-movement in stress) and Q1.3 (whether the relationship itself changes).</p>
 <p><strong>What it is.</strong> Turn each series into states \(a_t, b_t \in \{1,\dots,5\}\), here quintiles. The cross-recurrence plot marks \(R_{ij} = \mathbf{1}[a_i = b_j]\). The <em>diagonal recurrence profile</em> is the recurrence rate along each diagonal:
 $$\mathrm{DRP}(k) = \frac{1}{n-|k|}\sum_t \mathbf{1}[a_t = b_{t+k}],$$
@@ -148,9 +154,14 @@ the share of time points where series one now matches series two \(k\) steps lat
 </div>
 
 <!-- ================= METHOD 2 ================= -->
-<div class="sec-head" id="m2"><span class="n">Method 02</span><h2>IDR: the whole payout distribution, under one order constraint</h2><span class="line"></span></div>
+<div class="sec-head" id="m2"><span class="n">Method 02</span><h2 id="idr">IDR: the whole payout distribution, under one order constraint</h2><span class="line"></span></div>
 <p class="meta">Henzi, A., Ziegel, J. F. &amp; Gneiting, T. (2021), “Isotonic distributional regression”, <em>Journal of the Royal Statistical Society Series B</em> 83(5):963–993, doi:10.1111/rssb.12450 (arXiv:1909.03725) · CRAN isodistrreg 0.6.0 (2026-08-21; Rust core built with Cargo) · field: probabilistic weather forecasting (postprocessing of precipitation forecasts) · novelty: niche outside forecast verification · recommend for promote workflow — not promoted</p>
 <p class="found-via"><strong>Found via.</strong> Package registry · CRAN, <a href="https://cran.r-project.org/package=isodistrreg">https://cran.r-project.org/package=isodistrreg</a>, and the paper on arXiv, <a href="https://arxiv.org/abs/1909.03725">https://arxiv.org/abs/1909.03725</a> · picked on 2026-11-14 (isodistrreg installed from CRAN by 2:21 PM EST per the run’s install logs) · <strong>discovery path before that was not recorded by the interrupted run</strong>; both links were re-opened and verified on 2026-11-15 · field: weather forecasting / forecast verification. X and SSRN were not the discovery path.</p>
+<aside class="scout-respond" data-issue="58" data-slug="idr">
+  <span class="scout-chip status-proposed">Proposed</span>
+  <a class="scout-respond-btn" href="https://github.com/jgridifier/research-lab/issues/58">Respond on GitHub</a>
+  <p class="scout-respond-hint">👍 go ahead with the top pick · 👎 drop it · 👀 park for later · or comment <code>go engineering</code>, <code>go math</code>, <code>go new use</code>, <code>go all</code>, <code>refine: &lt;what to change&gt;</code>, <code>promote</code>, <code>park</code>, <code>drop</code>.</p>
+</aside>
 <p><strong>Target question.</strong> Q3.1 (cross-section), Q3.2 (buffer vs path) and Q3.3 (year-to-year movement).</p>
 <p><strong>What it is.</strong> For a response \(Y\) and covariate \(x\), IDR estimates the conditional CDFs \(\hat F_x(y)\). It minimises the summed CRPS
 $$\mathrm{CRPS}(F,y)=\int (F(z)-\mathbf{1}[y\le z])^2\,dz$$
