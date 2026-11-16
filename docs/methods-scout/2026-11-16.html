@@ -1,0 +1,300 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Methods scout · 2026-11-16 · research-lab</title>
+<meta name="description" content="Methods scout 2026-11-16, aimed at Q2 and Q3: mean-variance portfolio effects and Taylor’s power law (fisheries ecology, ecofolio) on the synthetic mock ZBB datasets; probabilistic index models (biostatistics, pim) on public stress-test results and Y-9C payouts.">
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,400..800&family=Newsreader:ital,opsz,wght@0,6..72,400..600;1,6..72,400..500&family=JetBrains+Mono:wght@400;500;700&display=swap">
+<link rel="stylesheet" href="../assets/brief.css">
+<link rel="stylesheet" href="feedback.css">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.css">
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.js"></script>
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/contrib/auto-render.min.js" onload="renderMathInElement(document.body,{delimiters:[{left:'$$',right:'$$',display:true},{left:'\\(',right:'\\)',display:false}]})"></script>
+<style>
+  .avenues { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 1rem; margin: 1.1rem 0 1.8rem; }
+  .avenues > .card { margin: 0; max-width: none; display: flex; flex-direction: column; }
+  .avenues > .card p, .avenues > .card li { max-width: none; }
+  .avenues .pitch { flex: 1 1 auto; margin: 0 0 .7rem; font-size: 1.02rem; }
+  .avenue-kicker { font-family: var(--f-mono); font-size: .72rem; letter-spacing: .14em; text-transform: uppercase; color: var(--muted); margin: 0 0 .35rem; }
+  .avenues h3 { margin: 0 0 .45rem; font-size: 1.15rem; letter-spacing: -.02em; line-height: 1.2; }
+  .badge-top { display: inline-block; font-family: var(--f-mono); font-weight: 700; font-size: .7rem; letter-spacing: .14em; text-transform: uppercase; padding: .22rem .55rem; background: var(--amber); border: 2px solid var(--ink); color: var(--ink); }
+  .card.top-pick { border-color: var(--ink); box-shadow: 8px 8px 0 var(--amber); }
+  .effort { font-family: var(--f-mono); font-size: .72rem; letter-spacing: .1em; text-transform: uppercase; color: var(--muted); }
+  .found-via { font-family: var(--f-mono); font-size: .82rem; line-height: 1.55; color: var(--body); background: var(--card); border: 2px solid var(--ink); border-left: 8px solid var(--teal); padding: .7rem 1rem; margin: .4rem 0 1rem; max-width: none; }
+  .found-via strong { font-family: var(--f-mono); letter-spacing: .08em; text-transform: uppercase; font-size: .75rem; }
+  figure { margin: 1.2rem 0 1.6rem; max-width: none; }
+  figure img { width: 100%; height: auto; border: 2px solid var(--ink); }
+  figcaption { font-family: var(--f-mono); font-size: .8rem; color: var(--muted); margin-top: .45rem; }
+  @media (max-width: 900px) { .avenues { grid-template-columns: 1fr; } }
+  .robust { border-left: 8px solid var(--ink); }
+  .finds { border-left: 8px solid var(--amber); }
+  .robust h3, .finds h3 { margin-top: 0; }
+</style>
+<!-- Methods Scout home-screen / PWA tags. Paste into <head> of every methods-scout page.
+     Paths are root-absolute so they resolve under https://jgridifier.github.io/research-lab/. -->
+<link rel="apple-touch-icon" sizes="180x180" href="/research-lab/methods-scout/icons/apple-touch-icon.png">
+<link rel="icon" type="image/png" sizes="32x32" href="/research-lab/methods-scout/icons/favicon-32.png">
+<link rel="icon" type="image/png" sizes="192x192" href="/research-lab/methods-scout/icons/icon-192.png">
+<link rel="manifest" href="/research-lab/methods-scout/manifest.webmanifest">
+<meta name="apple-mobile-web-app-title" content="Methods Scout">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="theme-color" content="#0F2A23">
+</head>
+<body><main>
+<header class="mast">
+  <div class="date">Monday · November 16, 2026 · scheduled edition · aimed at Q2 and Q3 · exotic · synthetic mocks (Q2) and public filings (Q3)</div>
+  <h1>Methods scout</h1>
+  <p class="dek">Two borrowed tools, one for each question that had gone quiet. From salmon fisheries: the <em>mean-variance portfolio effect</em>, which checks “diversification” against Taylor’s power law instead of assuming every program’s volatility scales with its size. From clinical biostatistics: <em>probabilistic index models</em>, which turn rank tests into regressions whose effect is a plain probability: how often the more-stressed bank pays out more than its peer.</p>
+  <nav><a href="index.html">All editions</a><a href="board.html">Feedback board</a><a href="secret-sauce.html">Secret sauce</a><a href="https://github.com/jgridifier/research-lab/blob/main/docs/methods-scout/QUESTIONS.md">Research questions</a><a href="https://github.com/jgridifier/research-lab/blob/main/docs/methods-scout/watchlist.md">Watchlist</a><a href="../index.html">Research lab home</a></nav>
+</header>
+
+<div class="ticker">
+  <span><b>●</b> Q2 (SYNTHETIC mocks): program spend scales with size at Taylor slope z = 1.67 (Corning mock) and 1.77 (Morgan Stanley mock), not 2. So the usual diversification numbers (average-CV portfolio effect 3.36 / 3.25; finance diversification ratio 3.14 / 3.10) say the portfolio is ~3× steadier than its programs. The mean-variance portfolio effect says 0.99 / 1.15: no steadier than a single program that size would be.</span>
+  <span><b>●</b> On the mocks’ noise-free true levels, the average-CV effect falls from 3.36 to 1.54 (Corning mock). Part of the “diversification” is measurement noise cancelling in the total.</span>
+  <span><b>●</b> Q3 (public data): within a test year, the bank with a one-IQR better severely adverse pre-tax income path has the higher payout/RWA 68% of the time (Holm p = 0.02). CET1 drawdown alone gives 40%, but it adds nothing once pre-tax income is in the model (50%, p = 0.89).</span>
+  <span><b>●</b> Q3.5: before 2020 the drawdown ranking lines up with dividends (PI 0.36 per IQR, Holm p = 0.02), not buybacks (0.49, p = 0.82). After 2020 it shows up in buybacks too (0.44, p = 0.034), but that does not survive Holm (0.27).</span>
+</div>
+
+<section class="tldr">
+<h2>The short version</h2>
+<ul>
+<li><strong>Data.</strong> Q2: the SYNTHETIC mock zero-based-budgeting datasets (Corning_mock and MorganStanley_mock, seed 20261113), box copy at <code>/workspace/q2-mock-zbb/output/</code>, the same generator output as the Drive folder “Q2 mock ZBB datasets (synthetic, 2026-11-13)”. They are not either firm’s budgets. The answer key was used only for scoring. Q3: public filings, the lab’s verified copies from the 11-14 run. Fed <code>public_results_DFAST_2026.csv</code> (all scenarios, including Adverse 2014–2019 and December 2020 Alternative Severe), FR Y-9C HI-A Q4 payouts 2012–2025 (BHCK4460, 4598, 4783, 4782, 4340), and the SCB from the Large Bank Capital Requirements PDFs. No private rows published.</li>
+<li><strong>Method 1, mean-variance portfolio effect and Taylor’s power law (ecofolio; fisheries ecology).</strong> It overturns the “diversified portfolio” reading. Today it does not find hidden groups: a plain correlation screen beats it. Verdict: <span class="verdict interesting">interesting</span>.</li>
+<li><strong>Method 2, probabilistic index models (pim; biostatistics).</strong> Within-year pairwise effects that survive outliers. They add Q3.4 (the Adverse gap adds nothing) and Q3.5 (dividends before 2020, buybacks after). Verdict: <span class="verdict adopt">recommend for promote workflow</span> (nothing promoted; Jared approves).</li>
+<li><strong>Not repeated.</strong> Earlier picks were not re-run: CCM, kairos/tabula, CRQA, IDR, ebnm, DenseLines, codyn, Lovell ρ, ecotraj, lphom, MARSS, InspectChangepoint, partykit and changeforest. No scout issue had a 👎 or a refine comment, so nothing was steered away from.</li>
+</ul>
+</section>
+
+<div class="sec-head"><span class="n">Questions</span><h2>Where each question stands</h2><span class="line"></span></div>
+<div class="card"><div class="card-top"><span class="tag">Q1 · in progress · not targeted today</span></div><p>No Q1 analysis today; the 11-14 and 11-15 results stand. Q2 and Q3 had gone two and one editions without a pick.</p></div>
+<div class="card"><div class="card-top"><span class="tag teal">Q2 · in progress</span></div>
+<p><strong>Q2.4 and Q2.3, on SYNTHETIC mocks.</strong> The portfolio is far more synchronous than chance: the observed mean-variance PE is 0.99 against a year-shuffle null median of 7.28 (Corning mock), p = 0.001. Because z &lt; 2, CV-based diversification numbers overstate stability about threefold. Noise inflates them further. Per-program volatility from 5–6 points did not flag the planted movers (AUC 0.28–0.34 for the Taylor residual and CV, 0.47–0.50 for raw variance). <strong>Still missing:</strong> real program-level budgets and actuals.</p></div>
+<div class="card"><div class="card-top"><span class="tag teal">Q3 · in progress</span></div>
+<p><strong>Q3.4 and Q3.5 run for the first time; Q3.1 and Q3.2 cross-checked.</strong> The severely adverse pre-tax path carries the cross-firm payout ordering; drawdown adds nothing beyond it. The SCB alone shows no link (2021–2025, p = 0.20), which agrees with the 11-14 IDR. The Adverse–SA gap adds nothing (2014–2019). Before 2020 the stress ranking lines up with dividends; after 2020, weakly, with buybacks. <strong>Still missing:</strong> firm-level baseline projections (not published) and the October 2020 SCB PDF.</p></div>
+
+<!-- ================= METHOD 1 ================= -->
+<div class="sec-head" id="m1"><span class="n">Method 01</span><h2 id="ecofolio">Mean-variance portfolio effect: is the program portfolio really diversified?</h2><span class="line"></span></div>
+<p class="meta">Anderson, Cooper &amp; Dulvy (2013), “Ecological prophets: quantifying metapopulation portfolio effects”, <em>Methods in Ecology and Evolution</em> 4:971–981, <a href="https://doi.org/10.1111/2041-210x.12093">doi:10.1111/2041-210x.12093</a> · Taylor’s power law (Taylor 1961) · R package ecofolio 0.1.0 (Sean C. Anderson, GPL-2) · Novelty: <strong>exotic-transfer</strong> (fisheries and metapopulation ecology) · Target: <strong>Q2.4 structure, Q2.3 real change vs noise</strong></p>
+<p class="found-via"><strong>Found via.</strong> GitHub, single-author repo, found on 2026-11-16 by searching for metapopulation portfolio-effect code: <a href="https://github.com/seananderson/ecofolio">https://github.com/seananderson/ecofolio</a> (4 stars, last push 2025-06-12 UTC). The paper summary was read on the DOI landing page; the author’s preprint link returned HTTP 500. Home field: salmon, moth and reef-fish metapopulations.</p>
+
+<aside class="scout-respond" data-issue="62" data-slug="ecofolio">
+  <span class="scout-chip status-proposed">Proposed</span>
+  <a class="scout-respond-btn" href="https://github.com/jgridifier/research-lab/issues/62">Respond on GitHub</a>
+  <p class="scout-respond-hint">👍 go ahead with the top pick · 👎 drop it · 👀 park for later · or comment <code>go engineering</code>, <code>go math</code>, <code>go new use</code>, <code>go all</code>, <code>refine: &lt;what to change&gt;</code>, <code>promote</code>, <code>park</code>, <code>drop</code>.</p>
+</aside>
+<div class="avenues">
+  <article class="card teal">
+    <div class="card-top"><span class="avenue-kicker">1 · Engineering</span><span class="effort">Effort S–M</span></div>
+    <h3>Ragged-panel port, R as oracle</h3>
+    <p class="pitch">ecofolio needs a complete program × year matrix, so 28% (Corning mock) and 24% (MS mock) of programs were dropped. A NumPy/Rust port could handle entrants and exiters. Today’s vectorised R version already matches <code>pe_mv</code> to 1e-15 and runs in 0.1 ms vs 215 ms.</p>
+    <div class="foot"><strong>Test.</strong> Parity ≤ 1e-10 with ecofolio on pinkbr and on 1,000 random subsets. Then a 999-shuffle null on 1,404 programs in &lt; 1 s.</div>
+  </article>
+  <article class="card top-pick">
+    <div class="card-top"><span class="avenue-kicker">2 · Math</span><span class="badge-top">Top pick</span></div>
+    <h3>A noise-corrected Taylor’s law and portfolio effect</h3>
+    <p class="pitch">Budget and actual are two noisy readings of each program. Their disagreement estimates observation-noise variance, which can be removed before fitting z. Then split variability across program → segment → firm (α/β/γ). Today, noise inflated the average-CV effect from 1.54 to 3.36. Effort M.</p>
+    <div class="foot"><strong>Test.</strong> On both mocks plus 20 new-seed mocks: the corrected PE is closer to the true-level PE in ≥ 80% of firm × segment cells. Pre-registered.</div>
+  </article>
+  <article class="card green">
+    <div class="card-top"><span class="avenue-kicker">3 · New use on our data</span><span class="effort">Effort S</span></div>
+    <h3>Stability cost of FY2026 decision packages</h3>
+    <p class="pitch">Recompute z and the mean-variance PE under the minimum, current and enhanced package scenarios in <code>decision_packages.csv</code>. Does approving the enhanced packages concentrate volatility (Q2.3/Q2.4)?</p>
+    <div class="foot"><strong>Test.</strong> PE change per scenario against 999 random same-cost package swaps, stated in advance.</div>
+  </article>
+</div>
+
+<div class="card robust"><div class="card-top"><span class="tag">(a) Robust at home</span><span class="verdict interesting">promising but thin</span></div>
+<h3>What the home field has established</h3>
+<ul>
+<li><strong>Taylor’s law is long established.</strong> Variance grows as a power of the mean, \(\sigma^2 = a\mu^z\). It has been reported since Taylor (1961) across insects, fish and plants. Cohen &amp; Xu (<em>PNAS</em> 112:7749–7754, 2015; <a href="https://www.pnas.org/doi/10.1073/pnas.1503824112">abstract read</a>) show that random block sampling from any skewed distribution with four finite moments produces it. They give formulae for the slope and its standard error. A follow-up exchange (Chen; Cohen &amp; Xu’s reply, <a href="https://doi.org/10.1073/pnas.1507551112">doi:10.1073/pnas.1507551112</a>) disputed when samples do not support it.</li>
+<li><strong>The mean-variance portfolio effect is newer and thinner.</strong> It rests on one methods paper. From its summary: the widely used average-CV portfolio effect implicitly assumes z = 2. Across 51 metapopulations and 1,070 subpopulations, the average-CV effect was stronger than the mean-variance one in 84% of metapopulations, by up to sevenfold. The gap was largest for reef fishes and moths (low z); the two agreed for salmon (z ≈ 2). The paper has 88 citations (DOI metadata). Tilman, Lehman &amp; Bristow (1998) is cited in the paper as the theoretical basis; we did not read it.</li>
+<li><strong>Package.</strong> v0.1.0, single author, no test suite, last push 2025-06. Today’s reproduction of the package vignette matched exactly: pink salmon <code>pinkbr</code> gives PE<sub>mv</sub> = 1.412 (vignette 1.412), PE<sub>avg-CV</sub> = 1.517 (vignette 1.517) and z = 1.98.</li>
+<li><strong>Known failure modes.</strong> The single-asset variance is <em>extrapolated</em> to the portfolio’s size. The package’s CI covers only the Taylor-fit uncertainty, not the portfolio CV. Today the quadratic variant blew up (Corning mock: 34.7, vs 0.83 linear and 0.86 robust) over a 2.1-decade extrapolation.</li>
+</ul>
+<p><strong>Verdict: promising but thin.</strong> The scaling law is solid. The portfolio-effect metric has one primary paper and an unmaintained, untested package, though the package is simple enough to verify by hand (we did, to 1e-15).</p></div>
+
+<div class="card finds"><div class="card-top"><span class="tag">(b) What it finds here</span></div>
+<h3>Mapping the home-field set-up to ours</h3>
+<ul>
+<li><strong>Who plays what.</strong> Each stream’s salmon run becomes a program’s annual actual spend. The metapopulation becomes the firm (or a segment). Taylor’s z becomes how a program’s volatility scales with its size.</li>
+<li><strong>Assumptions that break.</strong> Salmon series run for decades; ours have 5–6 points, so each program’s variance has 3–4 degrees of freedom after detrending. Budgets trend, so we use the package’s <code>linear_detrended</code> variant. Programs enter and exit, but the package needs a complete matrix. The mocks are raked to public totals, which constrains the firm total. Abundance noise is sampling noise; budget noise is accounting and planning noise.</li>
+<li><strong>What the standard toolkit gets wrong.</strong> The finance view is the diversification ratio \(\sum_i\sigma_i/\sigma_p\) (3.14 Corning mock, 3.10 MS mock), or its ecology twin, the average-CV PE (3.36 / 3.25). Both say the total is about three times steadier than its parts. That reading assumes every program’s volatility scales one-for-one with size (z = 2). The fitted z is 1.67 / 1.77, so big programs are proportionally calmer. Measured against a single program of the same size, the portfolio is no steadier: PE<sub>mv</sub> 0.99 / 1.15. On the mocks’ noise-free true levels the gap persists (Corning mock: average-CV 1.54 vs mean-variance 0.25).</li>
+<li><strong>Carries further?</strong> Yes, to anything with many units of very different size: branch networks, product lines, fund families by AUM, loan books by obligor.</li>
+</ul></div>
+
+<p><strong>What it is.</strong> Fit Taylor’s law across programs, \(\log v_i = \log a + z \log m_i\), where \(m_i\) is program \(i\)’s mean spend and \(v_i\) the variance of its linearly detrended spend. Extrapolate it to the portfolio mean \(M = \mathbb{E}[\sum_i x_{it}]\) to get the CV a <em>single</em> program of that size would have. Compare that with the portfolio’s observed CV:
+$$\mathrm{PE}_{mv} = \frac{\sqrt{a M^{z}}/M}{\mathrm{CV}_{\text{portfolio}}},\qquad \mathrm{PE}_{avgCV} = \frac{\tfrac1n\sum_i \mathrm{CV}_i}{\mathrm{CV}_{\text{portfolio}}}.$$
+With z = 2 the single-asset CV does not depend on size, and the two measures coincide. With z &lt; 2 a large program is calmer, so the average CV of small programs overstates what an equally large undivided program would show. PE &gt; 1 means the portfolio is steadier than one equal-sized program. <strong>Why it is fast:</strong> it is one log-log regression and one prediction. Our vectorised version takes 0.1–0.15 ms per portfolio.</p>
+
+<h3 id="ecofolio-1">1a · Portfolio effect with and without Taylor’s law (Q2.4, Q2.3)</h3>
+<figure><img src="fig/2026-11-16/eco_taylor.png" alt="Two log-log scatter plots of program mean spend against detrended variance. A solid Taylor line with slope 1.67 or 1.77 runs through the programs and is extrapolated to the portfolio total, which sits on or near it. A dashed z = 2 line, which the average-CV method assumes, runs well above the total."><figcaption>Each dot is one SYNTHETIC mock program (balanced panel). Solid line: Taylor fit, extrapolated. Dashed line: the average-CV assumption (z = 2, fixed CV). Red dot: the actual portfolio total. The vertical gap between dashed and red is the overstatement.</figcaption></figure>
+<div class="table-wrap"><table><thead><tr><th>Quantity</th><th class="num">Corning mock (778 of 1,079 programs, FY2020–25)</th><th class="num">MS mock (1,404 of 1,840, FY2021–25)</th></tr></thead><tbody>
+<tr><td>Taylor z, detrended (SE)</td><td class="num">1.67 (0.04)</td><td class="num">1.77 (0.03)</td></tr>
+<tr><td>Taylor z, leave one year out (range)</td><td class="num">1.62–1.72</td><td class="num">1.70–1.86</td></tr>
+<tr><td>Taylor z on budgets / on noise-free true levels</td><td class="num">1.72 / 1.48</td><td class="num">1.71 / 1.60</td></tr>
+<tr><td>Average-CV PE, detrended (raw, BCa 95%)</td><td class="num">3.36 (2.82 [2.58, 3.12])</td><td class="num">3.25 (2.72 [2.50, 2.96])</td></tr>
+<tr><td>Finance diversification ratio \(\sum\sigma_i/\sigma_p\), detrended</td><td class="num">3.14</td><td class="num">3.10</td></tr>
+<tr><td><strong>Mean-variance PE, detrended [95%]</strong></td><td class="num"><strong>0.99 [0.74, 1.31]</strong></td><td class="num"><strong>1.15 [0.91, 1.45]</strong></td></tr>
+<tr><td>Mean-variance PE, not detrended: linear / robust / quadratic Taylor fit</td><td class="num">0.83 / 0.86 / 34.7</td><td class="num">1.47 / 1.59 / 1.63</td></tr>
+<tr><td>On noise-free true levels: average-CV / mean-variance</td><td class="num">1.54 / 0.25</td><td class="num">2.63 / 0.47</td></tr>
+<tr><td>Extrapolation distance (largest program → total)</td><td class="num">$28.4M → $3,888M (2.1 decades)</td><td class="num">$191.8M → $37,601M (2.3 decades)</td></tr>
+</tbody></table></div>
+<p><strong>Reading.</strong> On standard numbers, a planner would say the program book is three times steadier than its parts because programs diversify each other. Taylor’s law says most of that is just size: one large program would be about as steady as the whole book. Two cautions. The linear, robust and detrended variants agree (0.83–0.99 on Corning, 1.15–1.59 on MS), but the quadratic variant does not (34.7 on Corning). The mean-variance answer depends on extrapolating the line about two orders of magnitude. On the noise-free true levels both measures drop, so some of the apparent diversification is observation noise cancelling in the total.</p>
+
+<h3 id="ecofolio-2">1b · By segment, and against the standard metric</h3>
+<figure><img src="fig/2026-11-16/eco_segments.png" alt="Dot-and-bar chart per segment of both mocks: amber average-CV portfolio effect, teal mean-variance effect, red crosses on true levels. The gap is small for segments with z near 2 (Corning Corporate, MS Wealth Management) and large for low-z segments (MS Firm Functions and Investment Management)."><figcaption>Per-segment portfolio effects (log scale), SYNTHETIC mocks, detrended. Segments are sorted by Taylor z.</figcaption></figure>
+<div class="table-wrap"><table><thead><tr><th>Segment</th><th class="num">n</th><th class="num">z</th><th class="num">Average-CV PE</th><th class="num">Div. ratio</th><th class="num">Mean-variance PE</th><th class="num">MV PE, true levels</th></tr></thead><tbody>
+<tr><td>Corning mock: Specialty Materials</td><td class='num'>106</td><td class='num'>1.47</td><td class='num'>2.18</td><td class='num'>2.00</td><td class='num'><strong>0.56</strong></td><td class='num'>0.61</td></tr>
+<tr><td>Corning mock: Hemlock and Emerging Growth Businesses</td><td class='num'>52</td><td class='num'>1.68</td><td class='num'>3.06</td><td class='num'>2.86</td><td class='num'><strong>1.44</strong></td><td class='num'>0.87</td></tr>
+<tr><td>Corning mock: Optical Communications</td><td class='num'>232</td><td class='num'>1.69</td><td class='num'>2.41</td><td class='num'>2.27</td><td class='num'><strong>0.93</strong></td><td class='num'>0.24</td></tr>
+<tr><td>Corning mock: Display</td><td class='num'>98</td><td class='num'>1.70</td><td class='num'>2.25</td><td class='num'>2.08</td><td class='num'><strong>1.01</strong></td><td class='num'>0.88</td></tr>
+<tr><td>Corning mock: Automotive</td><td class='num'>86</td><td class='num'>1.70</td><td class='num'>3.29</td><td class='num'>3.10</td><td class='num'><strong>1.54</strong></td><td class='num'>0.51</td></tr>
+<tr><td>Corning mock: Life Sciences</td><td class='num'>86</td><td class='num'>1.74</td><td class='num'>3.62</td><td class='num'>3.50</td><td class='num'><strong>1.86</strong></td><td class='num'>0.11</td></tr>
+<tr><td>Corning mock: Corporate</td><td class='num'>118</td><td class='num'>2.04</td><td class='num'>3.52</td><td class='num'>3.52</td><td class='num'><strong>3.48</strong></td><td class='num'>2.90</td></tr>
+<tr><td>MS mock: Investment Management</td><td class='num'>185</td><td class='num'>1.26</td><td class='num'>2.31</td><td class='num'>1.91</td><td class='num'><strong>0.27</strong></td><td class='num'>0.10</td></tr>
+<tr><td>MS mock: Firm Functions</td><td class='num'>317</td><td class='num'>1.45</td><td class='num'>5.02</td><td class='num'>4.13</td><td class='num'><strong>0.83</strong></td><td class='num'>0.08</td></tr>
+<tr><td>MS mock: Institutional Securities</td><td class='num'>528</td><td class='num'>1.80</td><td class='num'>3.21</td><td class='num'>3.12</td><td class='num'><strong>1.45</strong></td><td class='num'>0.25</td></tr>
+<tr><td>MS mock: Wealth Management</td><td class='num'>374</td><td class='num'>2.01</td><td class='num'>1.05</td><td class='num'>1.18</td><td class='num'><strong>0.95</strong></td><td class='num'>0.69</td></tr>
+</tbody></table></div>
+<p><strong>Reading.</strong> This is the home-field pattern again. Where z ≈ 2 (Corning mock Corporate, z = 2.04; MS mock Wealth Management, 2.01) the two measures agree (3.52 vs 3.48; 1.05 vs 0.95). Where z is low they diverge most: MS mock Firm Functions (z = 1.45) shows 5.02 vs 0.83, and Investment Management (z = 1.26) shows 2.31 vs 0.27. Those are the segments a CV-based dashboard would call “well diversified” and Taylor’s law would not.</p>
+
+<h3 id="ecofolio-3">1c · Nulls: is the co-movement real, and can PE find hidden groups? (Q2.4)</h3>
+<figure><img src="fig/2026-11-16/eco_screen.png" alt="Left: scatter of label groups by correlation percentile and PE percentile; planted clusters (stars) all sit at the 100th correlation percentile but spread from the 0th to 81st PE percentile. Right: observed portfolio PE (about 1) far below the year-shuffle null (medians 7.3 and 13.2)."><figcaption>Left: every subsegment, stated-driver and function group with ≥ 8 balanced programs, ranked against 299 random same-size sets (dot size = share of planted-cluster members); stars = planted clusters. Right: whole-portfolio PE vs 999 year-shuffles.</figcaption></figure>
+<div class="table-wrap"><table><thead><tr><th>Planted cluster (answer key)</th><th>Type</th><th class="num">n (balanced)</th><th class="num">MV PE</th><th class="num">PE percentile</th><th class="num">Mean YoY corr</th><th class="num">Corr percentile</th></tr></thead><tbody>
+<tr><td>Corning mock: ai_datacenter_demand (all)</td><td>co-move</td><td class='num'>122</td><td class='num'>0.92</td><td class='num'>10</td><td class='num'>0.34</td><td class='num'>100</td></tr>
+<tr><td>Corning mock: display_specialty_tradeoff (all)</td><td>tradeoff</td><td class='num'>84</td><td class='num'>1.83</td><td class='num'>81</td><td class='num'>0.41</td><td class='num'>100</td></tr>
+<tr><td>Corning mock: display_specialty_tradeoff (pos)</td><td>tradeoff</td><td class='num'>49</td><td class='num'>1.39</td><td class='num'>47</td><td class='num'>0.71</td><td class='num'>100</td></tr>
+<tr><td>Corning mock: display_specialty_tradeoff (neg)</td><td>tradeoff</td><td class='num'>35</td><td class='num'>1.77</td><td class='num'>61</td><td class='num'>0.63</td><td class='num'>100</td></tr>
+<tr><td>Corning mock: auto_ice_aftertreatment (all)</td><td>co-move</td><td class='num'>27</td><td class='num'>1.06</td><td class='num'>23</td><td class='num'>0.65</td><td class='num'>100</td></tr>
+<tr><td>MS mock: equity_market_activity (all)</td><td>co-move</td><td class='num'>163</td><td class='num'>0.65</td><td class='num'>0</td><td class='num'>0.16</td><td class='num'>100</td></tr>
+<tr><td>MS mock: wealth_fee_based_growth (all)</td><td>co-move</td><td class='num'>251</td><td class='num'>1.17</td><td class='num'>16</td><td class='num'>0.36</td><td class='num'>100</td></tr>
+<tr><td>MS mock: branch_vs_digital (all)</td><td>tradeoff</td><td class='num'>45</td><td class='num'>1.89</td><td class='num'>71</td><td class='num'>0.43</td><td class='num'>100</td></tr>
+<tr><td>MS mock: branch_vs_digital (neg)</td><td>tradeoff</td><td class='num'>39</td><td class='num'>1.60</td><td class='num'>58</td><td class='num'>0.47</td><td class='num'>100</td></tr>
+</tbody></table></div>
+<p><strong>Year-shuffle null.</strong> Shuffling each program’s years keeps its mean and variance but breaks co-movement. The observed portfolio PE is 0.99 against a null median of 7.28 (5–95%: 4.27–15.88) on the Corning mock, and 1.15 against 13.22 (7.27–34.92) on the MS mock; both p = 0.001. So the book co-moves far more than independent programs would, partly through the shared raking to public totals that the generator applies.</p>
+<p><strong>Group screen: an honest miss.</strong> As a detector of hidden co-moving groups, the plain standard (mean pairwise YoY correlation against random same-size sets) puts every planted cluster at the 100th percentile. The mean-variance PE puts them anywhere from the 0th to the 81st percentile. It also produces extreme values for small groups (up to 283 for a 12-program group) because the within-group Taylor fit is poor. Trade-off clusters do sit a little high (71st and 81st percentiles), as compensation would predict, but not significantly. Use correlation (or the 11-13 residual DenseLines) to find groups. Use PE to say how much a group’s size, rather than diversification, explains its steadiness.</p>
+<p><strong>Per-program flag (Q2.3).</strong> We also flagged programs by their residual from the Taylor line (size-aware volatility) and compared that with the CV. Neither found the planted “movers” (cluster members with large loading × factor range). AUC: Taylor residual 0.34 / 0.30, CV 0.32 / 0.28, raw variance 0.50 / 0.47 (Corning / MS mock). The Taylor residual does remove the size bias. Its Spearman with log size is 0.02 / −0.07, against −0.24 / −0.28 for CV. CV’s top 50 are small programs (mean $3.4M vs $5.0M overall on Corning; $11.0M vs $26.8M on MS). On the MS mock both track the true-level volatility ranking about equally (Spearman 0.62 vs 0.60); on the Corning mock neither does (−0.04, 0.15). Five or six points per program are not enough to rank programs by volatility. Pool (ebnm, 11-13) before ranking.</p>
+<p><strong>Timing.</strong> The 999-shuffle null takes 5.5 s (Corning mock) and 10.7 s (MS mock) with the vectorised PE. Through the package call it would be about 999 × 0.41 s ≈ 7 min on the MS mock; our first attempt did not finish one firm in 16 minutes. The whole script runs in 63 s.</p>
+
+<h3>Limitations and verdict</h3>
+<p><strong>Limitations.</strong> SYNTHETIC data only. The mocks rake programs to public totals, which builds in synchrony. Balanced panels drop 24–28% of programs. Short series make per-program variances noisy (the Taylor fit pools them, which is why it still works). The mean-variance PE hinges on a two-decade extrapolation and on the variant chosen. The package CI ignores portfolio-CV uncertainty.</p>
+<p><strong>Verdict: interesting.</strong> It is a one-line correction that changes the headline answer to “is the book diversified?”. Its picture (the Taylor plot with the z = 2 line) is clear. It is not a structure-discovery tool on short series. It needs the noise correction (top pick) before any real-data use.</p>
+
+<!-- ================= METHOD 2 ================= -->
+<div class="sec-head" id="m2"><span class="n">Method 02</span><h2 id="pim">Probabilistic index models: how often does the more-stressed bank pay out more?</h2><span class="line"></span></div>
+<p class="meta">Thas, De Neve, Clement &amp; Ottoy (2012), “Probabilistic index models”, <em>JRSS-B</em> 74(4):623–671, <a href="https://doi.org/10.1111/j.1467-9868.2011.01020.x">doi:10.1111/j.1467-9868.2011.01020.x</a> · Amorim, Thas, Vermeulen, Vansteelandt &amp; De Neve (2018), “Small sample inference for probabilistic index models”, <em>Computational Statistics &amp; Data Analysis</em> 121:137–148, <a href="https://doi.org/10.1016/j.csda.2017.11.005">doi:10.1016/j.csda.2017.11.005</a> · R package pim 2.0.4 (Meys, De Neve, Sabbe, Amorim; GPL ≥ 2) · Novelty: <strong>niche / exotic-transfer</strong> (clinical biostatistics, rank tests) · Target: <strong>Q3.1, Q3.2, Q3.4, Q3.5</strong></p>
+<p class="found-via"><strong>Found via.</strong> CRAN, found on 2026-11-16 while searching for rank-based regression with pairwise effect sizes: <a href="https://cran.r-project.org/web/packages/pim/index.html">https://cran.r-project.org/web/packages/pim/index.html</a> (v2.0.4, published 2025-01-08; source <a href="https://github.com/CenterForStatistics-UGent/pim">github.com/CenterForStatistics-UGent/pim</a>). The paper abstract was read on the <a href="https://academic.oup.com/jrsssb/article/74/4/623/7075301">OUP page</a> and <a href="https://biblio.ugent.be/publication/1934532">Ghent biblio</a>. Home field: clinical trials, sensory and listening tests.</p>
+
+<aside class="scout-respond" data-issue="63" data-slug="pim">
+  <span class="scout-chip status-proposed">Proposed</span>
+  <a class="scout-respond-btn" href="https://github.com/jgridifier/research-lab/issues/63">Respond on GitHub</a>
+  <p class="scout-respond-hint">👍 go ahead with the top pick · 👎 drop it · 👀 park for later · or comment <code>go engineering</code>, <code>go math</code>, <code>go new use</code>, <code>go all</code>, <code>refine: &lt;what to change&gt;</code>, <code>promote</code>, <code>park</code>, <code>drop</code>.</p>
+</aside>
+<div class="avenues">
+  <article class="card teal">
+    <div class="card-top"><span class="avenue-kicker">1 · Engineering</span><span class="effort">Effort M</span></div>
+    <h3>A streaming within-block PIM fitter</h3>
+    <p class="pitch">With within-year pairs, the score is a sum over small blocks. A Rust core could batch permutation and firm-bootstrap refits without rebuilding pair matrices, and scale to thousands of Q2 programs per subsegment. pim 2.0.4 is the oracle.</p>
+    <div class="foot"><strong>Test.</strong> β and SE parity ≤ 1e-8 with pim on all 29 models from today. Then 10,000 within-year permutations of a 2-covariate model on 360 firm-years in &lt; 2 s.</div>
+  </article>
+  <article class="card teal">
+    <div class="card-top"><span class="avenue-kicker">2 · Math</span><span class="effort">Effort M</span></div>
+    <h3>Firm-clustered inference for PIMs</h3>
+    <p class="pitch">Firms repeat across test years, but pim’s sandwich treats firm-years as independent, so today used a firm-block bootstrap instead. Derive a two-way (firm × year) U-statistic variance with Amorim et al.’s small-sample bias reduction.</p>
+    <div class="foot"><strong>Test.</strong> Simulation at our design (40 firms × 13 years, 18–35 per year, firm effects): 95% coverage within ±1.5 points, against the sandwich and the block bootstrap.</div>
+  </article>
+  <article class="card top-pick">
+    <div class="card-top"><span class="avenue-kicker">3 · New use on our data</span><span class="badge-top">Top pick</span></div>
+    <h3>Text versus numbers as a probabilistic index (Q2.2)</h3>
+    <p class="pitch">Within each subsegment of the mock ZBB data, fit P(program A grows faster than B | stated intent, cost type, discretionary flag). The programs whose pairwise ordering most contradicts their stated label are candidate text–number mismatches. Effort S.</p>
+    <div class="foot"><strong>Test.</strong> AUC against the planted mismatch key. It must beat the 11-13 peer-comparison benchmark (0.78, MS mock, “stated growth, actually declining”). Pre-registered.</div>
+  </article>
+</div>
+
+<div class="card robust"><div class="card-top"><span class="tag">(a) Robust at home</span><span class="verdict adopt">well established</span></div>
+<h3>What the home field has established</h3>
+<ul>
+<li><strong>Origin.</strong> A semiparametric model for \(P(Y \le Y^* \mid X, X^*)\), with asymptotic normality of the estimator, a consistent sandwich covariance, and a simulation study (JRSS-B 2012 abstract). The DOI metadata lists 163 citations.</li>
+<li><strong>Follow-ups.</strong> Amorim et al. (2018; abstract and introduction read) describe PIMs as generating classical rank tests (Wilcoxon–Mann–Whitney, Kruskal–Wallis, Friedman), citing De Neve &amp; Thas (2015), which we did not read. They show that asymptotic inference is poor in small samples and that β has a large finite-sample bias. Their bias-reduced bootstrap and adjusted jackknife empirical likelihood fix it.</li>
+<li><strong>Implementation.</strong> pim 2.0.4 on CRAN (2025-01), testthat in Suggests, maintained by the Ghent group; the original interface lives on as <code>pimold</code> on R-Forge. Today’s reproduction: on the package’s <code>FEVData</code>, a PIM with one binary covariate gives PI = 0.749275, identical to the Wilcoxon–Mann–Whitney probabilistic index (0.749275). That is the special case the theory says it should reproduce.</li>
+<li><strong>Known failure modes.</strong> Small samples (ours: 18–35 firms per year). Dependent pseudo-observations. Ties (many zero buybacks). Collinear covariates give unstable, sign-flipping coefficients (seen today with SCB + drawdown).</li>
+</ul>
+<p><strong>Verdict: well established</strong> as a statistical framework with theory, simulations and a maintained package. It is little used outside biostatistics and nearly unknown in finance.</p></div>
+
+<div class="card finds"><div class="card-top"><span class="tag">(b) What it finds here</span></div>
+<h3>Mapping the home-field set-up to ours</h3>
+<ul>
+<li><strong>Who plays what.</strong> Patients become banks. Treatment arms or doses become stress metrics (SA drawdown, SA pre-tax income, SCB, the Adverse–SA gap). The outcome becomes payout/RWA, or its dividend and buyback legs. Pairs are formed only <em>within a test year</em> (pim’s custom <code>compare</code> matrix), so year-to-year shifts in the scenario and in payout norms cancel out.</li>
+<li><strong>Assumptions that break.</strong> Firms recur across 13 years, so pairs are not independent across years; we use a firm-block bootstrap (299) and a within-year permutation null (499). Each year’s cross-section is small. Payout ratios have mass at zero and extreme values when net income is near zero.</li>
+<li><strong>What the standard toolkit gets wrong.</strong> OLS with year fixed effects on payout/net income ~ drawdown gives −0.070. Trimming the 8 most extreme ratios (2% of 360) cuts that to −0.040, a 43% drop. The PIM effect moves from 0.4675 to 0.4697. On the dividend share before 2020, OLS sees nothing (t = −0.94); PIM gives p = 0.014 (Holm 0.13, so suggestive only).</li>
+<li><strong>Carries further?</strong> Yes, to any small, heavy-tailed cross-section compared within blocks: Q2 programs within subsegments (the top-pick avenue), funds within strategy, dealers within week.</li>
+</ul></div>
+
+<p><strong>What it is.</strong> For two banks \(i, j\) in the same test year,
+$$P(Y_i \preccurlyeq Y_j \mid X_i, X_j) = \operatorname{expit}\big((X_j - X_i)^\top\beta\big),\qquad Y_i \preccurlyeq Y_j \iff Y_i &lt; Y_j \text{ or, for ties, half.}$$
+\(\operatorname{expit}(\beta\,\Delta)\) is the probability that the bank higher by \(\Delta\) on the stress metric has the higher payout. 0.5 means no ordering. It is estimated from the \(\binom{n}{2}\) within-year pseudo-observations by estimating equations, with a sandwich variance. <strong>Why this, not OLS or IDR:</strong> it reads ranks, so a near-zero net income cannot dominate. It is a regression, so it gives a partial effect: drawdown with pre-tax income held fixed. The 11-14 IDR gave monotone conditional distributions, not a partial effect size. Its effect size is a single, plain probability. <strong>Fast:</strong> 49,500 pairs fit in 0.05 s; all 29 models with 499 permutations and 299 bootstraps each ran in about 3 minutes.</p>
+
+<h3 id="pim-1">2a · Cross-section, buffer vs path, timing (Q3.1, Q3.2)</h3>
+<figure><img src="fig/2026-11-16/pim_forest.png" alt="Forest plot of probabilistic indices per IQR with bootstrap intervals. Pre-tax income sits near 0.68 well right of 0.5; drawdown near 0.40 alone but at 0.50 jointly; SCB at 0.46 crossing 0.5; Adverse gap rows straddle 0.5."><figcaption>PI per one-IQR difference (drawdown IQR 2.5 pp; pre-tax income 1.8 pp; SCB 2.0 pp; gap 1.1 pp), firm-block bootstrap 95% intervals. Public data: Fed DFAST results + Y-9C HI-A.</figcaption></figure>
+<div class="table-wrap"><table><thead><tr><th>Sample</th><th>Model</th><th class='num'>n</th><th class='num'>PI per 1 unit [firm-bootstrap 95%]</th><th class='num'>PI per IQR</th><th class='num'>p (perm)</th><th class='num'>Holm (family)</th><th class='num'>OLS + year FE (cluster t)</th></tr></thead><tbody>
+<tr><td>all years</td><td>payout/RWA ~ SA CET1 drawdown</td><td class='num'>360</td><td class='num'>0.460 [0.412, 0.486]</td><td class='num'><strong>0.40</strong></td><td class='num'>0.002</td><td class='num'>0.022</td><td class='num'>−0.118 (t −2.6)</td></tr>
+<tr><td>all years</td><td>payout/RWA ~ SA pre-tax income</td><td class='num'>360</td><td class='num'>0.606 [0.563, 0.669]</td><td class='num'><strong>0.68</strong></td><td class='num'>0.002</td><td class='num'>0.022</td><td class='num'>0.239 (t 3.0)</td></tr>
+<tr><td>all years joint</td><td>payout/RWA ~ SA CET1 drawdown</td><td class='num'>360</td><td class='num'>0.502 [0.462, 0.532]</td><td class='num'><strong>0.50</strong></td><td class='num'>0.894</td><td class='num'>0.894</td><td class='num'>−0.024 (t −0.5)</td></tr>
+<tr><td>all years joint</td><td>payout/RWA ~ SA pre-tax income</td><td class='num'>360</td><td class='num'>0.607 [0.553, 0.676]</td><td class='num'><strong>0.69</strong></td><td class='num'>0.002</td><td class='num'>0.022</td><td class='num'>0.219 (t 2.3)</td></tr>
+<tr><td>2013-2019</td><td>payout/RWA ~ SA CET1 drawdown</td><td class='num'>195</td><td class='num'>0.473 [0.407, 0.508]</td><td class='num'><strong>0.43</strong></td><td class='num'>0.048</td><td class='num'>0.144</td><td class='num'>−0.079 (t −1.5)</td></tr>
+<tr><td>2021-2025</td><td>payout/RWA ~ SA CET1 drawdown</td><td class='num'>132</td><td class='num'>0.451 [0.387, 0.490]</td><td class='num'><strong>0.38</strong></td><td class='num'>0.010</td><td class='num'>0.050</td><td class='num'>−0.168 (t −2.3)</td></tr>
+<tr><td>SCB era</td><td>payout/RWA ~ SCB</td><td class='num'>132</td><td class='num'>0.479 [0.422, 0.518]</td><td class='num'><strong>0.46</strong></td><td class='num'>0.198</td><td class='num'>0.396</td><td class='num'>−0.060 (t −1.1)</td></tr>
+<tr><td>SCB era joint</td><td>payout/RWA ~ SCB</td><td class='num'>132</td><td class='num'>0.736 [0.635, 0.875]</td><td class='num'><strong>0.89</strong></td><td class='num'>0.002</td><td class='num'>0.022</td><td class='num'>0.798 (t 4.9)</td></tr>
+<tr><td>SCB era joint</td><td>payout/RWA ~ SA CET1 drawdown</td><td class='num'>132</td><td class='num'>0.262 [0.146, 0.344]</td><td class='num'><strong>0.07</strong></td><td class='num'>0.002</td><td class='num'>0.022</td><td class='num'>−0.782 (t −5.1)</td></tr>
+<tr><td>timing: next-year payouts</td><td>next-year payout/RWA ~ SA CET1 drawdown</td><td class='num'>333</td><td class='num'>0.477 [0.427, 0.508]</td><td class='num'><strong>0.44</strong></td><td class='num'>0.014</td><td class='num'>0.056</td><td class='num'>−0.075 (t −1.6)</td></tr>
+<tr><td>payout/NI (unstable ratio)</td><td>payout/net income ~ SA CET1 drawdown</td><td class='num'>360</td><td class='num'>0.468 [0.439, 0.492]</td><td class='num'><strong>0.42</strong></td><td class='num'>0.002</td><td class='num'>0.022</td><td class='num'>−0.070 (t −2.7)</td></tr>
+</tbody></table></div>
+<p><strong>Reading.</strong> The pre-tax path carries the ordering. Alone, a bank with 2.5 pp more severely adverse CET1 drawdown out-pays its same-year peer 40% of the time. Held at equal pre-tax income, drawdown is a coin flip (0.50, p = 0.89), while pre-tax income keeps its effect (0.69). The SCB alone, 2021–2025, gives 0.46 (p = 0.20): no reliable ordering, matching the 11-14 IDR. The SCB + drawdown model flips signs (0.89 / 0.07). They are collinear (Spearman 0.92; 38% of firm-years at the 2.5% floor), so read that model as unidentified, not as a finding. <strong>Timing:</strong> next-year payouts, which fall wholly after the results, keep the drawdown effect (0.44, p = 0.014; Holm 0.056), so the link is not only same-year overlap. The firm-block bootstrap is wider than the permutation test: it treats firms, not firm-years, as the unit.</p>
+
+<h3 id="pim-2">2b · Adverse vs severely adverse, where both exist (Q3.4)</h3>
+<div class="table-wrap"><table><thead><tr><th>Sample</th><th>Model</th><th class='num'>n</th><th class='num'>PI per 1 unit [firm-bootstrap 95%]</th><th class='num'>PI per IQR</th><th class='num'>p (perm)</th><th class='num'>Holm (family)</th><th class='num'>OLS + year FE (cluster t)</th></tr></thead><tbody>
+<tr><td>SA drawdown + SA-A gap</td><td>payout/RWA ~ SA CET1 drawdown</td><td class='num'>177</td><td class='num'>0.494 [0.426, 0.549]</td><td class='num'><strong>0.49</strong></td><td class='num'>0.736</td><td class='num'>1.000</td><td class='num'>−0.028 (t −0.4)</td></tr>
+<tr><td>SA drawdown + SA-A gap</td><td>payout/RWA ~ SA − Adverse drawdown gap</td><td class='num'>177</td><td class='num'>0.428 [0.301, 0.546]</td><td class='num'><strong>0.42</strong></td><td class='num'>0.120</td><td class='num'>0.720</td><td class='num'>−0.202 (t −1.6)</td></tr>
+<tr><td>Adverse drawdown only</td><td>payout/RWA ~ Adverse drawdown</td><td class='num'>177</td><td class='num'>0.486 [0.427, 0.536]</td><td class='num'><strong>0.48</strong></td><td class='num'>0.402</td><td class='num'>1.000</td><td class='num'>−0.056 (t −0.9)</td></tr>
+<tr><td>SA drawdown only (same rows)</td><td>payout/RWA ~ SA CET1 drawdown</td><td class='num'>177</td><td class='num'>0.473 [0.406, 0.508]</td><td class='num'><strong>0.43</strong></td><td class='num'>0.040</td><td class='num'>0.280</td><td class='num'>−0.089 (t −1.6)</td></tr>
+<tr><td>gap, next-year payouts</td><td>next-year payout/RWA ~ SA CET1 drawdown</td><td class='num'>174</td><td class='num'>0.501 [0.438, 0.545]</td><td class='num'><strong>0.50</strong></td><td class='num'>0.966</td><td class='num'>1.000</td><td class='num'>−0.010 (t −0.2)</td></tr>
+<tr><td>gap, next-year payouts</td><td>next-year payout/RWA ~ SA − Adverse drawdown gap</td><td class='num'>174</td><td class='num'>0.456 [0.380, 0.552]</td><td class='num'><strong>0.45</strong></td><td class='num'>0.298</td><td class='num'>1.000</td><td class='num'>−0.083 (t −0.9)</td></tr>
+<tr><td>pre-tax SA + A-SA gap</td><td>payout/RWA ~ SA pre-tax income</td><td class='num'>177</td><td class='num'>0.603 [0.542, 0.705]</td><td class='num'><strong>0.68</strong></td><td class='num'>0.002</td><td class='num'>0.016</td><td class='num'>0.193 (t 1.9)</td></tr>
+<tr><td>pre-tax SA + A-SA gap</td><td>payout/RWA ~ Adverse − SA pre-tax gap</td><td class='num'>177</td><td class='num'>0.547 [0.399, 0.741]</td><td class='num'><strong>0.55</strong></td><td class='num'>0.296</td><td class='num'>1.000</td><td class='num'>0.113 (t 0.6)</td></tr>
+</tbody></table></div>
+<p><strong>Reading.</strong> For 2014–2019 (177 firm-years with both scenarios), how much worse a bank looks under severely adverse than under adverse adds nothing beyond its severely adverse drawdown: gap PI 0.42 per IQR, p = 0.12, Holm 0.72. The same holds for next-year payouts (p = 0.30) and for the pre-tax gap (p = 0.30). On the same rows, the severely adverse drawdown alone orders payouts a little better (0.43, p = 0.040) than the adverse drawdown alone (0.48, p = 0.40). Neither survives Holm across this family. <strong>December 2020</strong> (33 banks, one cross-section, 2021 payouts): the Alternative Severe minus Severely Adverse gap gives PI 0.21 per pp, permutation p = 0.21. Not distinguishable from no ordering.</p>
+
+<h3 id="pim-3">2c · Composition: dividends vs buybacks, before and after 2020 (Q3.5)</h3>
+<figure><img src="fig/2026-11-16/pim_mix.png" alt="Two forest panels. Left: dividends per RWA vs drawdown sits at about 0.36 before 2020 and 0.35 after; net buybacks at 0.49 before and 0.44 after; dividend share 0.43 before and 0.54 after. Right: versus SCB, all three legs straddle 0.5."><figcaption>PI per one-IQR difference for each payout leg, firm-block bootstrap 95% intervals, with permutation and Holm (B3 family, 10 tests) p-values.</figcaption></figure>
+<div class="table-wrap"><table><thead><tr><th>Sample</th><th>Model</th><th class='num'>n</th><th class='num'>PI per 1 unit [firm-bootstrap 95%]</th><th class='num'>PI per IQR</th><th class='num'>p (perm)</th><th class='num'>Holm (family)</th><th class='num'>OLS + year FE (cluster t)</th></tr></thead><tbody>
+<tr><td>2013-2019</td><td>dividends/RWA ~ SA CET1 drawdown</td><td class='num'>195</td><td class='num'>0.444 [0.383, 0.483]</td><td class='num'><strong>0.36</strong></td><td class='num'>0.002</td><td class='num'>0.020</td><td class='num'>−0.039 (t −2.4)</td></tr>
+<tr><td>2021-2025</td><td>dividends/RWA ~ SA CET1 drawdown</td><td class='num'>132</td><td class='num'>0.439 [0.327, 0.486]</td><td class='num'><strong>0.35</strong></td><td class='num'>0.052</td><td class='num'>0.364</td><td class='num'>−0.067 (t −1.7)</td></tr>
+<tr><td>SCB era</td><td>dividends/RWA ~ SCB</td><td class='num'>132</td><td class='num'>0.478 [0.370, 0.515]</td><td class='num'><strong>0.46</strong></td><td class='num'>0.326</td><td class='num'>0.900</td><td class='num'>0.019 (t 0.6)</td></tr>
+<tr><td>2013-2019</td><td>net buybacks/RWA ~ SA CET1 drawdown</td><td class='num'>195</td><td class='num'>0.497 [0.447, 0.530]</td><td class='num'><strong>0.49</strong></td><td class='num'>0.820</td><td class='num'>0.900</td><td class='num'>−0.040 (t −0.9)</td></tr>
+<tr><td>2021-2025</td><td>net buybacks/RWA ~ SA CET1 drawdown</td><td class='num'>132</td><td class='num'>0.475 [0.443, 0.526]</td><td class='num'><strong>0.44</strong></td><td class='num'>0.034</td><td class='num'>0.272</td><td class='num'>−0.101 (t −2.2)</td></tr>
+<tr><td>SCB era</td><td>net buybacks/RWA ~ SCB</td><td class='num'>132</td><td class='num'>0.477 [0.444, 0.526]</td><td class='num'><strong>0.45</strong></td><td class='num'>0.056</td><td class='num'>0.364</td><td class='num'>−0.079 (t −2.0)</td></tr>
+<tr><td>2013-2019</td><td>dividend share ~ SA CET1 drawdown</td><td class='num'>169</td><td class='num'>0.472 [0.433, 0.546]</td><td class='num'><strong>0.43</strong></td><td class='num'>0.014</td><td class='num'>0.126</td><td class='num'>−0.022 (t −0.9)</td></tr>
+<tr><td>2021-2025</td><td>dividend share ~ SA CET1 drawdown</td><td class='num'>112</td><td class='num'>0.514 [0.446, 0.548]</td><td class='num'><strong>0.54</strong></td><td class='num'>0.300</td><td class='num'>0.900</td><td class='num'>0.015 (t 0.8)</td></tr>
+<tr><td>SCB era</td><td>dividend share ~ SCB</td><td class='num'>112</td><td class='num'>0.519 [0.434, 0.564]</td><td class='num'><strong>0.54</strong></td><td class='num'>0.200</td><td class='num'>0.840</td><td class='num'>0.020 (t 0.9)</td></tr>
+<tr><td>timing: next-year div share</td><td>next-year dividend share ~ SA CET1 drawdown</td><td class='num'>291</td><td class='num'>0.486 [0.446, 0.549]</td><td class='num'><strong>0.46</strong></td><td class='num'>0.168</td><td class='num'>0.840</td><td class='num'>−0.013 (t −0.6)</td></tr>
+</tbody></table></div>
+<p><strong>Reading.</strong> Before 2020, banks with deeper stress drawdowns paid lower <em>dividends</em> relative to RWA than their same-year peers (0.36 per IQR, Holm p = 0.02). Buybacks showed no ordering (0.49, p = 0.82), and the dividend share of gross distributions was lower (0.43, p = 0.014, Holm 0.13). After 2020, when capital actions in the projections became standardised and the SCB arrived, buybacks pick up the ordering (0.44, p = 0.034) and the dividend-share effect disappears (0.54, p = 0.30). Only the pre-2020 dividend result survives Holm. So the answer to Q3.5 is tentative: before 2020 the stress ranking showed up in the payout <em>mix</em>; after 2020 it may have moved into the buyback leg. The SCB itself orders buybacks weakly (0.45, p = 0.056) and dividends not at all (p = 0.33).</p>
+
+<h3>Limitations and verdict</h3>
+<p><strong>Limitations.</strong> Descriptive association only; the work makes no claim about how a bank should set its payouts. Payouts in calendar Y partly precede year-Y results, which is why the next-year check is reported. Small yearly cross-sections (18–35) are the case where Amorim et al. found asymptotic inference unreliable, so we lean on permutation and firm-block bootstrap rather than the sandwich p. 29 models in three families; Holm is applied within each family. Firm-level baseline projections are not published, so “versus baseline” cannot be asked. Y-9C overlaps the held-out window of the pre-registered trading study; nothing here forecasts.</p>
+<p><strong>Verdict: recommend for promote workflow</strong> (Jared decides; nothing is promoted). It is well grounded at home and robust where OLS is fragile. It gives effect sizes a reader can say out loud, and it answered two Q3 sub-questions in one pass. The top-pick avenue carries it to Q2.2.</p>
+
+<div class="sec-head"><span class="n">Watch</span><h2>Watchlist additions</h2><span class="line"></span></div>
+<p>Both picks are added to the <a href="https://github.com/jgridifier/research-lab/blob/main/docs/methods-scout/watchlist.md">watchlist</a> as trialed. New watch items, all seen on 2026-11-16 and not run:</p>
+<ul>
+<li><strong>BayesMallows</strong> (R, CRAN 2.3.0, published 2026-11-09; Vitelli et al., <em>JMLR</em> 2018). Bayesian Mallows rank model with partial rankings. Social choice and preference learning; niche. Fits Q3.3 (payout-rank stability when firms drop in and out of odd-year tests). Found via CRAN: <a href="https://cran.r-project.org/package=BayesMallows">cran.r-project.org/package=BayesMallows</a>.</li>
+<li><strong>tsvr</strong> (R, CRAN 1.0.2, 2021-01-09). Timescale-specific variance ratio from community ecology (extends Peterson et al. 1975). Splits synchrony by timescale. Our series are probably too short; it fits Q2.4 once monthly or quarterly program data exist. Found via CRAN: <a href="https://cran.r-project.org/package=tsvr">cran.r-project.org/package=tsvr</a>.</li>
+<li><strong>α/β/γ variability partition</strong> (paper; Wang &amp; Loreau, “Ecosystem stability in space: α, β and γ variability”, <em>Ecology Letters</em> 17:891–901, 2014). Splits portfolio variability across hierarchy levels; its appendix treats Taylor’s z directly. Closest prior work for today’s ecofolio math avenue. Found via web search: <a href="https://onlinelibrary.wiley.com/doi/10.1111/ele.12292">onlinelibrary.wiley.com/doi/10.1111/ele.12292</a>.</li>
+<li><strong>ade4 RLQ / fourth-corner</strong> (R, CRAN 1.7-24; Dray &amp; Dufour, <em>JSS</em> 22(4), 2007). Links species traits to environments through an abundance table. Here: bank stress traits × test-year scenario severity through payouts (Q3.3). Well known in ecology, exotic in finance. Found via CRAN: <a href="https://cran.r-project.org/package=ade4">cran.r-project.org/package=ade4</a>.</li>
+</ul>
+<p>Nothing already trialed was rerun. No <code>APPROVAL.md</code> was written; nothing is promoted.</p>
+
+<footer>
+<p>Scheduled edition of 2026-11-16, America/New_York (EST). Seed 20261116. Q2 on SYNTHETIC mocks; Q3 on public filings. Theme: <code>docs/assets/brief.css</code>. Scripts and outputs: <code>docs/methods-scout/runs/2026-11-16/</code>.</p>
+</footer>
+</main></body></html>

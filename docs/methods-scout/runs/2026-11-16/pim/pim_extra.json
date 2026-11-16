@@ -1,0 +1,74 @@
+{
+  "dec2020": [
+    {
+      "analysis": "B2 Dec 2020 alt-severe gap (2021 payouts)",
+      "outcome": "payout_rwa_next",
+      "covariate": "dd_sa_dec",
+      "unit": 1,
+      "n": 33,
+      "firms": 33,
+      "years": "2020-2020",
+      "npairs": 528,
+      "beta": 0.004732,
+      "se": 0.094378,
+      "PI": 0.501183,
+      "p_sandwich": 0.960011,
+      "fit_s": 0.002494,
+      "p_perm": 0.98,
+      "ols_b": 0.040677,
+      "ols_t": 0.4472,
+      "_row": "dd_sa_dec"
+    },
+    {
+      "analysis": "B2 Dec 2020 alt-severe gap (2021 payouts)",
+      "outcome": "payout_rwa_next",
+      "covariate": "gap_alt",
+      "unit": 1,
+      "n": 33,
+      "firms": 33,
+      "years": "2020-2020",
+      "npairs": 528,
+      "beta": -1.341486,
+      "se": 0.785859,
+      "PI": 0.207266,
+      "p_sandwich": 0.087816,
+      "fit_s": 0.002494,
+      "p_perm": 0.212,
+      "ols_b": -1.104305,
+      "ols_t": -2.093811,
+      "_row": "gap_alt"
+    }
+  ],
+  "fragility": {
+    "n": 360,
+    "n_trim": 352,
+    "cut": 2.421148,
+    "ols_full": -0.07018,
+    "ols_trim": -0.039978,
+    "pim_full": 0.467539,
+    "pim_trim": 0.469711,
+    "ols_rwa_full": -0.117976
+  },
+  "repro": {
+    "pim_PI": 0.749275,
+    "wmw_PI": 0.749275
+  },
+  "timing": [
+    {
+      "n": 200,
+      "pairs": 1900,
+      "sec": 0.004
+    },
+    {
+      "n": 500,
+      "pairs": 12250,
+      "sec": 0.013
+    },
+    {
+      "n": 1000,
+      "pairs": 49500,
+      "sec": 0.047
+    }
+  ],
+  "session": ["R version 4.5.3 (2026-03-11)", "Platform: x86_64-conda-linux-gnu", "Running under: Debian GNU/Linux 13 (trixie)", "", "Matrix products: default", "BLAS/LAPACK: /home/box/mamba/envs/rscout/lib/libopenblasp-r0.3.34.so;  LAPACK version 3.12.0", "", "locale:", " [1] LC_CTYPE=C.UTF-8       LC_NUMERIC=C           LC_TIME=C.UTF-8       ", " [4] LC_COLLATE=C.UTF-8     LC_MONETARY=C.UTF-8    LC_MESSAGES=C.UTF-8   ", " [7] LC_PAPER=C.UTF-8       LC_NAME=C              LC_ADDRESS=C          ", "[10] LC_TELEPHONE=C         LC_MEASUREMENT=C.UTF-8 LC_IDENTIFICATION=C   ", "", "time zone: America/New_York", "tzcode source: system (glibc)", "", "attached base packages:", "[1] stats     graphics  grDevices utils     datasets  methods   base     ", "", "other attached packages:", "[1] sandwich_3.1-3 jsonlite_2.0.0 pim_2.0.4     ", "", "loaded via a namespace (and not attached):", "[1] nleqslv_3.3.7  zoo_1.9-0      compiler_4.5.3 tools_4.5.3    grid_4.5.3    ", "[6] BB_2026.1.0    stats4_4.5.3   lattice_0.23-1 quadprog_1.5-8"]
+}

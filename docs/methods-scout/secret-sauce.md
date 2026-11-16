@@ -34,6 +34,8 @@ For each avenue: what it is in plain math, why it matters on our data (tied to a
 | DenseLines | **Engineering** | A gap-safe, weighted Rust core with a Python binding. The reference returns NaN on start/stop programs, and the exact NumPy port is 10–120× slower. |
 | CRQA (crqa) | **Math** | An order-aware cross-recurrence test: alignment-dependent statistics, max-T over lags and windows, persistence-matched surrogates — full-plot RR on categorical states is shift-invariant. |
 | IDR (isodistrreg) | **Math** | A monotone stress index (distributional single index) so several stress covariates can be combined without the weak 2-D partial order that lost to OLS. |
+| ecofolio (mean-variance PE) | **Math** | A noise-corrected Taylor's law: budget–actual disagreement estimates observation noise, which inflated the average-CV portfolio effect from 1.54 to 3.36 on the Corning mock. |
+| pim (probabilistic index models) | **New use** | Text versus numbers as a within-subsegment probabilistic index (Q2.2), against the 11-13 benchmark AUC of 0.78. |
 
 ---
 
@@ -578,6 +580,54 @@ Collateral-mix (tri-party Treasury / agency / corporate / other) and positioning
 
 ---
 
+## Mean-variance portfolio effect and Taylor's power law (ecofolio)
+
+Anderson, S. C., Cooper, A. B. & Dulvy, N. K. (2013), "Ecological prophets: quantifying metapopulation portfolio effects", *Methods in Ecology and Evolution* 4:971–981, doi:10.1111/2041-210x.12093. ecofolio 0.1.0 (Sean C. Anderson, GPL-2). Scouted on the [2026-11-16 scheduled edition](2026-11-16.html#ecofolio), aimed at [Q2](QUESTIONS.md#q2) (Q2.3, Q2.4), SYNTHETIC mock ZBB data. Novelty: exotic-transfer (fisheries and metapopulation ecology). Home-field verdict: promising but thin. Status: interesting — not promoted. Issue [#62](https://github.com/jgridifier/research-lab/issues/62). Plans only.
+
+**Found via.** GitHub (single-author repo), found 2026-11-16 by searching for metapopulation portfolio-effect code: [https://github.com/seananderson/ecofolio](https://github.com/seananderson/ecofolio). Paper summary read at [https://doi.org/10.1111/2041-210x.12093](https://doi.org/10.1111/2041-210x.12093). Field: ecology.
+
+**What our run showed.** Taylor z = 1.67 (Corning mock, 778 balanced programs) and 1.77 (MS mock, 1,404). Average-CV PE 3.36 / 3.25 and diversification ratio 3.14 / 3.10 vs mean-variance PE 0.99 / 1.15. On noise-free true levels: average-CV 1.54 / 2.63, mean-variance 0.25 / 0.47. Quadratic Taylor variant unstable (34.7 on Corning). Year-shuffle null p = 0.001 on both. As a hidden-group screen it loses to mean pairwise correlation. Vectorised PE matches `pe_mv` to 1e-15 at 0.1 ms vs 215 ms.
+
+### 1 · Engineering (effort S–M)
+
+A ragged-panel port. ecofolio requires a complete program × year matrix (24–28% of mock programs dropped). Port all six `pe_mv` types, `pe_avg_cv` with BCa bootstrap, `fit_taylor` and `synchrony` to NumPy with a Rust core. Handle entrants and exiters by fitting Taylor's law on each program's observed years, with weights by degrees of freedom. ecofolio is the oracle on complete panels. Closest prior work: the package itself; none found for ragged panels. **Why it matters here:** real budget books churn every cycle. **Test:** parity ≤ 1e-10 on `pinkbr` and 1,000 random complete subsets; then a 999-shuffle null on 1,404 programs in < 1 s.
+
+### 2 · Math (top pick, effort M)
+
+A noise-corrected Taylor's law and portfolio effect. Observed detrended variance is \(v_i = v_i^{true} + \sigma^2_{i,noise}\). Budget and actual are two noisy readings of the same program, so their disagreement estimates \(\sigma^2_{i,noise}\) (method-of-moments, pooled across programs of similar size with ebnm). Fit \(\log(v_i - \hat\sigma^2_{i}) = \log a + z\log m_i\) on the corrected variances. Then partition variability program → segment → firm into α/β/γ components. Closest prior work: Wang & Loreau (2014), *Ecology Letters* 17:891–901 (α/β/γ variability, with Taylor's z in the appendix); Cohen & Xu (2015), *PNAS* 112:7749–7754 (sampling-based Taylor's law). We found no noise-corrected portfolio effect in a short search. **Why it matters here:** noise inflated the average-CV PE from 1.54 to 3.36 on the Corning mock. **Test:** on both mocks plus 20 new-seed mocks, the corrected PE is closer to the true-level PE (absolute log error) in ≥ 80% of firm × segment cells; pre-registered.
+
+### 3 · New use on our data (effort S)
+
+Stability cost of FY2026 decision packages (Q2.3/Q2.4). Recompute z and the mean-variance PE under the minimum, current and enhanced package scenarios in `decision_packages.csv`. Closest prior work: none found. **Test:** PE change per scenario vs 999 random same-cost package swaps, stated in advance.
+
+**Why Math is the top pick.** Today's headline (CV-based diversification overstates stability) is partly a noise artefact; correcting for noise decides how much of it survives on real books.
+
+---
+
+## Probabilistic index models (pim)
+
+Thas, O., De Neve, J., Clement, L. & Ottoy, J.-P. (2012), "Probabilistic index models", *JRSS-B* 74(4):623–671, doi:10.1111/j.1467-9868.2011.01020.x. pim 2.0.4 (CRAN, 2025-01-08). Scouted on the [2026-11-16 scheduled edition](2026-11-16.html#pim), aimed at [Q3](QUESTIONS.md#q3) (Q3.1, Q3.2, Q3.4, Q3.5), public data. Novelty: niche / exotic-transfer (biostatistics). Home-field verdict: well established. Status: recommended for the promote workflow — not promoted. Issue [#63](https://github.com/jgridifier/research-lab/issues/63). Plans only.
+
+**Found via.** CRAN, found 2026-11-16 while searching for rank-based regression with pairwise effect sizes: [https://cran.r-project.org/web/packages/pim/index.html](https://cran.r-project.org/web/packages/pim/index.html). Abstract read at the OUP and Ghent biblio pages. Field: biostatistics.
+
+**What our run showed.** Within-test-year pairs, 360 firm-years. Per one-IQR difference: SA pre-tax income PI 0.68 (Holm 0.02); SA drawdown 0.40 alone, 0.50 with pre-tax income held. SCB alone 0.46 (p = 0.20). The Adverse–SA gap adds nothing (p = 0.12). Dividends carry the stress ranking before 2020 (0.36, Holm 0.02); buybacks weakly after (0.44, p = 0.034, Holm 0.27). OLS on payout/NI loses 43% of its slope after trimming 2% of ratios; PIM < 2%. FEVData WMW reproduction exact.
+
+### 1 · Engineering (effort M)
+
+A streaming within-block PIM fitter. The estimating equation \(\sum_{(i,j)\in\mathcal{P}} Z_{ij}\,(I_{ij} - \operatorname{expit}(Z_{ij}^\top\beta)) = 0\) with \(Z_{ij} = X_j - X_i\) sums over within-year blocks. A Rust core can batch refits for permutations and firm bootstraps without materialising pair matrices. pim 2.0.4 is the oracle. Closest prior work: pim itself (dense pseudo-observation design); none found for block-streaming. **Test:** β and SE parity ≤ 1e-8 on today's 29 models; 10,000 within-year permutations of a 2-covariate model on 360 firm-years in < 2 s.
+
+### 2 · Math (effort M)
+
+Firm-clustered inference. pim's sandwich treats firm-years as independent; firms repeat across 13 test years. Derive a two-way (firm × year) U-statistic variance and combine it with the bias-reduced bootstrap of Amorim et al. (2018), *CSDA* 121:137–148. Closest prior work: Amorim et al. (2018) for small samples; none found for clustering across blocks in a short search. **Test:** simulation at our design (40 firms × 13 years, 18–35 per year, firm random effects): 95% coverage within ±1.5 points, against the sandwich and the firm-block bootstrap.
+
+### 3 · New use on our data (top pick, effort S)
+
+Text versus numbers as a probabilistic index (Q2.2). Within each subsegment of the mock ZBB data, fit \(P(g_A \le g_B \mid \text{stated labels}) = \operatorname{expit}((L_B - L_A)^\top\beta)\), where g is realized growth and L the stated intent, cost type and discretionary flags. Then score each program by how often its pairwise orderings contradict the fitted index. Closest prior work: the 2026-11-13 peer-comparison flag (AUC 0.78 on the MS mock). **Test:** AUC against the planted mismatch key, beating 0.78, pre-registered.
+
+**Why New use is the top pick.** It is small, it carries a well-established tool straight into the open Q2.2 sub-question, and it has a ready benchmark to beat.
+
+---
+
 ## Citations used (verified)
 
 Only papers we located with venue, year, and pages, plus the four method papers already cited on the scout pages. "Found via" links are only those recorded on the 11-10 and 11-11 pages or in the watchlist.
@@ -605,6 +655,11 @@ Only papers we located with venue, year, and pages, plus the four method papers 
 - Bellanger, L. & Husi, P. (2012). Statistical tool for dating and interpreting archaeological contexts using pottery. *Journal of Archaeological Science*, 39(4):777–790.
 - Porčić, M. (2013). The goodness of fit and statistical significance of seriation solutions. *Journal of Archaeological Science*, 40(12):4552–4559.
 - Lipo, C. P., Madsen, M. E. & Dunnell, R. C. (2015). A theoretically-sufficient and computationally-practical technique for deterministic frequency seriation. *PLOS ONE*, 10(4):e0124942.
+- Anderson, S. C., Cooper, A. B. & Dulvy, N. K. (2013). Ecological prophets: quantifying metapopulation portfolio effects. *Methods in Ecology and Evolution*, 4:971–981.
+- Cohen, J. E. & Xu, M. (2015). Random sampling of skewed distributions implies Taylor's power law of fluctuation scaling. *PNAS*, 112(25):7749–7754.
+- Wang, S. & Loreau, M. (2014). Ecosystem stability in space: α, β and γ variability. *Ecology Letters*, 17(8):891–901.
+- Thas, O., De Neve, J., Clement, L. & Ottoy, J.-P. (2012). Probabilistic index models. *Journal of the Royal Statistical Society Series B*, 74(4):623–671.
+- Amorim, G., Thas, O., Vermeulen, K., Vansteelandt, S. & De Neve, J. (2018). Small sample inference for probabilistic index models. *Computational Statistics & Data Analysis*, 121:137–148.
 
 ## What this is not
 
