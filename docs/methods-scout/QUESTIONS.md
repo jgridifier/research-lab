@@ -1,8 +1,8 @@
 # Methods scout: research questions
 
 Standing questions from Jared that steer the daily methods scout. Each day the scout picks methods aimed at an
-open question, and at least one analysis per method targets it directly. Original question text from Jared is kept
-verbatim. Approved refined wordings are labelled as such.
+open question, and at least one analysis per method targets it directly. Jared's original question text is kept
+for the record; approved or cleaned-up wordings are labelled as such and are the ones in force.
 Status: `open` · `in progress` · `answered` · `parked` · `retired`.
 
 **Only questions with status `open` or `in progress` are scout targets.** Retired questions are kept for the record
@@ -13,7 +13,7 @@ and must not be targeted by future scout runs.
 | ID | Added | Question | Status | Scout pages | Data located | Data missing |
 |---|---|---|---|---|---|---|
 | Q1 | 2026-11-14 | What is the connection between Form PF aggregate prime-broker borrowings (and related private-fund leverage tabs) and short-term funding conditions in OFR cleared-repo volumes and rates and NY Fed primary-dealer settlement fails? Do borrowings, repo, and fails co-move, lead or lag one another, or disconnect in stress? | in progress | [2026-11-14](2026-11-14.html), [2026-11-15](2026-11-15.html) | Real public series already in the lab's Drive copies and on the box: SEC Form PF / private-fund statistics (2012Q4–2025Q4, aggregate tabs including 8.28); OFR cleared and tri-party repo (daily 2014-08-22–2026-10-05); NY Fed primary-dealer settlement fails (weekly 2013-04-03–2026-09-23). Optional companions: CFTC Traders in Financial Futures (weekly 2010-07-20–2026-09-29) and FINRA customer margin statistics (monthly 1997-01–2026-08). Official sources linked in the Q1 section below. | The lab copy of CFTC TFF has a gap from 2025-12-30 to 2026-09-29 (refresh from CFTC; public). Per-firm prime-brokerage revenue or balances; a Form ADV Schedule D §7.B.(1) prime-broker panel (not built). This question is aggregate-only by design. |
-| Q2 | 2026-11-13 | "Want to add a guiding question about like let’s say you have a ton of decriptions, and we extract out some classifications and then get some implied features, understanding the trends and composition over time but like what else would be really interesting to look at -think ok like a budgeting use case where the rest hundreds or thousands of program all with their own noise and not that much history" | in progress | [2026-11-13](2026-11-13.html) | SYNTHETIC mocks only (built 2026-11-13): program-level zero-based-budgeting datasets modeled on publicly reported figures for a manufacturer like Corning Incorporated and a financial firm like Morgan Stanley, in the Drive folder "Q2 mock ZBB datasets (synthetic, 2026-11-13)". Teaching page: [What the Q2 mock budget datasets are doing](q2-mock-zbb.html). Clearly labelled synthetic; they are not either firm's actual budgets and contain no private data. | Real program-level budgets, actuals, headcount and decision packages for any firm. The mocks are a stand-in so methods can be tried before any real data arrives. |
+| Q2 | 2026-11-13 | With hundreds to thousands of programs, each with free-text descriptions and tabular data (turned into categories and implied features) but only a few noisy periods of history, what can we reliably learn beyond trends and category mix over time? Sub-questions: borrowing strength, text vs numbers, real change vs noise, hidden structure, and visualizing many short series (see the Q2 section below). | in progress | [2026-11-13](2026-11-13.html) | SYNTHETIC mocks only (built 2026-11-13): program-level zero-based-budgeting datasets modeled on publicly reported figures for a manufacturer like Corning Incorporated and a financial firm like Morgan Stanley, in the Drive folder "Q2 mock ZBB datasets (synthetic, 2026-11-13)". Teaching page: [What the Q2 mock budget datasets are doing](q2-mock-zbb.html). Clearly labelled synthetic; they are not either firm's actual budgets and contain no private data. | Real program-level budgets, actuals, headcount and decision packages for any firm. The mocks are a stand-in so methods can be tried before any real data arrives. |
 | Q3 | 2026-11-14 | What is the connection between supervisory stress-test projections—severely adverse pre-tax net income, loan losses, capital-ratio drawdowns, and the stress capital buffer—and the same firms' realized payout ratios from FR Y-9C dividends and share repurchases? Do the buffer or the projected earnings path help describe subsequent payouts, and how do cross-firm patterns move from one test year to the next? | in progress | [2026-11-14](2026-11-14.html) | Fed DFAST/CCAR firm results, 2013–2026 ([public CSV](https://www.federalreserve.gov/supervisionreg/files/public_results_DFAST_2026.csv); join key `id_rssd`). FR Y-9C / BHCF zips, 2008Q1–2026Q2, payout and income items BHCK4460, BHCK4598, BHCK4783, BHCK4782, BHCK4340 (join `id_rssd` = RSSD9001). Fed scenario variables (baseline and severely adverse, plus history) and annual Large Bank Capital Requirements PDFs (SCB, 2020–2026, by name). Coverage and firm counts are in the Q3 section below. | Firm-level *baseline* projected earnings or capital paths are not published (baseline is macro-only). A tidy SCB panel is not published as a CSV (annual PDFs, name-based). |
 
 <a id="q1"></a>
@@ -61,11 +61,18 @@ On 2026-11-14 Jared approved this pairing, together with Q3, with the wording "N
 
 <a id="q2"></a>
 
-## Q2 — refined statement (approved 2026-11-13)
+## Q2 — Learning from many short, noisy programs (approved 2026-11-13)
 
-Jared's original wording is in the table above, kept verbatim (including "decriptions" and "the rest hundreds"). On 2026-11-13 he approved the refined question, all five sub-questions, and the addition of tabular data alongside the free-text descriptions. Status is `in progress` since the 2026-11-13 scheduled scout, which ran on the SYNTHETIC mocks only (see the Q2 progress log below).
+On 2026-11-13 Jared approved the question, all five sub-questions, and the addition of tabular data alongside the free-text descriptions. On 2026-11-16 he asked for the wording to be cleaned up ("Just format it so it's clearer and less like me rambling"); the cleaned wording below is the one in force. Status is `in progress` since the 2026-11-13 scheduled scout, which ran on the SYNTHETIC mocks only (see the Q2 progress log below).
 
-**Refined question.** Suppose we have hundreds to thousands of programs. Each one has free-text descriptions plus tabular data, which we turn into categories and implied features, and each has only a few noisy periods of numbers. Past tracking trends and category mix over time, what can we reliably learn about each program and about the portfolio as a whole?
+**Question.** We have hundreds to thousands of programs (for example, budget lines). Each has free-text descriptions and tabular data, which we turn into categories and implied features, but only a few noisy periods of numbers. Beyond tracking trends and category mix over time, what can we reliably learn about each program and about the portfolio as a whole?
+
+**Setting.**
+
+- **Units:** hundreds to thousands of programs.
+- **Inputs:** free-text descriptions plus tabular data → classifications and implied features.
+- **History:** short (a handful of periods) and noisy per program.
+- **Already covered:** trends and composition over time. The question is what else is worth studying.
 
 **Sub-questions.**
 
@@ -74,6 +81,12 @@ Jared's original wording is in the table above, kept verbatim (including "decrip
 3. **Real change or noise.** When a total moves, how much comes from the program mix changing, how much from programs actually behaving differently, and how much is just noise?
 4. **Structure.** Do programs form groups that rise and fall together, or trade off against each other, in ways the categories don't show?
 5. **Seeing it.** How can one chart show a thousand short, noisy series without turning into spaghetti?
+
+<details><summary>Original wording (2026-11-13, kept for the record)</summary>
+
+"Want to add a guiding question about like let’s say you have a ton of decriptions, and we extract out some classifications and then get some implied features, understanding the trends and composition over time but like what else would be really interesting to look at -think ok like a budgeting use case where the rest hundreds or thousands of program all with their own noise and not that much history"
+
+</details>
 
 ## Q2 progress log
 
