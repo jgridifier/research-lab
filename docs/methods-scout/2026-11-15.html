@@ -5,6 +5,7 @@
 <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,400..800&family=Newsreader:ital,opsz,wght@0,6..72,400..600;1,6..72,400..500&family=JetBrains+Mono:wght@400;500;700&display=swap">
 <link rel="stylesheet" href="../assets/brief.css">
+<link rel="stylesheet" href="feedback.css">
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.css">
 <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.js"></script>
 <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/contrib/auto-render.min.js" onload="renderMathInElement(document.body,{delimiters:[{left:'$$',right:'$$',display:true},{left:'\\(',right:'\\)',display:false}]})"></script>
@@ -41,7 +42,7 @@
   <div class="date">Sunday · November 15, 2026 · scheduled edition · aimed at Q1.4 and Q1.5 · exotic · public aggregate data</div>
   <h1>Methods scout</h1>
   <p class="dek">Two tools from fields that study systems they can’t experiment on. From fisheries ecology: convergent cross mapping, which asks whether one series’ dynamics carry a fingerprint of another. From archaeology: seriation, battleship plots and pottery-style “event dates”, which here put a date on the repo market’s venue-and-tenor mix. Together they cover the two Q1 sub-questions nobody had run yet: tenor and venue mix (Q1.4) and positioning versus funding (Q1.5).</p>
-  <nav><a href="index.html">All editions</a><a href="secret-sauce.html">Secret sauce</a><a href="https://github.com/jgridifier/research-lab/blob/main/docs/methods-scout/QUESTIONS.md">Research questions</a><a href="https://github.com/jgridifier/research-lab/blob/main/docs/methods-scout/watchlist.md">Watchlist</a><a href="../index.html">Research lab home</a></nav>
+  <nav><a href="index.html">All editions</a><a href="board.html">Feedback board</a><a href="secret-sauce.html">Secret sauce</a><a href="https://github.com/jgridifier/research-lab/blob/main/docs/methods-scout/QUESTIONS.md">Research questions</a><a href="https://github.com/jgridifier/research-lab/blob/main/docs/methods-scout/watchlist.md">Watchlist</a><a href="../index.html">Research lab home</a></nav>
 </header>
 
 <div class="ticker">
@@ -68,10 +69,15 @@
 <div class="card"><div class="card-top"><span class="tag">Q3 · in progress · not targeted today</span></div><p>No Q3 analysis today. The <a href="2026-11-14.html">11-14 IDR</a> results stand.</p></div>
 
 <!-- ================= METHOD 1 ================= -->
-<div class="sec-head" id="m1"><span class="n">Method 01</span><h2>Convergent cross mapping: whose fingerprint is in whose dynamics?</h2><span class="line"></span></div>
+<div class="sec-head" id="m1"><span class="n">Method 01</span><h2 id="ccm">Convergent cross mapping: whose fingerprint is in whose dynamics?</h2><span class="line"></span></div>
 <p class="meta">Sugihara, May, Ye, Hsieh, Deyle, Fogarty &amp; Munch (2012), “Detecting causality in complex ecosystems”, <em>Science</em> 338:496–500 · Ye, Deyle, Gilarranz &amp; Sugihara (2015), “Distinguishing time-delayed causal interactions using convergent cross mapping”, <em>Scientific Reports</em> 5:14750, doi:10.1038/srep14750 · pyEDM 2.5.7 (Sugihara Lab, UCSD license; cppEDM C++ core for 1.x, NumPy/SciPy for 2.x) · field: fisheries and population ecology · novelty: <strong>exotic-transfer</strong> · <span class="verdict interesting">interesting</span></p>
 <p class="found-via"><strong>Found via.</strong> Chosen from the ecology causal-inference literature (Sugihara et al. 2012). Package located by web search on 2026-11-15: GitHub, <a href="https://github.com/SugiharaLab/pyEDM">https://github.com/SugiharaLab/pyEDM</a> (148 stars), and the lab’s documentation, <a href="https://sugiharalab.github.io/EDM_Documentation/ccm_/">https://sugiharalab.github.io/EDM_Documentation/ccm_/</a>. Installed from PyPI on 2026-11-15. The lag-scan paper was verified at <a href="https://www.nature.com/articles/srep14750">nature.com/articles/srep14750</a>. Not found via X or SSRN.</p>
 
+<aside class="scout-respond" data-issue="59" data-slug="ccm">
+  <span class="scout-chip status-proposed">Proposed</span>
+  <a class="scout-respond-btn" href="https://github.com/jgridifier/research-lab/issues/59">Respond on GitHub</a>
+  <p class="scout-respond-hint">👍 go ahead with the top pick · 👎 drop it · 👀 park for later · or comment <code>go engineering</code>, <code>go math</code>, <code>go new use</code>, <code>go all</code>, <code>refine: &lt;what to change&gt;</code>, <code>promote</code>, <code>park</code>, <code>drop</code>.</p>
+</aside>
 <div class="avenues">
   <article class="card top-pick">
     <div class="card-top"><span class="avenue-kicker">1 · Engineering</span><span class="badge-top">Top pick</span></div>
@@ -140,10 +146,15 @@ $$\hat x_t = \sum_{i=1}^{E+1} w_i\, x_{t_i},\qquad w_i \propto e^{-d_i/d_1},\qqu
 <p><strong>Verdict: interesting.</strong> It gives a direction to the fails–spread link and a clean “no” on positioning vs fails, where Granger says “yes”. Results are Holm-borderline until the null is cheaper.</p>
 
 <!-- ================= METHOD 2 ================= -->
-<div class="sec-head" id="m2"><span class="n">Method 02</span><h2>Seriation, battleship plots and a mix clock: dating the repo market like pottery</h2><span class="line"></span></div>
+<div class="sec-head" id="m2"><span class="n">Method 02</span><h2 id="kairos">Seriation, battleship plots and a mix clock: dating the repo market like pottery</h2><span class="line"></span></div>
 <p class="meta">Frerebeau, N. (2026), <em>kairos: Analysis of Chronological Patterns from Archaeological Count Data</em>, R package (CRAN 2.3.0; site lists 2.4.0), doi:10.5281/zenodo.5653896 · <em>tabula</em> 3.3.2 (JOSS, doi:10.21105/joss.01821) · Bellanger &amp; Husi (2012), <em>Journal of Archaeological Science</em> 39(4):777–790, doi:10.1016/j.jas.2011.06.031 · Porčić (2013), <em>Journal of Archaeological Science</em> 40(12):4552–4559, doi:10.1016/j.jas.2013.07.013 · Desachy (2004), EPPM seriograph, <em>Revue archéologique de Picardie</em> 3(1):39–56 · field: archaeology (ceramic chronology) · novelty: <strong>exotic-transfer · obscure</strong> (tesselle project, Université Bordeaux Montaigne; development on Codeberg) · GPL-3 · <span class="verdict adopt">recommend for promote workflow</span></p>
 <p class="found-via"><strong>Found via.</strong> Web search for archaeological seriation software on 2026-11-15. It turned up the tesselle package site, <a href="https://packages.tesselle.org/kairos/">https://packages.tesselle.org/kairos/</a> (with the Codeberg repo <a href="https://codeberg.org/tesselle/kairos">codeberg.org/tesselle/kairos</a>), and the tabula paper in JOSS, <a href="https://joss.theoj.org/papers/10.21105/joss.01821.pdf">joss.theoj.org/papers/10.21105/joss.01821</a>. The method references (Bellanger &amp; Husi 2012; Porčić 2013; Desachy 2004) were taken from the kairos reference list. Installed from CRAN on 2026-11-15. Not found via X or SSRN.</p>
 
+<aside class="scout-respond" data-issue="60" data-slug="kairos">
+  <span class="scout-chip status-proposed">Proposed</span>
+  <a class="scout-respond-btn" href="https://github.com/jgridifier/research-lab/issues/60">Respond on GitHub</a>
+  <p class="scout-respond-hint">👍 go ahead with the top pick · 👎 drop it · 👀 park for later · or comment <code>go engineering</code>, <code>go math</code>, <code>go new use</code>, <code>go all</code>, <code>refine: &lt;what to change&gt;</code>, <code>promote</code>, <code>park</code>, <code>drop</code>.</p>
+</aside>
 <div class="avenues">
   <article class="card teal">
     <div class="card-top"><span class="avenue-kicker">1 · Engineering</span><span class="effort">Effort S</span></div>

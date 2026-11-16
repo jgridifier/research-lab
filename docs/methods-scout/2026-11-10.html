@@ -4,6 +4,7 @@
 <meta name="description" content="Daily methods scout: partykit conditional-inference and model-based trees, and changeforest random-forest change-point detection, each run on Drive data.">
 <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,400..800&family=Newsreader:ital,opsz,wght@0,6..72,400..600;1,6..72,400..500&family=JetBrains+Mono:wght@400;500;700&display=swap">
 <link rel="stylesheet" href="../assets/brief.css">
+<link rel="stylesheet" href="feedback.css">
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.css">
 <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.js"></script>
 <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/contrib/auto-render.min.js" onload="renderMathInElement(document.body,{delimiters:[{left:'$$',right:'$$',display:true},{left:'\\(',right:'\\)',display:false}]})"></script>
@@ -22,7 +23,7 @@
   <div class="date">Tuesday · November 10, 2026 · first edition</div>
   <h1>Methods scout</h1>
   <p class="dek">Two lesser-known, fast, interpretable methods, each run three-plus ways on our own data. No neural nets.</p>
-  <nav><a href="index.html">All editions</a><a href="https://github.com/jgridifier/research-lab/blob/main/docs/methods-scout/watchlist.md">Watchlist</a><a href="../index.html">Research lab home</a></nav>
+  <nav><a href="index.html">All editions</a><a href="board.html">Feedback board</a><a href="https://github.com/jgridifier/research-lab/blob/main/docs/methods-scout/watchlist.md">Watchlist</a><a href="../index.html">Research lab home</a></nav>
 </header>
 
 <div class="ticker"><span><b>●</b> ctree's regime splits did not forecast credit spreads out of sample (OOS R² −0.31)</span><span><b>●</b> MOB: the VIX→spread link roughly doubles when NFCI &gt; 0.06, and calendar time stops mattering (p = 0.83)</span><span><b>●</b> changeforest: 0 mean breaks but 35 distribution breaks in weekly changes, and zero false breaks on shuffled data</span><span><b>●</b> Rust core: 9,174 × 4 daily panel segmented in 1.2s</span></div>
@@ -37,7 +38,13 @@
 </section>
 
 <!-- ================= METHOD 1 ================= -->
-<div class="sec-head"><span class="n">Method 01</span><h2>partykit: conditional inference trees + model-based recursive partitioning</h2><span class="line"></span></div>
+<div class="sec-head"><span class="n">Method 01</span><h2 id="partykit">partykit: conditional inference trees + model-based recursive partitioning</h2><span class="line"></span></div>
+<aside class="scout-respond" data-issue="46" data-slug="partykit">
+  <span class="scout-chip status-proposed">Proposed</span>
+  <a class="scout-respond-btn" href="https://github.com/jgridifier/research-lab/issues/46">Respond on GitHub</a>
+  <p class="scout-respond-hint">👍 go ahead with the top pick · 👎 drop it · 👀 park for later · or comment <code>go engineering</code>, <code>go math</code>, <code>go new use</code>, <code>go all</code>, <code>refine: &lt;what to change&gt;</code>, <code>promote</code>, <code>park</code>, <code>drop</code>.</p>
+</aside>
+
 
 <div class="card teal">
 <div class="card-top"><span class="tag teal">R · CRAN · C core</span><span class="verdict adopt">adopt-candidate</span></div>
@@ -95,7 +102,13 @@
 <p><strong>Verdict: adopt-candidate.</strong> Use MOB as the default "where does this relationship change?" tool on our panels, with a block-bootstrap stability table attached. It's also a natural interpretable comparison for any regime claim.</p></div>
 
 <!-- ================= METHOD 2 ================= -->
-<div class="sec-head"><span class="n">Method 02</span><h2>changeforest: random-forest change-point detection (Rust core)</h2><span class="line"></span></div>
+<div class="sec-head"><span class="n">Method 02</span><h2 id="changeforest">changeforest: random-forest change-point detection (Rust core)</h2><span class="line"></span></div>
+<aside class="scout-respond" data-issue="47" data-slug="changeforest">
+  <span class="scout-chip status-proposed">Proposed</span>
+  <a class="scout-respond-btn" href="https://github.com/jgridifier/research-lab/issues/47">Respond on GitHub</a>
+  <p class="scout-respond-hint">👍 go ahead with the top pick · 👎 drop it · 👀 park for later · or comment <code>go engineering</code>, <code>go math</code>, <code>go new use</code>, <code>go all</code>, <code>refine: &lt;what to change&gt;</code>, <code>promote</code>, <code>park</code>, <code>drop</code>.</p>
+</aside>
+
 <div class="card">
 <div class="card-top"><span class="tag">Rust crate · PyPI · conda-forge R</span><span class="verdict interesting">interesting</span></div>
 <p><strong>Citation.</strong> Londschien, Bühlmann &amp; Kovács (2023), "Random Forests for Change Point Detection", <em>JMLR</em> 24(216):1–45. Code: <a href="https://github.com/mlondschien/changeforest">github.com/mlondschien/changeforest</a>, <a href="https://crates.io/crates/changeforest">crates.io/crates/changeforest</a>, <a href="https://pypi.org/project/changeforest/">PyPI</a> (v1.2.1; essentially a single-maintainer Rust crate with thin Python and R bindings, which is the same architecture TRACE uses).</p>

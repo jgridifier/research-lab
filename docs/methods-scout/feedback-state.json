@@ -1,6 +1,340 @@
 {
   "version": 1,
   "repo": "jgridifier/research-lab",
-  "updated_at": null,
-  "issues": {}
+  "updated_at": "2026-11-16T18:59:59Z",
+  "issues": {
+    "46": {
+      "issue": 46,
+      "slug": "partykit",
+      "method": "partykit",
+      "scout_date": "2026-11-10",
+      "page": "2026-11-10.html",
+      "page_anchor": "#partykit",
+      "question": null,
+      "status": "proposed",
+      "top_pick": "math",
+      "labels": [
+        "scout",
+        "status:proposed",
+        "pick:math"
+      ],
+      "last_processed_at": "2026-11-16T18:59:34Z",
+      "notes": "Promotion into analysis-skills is pending Jared. Do not write an APPROVAL.md until Jared's own dated approval exists.",
+      "history": []
+    },
+    "47": {
+      "issue": 47,
+      "slug": "changeforest",
+      "method": "changeforest",
+      "scout_date": "2026-11-10",
+      "page": "2026-11-10.html",
+      "page_anchor": "#changeforest",
+      "question": null,
+      "status": "proposed",
+      "top_pick": "math",
+      "labels": [
+        "scout",
+        "status:proposed",
+        "pick:math"
+      ],
+      "last_processed_at": "2026-11-16T18:59:36Z",
+      "notes": "Promotion into analysis-skills is pending Jared. Do not write an APPROVAL.md until Jared's own dated approval exists.",
+      "history": []
+    },
+    "48": {
+      "issue": 48,
+      "slug": "marss",
+      "method": "MARSS",
+      "scout_date": "2026-11-11",
+      "page": "2026-11-11.html",
+      "page_anchor": "#marss",
+      "question": "Q1-retired",
+      "status": "proposed",
+      "top_pick": "math",
+      "labels": [
+        "scout",
+        "scout:Q1-retired",
+        "status:proposed",
+        "pick:math"
+      ],
+      "last_processed_at": "2026-11-16T18:59:38Z",
+      "notes": "Aimed at the retired prime-broker Q1, on a public Y-9C proxy. Recommended for the promote workflow; not promoted.",
+      "history": []
+    },
+    "49": {
+      "issue": 49,
+      "slug": "inspectchangepoint",
+      "method": "InspectChangepoint",
+      "scout_date": "2026-11-11",
+      "page": "2026-11-11.html",
+      "page_anchor": "#inspectchangepoint",
+      "question": "Q1-retired",
+      "status": "proposed",
+      "top_pick": "math",
+      "labels": [
+        "scout",
+        "scout:Q1-retired",
+        "status:proposed",
+        "pick:math"
+      ],
+      "last_processed_at": "2026-11-16T18:59:40Z",
+      "notes": "Aimed at the retired prime-broker Q1, on a public Y-9C proxy.",
+      "history": []
+    },
+    "50": {
+      "issue": 50,
+      "slug": "ecotraj",
+      "method": "ecotraj",
+      "scout_date": "2026-11-12",
+      "page": "2026-11-12.html",
+      "page_anchor": "#ecotraj",
+      "question": "Q1-retired",
+      "status": "in-progress",
+      "top_pick": "math",
+      "labels": [
+        "scout",
+        "scout:Q1-retired",
+        "status:in-progress",
+        "pick:math"
+      ],
+      "last_processed_at": "2026-11-16T18:59:41Z",
+      "notes": "Python port exists at jgridifier/ecotraj-py (parity 1,260/1,280). Jared's choice between accepting the 20 R quirks and pre-registering the power curve (P2) is still open.",
+      "history": []
+    },
+    "51": {
+      "issue": 51,
+      "slug": "lphom",
+      "method": "lphom",
+      "scout_date": "2026-11-12",
+      "page": "2026-11-12.html",
+      "page_anchor": "#lphom",
+      "question": "Q1-retired",
+      "status": "proposed",
+      "top_pick": "new-use",
+      "labels": [
+        "scout",
+        "scout:Q1-retired",
+        "status:proposed",
+        "pick:new-use"
+      ],
+      "last_processed_at": "2026-11-16T18:59:43Z",
+      "notes": "Aimed at the retired prime-broker Q1. Flow matrices on consecutive quarters were not identified on the Y-9C proxy.",
+      "history": []
+    },
+    "52": {
+      "issue": 52,
+      "slug": "codyn",
+      "method": "codyn",
+      "scout_date": "2026-11-12",
+      "page": "2026-11-12-adhoc.html",
+      "page_anchor": "#codyn",
+      "question": "Q1-retired",
+      "status": "approved",
+      "top_pick": "math",
+      "labels": [
+        "scout",
+        "scout:Q1-retired",
+        "status:approved",
+        "pick:math"
+      ],
+      "last_processed_at": "2026-11-16T18:59:45Z",
+      "notes": "Approved to move forward on 2026-11-13 at 11:51 PM ET. Real-panel validation is still owed.",
+      "history": [
+        {
+          "at": "2026-11-14T04:51:00Z",
+          "signal": "approved to move forward",
+          "source": "prior_decision",
+          "actor": "jgridifier",
+          "action": "status:approved",
+          "ref": null
+        }
+      ]
+    },
+    "53": {
+      "issue": 53,
+      "slug": "lovell-proportionality",
+      "method": "Lovell proportionality",
+      "scout_date": "2026-11-12",
+      "page": "2026-11-12-adhoc.html",
+      "page_anchor": "#lovell-proportionality",
+      "question": "Q1-retired",
+      "status": "refine",
+      "top_pick": "math",
+      "labels": [
+        "scout",
+        "scout:Q1-retired",
+        "status:refine",
+        "pick:math"
+      ],
+      "last_processed_at": "2026-11-16T18:59:46Z",
+      "notes": "Approved to move forward on 2026-11-13 at 11:51 PM ET, but direction is still TBD with Jared.",
+      "history": [
+        {
+          "at": "2026-11-14T04:51:00Z",
+          "signal": "approved to move forward; direction TBD",
+          "source": "prior_decision",
+          "actor": "jgridifier",
+          "action": "status:refine",
+          "ref": null
+        }
+      ]
+    },
+    "54": {
+      "issue": 54,
+      "slug": "maxlipo-tr",
+      "method": "MaxLIPO+TR",
+      "scout_date": "2026-11-12",
+      "page": "2026-11-12-adhoc.html",
+      "page_anchor": "#maxlipo-tr",
+      "question": "watchlist",
+      "status": "parked",
+      "top_pick": null,
+      "labels": [
+        "scout",
+        "watchlist",
+        "status:parked"
+      ],
+      "last_processed_at": "2026-11-16T18:59:48Z",
+      "notes": "The MD's pick (Jared, 2026-11-12), not a scout method pick. Watchlist only.",
+      "history": []
+    },
+    "55": {
+      "issue": 55,
+      "slug": "ebnm",
+      "method": "ebnm",
+      "scout_date": "2026-11-13",
+      "page": "2026-11-13.html",
+      "page_anchor": "#ebnm",
+      "question": "Q2",
+      "status": "approved",
+      "top_pick": "new-use",
+      "labels": [
+        "scout",
+        "scout:Q2",
+        "status:approved",
+        "pick:new-use"
+      ],
+      "last_processed_at": "2026-11-16T18:59:50Z",
+      "notes": "Approved to move forward on 2026-11-13 at 11:51 PM ET. Real-panel validation is still owed. The 11-13 run used SYNTHETIC mock budgets, not real program data.",
+      "history": [
+        {
+          "at": "2026-11-14T04:51:00Z",
+          "signal": "approved to move forward",
+          "source": "prior_decision",
+          "actor": "jgridifier",
+          "action": "status:approved",
+          "ref": null
+        }
+      ]
+    },
+    "56": {
+      "issue": 56,
+      "slug": "denselines",
+      "method": "DenseLines",
+      "scout_date": "2026-11-13",
+      "page": "2026-11-13.html",
+      "page_anchor": "#denselines",
+      "question": "Q2",
+      "status": "approved",
+      "top_pick": "engineering",
+      "labels": [
+        "scout",
+        "scout:Q2",
+        "status:approved",
+        "pick:engineering"
+      ],
+      "last_processed_at": "2026-11-16T18:59:51Z",
+      "notes": "Approved to move forward on 2026-11-13 at 11:51 PM ET. Real-panel validation, and a DenseLines Rust parity check, are still owed. The 11-13 run used SYNTHETIC mock budgets, not real program data.",
+      "history": [
+        {
+          "at": "2026-11-14T04:51:00Z",
+          "signal": "approved to move forward",
+          "source": "prior_decision",
+          "actor": "jgridifier",
+          "action": "status:approved",
+          "ref": null
+        }
+      ]
+    },
+    "57": {
+      "issue": 57,
+      "slug": "crqa",
+      "method": "CRQA",
+      "scout_date": "2026-11-14",
+      "page": "2026-11-14.html",
+      "page_anchor": "#crqa",
+      "question": "Q1",
+      "status": "proposed",
+      "top_pick": "math",
+      "labels": [
+        "scout",
+        "scout:Q1",
+        "status:proposed",
+        "pick:math"
+      ],
+      "last_processed_at": "2026-11-16T18:59:53Z",
+      "notes": "",
+      "history": []
+    },
+    "58": {
+      "issue": 58,
+      "slug": "idr",
+      "method": "IDR",
+      "scout_date": "2026-11-14",
+      "page": "2026-11-14.html",
+      "page_anchor": "#idr",
+      "question": "Q3",
+      "status": "proposed",
+      "top_pick": "math",
+      "labels": [
+        "scout",
+        "scout:Q3",
+        "status:proposed",
+        "pick:math"
+      ],
+      "last_processed_at": "2026-11-16T18:59:55Z",
+      "notes": "Recommended for the promote workflow; not promoted. Promotion needs Jared’s dated approval.",
+      "history": []
+    },
+    "59": {
+      "issue": 59,
+      "slug": "ccm",
+      "method": "Convergent cross mapping",
+      "scout_date": "2026-11-15",
+      "page": "2026-11-15.html",
+      "page_anchor": "#ccm",
+      "question": "Q1",
+      "status": "proposed",
+      "top_pick": "engineering",
+      "labels": [
+        "scout",
+        "scout:Q1",
+        "status:proposed",
+        "pick:engineering"
+      ],
+      "last_processed_at": "2026-11-16T18:59:57Z",
+      "notes": "",
+      "history": []
+    },
+    "60": {
+      "issue": 60,
+      "slug": "kairos",
+      "method": "kairos/tabula",
+      "scout_date": "2026-11-15",
+      "page": "2026-11-15.html",
+      "page_anchor": "#kairos",
+      "question": "Q1",
+      "status": "proposed",
+      "top_pick": "math",
+      "labels": [
+        "scout",
+        "scout:Q1",
+        "status:proposed",
+        "pick:math"
+      ],
+      "last_processed_at": "2026-11-16T18:59:59Z",
+      "notes": "Recommended for the promote workflow; not promoted. The taxonomy fix (OFR’s 2025-08 tenor-bucket split) should come before anything is built on the clock.",
+      "history": []
+    }
+  }
 }

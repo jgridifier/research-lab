@@ -191,17 +191,16 @@ def main() -> int:
         label_args = []
         for lab in labels:
             label_args.extend(["--label", lab])
-        out = _gh(
+        url = _gh(
             "issue", "create", "-R", REPO,
             "--title", title,
             "--body-file", body_path,
             *label_args,
-            "--json", "number,url,createdAt",
-        )
-        data = json.loads(out)
+        ).strip()
+        data = json.loads(_gh("issue", "view", url, "-R", REPO, "--json", "number,url,createdAt"))
         number = int(data["number"])
         created_at = data.get("createdAt") or data.get("created_at")
-        print(f"created issue #{number} {data.get('url')}", file=sys.stderr)
+        print(f"created issue #{number} {data.get('url') or url}", file=sys.stderr)
     else:
         # adopt: set labels (additive via gh edit --add-label) and ensure how-to-respond is present
         view = json.loads(_gh("issue", "view", str(number), "-R", REPO, "--json", "number,title,body,createdAt,labels"))
