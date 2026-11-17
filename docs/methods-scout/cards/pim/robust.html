@@ -1,0 +1,9 @@
+<p><span class="grade ok">Well established</span></p>
+<h4>What the home field has established</h4>
+<ul>
+<li><b>Origin.</b> A semiparametric model for \(P(Y \le Y^* \mid X, X^*)\) with asymptotic normality of the estimator, a consistent sandwich covariance and a simulation study (Thas et al., JRSS-B 2012; abstract read). DOI metadata lists 163 citations.</li>
+<li><b>Follow-ups.</b> Amorim et al. (2018; abstract and introduction read) describe PIMs as generating classical rank tests (Wilcoxon–Mann–Whitney, Kruskal–Wallis, Friedman). They show asymptotic inference is poor in small samples and \(\beta\) has a large finite-sample bias; their bias-reduced bootstrap and adjusted jackknife empirical likelihood fix it.</li>
+<li><b>Implementation.</b> pim 2.0.4 on CRAN (2025-01), tests in Suggests, maintained by the Ghent group. Our reproduction: PI = 0.749275 on <code>FEVData</code>, identical to WMW.</li>
+<li><b>Known failure modes.</b> Small samples, dependent pseudo-observations, ties, collinear covariates. All four showed up here.</li>
+</ul>
+<p class="small">Grade from the 2026-11-16 edition: "well established as a statistical framework with theory, simulations and a maintained package. It is little used outside biostatistics and nearly unknown in finance."</p>

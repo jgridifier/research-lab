@@ -1,0 +1,32 @@
+{
+  "issue": 56,
+  "name": "DenseLines (density line charts)",
+  "title": "A thousand short lines as one picture",
+  "field": "visualization research",
+  "what": "Give every series one unit of ink per column, so a thousand lines become a readable density, not spaghetti.",
+  "verdict": "Interesting",
+  "grade": "not graded (the 11-13 edition predates grading)",
+  "pick_eff": "S–M",
+  "pick_line": "Gap-safe, weighted DenseLines in Rust with a Python binding.",
+  "data": "SYNTHETIC mock budgets (Corning_mock, MS_mock), not any firm's budget",
+  "one": "The shared 2022–24 dip and the 2025 split appear; spaghetti hides them.",
+  "picture": {"type": "images", "a": "img/denselines_spaghetti.png", "b": "img/denselines_density.png", "la": "Spaghetti", "lb": "DenseLines"},
+  "findings": [
+    {"h": "The authors' code breaks on programs that start or stop.", "miss": true,
+     "t": "One partial series turns a column blank (NaN). 274 of 1,052 Corning-mock programs are partial, so every column fails. Our one-line gap-safe fix: none.",
+     "chart": {"type": "hbars", "title": "Columns that come out blank", "max": 600,
+       "rows": [["Reference code (MS mock panel)", 500, "red", "500 / 500"], ["Gap-safe fix", 0, "teal", "0 / 500"]]},
+     "fig": "fig/2026-11-13/m2_startstop.png"},
+    {"h": "Chart plus keyword finds 94% of a hidden group, but it is fragile.",
+     "t": "AI-demand group, Corning mock. The brush works at 2–4 px smoothing and vanishes at 6–8 px.",
+     "note": "Precision: 100%, 51% and 56%.",
+     "chart": {"type": "hbars", "title": "Share of the hidden group found (recall)", "max": 110,
+       "rows": [["Text keyword only", 66, "amber", "66%"], ["Chart brush only", 75, "amber", "75%"], ["Brush OR keyword", 94, "teal", "94%"]]},
+     "fig": "fig/2026-11-13/m2_residual_corning.png"},
+    {"h": "At 5–6 points per line, the normalisation itself barely matters.",
+     "t": "The noisiest 10% of programs take 12.0% of the ink without normalisation and 10.7% with it (Corning mock). The density view is the gain.",
+     "chart": {"type": "hbars", "title": "Ink taken by the noisiest 10% of programs", "max": 14,
+       "rows": [["Fair share", 10, "muted", "10%"], ["Without normalisation", 12.0, "amber", "12.0%"], ["DenseLines", 10.7, "teal", "10.7%"]]},
+     "fig": "fig/2026-11-13/m2_hero.png"}
+  ]
+}

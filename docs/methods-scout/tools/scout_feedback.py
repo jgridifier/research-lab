@@ -45,31 +45,13 @@ QUESTION_LABEL = {
 }
 PICKS = ("engineering", "math", "new-use", "all")
 
-RESPOND_HINT = (
-    "👍 go ahead with the top pick · 👎 drop it · 👀 park for later · "
-    "or comment <code>go engineering</code>, <code>go math</code>, "
-    "<code>go new use</code>, <code>go all</code>, "
-    "<code>refine: &lt;what to change&gt;</code>, "
-    "<code>promote</code>, <code>park</code>, <code>drop</code>."
-)
+RESPOND_HINT = "👍 go ahead · 👎 drop · or just comment what you think"
 
 HOW_TO_RESPOND = """## How to respond
 
-React on this issue (do not comment just to vote):
+👍 go ahead · 👎 drop · or just comment what you think.
 
-- 👍 = go ahead with the top pick
-- 👎 = drop it
-- 👀 = park for later
-
-Or comment one of:
-
-- `go engineering` · `go math` · `go new use` · `go all`
-- `refine: <what to change>`
-- `promote` (move into analysis-skills)
-- `park`
-- `drop`
-
-Free-text comments are read as refinement notes. A daily scanner picks this up; you do not need to @-mention anyone.
+A daily scanner reads this issue; you do not need to @-mention anyone.
 """
 
 

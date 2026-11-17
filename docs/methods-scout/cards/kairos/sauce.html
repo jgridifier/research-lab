@@ -1,0 +1,13 @@
+<div class="sauce"><span class="t">1 · Engineering · Effort S</span><h5>A Python port of CA seriation, the Porčić test and event dates</h5>
+<p>Three small linear-algebra routines: CA by SVD, a mode count over permutations, a regression on CA coordinates. A NumPy port, with Rust for the permutation test, runs them inside the lab's Python pipelines and on daily data with bootstrap bands. kairos 2.3.0 is the oracle.</p>
+<p><b>Math sketch.</b> \(S = D_r^{-1/2}(P - rc^\top)D_c^{-1/2} = U\Sigma V^\top\); \(F = D_r^{-1/2}U\Sigma\); modes counted on each column after ordering by \(F_{\cdot 1}\).</p>
+<p class="small"><b>Test.</b> CA coordinates ≤ 1e-10 (up to sign), event dates ≤ 1e-8, identical mode counts under shared permutations; then 10,000 permutations on 2,000 days in &lt; 1 s.</p></div>
+<div class="sauce top"><span class="t">2 · Math · Effort M · ★ Top pick</span><h5>A taxonomy-robust mix clock with a time-series null</h5>
+<p>The event model treats months as independent deposits and assumes the type list never changes. Both fail here. Make re-defined buckets supplementary CA columns tied by an aggregation constraint, and bootstrap the event intervals in blocks.</p>
+<p><b>Math sketch.</b> Keep the old bucket as the active column; project the new sub-buckets \(j_1, j_2\) as supplementary columns with the constraint \(n_{i j_1} + n_{i j_2} = n_{ij}\), so post-split months get coordinates on the pre-split axes. Intervals: moving-block bootstrap of months, refit CA and \(\beta\) per draw.</p>
+<p class="small"><b>Test (pre-registered).</b> The 2025-08 jump (−0.51 → +0.50 years) shrinks below 0.15 years, and the walk-forward MAE (1.06 years) does not get worse.</p></div>
+<div class="sauce"><span class="t">3 · New use on our data · Effort S</span><h5>Collateral-mix and positioning-mix clocks (Q1.4, Q1.5)</h5>
+<p>Build the same clock on tri-party collateral (Treasury, agency, corporate, other) and on TFF open interest by trader type. Does Form PF borrowing growth lead them too, or is the lead specific to venue and tenor?</p>
+<p><b>Math sketch.</b> Same CA + event model per panel; correlation of each clock's 12-month speed with Form PF growth at leads 3 and 6, circular-shift null.</p>
+<p class="small"><b>Test.</b> Circular-shift p &lt; 0.05 after Holm, stated in advance; today's venue × tenor result is the reference.</p></div>
+<p class="small">👍 on the issue means go with the ★ top pick. To choose another, just say so in a comment.</p>

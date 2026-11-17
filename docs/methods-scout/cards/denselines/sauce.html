@@ -1,0 +1,13 @@
+<div class="sauce top"><span class="t">1 · Engineering · Effort S–M · ★ Top pick</span><h5>Gap-safe, weighted DenseLines in Rust with a Python binding</h5>
+<p>The reference NaNs out on start/stop programs, and the exact NumPy port is 10–120× slower. Build a Rust core (parity first, then speed) with gap-safe columns, per-series weights and a live-count channel.</p>
+<p><b>Math sketch.</b> \(D_w(c,r) = \sum_s w_s\,B_s(c,r)/k_s(c)\) with \(0/0 := 0\); also return \(n(c)=\sum_s \mathbf 1[k_s(c)&gt;0]\) and \(W(c) = \sum_s w_s \mathbf 1[k_s(c)&gt;0]\) so each column can be shown as a density (\(D_w/W\)) or as mass.</p>
+<p class="small"><b>Test.</b> Relative difference ≤ 1e-6 vs commit 083890c on full-span inputs, zero NaN columns on both mocks, and ≤ 2× the reference's time at 10,000 series.</p></div>
+<div class="sauce"><span class="t">2 · Math · Effort M</span><h5>Posterior DenseLines: draw what the program probably is</h5>
+<p>Replace each noisy path with ebnm posterior draws (weight 1/draws). Noise, not steepness, is what separates today's chart from the truth chart.</p>
+<p><b>Math sketch.</b> \(D(c,r) = \sum_s \tfrac1R\sum_{q=1}^R B_{s}^{(q)}(c,r)/k_s^{(q)}(c)\), where path \(q\) is a draw from the posterior of program \(s\)'s true path; each program still carries one unit per column.</p>
+<p class="small"><b>Test.</b> Lower Wasserstein distance to the true-path chart than today's 0.053 (Corning) and 0.035 (MS), and no false branch on a mock with the clusters switched off.</p></div>
+<div class="sauce"><span class="t">3 · New use on our data · Effort S</span><h5>Residual brush plus text keyword as a hidden-group finder</h5>
+<p>Text and chart find different members; together they reach 94% recall on the AI-demand group. The brush needs a bandwidth-free branch test.</p>
+<p><b>Math sketch.</b> Hartigan's dip statistic on the last-column residual distribution, with a null from year-shuffled programs; select programs above the antimode only when the dip test rejects.</p>
+<p class="small"><b>Test.</b> Recall ≥ 0.7 at precision ≥ 0.5 on both mocks, at any smoothing from 2 to 8 px.</p></div>
+<p class="small">👍 on the issue means go with the ★ top pick. To choose another, just say so in a comment.</p>

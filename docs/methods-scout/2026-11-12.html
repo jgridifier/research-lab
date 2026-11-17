@@ -79,7 +79,7 @@
 <aside class="scout-respond" data-issue="50" data-slug="ecotraj">
   <span class="scout-chip status-in-progress">In progress</span>
   <a class="scout-respond-btn" href="https://github.com/jgridifier/research-lab/issues/50">Respond on GitHub</a>
-  <p class="scout-respond-hint">👍 go ahead with the top pick · 👎 drop it · 👀 park for later · or comment <code>go engineering</code>, <code>go math</code>, <code>go new use</code>, <code>go all</code>, <code>refine: &lt;what to change&gt;</code>, <code>promote</code>, <code>park</code>, <code>drop</code>.</p>
+  <p class="scout-respond-hint">👍 go ahead · 👎 drop · or just comment what you think</p>
 </aside>
 <p><strong>Target question.</strong> Q1, in trajectory language: does the share composition walk with a preferred direction (sticky migration), or does it wander like a persistent random path, and how much of that walk is just the market?</p>
 <p><strong>Why it is a visual, MaxLIPO-style find, and fast enough.</strong> The usual chart is a stacked-area plot of shares, which hides direction. ecotraj gives a no-tuning path in a resemblance space, a directionality number, and a way to compare whole trajectories (DSPD). Three analyses: (1a) directionality of the clr path vs a built-in random-order null, a sign-flip-increments null, and a persistence-matched AR(1); (1b) market vs residual sub-trajectories, on both levels and increments; (1c) 13 stress episodes as trajectories in a z-scored macro state, clustered by DSPD. Runtime for 1a–1c was 8.0 minutes (R 4.5.3, ecotraj 1.2.2, seed 20261112, 999 draws). The built-in permutation (random survey order) is too weak on a trending composition — the same lesson as InspectChangepoint — so the sign-flip and AR(1) nulls are the ones we trust.</p>
@@ -133,7 +133,7 @@
 <aside class="scout-respond" data-issue="51" data-slug="lphom">
   <span class="scout-chip status-proposed">Proposed</span>
   <a class="scout-respond-btn" href="https://github.com/jgridifier/research-lab/issues/51">Respond on GitHub</a>
-  <p class="scout-respond-hint">👍 go ahead with the top pick · 👎 drop it · 👀 park for later · or comment <code>go engineering</code>, <code>go math</code>, <code>go new use</code>, <code>go all</code>, <code>refine: &lt;what to change&gt;</code>, <code>promote</code>, <code>park</code>, <code>drop</code>.</p>
+  <p class="scout-respond-hint">👍 go ahead · 👎 drop · or just comment what you think</p>
 </aside>
 <p><strong>Target question.</strong> Q1’s second half, taken literally: can we recover a transfer matrix that says, of last quarter’s share, how much each dealer kept and where the rest went — and does that matrix change with the market?</p>
 <p><strong>Three analyses, plus a better-units check.</strong> (2a) Fit \(P\) on E4 and on a six-bloc version of panel A, against a constrained least-squares (Lee–Judge–Zellner) baseline, with half-sample and annual cuts. (2b) High-VIX vs low-VIX quarter pairs, with a random-split null. (2c) A no-migration persistence null, and a planted-truth recovery (true GS→JPM flow 1% per quarter). Extra: treat product-year lines as voting units (54 units). Runtime 3.3 minutes (seed 20261112).</p>

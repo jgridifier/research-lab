@@ -1,0 +1,48 @@
+<h4>Who plays what</h4>
+<div class="table-wrap"><table>
+<tr><th>Home field (clinical trial)</th><th>Our data</th></tr>
+<tr><td>Patient</td><td>Bank in a stress-test year</td></tr>
+<tr><td>Treatment arm or dose</td><td>Stress metric: SA CET1 drawdown, SA pre-tax income, SCB, Adverse–SA gap</td></tr>
+<tr><td>Outcome (e.g. pain score)</td><td>Payout/RWA, or its dividend and buyback legs</td></tr>
+<tr><td>Comparisons within a trial</td><td>Comparisons only within a test year, so scenario and payout-norm shifts cancel</td></tr>
+</table></div>
+
+<h4>Inputs and preprocessing</h4>
+<ul>
+<li>Fed <code>public_results_DFAST_2026.csv</code> (all scenarios), FR Y-9C HI-A Q4 payouts 2012–2025 (BHCK4460, 4598, 4783, 4782, 4340), SCB from the Large Bank Capital Requirements PDFs. The lab's verified copies from the 11-14 run.</li>
+<li>Payout = common and preferred dividends plus net buybacks over RWA, calendar year \(Y\), for test year \(Y\); 360 firm-years. Next-year payouts as a timing check.</li>
+<li>IQRs used for "per IQR": drawdown 2.5 pp, pre-tax income 1.8 pp, SCB 2.0 pp, gap 1.1 pp.</li>
+</ul>
+
+<h4>What we ran</h4>
+<ol>
+<li>Sanity: pim on its own example data reproduces the Wilcoxon–Mann–Whitney index exactly.</li>
+<li>Q3.1/Q3.2: one-covariate and joint (drawdown + pre-tax income) PIMs, all years and SCB era.</li>
+<li>Q3.4: Adverse vs severely adverse gap on 2014–2019 (177 firm-years with both scenarios).</li>
+<li>Q3.5: dividends/RWA, net buybacks/RWA and dividend share, before vs after 2020.</li>
+<li>Robustness: trim the 8 most extreme payout ratios and refit both OLS and PIM.</li>
+<li>Inference: 299 firm-block bootstraps and 499 within-year permutations per model; Holm within families. All 29 models ran in about 3 minutes.</li>
+</ol>
+
+<div class="callouts"><h5>How to read the main chart (forest plot)</h5>
+<ol>
+<li>Each row is one model; the dot is the PI per one-IQR difference in the stress metric.</li>
+<li>The vertical line at 0.5 means "no ordering". Right of it: the better-placed bank tends to pay more.</li>
+<li>Bars are firm-block bootstrap 95% intervals; a bar that crosses 0.5 is not distinguishable from no ordering.</li>
+<li>Compare "alone" with "joint" rows: drawdown alone sits at 0.40, but with pre-tax income in the model it moves to 0.50. Pre-tax income carries the ordering.</li>
+</ol></div>
+
+<div class="plain"><h5>What it means for a decision-maker</h5>
+<p>Within a stress-test year, the bank whose severely adverse projected pre-tax income looks better usually pays out more: about 2 times in 3 for a typical gap. The capital drawdown on its own seems to matter only because it travels with pre-tax income. The buffer itself (SCB) shows no link. This is a description of how payouts lined up with published stress numbers, not advice on setting payouts and not a forecast.</p></div>
+
+<h4>Where it breaks (seen in our runs)</h4>
+<ul>
+<li><b>Collinearity:</b> SCB + drawdown together gave unstable, sign-flipping coefficients (Spearman 0.92 between them).</li>
+<li><b>Small yearly cross-sections</b> (18–35 banks): the package's sandwich p-values are optimistic; we used resampling instead.</li>
+<li><b>Ties:</b> many zero buybacks; handled as ½, but they dilute the buyback leg.</li>
+<li><b>Timing:</b> payouts in calendar \(Y\) partly precede year-\(Y\) results; next-year checks were weaker (next-year dividend share vs drawdown: PI 0.46 per IQR, p = 0.17).</li>
+<li><b>Not available:</b> firm-level baseline projections, so "versus baseline" cannot be asked.</li>
+</ul>
+
+<h4>What we'd do next</h4>
+<p>Top pick: carry the PIM to Q2 as a text-versus-numbers check, "within a subsegment, how often does a program labelled <em>grow</em> actually grow faster than its peers?", and require it to beat the 0.78 AUC from the 11-13 peer comparison. In parallel, the Math card would give a proper firm-clustered variance so we stop relying on the bootstrap.</p>

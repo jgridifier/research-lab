@@ -1,0 +1,38 @@
+<h4>Notation</h4>
+<div class="table-wrap"><table>
+<tr><th>Symbol</th><th>Meaning</th><th>Here</th></tr>
+<tr><td>\(N = (n_{ij})\)</td><td>counts: deposit \(i\), type \(j\)</td><td>month \(i\) (101 months), repo segment \(j\) (9 venue × tenor), monthly average volume in $bn</td></tr>
+<tr><td>\(P = N/n_{\cdot\cdot}\), \(r\), \(c\)</td><td>correspondence matrix and its row and column masses</td><td>share of all volume; each month's and each segment's weight</td></tr>
+<tr><td>\(F_{ik}\)</td><td>principal coordinate of month \(i\) on CA axis \(k\)</td><td>axis 1 = "term DVP and tri-party overnight" → "overnight and short-term DVP"</td></tr>
+<tr><td>\(t_i,\ \hat t_i\)</td><td>calendar date, event (mix) date</td><td>\(\hat t_i - t_i\): how old or new the mix looks</td></tr>
+<tr><td>mix speed</td><td>12-month change in \(\hat t\)</td><td>mix-years per calendar year</td></tr>
+</table></div>
+
+<h4>Assumptions</h4>
+<ul><li>Each type comes in and goes out of fashion once (unimodal over time: a "battleship" shape).</li>
+<li>The type list is fixed across deposits.</li>
+<li>Deposits are independent (used by the event model's intervals).</li></ul>
+
+<h4>The statistics</h4>
+<p><b>Seriation by correspondence analysis.</b> Take the SVD of the standardised residuals and order months and segments by their axis-1 coordinates:</p>
+$$S = D_r^{-1/2}\,(P - r c^{\top})\,D_c^{-1/2} = U\Sigma V^{\top},\qquad F = D_r^{-1/2}U\Sigma .$$
+<p><b>Event date</b> (Bellanger &amp; Husi): regress the known dates on the leading CA row coordinates; any mix, including a new month, then gets a date.</p>
+$$\hat t_i = \beta_0 + \sum_{k} \beta_k F_{ik}.$$
+<p><b>EPPM seriograph</b> (Desachy): plot each share's excess over its column mean, \(\max(0,\ p_{ij}/r_i - \bar s_j)\), so hand-offs between types stand out.</p>
+
+<h4>Why it works, step by step</h4>
+<div class="step"><b class="n">Step 1 · what CA finds</b>\(S\) measures how far each month's mix is from the average mix, scaled so that \(\sum S_{ij}^2\) is the total inertia (the χ² statistic over \(n\)). Its first singular vector is the single direction of mix change that explains the most inertia, here 69.3%.</div>
+<div class="step"><b class="n">Step 2 · why a fashion cycle lands on axis 1</b>If types rise and fall in sequence, nearby months share types and distant months share few. That gives a "horseshoe" in CA, whose first axis orders deposits along the sequence (the classical seriation result). Ordering by \(F_{i1}\) therefore recovers time up to sign: our sign is negative (Spearman −0.964).</div>
+<div class="step"><b class="n">Step 3 · dating a new month</b>A new mix needs no refit: its coordinate is its profile times the standard column coordinates (the CA transition formula), \(f = \sum_j (n_j/n_\cdot)\,v_{j1}/\sqrt{c_j}\). Plug \(f\) into the event model.</div>
+<div class="step"><b class="n">Step 4 · the null (Porčić)</b>After seriation, count the modes (local peaks) in each type's sequence and sum. Under the seriation model the total is small. Compare it with 1,000 random month orders; p = share of random orders with as few modes.</div>
+<p><b>Inference used for the Q1.4 link:</b> correlation of mix speed with Form PF borrowing growth (overlapping 12-month changes), with a circular-shift null that keeps persistence, and Holm over 18 tests.</p>
+
+<div class="toy"><h5>Toy example (computed on the box)</h5>
+<p>Three months, three segments, counts \(\begin{pmatrix}60&amp;30&amp;10\\40&amp;40&amp;20\\20&amp;30&amp;50\end{pmatrix}\). Shares by month: (.6,.3,.1), (.4,.4,.2), (.2,.3,.5); column means (.400, .333, .267).</p>
+<ul><li><b>EPPM:</b> excesses are .200 for segment A in month 1, .067 for B in month 2, .233 for C in month 3, and 0 elsewhere: a clean hand-off A → B → C.</li>
+<li><b>CA:</b> axis 1 holds 94.7% of inertia; month coordinates −0.446, −0.106, +0.553, already in calendar order.</li>
+<li><b>Event model:</b> dating the months 2018, 2020, 2022 gives \(\hat t = 2020 + 3.873\,F_1\), fitted 2018.27, 2019.59, 2022.14.</li>
+<li><b>A new mix</b> (50, 35, 15): coordinate −0.276, so event date ≈ 2018.9: it "looks like" late 2018.</li></ul></div>
+
+<div class="diff"><b>How it differs from the standard tool.</b> The usual view is a stacked-area chart of shares, or a compositional PCA on log-ratios. Neither assumes a direction in time, so neither gives a date or a speed. Seriation adds a strong, testable structure (each type has one rise and fall) and turns the mix into a single clock. The cost: the structure can be wrong (coefficient 0.52 here, so some segments go up and down more than once), and the method is blind to a change in the type list.</div>
+<p class="cite">Followed: Bellanger &amp; Husi (2012), Journal of Archaeological Science 39(4):777–790, event model; Porčić (2013), Journal of Archaeological Science 40(12):4552–4559, mode-count test; Desachy (2004), EPPM seriograph. All three taken from the kairos reference list; section and equation numbers not checked. Packages: kairos 2.3.0 (CRAN), tabula 3.3.2 (JOSS, doi:10.21105/joss.01821). CA and transition formula: standard. Toy: <code>cards/_toys/toys.py</code>.</p>

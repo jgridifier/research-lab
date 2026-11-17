@@ -1,0 +1,33 @@
+== ecofolio: three programs on v = a m^z, a=0.04, z=1.5
+[0.2, 0.141, 0.1] avg 0.147 CV(M) 0.093 PE_avgCV 2.45 PE_mv 1.56
+== pim: A={1.0,2.0} vs B={1.5,3.0,4.0}
+PI 0.833 beta 1.61
+per-unit 0.606 IQR 1.8 -> per-IQR 0.685
+per-unit 0.46 IQR 2.5 -> per-IQR 0.401
+== ebnm: x=(2,0.5,-0.5,3), s=1, normal prior
+mu 1.25 spread 1.812 sigma2 0.812 B 0.448 post [1.59, 0.91, 0.47, 2.03] sd 0.67 lfsr [0.009, 0.086, 0.243, 0.001]
+== CRQA: a=(1,2,2,3,1), b=(2,2,3,1,1); DRP(k) = share of t with a_t == b_{t+k}
+k -2 1/3
+k -1 4/4
+k 0 2/5
+k 1 0/4
+k 2 0/3
+== IDR: x=(1,2,3,4), y=(0.5,2.0,1.0,3.0), isotonic in x (CDF non-increasing in x)
+z 0.5 1{y<=z} [1, 0, 0, 0] IDR F(z) [1, 0, 0, 0]
+z 1.0 1{y<=z} [1, 0, 1, 0] IDR F(z) [1, 0.5, 0.5, 0]
+z 2.0 1{y<=z} [1, 1, 1, 0] IDR F(z) [1, 1, 1, 0]
+z 3.0 1{y<=z} [1, 1, 1, 1] IDR F(z) [1, 1, 1, 1]
+== CCM: Sugihara-style coupled logistic maps, X drives Y (beta_yx = 0.1), E = 2
+L 10 Y-manifold recovers X (X->Y) 0.31 | X-manifold recovers Y -0.02
+L 25 Y-manifold recovers X (X->Y) 0.54 | X-manifold recovers Y -0.01
+L 100 Y-manifold recovers X (X->Y) 0.84 | X-manifold recovers Y -0.04
+L 300 Y-manifold recovers X (X->Y) 0.92 | X-manifold recovers Y -0.09
+== kairos/EPPM: 3 months x 3 segments
+shares [[0.6, 0.3, 0.1], [0.4, 0.4, 0.2], [0.2, 0.3, 0.5]] column means [0.4, 0.333, 0.267]
+EPPM [[0.2, 0, 0], [0.0, 0.067, 0], [0, 0, 0.233]]
+modes per segment in this order [1, 1, 1]
+== kairos/CA + event date on the same 3x3 toy
+inertia share axis1 0.947
+row coords axis1 [-0.446 -0.106  0.553] check via profiles [-0.446 -0.106  0.553]
+event model beta [2020.       3.873] fitted [2018.27 2019.59 2022.14]
+new mix 50/35/15: coord -0.276 event date 2018.93

@@ -1,0 +1,13 @@
+<div class="sauce"><span class="t">1 · Engineering · Effort M</span><h5>A Rust core for the ash and point-normal fits, R as oracle</h5>
+<p>A thousand programs × categories × cycles × bootstraps means thousands of fits. Port the mixture-weight solve (mixsqp's SQP) and the posterior summaries to Rust, with a thin Python binding.</p>
+<p><b>Math sketch.</b> With a fixed grid \(\sigma_1&lt;\dots&lt;\sigma_K\), build \(L_{jk}=\mathcal N(x_j;0,\sigma_k^2+s_j^2)\) once and maximise the concave \(\sum_j\log\sum_k \pi_k L_{jk}\) over the simplex; posteriors are then mixtures of normals with closed-form means and tail probabilities.</p>
+<p class="small"><b>Test.</b> Log-likelihood parity −145.7808 (Corning, ash) and −238.8506 (MS), posterior means within 1e-6; then wall time against R's 0.03 s per fit.</p></div>
+<div class="sauce"><span class="t">2 · Math · Effort M–L</span><h5>Let the description set the prior</h5>
+<p>Make \(g\) depend on text-derived features (stated category, intent, driver), as in covariate-powered empirical Bayes. Today one global prior made lone programs slightly worse than their own number.</p>
+<p><b>Math sketch.</b> \(\theta_j \sim g_{w(c_j)}\) with mixture weights \(\pi_k(c_j) = \mathrm{softmax}(W c_j)_k\) for text features \(c_j\); fit \(W\) by marginal likelihood, cross-fitted so a program's own text does not leak (Ignatiadis &amp; Wager, arXiv:1906.01611).</p>
+<p class="small"><b>Test.</b> On non-family programs, beat both the own number (0.110 / 0.093) and global ash (0.120 / 0.096) on both mocks, with no loss on families.</p></div>
+<div class="sauce top"><span class="t">3 · New use on our data · Effort S · ★ Top pick</span><h5>"Is this move real?" flags for every program in a budget cycle</h5>
+<p>One column per program, per cycle: shrunk change, interval, lfsr. It gives 6–7× the calls of BH at ≤ 1.5% wrong sign, needs no tuning and runs in milliseconds.</p>
+<p><b>Math sketch.</b> \(x_j = \Delta\log\) actual, \(s_j=\sqrt2\hat\sigma_j\), ash prior centred at 0; report \(\hat\theta_j\), 90% interval and \(\mathrm{lfsr}_j\); flag \(\mathrm{lfsr}_j&lt;0.05\).</p>
+<p class="small"><b>Test.</b> On a mock regenerated with a new seed (and later on real data): wrong-sign rate ≤ 5% among lfsr &lt; 0.05 calls, at least 3× BH's calls, and lfsr bins calibrated within ±5 points.</p></div>
+<p class="small">👍 on the issue means go with the ★ top pick. To choose another, just say so in a comment.</p>

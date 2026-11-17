@@ -1,0 +1,46 @@
+<h4>Who plays what</h4>
+<div class="table-wrap"><table>
+<tr><th>Home field (fish populations)</th><th>Our data</th></tr>
+<tr><td>Sardine, anchovy and sea temperature series</td><td>Weekly Treasury fails, the DVP–tri-party spread, DVP volume, leveraged-fund Treasury positioning</td></tr>
+<tr><td>"Temperature's fingerprint is in sardine dynamics"</td><td>"Fails' fingerprint is in the spread's dynamics"</td></tr>
+<tr><td>Decades of noisy yearly counts</td><td>About 360 weeks, 2019-01 to 2025-12</td></tr>
+</table></div>
+
+<h4>Inputs and preprocessing</h4>
+<ul>
+<li>CFTC Traders in Financial Futures (leveraged-fund net short in 2y, 5y, 10y, an unweighted sum, not DV01-weighted), NY Fed financing fails, OFR DVP and tri-party data.</li>
+<li>Weekly differences (log differences for volumes and fails). Two holiday weeks without a fails release interpolated. The lab's TFF copy stops at 2025-12-30, so the panel ends there.</li>
+<li>Embedding \(E\) per series by simplex skill (first half fit, second half test); 4-week exclusion radius.</li>
+</ul>
+
+<h4>What we ran</h4>
+<ol>
+<li>Own-dynamics checks: simplex and S-map skill for each series (is it predictable, is it nonlinear?).</li>
+<li>Convergence curves for 10 directions (100 random libraries per point, 10 points).</li>
+<li>200 driver-shift surrogates per direction at \(L = 350\); Holm across directions.</li>
+<li>Lag scan −4…+4 weeks; linear Granger as the plain baseline; the same analysis on each half.</li>
+<li>Full run: 148 s single-threaded.</li>
+</ol>
+
+<div class="callouts"><h5>How to read the main chart (convergence curves)</h5>
+<ol>
+<li>x = library size \(L\); y = cross-map skill \(\rho\). Each panel is one direction (driver → responder).</li>
+<li>A link needs two things: the curve rises as \(L\) grows, and it ends above the grey band (below the null's 95th percentile).</li>
+<li>Fails → spread and positioning → spread rise (+0.24 and +0.19 from \(L\) = 20 to 350) and clear the band.</li>
+<li>Flat curves inside the band (positioning ↔ fails) mean no detectable coupling.</li>
+</ol></div>
+
+<div class="plain"><h5>What it means for a decision-maker</h5>
+<p>The DVP–tri-party rate spread behaves like the "listener": its week-to-week moves carry traces of settlement fails and of leveraged-fund positioning, more than the reverse. Fails and positioning are not linked to each other, even though a standard linear test says they are; that test is probably picking up shared calendar effects. These links are real but modest and sit right at the edge of significance. Descriptive only.</p></div>
+
+<h4>Where it breaks (seen in our runs)</h4>
+<ul>
+<li><b>Noise:</b> CCM assumes near-deterministic dynamics; ours are noisy weekly differences with \(\rho\) of 0.2–0.3.</li>
+<li><b>p-value floor:</b> 200 surrogates cap p at 0.005; after Holm the two links sit exactly at 0.05.</li>
+<li><b>Unpredictable driver:</b> positioning changes are nearly unpredictable from their own past (\(\rho\approx0.07\)), so they can only be tested as a driver.</li>
+<li><b>Regime change:</b> links into DVP volume exist only after mid-2022, so full-sample numbers mix two regimes.</li>
+<li><b>Circular shift</b> wraps the end of each series onto its start.</li>
+</ul>
+
+<h4>What we'd do next</h4>
+<p>Top pick (Engineering): reuse the responder's neighbour sets across surrogates, so 10,000 surrogates cost little and the p-value floor drops. Then rolling CCM on the late-2025 switch-off seen by CRQA.</p>

@@ -1,0 +1,13 @@
+<div class="sauce"><span class="t">1 · Engineering · Effort S</span><h5>A Rust lag-profile engine with the shift null built in</h5>
+<p>The categorical lag profile is \(O(n\cdot L)\), but crqa builds the full \(n\times n\) plot each call. A Rust core with a Python binding would run the 999-shift null in one pass, with crqa 2.1.0 as the oracle.</p>
+<p><b>Math sketch.</b> One-hot encode states, \(A_{ts}=\mathbf 1[a_t=s]\); then \(\mathrm{DRP}(k) = \frac{1}{n-|k|}\sum_s\sum_t A_{ts}B_{t+k,s}\), a sum of per-state cross-correlations, computable for all shifts at once by FFT.</p>
+<p class="small"><b>Test.</b> Exact parity (difference 0) with <code>drpfromts</code> on all 8 weekly and 12 monthly profiles, and the full weekly null in &lt; 1 s (R today: 143 s on 8 workers).</p></div>
+<div class="sauce top"><span class="t">2 · Math · Effort M · ★ Top pick</span><h5>An order-aware CRQA test with familywise lag control and persistence-matched surrogates</h5>
+<p>Full-plot RR is order-blind and DET barely moves. Build statistics that depend on alignment (\(rr_0\), the lag profile, a lead–lag contrast), with max-T control over lags and windows, and a stationary-bootstrap or AR-matched null instead of a wrap-around shift.</p>
+<p><b>Math sketch.</b> \(T = \max_{w,k} \big(\mathrm{DRP}_w(k) - \mu_{w,k}\big)/\sigma_{w,k}\) over windows \(w\) and lags \(k\), with \(\mu,\sigma\) from surrogates that match each series' persistence; reject where the observed statistic exceeds the 95th percentile of the surrogate \(T\).</p>
+<p class="small"><b>Test.</b> Size 5% ± 1.5 points on 2,000 simulated independent AR(1) pairs at our weekly persistence; power ≥ 0.8 for a planted same-week coupling of the 2021–22 size. The circular shift is the baseline to beat.</p></div>
+<div class="sauce"><span class="t">3 · New use on our data · Effort M</span><h5>Joint "stress-state" recurrence across all four Q1 legs</h5>
+<p>Multidimensional CRQA on top-quintile stress states of fails, the spread, Form PF repo growth and CFTC TFF leveraged-fund positioning (Q1.5): do the legs co-visit stress in March 2020, March 2023 and late 2025, or come apart?</p>
+<p><b>Math sketch.</b> Joint recurrence \(J_t = \prod_{\ell=1}^4 \mathbf 1[\text{leg } \ell \text{ in top quintile at } t]\); episode statistic \(\sum_{t\in E} J_t\) vs a block-shift null per leg.</p>
+<p class="small"><b>Test.</b> A pre-registered episode list, with joint recurrence in each episode against a block-shift null at p &lt; 0.05. An honest miss counts.</p></div>
+<p class="small">👍 on the issue means go with the ★ top pick. To choose another, just say so in a comment.</p>

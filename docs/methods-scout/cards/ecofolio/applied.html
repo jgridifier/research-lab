@@ -1,0 +1,48 @@
+<h4>Who plays what</h4>
+<div class="table-wrap"><table>
+<tr><th>Home field (salmon)</th><th>Our data</th></tr>
+<tr><td>One stream's yearly salmon run</td><td>One program's yearly actual spend</td></tr>
+<tr><td>The metapopulation (all streams)</td><td>The firm total, or one segment</td></tr>
+<tr><td>Taylor's \(z\): how a stream's variability scales with its abundance</td><td>How a program's volatility scales with its budget size</td></tr>
+<tr><td>Decades of yearly counts</td><td>5–6 fiscal years per program (FY2020–25 Corning mock, FY2021–25 MS mock)</td></tr>
+<tr><td>Sampling noise in counts</td><td>Accounting and planning noise in spend</td></tr>
+</table></div>
+
+<h4>Inputs and preprocessing</h4>
+<ul>
+<li>SYNTHETIC zero-based-budgeting mocks (seed 20261113): 1,079 programs (Corning mock) and 1,840 (MS mock). The answer key was used only for scoring.</li>
+<li>Balanced panel only, because the package needs every program in every year: 778 of 1,079 and 1,404 of 1,840 programs kept (28% and 24% dropped).</li>
+<li>Each series linearly detrended before computing variances (<code>linear_detrended</code>).</li>
+</ul>
+
+<h4>What we ran</h4>
+<ol>
+<li>Reproduced the package vignette on pink salmon (<code>pinkbr</code>): PE<sub>mv</sub> 1.412 and PE<sub>avgCV</sub> 1.517, exactly as published.</li>
+<li>Fitted \(z\) per firm (1.67 Corning mock, 1.77 MS mock) and per segment; computed PE<sub>mv</sub>, PE<sub>avgCV</sub> and the finance diversification ratio.</li>
+<li>Robustness: linear / robust / quadratic Taylor fits; leave-one-year-out \(z\); the same on noise-free true levels from the answer key.</li>
+<li>Null: 999 year-shuffles for the whole book; 299 random same-size sets for every subsegment, driver and function group, to see if PE finds planted co-moving groups.</li>
+<li>Per-program flag: residual from the Taylor line vs plain CV, scored by AUC against planted "movers".</li>
+</ol>
+
+<div class="callouts"><h5>How to read the main chart (Taylor plot, first finding's original chart)</h5>
+<ol>
+<li>Each dot is one mock program: x = log mean spend, y = log variance.</li>
+<li>The solid line is the fitted size law; its slope is \(z\) (1.67 on the Corning mock), flatter than the dashed \(z = 2\) line.</li>
+<li>Both lines are extended far right to the book's size (2.1 decades past the largest program).</li>
+<li>The red dot is the real book. The gap between the dashed line and the red dot is what the usual measure calls diversification; the gap between the solid line and the red dot is what is left after allowing for size (about none).</li>
+</ol></div>
+
+<div class="plain"><h5>What it means for a decision-maker</h5>
+<p>"Our program book is three times steadier than its programs" is mostly a statement about size, not about programs offsetting each other. A single program as big as the whole book would be about as steady. Do not count on diversification inside the book to absorb a bad year; the programs move together (the shuffle test says far more than chance), partly because the mock is built to add up to public totals.</p></div>
+
+<h4>Where it breaks (seen in our runs)</h4>
+<ul>
+<li><b>Extrapolation:</b> the benchmark sits about two orders of magnitude beyond the data. The quadratic fit blew up (34.7 vs 0.83 linear on the Corning mock).</li>
+<li><b>Short series:</b> 3–4 degrees of freedom per variance. Per-program flags failed (AUC 0.28–0.34 for Taylor residual and CV).</li>
+<li><b>Not a group finder:</b> small groups give wild values (up to 283 for a 12-program group) because the within-group fit is poor.</li>
+<li><b>Ragged panels:</b> a quarter of programs dropped for entering or exiting.</li>
+<li><b>Noise:</b> on noise-free levels both measures fall (Corning mock: average-CV 1.54, mean-variance 0.25), so the reported numbers include noise cancelling in the total.</li>
+</ul>
+
+<h4>What we'd do next</h4>
+<p>The top pick: estimate observation noise from the budget-vs-actual gap and remove it before fitting \(z\) (Secret sauce, card 2), pre-registered against 20 new-seed mocks. Then run it on real program budgets and actuals once we have them.</p>
