@@ -1,0 +1,6 @@
+{
+  "issue": 46,
+  "stub": true,
+  "verdict": "Adopt-candidate",
+  "one": "The VIX→spread link roughly doubles when NFCI > 0.06; tree splits did not forecast out of sample."
+}

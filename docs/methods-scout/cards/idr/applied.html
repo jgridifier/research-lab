@@ -1,0 +1,46 @@
+<h4>Who plays what</h4>
+<div class="table-wrap"><table>
+<tr><th>Home field (rain forecasts)</th><th>Our data</th></tr>
+<tr><td>Weather model's predicted rainfall</td><td>A bank's published stress result (drawdown, pre-tax income, SCB)</td></tr>
+<tr><td>Observed rainfall the next day</td><td>The bank's payout/RWA that year</td></tr>
+<tr><td>"More predicted rain never means less rain"</td><td>"Worse stress never means a bigger payout distribution"</td></tr>
+<tr><td>Climatology (the usual spread of rain)</td><td>The usual spread of payouts across banks</td></tr>
+</table></div>
+
+<h4>Inputs and preprocessing</h4>
+<ul>
+<li>All 643 rows of the Fed's <code>public_results_DFAST_2026.csv</code>, FR Y-9C payout items for 2013–2025, and 165 SCB values (effective 2021–2026), each re-verified against fresh downloads.</li>
+<li>Payout = common and preferred dividends plus net buybacks (BHCK4460 + 4598 + 4783 − 4782) over RWA, calendar year \(Y\), for test year \(Y\). 360 firm-years; 18–35 banks per year.</li>
+<li>Two response scales: within-year percentile (removes the payout cycle on purpose) and raw payout/RWA.</li>
+</ul>
+
+<h4>What we ran</h4>
+<ol>
+<li>Full-sample IDR fits for drawdown (antitonic) and pre-tax income (isotonic), percentile and raw scales; OLS with normal errors on the same inputs.</li>
+<li>Leave-one-test-year-out CRPS skill vs climatology; 299 within-year shuffles per test.</li>
+<li>SCB era 2021–2025: SCB alone, drawdown alone, pre-tax alone, and SCB + drawdown under the 2-D componentwise order.</li>
+<li>Eras: fit 2013–19, score 2021–25 and vice versa; Kendall τ of each year's ranking against the prior year's.</li>
+</ol>
+
+<div class="callouts"><h5>How to read the main chart (IDR fan)</h5>
+<ol>
+<li>x = the bank's drawdown percentile within its test year; y = its payout percentile (left) or raw payout/RWA (right). Grey dots are the 360 firm-years.</li>
+<li>The dark line is the IDR median; the bands are 25–75% and 10–90% of the predicted distribution.</li>
+<li>The steps are the estimate itself: no smoothing. A flat stretch means the data do not separate those banks.</li>
+<li>Read the band width: wide bands at a given drawdown mean the stress result says little about that bank's payout.</li>
+</ol></div>
+
+<div class="plain"><h5>What it means for a decision-maker</h5>
+<p>If you want to describe how payouts line up with stress results, use projected pre-tax income under the severely adverse scenario, not the capital buffer: it explains payout ranks about four times better than the drawdown, and the SCB adds nothing. Since 2020 the link is weaker and concentrated in the worst-hit decile of banks. This is a description, not a forecast, and it does not touch the pre-registered trading study.</p></div>
+
+<h4>Where it breaks (seen in our runs)</h4>
+<ul>
+<li><b>Two covariates:</b> with SCB + drawdown most pairs are incomparable, and IDR lost to OLS (5.4% vs 10.6%). This is the case for the Math card.</li>
+<li><b>Ties at the floor:</b> 37.9% of SCB firm-years sit at 2.5%, tying a third of the sample.</li>
+<li><b>Dependence:</b> firm-years within a firm are dependent; the within-year shuffle does not model that.</li>
+<li><b>Coarse steps</b> at n = 132–360.</li>
+<li><b>Speed:</b> 2-D partial order 13.2 s at n = 1,000 (1-D: 0.02 s).</li>
+</ul>
+
+<h4>What we'd do next</h4>
+<p>Top pick (Math): learn a single monotone stress index from pre-tax income, drawdown, loan losses and SCB (a distributional single-index model), then fit IDR on that one score, with a firm-block null.</p>

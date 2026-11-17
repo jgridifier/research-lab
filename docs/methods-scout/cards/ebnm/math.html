@@ -1,0 +1,35 @@
+<h4>Notation</h4>
+<div class="table-wrap"><table>
+<tr><th>Symbol</th><th>Meaning</th><th>Here</th></tr>
+<tr><td>\(x_j\)</td><td>one noisy observation per unit</td><td>a program's log 2025 level (relative to its group), or its log change 2024→2025</td></tr>
+<tr><td>\(s_j\)</td><td>its known standard error</td><td>from the spread of the program's budget-minus-actual gaps</td></tr>
+<tr><td>\(\theta_j\)</td><td>the true value</td><td>the program's true level or true change</td></tr>
+<tr><td>\(g\)</td><td>the prior: how true values are spread across units</td><td>estimated from all programs at once</td></tr>
+<tr><td>\(\mathcal G\)</td><td>the family \(g\) is chosen from</td><td>normal, point-normal, scale mixture of normals (ash), unimodal, NPMLE</td></tr>
+</table></div>
+
+<h4>The model</h4>
+$$x_j \mid \theta_j \sim \mathcal N(\theta_j, s_j^2),\qquad \theta_j \overset{\text{iid}}{\sim} g \in \mathcal G .$$
+<p>Step one estimates the prior by maximum marginal likelihood, integrating each \(\theta_j\) out:</p>
+$$\hat g = \arg\max_{g\in\mathcal G}\ \sum_j \log \int \mathcal N(x_j;\theta, s_j^2)\, g(d\theta).$$
+<p>Step two reports, for every program, the posterior mean \(\hat\theta_j = \mathbb E[\theta_j \mid x_j, \hat g]\), a posterior interval, and the <b>local false sign rate</b></p>
+$$\mathrm{lfsr}_j = \min\{P(\theta_j \ge 0 \mid x_j,\hat g),\ P(\theta_j \le 0 \mid x_j,\hat g)\},$$
+<p>the probability that we have the <em>direction</em> of the change wrong.</p>
+
+<h4>Why it works, step by step</h4>
+<div class="step"><b class="n">Step 1 · normal prior gives a closed form</b>With \(g = \mathcal N(\mu,\sigma^2)\) the posterior is normal with mean \(\hat\theta_j = \mu + B_j (x_j-\mu)\), where \(B_j = \sigma^2/(\sigma^2+s_j^2)\). Noisy programs (large \(s_j\)) get small \(B_j\) and are pulled hard toward the group; precise ones keep their own number.</div>
+<div class="step"><b class="n">Step 2 · the data tell us σ²</b>Marginally \(x_j \sim \mathcal N(\mu, \sigma^2 + s_j^2)\): the observed spread is true spread plus noise. With equal \(s\), the MLE is \(\hat\sigma^2 = \max\{0, \tfrac1n\sum (x_j-\bar x)^2 - s^2\}\): subtract the noise you know about from the spread you see. That is James–Stein shrinkage, derived rather than tuned.</div>
+<div class="step"><b class="n">Step 3 · flexible priors shrink adaptively</b>A scale mixture \(g=\sum_k \pi_k\,\mathcal N(0,\sigma_k^2)\) on a fixed grid makes the marginal \(\sum_k \pi_k \mathcal N(x_j;0,\sigma_k^2+s_j^2)\); the log-likelihood is concave in \(\pi\), so the fit is a convex problem (solved by mixsqp). Tight groups get strong shrinkage, grab-bag groups get little, without being told which is which.</div>
+<div class="step"><b class="n">Step 4 · lfsr replaces "is it significant?"</b>A z-test asks whether \(\theta_j = 0\) is implausible. lfsr asks the decision question, "how likely am I wrong about up vs down?", and because it uses \(\hat g\) it borrows strength: a modest move in a family where everything moves is believable.</div>
+
+<h4>Inference and checks</h4>
+<ul>
+<li>No null to choose and no penalty: \(\hat g\) is fitted, then posteriors follow. Calibration is checked against the answer key instead: among lfsr 0.05–0.2 calls, 11–13% of signs were wrong; 0.2–0.5, 39–40%.</li>
+<li>Uncertainty in \(\hat g\) itself is ignored (plug-in empirical Bayes); with 1,000–1,700 programs this is small.</li>
+</ul>
+
+<div class="toy"><h5>Toy example (computed on the box)</h5>
+<p>Four programs, each with \(s = 1\): \(x = (2.0,\ 0.5,\ -0.5,\ 3.0)\). Mean \(\hat\mu = 1.25\); observed spread \(1.81\); so \(\hat\sigma^2 = 1.81 - 1 = 0.81\) and \(B = 0.81/1.81 = 0.45\). Posterior means: \(1.59,\ 0.91,\ 0.47,\ 2.03\) (each pulled 55% of the way to 1.25). Posterior SD \(=\sqrt{0.81\cdot1/1.81} = 0.67\). lfsr: \(0.009,\ 0.086,\ 0.243,\ 0.001\). Only the first and last are confident "up" calls at lfsr &lt; 0.05.</p></div>
+
+<div class="diff"><b>How it differs from the standard tool.</b> Benjamini–Hochberg treats each program alone (\(z_j = x_j/s_j\)) and controls the share of false discoveries of "≠ 0". ebnm first learns what true changes look like across all programs, then judges each one against that, and reports a sign-error probability. Same data, same \(s_j\): 91 vs 14 calls on the Corning mock, with 0% wrong sign. Against complete pooling (group means) it never has to be told whether a group is a real family.</div>
+<p class="cite">Followed: Willwerscheid, Carbonetto &amp; Stephens (2025), JSS 114(3), §1 eqs (1)–(3) (model, prior family, posterior mean) and §2.1 eqs (8)–(10) (normal-prior MLE and posterior); lfsr from Stephens (2017), Biostatistics 18(2):275–294. Package ebnm 1.1-42 with ashr and mixsqp. Toy: <code>cards/_toys/toys.py</code>.</p>

@@ -1,0 +1,46 @@
+<h4>Who plays what</h4>
+<div class="table-wrap"><table>
+<tr><th>Home field (genomics)</th><th>Our data</th></tr>
+<tr><td>One gene's measured effect</td><td>One program's measured level or change</td></tr>
+<tr><td>Its standard error from replicates</td><td>Its standard error from budget-minus-actual gaps</td></tr>
+<tr><td>Thousands of genes measured together</td><td>1,000–1,700 programs per firm, one budget cycle</td></tr>
+<tr><td>"Is this gene really up or down?"</td><td>"Did this program really change?"</td></tr>
+</table></div>
+
+<h4>Inputs and preprocessing</h4>
+<ul>
+<li>SYNTHETIC mocks (seed 20261113): Corning mock 1,079 programs FY2020–25; MS mock 1,840 programs FY2021–25. Answer key used only for scoring.</li>
+<li>\(s_j\): observable spread of each program's budget-minus-actual gaps, scaled by the dataset README's stated budget/actual noise ratio, shrunk toward the group median.</li>
+<li>Levels: \(x_j\) = log 2025 actual minus the mean of its stated segment × function group; shrink the deviation, add the group mean back.</li>
+<li>Changes: \(x_j\) = change in log actual 2024→2025, \(s_j = \sqrt2\,\hat\sigma_j\); prior centred at 0.</li>
+<li>Text check: \(x_j\) = OLS slope of log actual over a program's years (≥ 3), \(s_j = \hat\sigma_j/\sqrt{S_{xx}}\).</li>
+</ul>
+
+<h4>What we ran</h4>
+<ol>
+<li>Borrowing strength (Q2.1): six estimators of each program's 2025 level, from no pooling to complete pooling, scored by log RMSE against the true level.</li>
+<li>Real change vs noise (Q2.3): naive |z| &gt; 1.96, BH q &lt; 0.05, and ebnm lfsr &lt; 0.05; calls and wrong-sign rates against the true change. Portfolio check: does summing denoised levels improve the mix/behaviour split?</li>
+<li>Text vs numbers (Q2.2): rank "says grow" programs by how strongly the numbers decline; AUC against 6 (Corning) and 27 (MS) planted mismatches.</li>
+<li>Each fit took 0.003–0.6 s.</li>
+</ol>
+
+<div class="callouts"><h5>How to read the main chart (observed vs true change)</h5>
+<ol>
+<li>Each dot is a program: x = its observed year-on-year change, y = its true change from the answer key.</li>
+<li>Teal dots are programs ebnm calls "really changed" (lfsr &lt; 0.05). Look for teal dots in the wrong quadrant: they are wrong-sign calls (none on the Corning mock).</li>
+<li>The right panel counts calls by rule and their wrong-sign rate: BH is safe but finds few; naive |z| finds many but is wrong 4.3% (Corning) / 2.7% (MS).</li>
+</ol></div>
+
+<div class="plain"><h5>What it means for a decision-maker</h5>
+<p>For each program in a budget cycle you get a better estimate of where it really is, and a plain "probability we have the direction wrong". On the mocks it flags six to seven times as many genuine moves as the cautious standard test, almost never in the wrong direction, with nothing to tune. It is for programs, not totals: portfolio totals were already 98% right.</p></div>
+
+<h4>Where it breaks (seen in our runs)</h4>
+<ul>
+<li><b>Lone programs</b> (no real family in their group) get slightly worse: 0.110 → 0.120 on the Corning mock. One global prior is the cause; the Math card fixes it.</li>
+<li><b>Totals:</b> shrinking in logs and summing in dollars moved the Corning behaviour term closer to truth ($345.5M vs $359.6M true) and the MS one further away ($5.151B vs $4.980B).</li>
+<li><b>Text:</b> shrinkage adds nothing over a z-score; the gain comes from peer comparison.</li>
+<li><b>Standard errors</b> are only as good as the budget-vs-actual noise model; on real data they must be re-derived.</li>
+</ul>
+
+<h4>What we'd do next</h4>
+<p>Status: approved 2026-11-13. Owed: the real-panel validation. The top pick turns this into one column per program per cycle (shrunk change, interval, lfsr), checked on a new-seed mock first and real data second.</p>

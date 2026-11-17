@@ -1,0 +1,6 @@
+{
+  "issue": 47,
+  "stub": true,
+  "verdict": "Interesting",
+  "one": "0 mean breaks but 35 distribution breaks in weekly changes; no false breaks on shuffled data."
+}

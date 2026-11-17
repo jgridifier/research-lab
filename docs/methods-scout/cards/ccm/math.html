@@ -1,0 +1,36 @@
+<h4>Notation</h4>
+<div class="table-wrap"><table>
+<tr><th>Symbol</th><th>Meaning</th><th>Here</th></tr>
+<tr><td>\(x_t, y_t\)</td><td>candidate driver and responder</td><td>weekly fails, spread, DVP volume, leveraged-fund positioning (differences or log differences)</td></tr>
+<tr><td>\(E\)</td><td>embedding dimension</td><td>2–8, chosen per series by simplex skill</td></tr>
+<tr><td>\(\mathbf y_t = (y_t, y_{t-1},\dots,y_{t-E+1})\)</td><td>a point on \(Y\)'s shadow manifold \(M_Y\)</td><td>the last \(E\) weeks of \(Y\)</td></tr>
+<tr><td>\(L\)</td><td>library size (points allowed as neighbours)</td><td>20 → 350</td></tr>
+<tr><td>\(\rho_L\)</td><td>cross-map skill</td><td>correlation of reconstructed and actual \(x_t\)</td></tr>
+</table></div>
+
+<h4>The estimator</h4>
+<p>For each time \(t\), find the \(E+1\) nearest neighbours \(t_1,\dots,t_{E+1}\) of \(\mathbf y_t\) on \(M_Y\) (from a library of \(L\) points, excluding a 4-week radius around \(t\)), with distances \(d_1\le\dots\le d_{E+1}\). Reconstruct \(x_t\) from the \(x\)-values at those times:</p>
+$$\hat x_t \mid M_Y = \sum_{i=1}^{E+1} w_i\, x_{t_i},\qquad w_i = \frac{e^{-d_i/d_1}}{\sum_{k} e^{-d_k/d_1}},\qquad \rho_L = \operatorname{cor}(x_t,\ \hat x_t).$$
+<p>"\(X\) drives \(Y\)" is read when \(\rho_L\) is positive <b>and rises with \(L\)</b> (convergence). Note the direction: the <em>responder's</em> manifold recovers the <em>driver</em>.</p>
+
+<h4>Why it works, step by step</h4>
+<div class="step"><b class="n">Step 1 · delay embedding (Takens)</b>If \(x\) and \(y\) come from one deterministic system, the lag vectors \(\mathbf y_t\) of a single observed variable trace out a copy of the whole system's attractor (a smooth one-to-one image, for \(E\) large enough). So the full state, including \(x_t\), is a function of \(\mathbf y_t\).</div>
+<div class="step"><b class="n">Step 2 · nearby on \(M_Y\) ⇒ nearby in \(x\)</b>Because the map is smooth, points close on \(M_Y\) correspond to close system states, hence close \(x\). The weighted neighbour average \(\hat x_t\) then estimates \(x_t\).</div>
+<div class="step"><b class="n">Step 3 · convergence</b>With a bigger library, neighbours are closer (\(d_i\to 0\)), so the estimate improves and \(\rho_L\) climbs. Plain correlation does not have this signature; that is what separates causal coupling from coincidence.</div>
+<div class="step"><b class="n">Step 4 · the asymmetry</b>If \(X\) drives \(Y\) but not the reverse, \(y\) carries information about \(x\) but \(x\)'s own dynamics carry none about \(y\): \(M_Y\) recovers \(X\), \(M_X\) does not recover \(Y\). Granger asks the opposite question ("does \(X\)'s past improve a linear forecast of \(Y\)?"), which works when variables are separable and can be fooled by shared cycles.</div>
+
+<h4>Inference and checks</h4>
+<ul>
+<li><b>Null:</b> 200 circular shifts of the driver by ≥ 26 weeks, \(\rho\) recomputed at \(L = 350\). Keeps the driver's persistence, breaks alignment. Holm across the 10 directions; with 200 surrogates the smallest p is 0.005, and 0.005 × 10 = 0.05 after Holm.</li>
+<li><b>Determinism pre-check:</b> simplex and S-map skill on each series' own past; S-map with \(\theta&gt;0\) beating \(\theta=0\) (linear) means state-dependent dynamics (spread: 0.542 vs 0.451).</li>
+<li><b>Lag scan</b> (Ye et al. 2015): cross-map at lags −4…+4; a peak at a negative lag fits a delayed effect (fails → spread peaks at −1 week).</li>
+</ul>
+
+<div class="toy"><h5>Toy example (computed on the box)</h5>
+<p>Two coupled logistic maps in the style of Sugihara et al.: \(x_{t+1} = 3.8\,x_t(1-x_t)\) and \(y_{t+1} = y_t(3.5 - 3.5\,y_t - 0.1\,x_t)\). \(X\) drives \(Y\); nothing drives \(X\). With \(E = 2\) and 400 steps:</p>
+<div class="table-wrap"><table><tr><th>Library \(L\)</th><th>\(M_Y\) recovers \(X\)</th><th>\(M_X\) recovers \(Y\)</th></tr>
+<tr><td>10</td><td>0.31</td><td>−0.02</td></tr><tr><td>25</td><td>0.54</td><td>−0.01</td></tr><tr><td>100</td><td>0.84</td><td>−0.04</td></tr><tr><td>300</td><td>0.92</td><td>−0.09</td></tr></table></div>
+<p>Skill rises with \(L\) only in the true direction. Our real links (0.33, 0.25) converge too, but are far noisier than this toy.</p></div>
+
+<div class="diff"><b>How it differs from the standard tool.</b> Granger causality fits a linear autoregression and tests whether \(X\)'s lags help predict \(Y\). It needs separable, roughly linear effects and is fooled by common drivers and shared cycles. CCM needs no model, reads state-dependent coupling, and has a built-in signature (convergence). Its own assumption is near-deterministic, weakly noisy dynamics, which our weekly differences only partly meet.</div>
+<p class="cite">Followed: Sugihara, May, Ye et al. (2012), "Detecting causality in complex ecosystems", Science 338:496–500 (cross-map estimator and convergence); Ye, Deyle, Gilarranz &amp; Sugihara (2015), Scientific Reports 5:14750 (lag scan). Section and equation numbers not checked. Package pyEDM 2.5.7; lab docs sugiharalab.github.io/EDM_Documentation. Toy: <code>cards/_toys/toys.py</code>.</p>

@@ -1,0 +1,37 @@
+<h4>Notation</h4>
+<div class="table-wrap"><table>
+<tr><th>Symbol</th><th>Meaning</th><th>Here</th></tr>
+<tr><td>\(Y_i\)</td><td>outcome of subject \(i\)</td><td>bank \(i\)'s payout/RWA in the test year (or its dividend or buyback leg)</td></tr>
+<tr><td>\(X_i\)</td><td>covariates</td><td>stress metrics: severely adverse CET1 drawdown, SA pre-tax income, SCB, Adverse–SA gap</td></tr>
+<tr><td>\(Y_i \preccurlyeq Y_j\)</td><td>"\(i\) does not beat \(j\)": \(Y_i &lt; Y_j\), counting a tie as ½</td><td>ties matter: many zero buybacks</td></tr>
+<tr><td>\(\mathcal{I}\)</td><td>the set of pairs used</td><td>only pairs of banks <b>in the same test year</b></td></tr>
+<tr><td>\(\operatorname{expit}(u)=1/(1+e^{-u})\)</td><td>link</td><td>logit link, as in the pim package default</td></tr>
+</table></div>
+
+<h4>The model</h4>
+$$P\big(Y_i \preccurlyeq Y_j \mid X_i, X_j\big) = \operatorname{expit}\!\big((X_j - X_i)^\top \beta\big),\qquad (i,j)\in\mathcal I .$$
+<p>The left side is the <em>probabilistic index</em> (PI): the chance that bank \(j\), which is higher by \(X_j - X_i\) on the stress metric, has the higher payout. \(\beta = 0\) gives PI = 0.5, "the metric does not order payouts". Nothing is assumed about the shape of \(Y\)'s distribution: only this pairwise probability is modelled (semiparametric).</p>
+
+<h4>The estimator</h4>
+<p>Make one pseudo-observation per pair, \(I_{ij} = \mathbf 1[Y_i &lt; Y_j] + \tfrac12\mathbf 1[Y_i = Y_j]\) with design \(Z_{ij} = X_j - X_i\), and solve the estimating equation</p>
+$$U(\beta)=\sum_{(i,j)\in\mathcal I} Z_{ij}\Big(I_{ij} - \operatorname{expit}(Z_{ij}^\top\beta)\Big) = 0 .$$
+<p>That is exactly the score of a logistic regression on the pairs, so it is fast (49,500 pairs fit in 0.05 s). But the pairs share banks, so they are <b>not</b> independent: the variance needs a sandwich that accounts for the overlap.</p>
+
+<h4>Why it works, step by step</h4>
+<div class="step"><b class="n">Step 1 · unbiased estimating equation</b>Under the model, \(\mathbb E[I_{ij}\mid X_i,X_j] = \operatorname{expit}(Z_{ij}^\top\beta)\), so each term of \(U(\beta)\) has mean zero at the true \(\beta\). Solving \(U(\hat\beta)=0\) is consistent even though the pairs are dependent.</div>
+<div class="step"><b class="n">Step 2 · it contains the Wilcoxon–Mann–Whitney test</b>With one binary covariate (group A = 0, B = 1) every cross-group pair has \(Z_{ij} = 1\), and \(U(\beta)=0\) gives \(\operatorname{expit}(\hat\beta) = \tfrac1{n_An_B}\sum_{i\in A,\,j\in B} I_{ij}\): the Mann–Whitney probability. A PIM is "the rank test turned into a regression"; with more covariates it gives partial effects (drawdown with pre-tax income held fixed).</div>
+<div class="step"><b class="n">Step 3 · converting to "per IQR"</b>Because the link is on the difference, a gap of \(\Delta\) in the metric gives PI \(=\operatorname{expit}(\beta\Delta)\). Our pre-tax income fit has PI 0.606 per 1 pp, so \(\beta = \operatorname{logit}(0.606) = 0.431\), and at the IQR \(\Delta = 1.8\) pp: \(\operatorname{expit}(0.431\times1.8) = 0.685\), the 68% on the card. Drawdown: \(\operatorname{expit}(\operatorname{logit}(0.460)\times2.5) = 0.401\).</div>
+<div class="step"><b class="n">Step 4 · why outliers barely matter</b>Each pair contributes \(I_{ij}\in\{0,\tfrac12,1\}\). Moving one bank's payout from 5% to 500% of RWA changes nothing unless it changes who beats whom. OLS instead squares the distance, so a near-zero net income can dominate.</div>
+
+<h4>Inference and the null</h4>
+<ul>
+<li>Pim's sandwich treats firm-years as independent, but firms recur across 13 years. We used a <b>firm-block bootstrap</b> (299 resamples of whole firms) for intervals and a <b>within-year permutation</b> of \(Y\) (499) for p-values. Within-year permutation keeps each year's payout norms and breaks the link to \(X\).</li>
+<li>Small samples (18–35 banks a year) are where Amorim et al. (2018) found asymptotic PIM inference unreliable, which is why we lean on resampling.</li>
+<li>29 models in three families; Holm within each family.</li>
+</ul>
+
+<div class="toy"><h5>Toy example (computed on the box)</h5>
+<p>Two banks with a weak stress result (A) paid 1.0 and 2.0; three with a strong result (B) paid 1.5, 3.0 and 4.0. Of the 6 A–B pairs, B pays more in 5 (only 2.0 &gt; 1.5 goes the other way). So \(\widehat{PI} = 5/6 = 0.83\) and \(\hat\beta = \operatorname{logit}(0.83) = 1.61\). Change the 4.0 to 400: still 5 of 6, PI unchanged. An OLS slope would jump.</p></div>
+
+<div class="diff"><b>How it differs from the standard tool.</b> OLS with year fixed effects models \(\mathbb E[Y\mid X]\) and reports a slope in payout units; with heavy tails it is driven by a few extreme ratios (−43% after trimming 2% of rows). A PIM models only the ordering within a year and reports a probability. Compared with the 11-14 IDR (full conditional distributions under an order constraint), it gives a <em>partial</em> effect size, at the cost of saying nothing about levels.</div>
+<p class="cite">Followed: Thas, De Neve, Clement &amp; Ottoy (2012), JRSS-B 74(4):623–671 (model and estimating equations; abstract read, section and equation numbers not checked); Amorim et al. (2018), CSDA 121:137–148 (small-sample bias). Package pim 2.0.4; our check reproduced the WMW special case exactly (PI 0.749275 on FEVData). Toy: <code>cards/_toys/toys.py</code>.</p>

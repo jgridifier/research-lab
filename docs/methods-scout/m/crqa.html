@@ -1,0 +1,142 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Cross-recurrence quantification (CRQA) · research card · methods scout</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,400..800&family=Newsreader:ital,opsz,wght@0,6..72,400..600;1,6..72,400..500&family=JetBrains+Mono:wght@400;500;700&display=swap">
+<link rel="stylesheet" href="../../assets/brief.css">
+<link rel="stylesheet" href="../scout-cards.css">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.css"><script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.js"></script><script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/contrib/auto-render.min.js" onload="renderMathInElement(document.body,{delimiters:[{left:'$$',right:'$$',display:true},{left:'\\(',right:'\\)',display:false}]})"></script>
+<!-- Methods Scout home-screen / PWA tags. Paste into <head> of every methods-scout page.
+     Paths are root-absolute so they resolve under https://jgridifier.github.io/research-lab/. -->
+<link rel="apple-touch-icon" sizes="180x180" href="/research-lab/methods-scout/icons/apple-touch-icon.png">
+<link rel="icon" type="image/png" sizes="32x32" href="/research-lab/methods-scout/icons/favicon-32.png">
+<link rel="icon" type="image/png" sizes="192x192" href="/research-lab/methods-scout/icons/icon-192.png">
+<link rel="manifest" href="/research-lab/methods-scout/manifest.webmanifest">
+<meta name="apple-mobile-web-app-title" content="Methods Scout">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="theme-color" content="#0F2A23">
+
+</head><body>
+<header class="topbar"><a class="brand" href="../index.html">Methods scout</a>
+<span><a href="../index.html">Queue</a> · <a href="../archive.html">Archive</a></span></header>
+<div class="pz">
+<p class="crumb"><a href="../index.html">← Queue</a></p>
+<div class="chips"><span class="chip q">Q1</span><span class="chip st-proposed" data-issue="57">○ New</span><span class="chip v-int">Interesting</span><span class="date">Scouted 2026-11-14</span></div>
+<section class="hero" style="padding-top:.5rem"><p class="kicker">Cross-recurrence quantification (CRQA) · from cognitive science (dialogue coordination)</p>
+<h1>Do two series visit the same states, and when?</h1></section>
+<div class="sum">
+<div class="row"><span class="k">What it is</span><span class="v">Turn two series into states and count how often they are in matching states, at each lead or lag.</span></div>
+<div class="row"><span class="k">Verdict</span><span class="v"><b>Interesting.</b> Home field: not graded (the 11-14 edition predates grading).</span></div>
+<div class="row"><span class="k">Top pick</span><span class="v"><b>Math</b> (effort M): An order-aware test with familywise lag control and persistence-matched surrogates.</span></div>
+<div class="row"><span class="k">Data</span><span class="v">Public aggregates (OFR repo, NY Fed fails, Form PF); descriptive only</span></div>
+</div>
+<p class="kicker" style="margin-top:1rem">The one picture</p>
+<div class="pair"><div><span class="lab">Default statistic (RR)</span><div class="big">0 / 96</div><div class="sub">rolling windows significant: full-plot RR ignores order, so every shift ties</div></div><div class="new"><span class="lab">Order-aware (same-week rate)</span><div class="big">52 / 96</div><div class="sub">windows significant, about 5 expected by chance</div></div></div>
+<div style="margin:1rem 0 .4rem"><a class="btn big" href="https://github.com/jgridifier/research-lab/issues/57">Respond on #57</a><p class="howto">👍 go ahead · 👎 drop · or just comment what you think</p></div>
+<div class="tabs"><input type="radio" name="tab" id="t1" checked><input type="radio" name="tab" id="t2"><input type="radio" name="tab" id="t3"><input type="radio" name="tab" id="t4"><input type="radio" name="tab" id="t5"><div class="tabbar"><label for="t1">The math</label><label for="t2">On our data</label><label for="t3">Robust at home</label><label for="t4">Secret sauce</label><label for="t5">Questions</label></div><div class="panels"><div class="panel p1" id="math"><h4>Notation</h4>
+<div class="table-wrap"><table>
+<tr><th>Symbol</th><th>Meaning</th><th>Here</th></tr>
+<tr><td>\(a_t, b_t \in\{1,\dots,5\}\)</td><td>categorical states of the two series</td><td>quintiles of weekly fails, spread, DVP growth (local quintiles inside rolling windows)</td></tr>
+<tr><td>\(R_{ij} = \mathbf 1[a_i = b_j]\)</td><td>cross-recurrence plot</td><td>\(n\times n\) matrix, \(n = 432\) weeks</td></tr>
+<tr><td>\(k\)</td><td>lag (diagonal of \(R\))</td><td>±13 weeks; ±6 months monthly</td></tr>
+<tr><td>\(\tilde b_t = 6 - b_t\)</td><td>reversed states</td><td>"anti" mode: high here, low there</td></tr>
+<tr><td>\(\hat p^a_s\)</td><td>share of time series \(a\) spends in state \(s\)</td><td>0.2 for every quintile</td></tr>
+</table></div>
+
+<h4>The statistics</h4>
+<p>The <b>diagonal recurrence profile</b> is the match rate along each diagonal of \(R\):</p>
+$$\mathrm{DRP}(k) = \frac{1}{n-|k|}\sum_{t} \mathbf 1[a_t = b_{t+k}] .$$
+<p>A peak at \(k&gt;0\) means series \(a\) leads. \(rr_0 = \mathrm{DRP}(0)\) is the same-week match rate. <b>DET</b> is the share of recurrent points that lie on diagonal runs of length ≥ 2 (runs of matching). Anti-recurrence replaces \(b\) with \(\tilde b\).</p>
+
+<h4>Why it works, and the trap we hit</h4>
+<div class="step"><b class="n">Step 1 · chance level</b>If \(a\) and \(b\) were unrelated, \(P(a_t = b_{t+k}) = \sum_s \hat p^a_s \hat p^b_s\). With quintiles each \(\hat p_s = 0.2\), so chance is \(5 \times 0.2^2 = 0.20\). An observed same-week rate of 0.287 is 44% above chance.</div>
+<div class="step"><b class="n">Step 2 · the full-plot rate ignores time order</b>The default summary is \(\mathrm{RR} = \frac1{n^2}\sum_{i,j}\mathbf 1[a_i=b_j]\). Group by state: \(\sum_{i,j}\mathbf 1[a_i=b_j] = \sum_s \#\{i:a_i=s\}\,\#\{j:b_j=s\} = n^2\sum_s \hat p^a_s\hat p^b_s\). It depends only on how often each state occurs, not on <em>when</em>, so shifting \(b\) cannot change it: our first run got p = 1 in all 96 windows. Only order-aware statistics (\(\mathrm{DRP}(k)\), \(rr_0\), DET) can be tested by shifting.</div>
+<div class="step"><b class="n">Step 3 · why states, not correlation</b>Quintile states are unchanged by any monotone transform, and an outlier is just "state 5". The question becomes "do they visit the same (or opposite) states at the same time?", which also gives a readable sentence: high fails with a low spread.</div>
+
+<h4>Inference: circular-shift null with familywise control</h4>
+<p>Shift \(b\) circularly by \(\tau \ge 26\) weeks (12 months monthly), 999 times: \(b^{(\tau)}_t = b_{(t+\tau) \bmod n}\). Each series keeps its own persistence and state shares; only the alignment breaks. For lags, use the maximum over the lag window, \(T = \max_{|k|\le 13}\mathrm{DRP}(k)\), and compare it with the null maxima: a single familywise p-value for "a link at some lag". The lead/lag asymmetry test compares \(\sum_{k&gt;0}\) with \(\sum_{k&lt;0}\) of the profile under the same null.</p>
+
+<div class="toy"><h5>Toy example (computed on the box)</h5>
+<p>\(a = (1,2,2,3,1)\), \(b = (2,2,3,1,1)\). Same week (\(k=0\)): matches at \(t=2\) and \(t=5\), so \(\mathrm{DRP}(0) = 2/5\). One step (\(k = -1\), compare \(a_t\) with \(b_{t-1}\)): 4 of 4 match, \(\mathrm{DRP}(-1) = 1\). At \(k=+1\): 0/4. The profile peaks at \(k=-1\): \(b\) leads \(a\) by one step (\(a\) copies \(b\)). Note that \(\mathrm{RR}\) for these two series would not change if we shuffled \(b\): same state counts.</p></div>
+
+<div class="diff"><b>How it differs from the standard tool.</b> A lagged Spearman correlation measures linear-in-ranks association across the whole range. CRQA counts co-visits of discrete states, so it is blind to magnitude within a state but can say <em>which</em> states line up, and it windows naturally. On these data the lag profile mostly agreed with the rank correlation (ρ = −0.35 at lag 0); the additions are the state reading, a clean familywise lag test, and the rolling on/off picture.</div>
+<p class="cite">Followed: Coco &amp; Dale (2014), Frontiers in Psychology 5:510 (categorical CRQA, diagonal recurrence profile); Coco, Mønster, Leonardi, Dale &amp; Wallot (2021), The R Journal 13(1):112–130 (crqa package). Section and equation numbers not checked. Package crqa 2.1.0 (<code>drpfromts</code>). Toy: <code>cards/_toys/toys.py</code>.</p>
+</div><div class="panel p2" id="applied"><h4>What we found</h4><article class="fcard"><div class="viz"><svg viewBox="0 0 360 208" role="img" xmlns="http://www.w3.org/2000/svg"><text x="6" y="16" font-family="JetBrains Mono, monospace" font-size="11" fill="#6f5f46" letter-spacing="1">SAME-WEEK MATCH RATE (QUINTILE STATES)</text><line x1="168.3" x2="168.3" y1="40" y2="192" stroke="#df5236" stroke-width="2" stroke-dasharray="4 3" opacity=".75"/><text x="172.3" y="204" font-family="JetBrains Mono, monospace" font-size="10.5" fill="#df5236">0.20 = chance for quintiles</text><text x="6" y="38" font-family="JetBrains Mono, monospace" font-size="12" fill="#1c150d">Financing fails vs spread (anti)</text><rect x="6" y="43" width="232.9" height="16" fill="#1f9e8e" stroke="#1c150d" stroke-width="1.5"/><text x="244.9" y="56" font-family="Bricolage Grotesque, sans-serif" font-weight="800" font-size="15" fill="#1c150d">0.287</text><text x="6" y="78" font-family="JetBrains Mono, monospace" font-size="12" fill="#1c150d">On-the-run fails vs spread (anti)</text><rect x="6" y="83" width="231.3" height="16" fill="#1f9e8e" stroke="#1c150d" stroke-width="1.5"/><text x="243.3" y="96" font-family="Bricolage Grotesque, sans-serif" font-weight="800" font-size="15" fill="#1c150d">0.285</text><text x="6" y="118" font-family="JetBrains Mono, monospace" font-size="12" fill="#1c150d">Fails vs DVP volume growth (co)</text><rect x="6" y="123" width="195.6" height="16" fill="#e8902e" stroke="#1c150d" stroke-width="1.5"/><text x="207.6" y="136" font-family="Bricolage Grotesque, sans-serif" font-weight="800" font-size="15" fill="#1c150d">0.241</text><text x="6" y="158" font-family="JetBrains Mono, monospace" font-size="12" fill="#1c150d">Fails vs spread (co)</text><rect x="6" y="163" width="94.1" height="16" fill="#6f5f46" stroke="#1c150d" stroke-width="1.5"/><text x="106.1" y="176" font-family="Bricolage Grotesque, sans-serif" font-weight="800" font-size="15" fill="#1c150d">0.116</text></svg></div><div class="body"><span class="chip">Finding 1</span><h3>High fails come with a low DVP rate, in the same week.</h3><p class="take">Same-week anti-recurrence of financing fails and the DVP–tri-party spread: 0.287 vs 0.20 by chance (p = 0.011). No lead either way (asymmetry p = 0.56).</p><p class="small"><a href="../fig/2026-11-14/q1_drp_weekly.png">Original chart from the 2026-11-14 edition →</a></p></div></article><article class="fcard"><div class="viz"><svg viewBox="0 0 360 208" role="img" xmlns="http://www.w3.org/2000/svg"><text x="6" y="16" font-family="JetBrains Mono, monospace" font-size="11" fill="#6f5f46" letter-spacing="1">ROLLING YEARS WITH P &lt; 0.05 (OF 96)</text><line x1="29.7" x2="29.7" y1="40" y2="192" stroke="#df5236" stroke-width="2" stroke-dasharray="4 3" opacity=".75"/><text x="33.7" y="204" font-family="JetBrains Mono, monospace" font-size="10.5" fill="#df5236">≈ 5 by chance</text><text x="6" y="38" font-family="JetBrains Mono, monospace" font-size="12" fill="#1c150d">Same-week rate, fails vs spread</text><rect x="6" y="43" width="246.1" height="16" fill="#1f9e8e" stroke="#1c150d" stroke-width="1.5"/><text x="258.1" y="56" font-family="Bricolage Grotesque, sans-serif" font-weight="800" font-size="15" fill="#1c150d">52</text><text x="6" y="78" font-family="JetBrains Mono, monospace" font-size="12" fill="#1c150d">DET, fails vs spread</text><rect x="6" y="83" width="47.3" height="16" fill="#6f5f46" stroke="#1c150d" stroke-width="1.5"/><text x="59.3" y="96" font-family="Bricolage Grotesque, sans-serif" font-weight="800" font-size="15" fill="#1c150d">10</text><text x="6" y="118" font-family="JetBrains Mono, monospace" font-size="12" fill="#1c150d">Same-week rate, fails vs DVP growth</text><rect x="6" y="123" width="85.2" height="16" fill="#e8902e" stroke="#1c150d" stroke-width="1.5"/><text x="97.2" y="136" font-family="Bricolage Grotesque, sans-serif" font-weight="800" font-size="15" fill="#1c150d">18</text><text x="6" y="158" font-family="JetBrains Mono, monospace" font-size="12" fill="#1c150d">DET, fails vs DVP growth</text><rect x="6" y="163" width="37.9" height="16" fill="#6f5f46" stroke="#1c150d" stroke-width="1.5"/><text x="49.9" y="176" font-family="Bricolage Grotesque, sans-serif" font-weight="800" font-size="15" fill="#1c150d">8</text></svg></div><div class="body"><span class="chip">Finding 2</span><h3>The coupling was on from 2019 to mid-2025, then switched off.</h3><p class="take">Same-week coupling was significant in 52 of 96 rolling years, and in none of the 15 windows ending after July 2025, which cover the late-2025 fails spike.</p><p class="small">Windows overlap, so counts are descriptive.</p><p class="small"><a href="../fig/2026-11-14/q1_windows.png">Original chart from the 2026-11-14 edition →</a></p></div></article><article class="fcard"><div class="viz"><svg viewBox="0 0 360 208" role="img" xmlns="http://www.w3.org/2000/svg"><text x="6" y="16" font-family="JetBrains Mono, monospace" font-size="11" fill="#6f5f46" letter-spacing="1">FAMILYWISE P, BEST MODE (SHORTER = STRONGER)</text><line x1="53.3" x2="53.3" y1="40" y2="192" stroke="#df5236" stroke-width="2" stroke-dasharray="4 3" opacity=".75"/><text x="57.3" y="204" font-family="JetBrains Mono, monospace" font-size="10.5" fill="#df5236">0.05</text><text x="6" y="38" font-family="JetBrains Mono, monospace" font-size="12" fill="#1c150d">Reverse repo → DVP growth (co)</text><rect x="6" y="43" width="2.0" height="16" fill="#1f9e8e" stroke="#1c150d" stroke-width="1.5"/><text x="12.9" y="56" font-family="Bricolage Grotesque, sans-serif" font-weight="800" font-size="15" fill="#1c150d">0.001</text><text x="6" y="78" font-family="JetBrains Mono, monospace" font-size="12" fill="#1c150d">Prime broker vs fails (anti)</text><rect x="6" y="83" width="38.8" height="16" fill="#e8902e" stroke="#1c150d" stroke-width="1.5"/><text x="50.8" y="96" font-family="Bricolage Grotesque, sans-serif" font-weight="800" font-size="15" fill="#1c150d">0.041*</text><text x="6" y="118" font-family="JetBrains Mono, monospace" font-size="12" fill="#1c150d">Prime broker vs DVP growth</text><rect x="6" y="123" width="142.9" height="16" fill="#6f5f46" stroke="#1c150d" stroke-width="1.5"/><text x="154.9" y="136" font-family="Bricolage Grotesque, sans-serif" font-weight="800" font-size="15" fill="#1c150d">0.151</text><text x="6" y="158" font-family="JetBrains Mono, monospace" font-size="12" fill="#1c150d">Prime broker vs tri-party growth</text><rect x="6" y="163" width="228.1" height="16" fill="#6f5f46" stroke="#1c150d" stroke-width="1.5"/><text x="240.1" y="176" font-family="Bricolage Grotesque, sans-serif" font-weight="800" font-size="15" fill="#1c150d">0.241</text></svg></div><div class="body"><span class="chip">Finding 3</span><h3>Form PF reverse-repo borrowing leads DVP volume by about 4 months.</h3><p class="take">Familywise p = 0.001 (asymmetry p = 0.001). Prime-broker borrowing shows no link that survives the max over lags.</p><p class="small">* not significant after 8 tests. Form PF is published about two quarters late: a lead in reference month, not in time to act.</p><p class="small"><a href="../fig/2026-11-14/q1_monthly.png">Original chart from the 2026-11-14 edition →</a></p></div></article><h4>Who plays what</h4>
+<div class="table-wrap"><table>
+<tr><th>Home field (two people in conversation)</th><th>Our data</th></tr>
+<tr><td>Speaker A's and speaker B's word or gaze category</td><td>Quintile state of weekly Treasury fails and of the DVP–tri-party rate spread</td></tr>
+<tr><td>Moment in the conversation</td><td>Week (monthly for Form PF)</td></tr>
+<tr><td>"B echoes A two turns later"</td><td>"The spread is in a matching state \(k\) weeks after fails"</td></tr>
+</table></div>
+
+<h4>Inputs and preprocessing</h4>
+<ul>
+<li>Weekly panel, 432 complete weeks (2018-06-06 to 2026-09-23), rebuilt from the lab's copies of public files: Treasury ex-TIPS dealer financing fails to deliver (PDFTD-USTET), on-the-run 5y + 10y fails, OFR DVP and tri-party volumes and rates.</li>
+<li>Monthly: Form PF tab 8.27 (Question 43 creditor types, $ billions); 3-month log growth because the circular shift is rough on trending series.</li>
+<li>Each series converted to quintile states (local quintiles within each 52-week window for the rolling analysis).</li>
+</ul>
+
+<h4>What we ran</h4>
+<ol>
+<li>Weekly lag profiles ±13 weeks, co and anti modes, for fails vs spread, on-the-run fails vs spread, fails vs DVP growth, plus a sanity pair (on-the-run vs financing fails). 999 shifts each.</li>
+<li>Rolling 52-week windows (4-week step, 96 windows): \(rr_0\) and DET with 199 within-window shifts. (The first attempt used full-plot RR and was degenerate; kept for the record, not used.)</li>
+<li>Monthly profiles ±6 months for Form PF prime-broker and "reverse repo" borrowings vs repo volumes, fails and the spread.</li>
+<li>Planted 3-step lead check to confirm the sign convention.</li>
+</ol>
+
+<div class="callouts"><h5>How to read the main chart (weekly lag profiles)</h5>
+<ol>
+<li>x = lag in weeks (positive: the first series leads); y = match rate on that diagonal.</li>
+<li>The grey band runs from the shift-null mean to its 95th percentile. A curve above the band is more matching than chance at that lag.</li>
+<li>Fails vs spread (anti) peaks at lag 0 and is symmetric: same week, no leader.</li>
+<li>The sanity pair (two fails measures) spikes at lag 0, as it must.</li>
+</ol></div>
+
+<div class="plain"><h5>What it means for a decision-maker</h5>
+<p>Weeks with many Treasury settlement fails were weeks when the DVP repo rate sat low relative to tri-party, from 2019 to mid-2025, strongest through mid-2022. That link was absent during the late-2025 fails spike: the usual relationship did not hold in that episode. Separately, hedge-fund "reverse repo" borrowing growth in Form PF ran about four months ahead of DVP volume growth, though Form PF arrives too late to use as an early signal. Descriptive only; not a trading signal.</p></div>
+
+<h4>Where it breaks (seen in our runs)</h4>
+<ul>
+<li><b>The degenerate-RR trap</b> (Math, Step 2): full-plot RR cannot be tested by shifting. Now documented.</li>
+<li><b>Quintiles discard magnitude:</b> a big and a small fail spike in the top quintile count the same.</li>
+<li><b>Circular shift</b> wraps the end of a series onto its start; rough for trends (hence growth rates monthly).</li>
+<li><b>Overlapping windows:</b> the 96 tests are not independent; counts are descriptive.</li>
+<li><b>Speed:</b> crqa builds the full \(n\times n\) plot (8.4 s at n = 4,000); the weekly nulls took 143 s on 8 workers.</li>
+</ul>
+
+<h4>What we'd do next</h4>
+<p>Top pick (Math): an order-aware test built on \(rr_0\), the lag profile and a lead–lag contrast, with max-T control over lags and windows, against AR-matched or stationary-bootstrap surrogates instead of the wrap-around shift. Then the joint "stress-state" recurrence across all four Q1 legs.</p>
+</div><div class="panel p3" id="robust"><p><span class="grade na">Not graded</span> <span class="small">Home-field grading started with the 2026-11-16 edition. What the 11-14 page records:</span></p>
+<ul>
+<li><b>Method papers:</b> Coco &amp; Dale (2014), Frontiers in Psychology 5:510 (categorical and continuous CRQA, with an R package); Coco, Mønster, Leonardi, Dale &amp; Wallot (2021), The R Journal 13(1):112–130.</li>
+<li><b>Home field:</b> cognitive science (dialogue and interpersonal coordination); niche outside cognitive science and nonlinear dynamics.</li>
+<li><b>Implementation:</b> CRAN crqa 2.1.0 (2026-05-26).</li>
+<li><b>Checked here:</b> a planted 3-step lead was recovered with the right sign; the sanity pair gave the expected strong lag-0 coupling (p = 0.001).</li>
+<li><b>Failure mode found here:</b> full-plot RR is order-blind for categorical states, so window-by-window shift tests on RR are degenerate.</li>
+</ul>
+</div><div class="panel p4" id="sauce"><div class="sauce"><span class="t">1 · Engineering · Effort S</span><h5>A Rust lag-profile engine with the shift null built in</h5>
+<p>The categorical lag profile is \(O(n\cdot L)\), but crqa builds the full \(n\times n\) plot each call. A Rust core with a Python binding would run the 999-shift null in one pass, with crqa 2.1.0 as the oracle.</p>
+<p><b>Math sketch.</b> One-hot encode states, \(A_{ts}=\mathbf 1[a_t=s]\); then \(\mathrm{DRP}(k) = \frac{1}{n-|k|}\sum_s\sum_t A_{ts}B_{t+k,s}\), a sum of per-state cross-correlations, computable for all shifts at once by FFT.</p>
+<p class="small"><b>Test.</b> Exact parity (difference 0) with <code>drpfromts</code> on all 8 weekly and 12 monthly profiles, and the full weekly null in &lt; 1 s (R today: 143 s on 8 workers).</p></div>
+<div class="sauce top"><span class="t">2 · Math · Effort M · ★ Top pick</span><h5>An order-aware CRQA test with familywise lag control and persistence-matched surrogates</h5>
+<p>Full-plot RR is order-blind and DET barely moves. Build statistics that depend on alignment (\(rr_0\), the lag profile, a lead–lag contrast), with max-T control over lags and windows, and a stationary-bootstrap or AR-matched null instead of a wrap-around shift.</p>
+<p><b>Math sketch.</b> \(T = \max_{w,k} \big(\mathrm{DRP}_w(k) - \mu_{w,k}\big)/\sigma_{w,k}\) over windows \(w\) and lags \(k\), with \(\mu,\sigma\) from surrogates that match each series' persistence; reject where the observed statistic exceeds the 95th percentile of the surrogate \(T\).</p>
+<p class="small"><b>Test.</b> Size 5% ± 1.5 points on 2,000 simulated independent AR(1) pairs at our weekly persistence; power ≥ 0.8 for a planted same-week coupling of the 2021–22 size. The circular shift is the baseline to beat.</p></div>
+<div class="sauce"><span class="t">3 · New use on our data · Effort M</span><h5>Joint "stress-state" recurrence across all four Q1 legs</h5>
+<p>Multidimensional CRQA on top-quintile stress states of fails, the spread, Form PF repo growth and CFTC TFF leveraged-fund positioning (Q1.5): do the legs co-visit stress in March 2020, March 2023 and late 2025, or come apart?</p>
+<p><b>Math sketch.</b> Joint recurrence \(J_t = \prod_{\ell=1}^4 \mathbf 1[\text{leg } \ell \text{ in top quintile at } t]\); episode statistic \(\sum_{t\in E} J_t\) vs a block-shift null per leg.</p>
+<p class="small"><b>Test.</b> A pre-registered episode list, with joint recurrence in each episode against a block-shift null at p &lt; 0.05. An honest miss counts.</p></div>
+<p class="small">👍 on the issue means go with the ★ top pick. To choose another, just say so in a comment.</p>
+</div><div class="panel p5" id="questions"><div class="sauce"><span class="t">Q1.1 · Lead / lag</span><p>Fails and the spread: same week, no leader. Form PF reverse-repo growth leads DVP volume growth by about 4 months (reference month).</p></div>
+<div class="sauce"><span class="t">Q1.2 · Co-movement in stress</span><p>The fails–spread coupling was absent in the late-2025 fails spike, while fails and DVP growth were co-recurrent then: a disconnect in one leg, not the other.</p></div>
+<div class="sauce"><span class="t">Q1.3 · Does the relationship change?</span><p>Yes: on 2019 to mid-2025, peak through mid-2022, off after July 2025. CCM (11-15) later gave the link a direction (fails → spread).</p></div>
+<p class="small"><a href="https://github.com/jgridifier/research-lab/blob/main/docs/methods-scout/QUESTIONS.md">All questions</a></p>
+</div></div></div>
+<p class="cite">Full tables, code and data notes: <a href="../2026-11-14.html#crqa">the 2026-11-14 edition</a> · scripts in <code>runs/2026-11-14/</code> · card sources in <code>cards/crqa/</code>.</p>
+<div style="margin:1.4rem 0"><a class="btn" href="https://github.com/jgridifier/research-lab/issues/57">Respond on #57</a><p class="howto">👍 go ahead · 👎 drop · or just comment what you think</p></div>
+<script>(function(){var m={"math":1,"applied":2,"robust":3,"sauce":4,"questions":5};var h=location.hash.slice(1);var i=m[h]||(/^t[1-5]$/.test(h)?+h[1]:0);if(i)document.getElementById("t"+i).checked=true;})();</script>
+</div>
+<footer class="pf">Generated by <code>tools/build_cards.py</code> from <code>feedback-state.json</code> and <code>cards/</code>; page contract in <a href="https://github.com/jgridifier/research-lab/blob/main/docs/methods-scout/LAYOUT.md">LAYOUT.md</a>.
+Status chips are baked in at build time and refreshed from the GitHub issue labels on load. Q2 work so far uses SYNTHETIC mock budgets; no private rows are published.</footer>
+<script src="../status.js"></script>
+</body></html>

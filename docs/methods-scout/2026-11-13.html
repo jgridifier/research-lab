@@ -78,7 +78,7 @@
 <aside class="scout-respond" data-issue="55" data-slug="ebnm">
   <span class="scout-chip status-approved">Approved</span>
   <a class="scout-respond-btn" href="https://github.com/jgridifier/research-lab/issues/55">Respond on GitHub</a>
-  <p class="scout-respond-hint">👍 go ahead with the top pick · 👎 drop it · 👀 park for later · or comment <code>go engineering</code>, <code>go math</code>, <code>go new use</code>, <code>go all</code>, <code>refine: &lt;what to change&gt;</code>, <code>promote</code>, <code>park</code>, <code>drop</code>.</p>
+  <p class="scout-respond-hint">👍 go ahead · 👎 drop · or just comment what you think</p>
 </aside>
 <p><strong>Target question.</strong> Q2.1 (borrowing strength) and Q2.3 (real change or noise), with one analysis on Q2.2 (text vs numbers).</p>
 <p><strong>What it is, and why it fits the bar.</strong> Each program gives an observation \(x_j\) with a standard error \(s_j\). The model is \(x_j \mid \theta_j \sim N(\theta_j, s_j^2)\) and \(\theta_j \sim g\). ebnm estimates the prior \(g\) itself by maximum marginal likelihood, from one of 15 families (normal, point-normal, scale mixtures, unimodal, NPMLE, …). It then returns posterior means, posterior SDs and the <em>local false sign rate</em> (lfsr): the posterior probability that you have the sign of \(\theta_j\) wrong. You choose no prior hyperparameters and no penalty. Each fit took 0.003–0.6 s on 1,000–1,700 programs. \(s_j\) comes from the observable spread of each program’s budget-minus-actual gaps, scaled by the dataset README’s stated budget/actual noise ratio. It is shrunk toward the group median. The scale-mixture 90% intervals cover 89.5% of true levels on both mocks, so these standard errors are not badly off.</p>
@@ -151,7 +151,7 @@
 <aside class="scout-respond" data-issue="56" data-slug="denselines">
   <span class="scout-chip status-approved">Approved</span>
   <a class="scout-respond-btn" href="https://github.com/jgridifier/research-lab/issues/56">Respond on GitHub</a>
-  <p class="scout-respond-hint">👍 go ahead with the top pick · 👎 drop it · 👀 park for later · or comment <code>go engineering</code>, <code>go math</code>, <code>go new use</code>, <code>go all</code>, <code>refine: &lt;what to change&gt;</code>, <code>promote</code>, <code>park</code>, <code>drop</code>.</p>
+  <p class="scout-respond-hint">👍 go ahead · 👎 drop · or just comment what you think</p>
 </aside>
 <p><strong>Target question.</strong> Q2.5 (seeing it), with Q2.4 (hidden structure) as the second use.</p>
 <p><strong>What it is.</strong> Draw each series into its own binary raster. Divide each column by that series’ pixel count in that column, so a steep, noisy line spreads one unit of weight over many pixels instead of painting them all. Then sum over series. The result is a density with exactly \(n\) units per column. Trends show up as dense ridges and outliers as faint isolated strands. The method has no parameters beyond canvas size; colour scale and display blur are presentation choices. Three analyses: (2a) a faithful port and parity check against the authors’ code, plus speed; (2b) the Q2.5 picture on 1,052 Corning-mock programs, with a test of whether normalisation matters at our series length; (2c) residual DenseLines for hidden groups (Q2.4), and the start/stop problem.</p>

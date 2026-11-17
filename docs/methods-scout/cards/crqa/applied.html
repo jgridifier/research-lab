@@ -1,0 +1,45 @@
+<h4>Who plays what</h4>
+<div class="table-wrap"><table>
+<tr><th>Home field (two people in conversation)</th><th>Our data</th></tr>
+<tr><td>Speaker A's and speaker B's word or gaze category</td><td>Quintile state of weekly Treasury fails and of the DVP–tri-party rate spread</td></tr>
+<tr><td>Moment in the conversation</td><td>Week (monthly for Form PF)</td></tr>
+<tr><td>"B echoes A two turns later"</td><td>"The spread is in a matching state \(k\) weeks after fails"</td></tr>
+</table></div>
+
+<h4>Inputs and preprocessing</h4>
+<ul>
+<li>Weekly panel, 432 complete weeks (2018-06-06 to 2026-09-23), rebuilt from the lab's copies of public files: Treasury ex-TIPS dealer financing fails to deliver (PDFTD-USTET), on-the-run 5y + 10y fails, OFR DVP and tri-party volumes and rates.</li>
+<li>Monthly: Form PF tab 8.27 (Question 43 creditor types, $ billions); 3-month log growth because the circular shift is rough on trending series.</li>
+<li>Each series converted to quintile states (local quintiles within each 52-week window for the rolling analysis).</li>
+</ul>
+
+<h4>What we ran</h4>
+<ol>
+<li>Weekly lag profiles ±13 weeks, co and anti modes, for fails vs spread, on-the-run fails vs spread, fails vs DVP growth, plus a sanity pair (on-the-run vs financing fails). 999 shifts each.</li>
+<li>Rolling 52-week windows (4-week step, 96 windows): \(rr_0\) and DET with 199 within-window shifts. (The first attempt used full-plot RR and was degenerate; kept for the record, not used.)</li>
+<li>Monthly profiles ±6 months for Form PF prime-broker and "reverse repo" borrowings vs repo volumes, fails and the spread.</li>
+<li>Planted 3-step lead check to confirm the sign convention.</li>
+</ol>
+
+<div class="callouts"><h5>How to read the main chart (weekly lag profiles)</h5>
+<ol>
+<li>x = lag in weeks (positive: the first series leads); y = match rate on that diagonal.</li>
+<li>The grey band runs from the shift-null mean to its 95th percentile. A curve above the band is more matching than chance at that lag.</li>
+<li>Fails vs spread (anti) peaks at lag 0 and is symmetric: same week, no leader.</li>
+<li>The sanity pair (two fails measures) spikes at lag 0, as it must.</li>
+</ol></div>
+
+<div class="plain"><h5>What it means for a decision-maker</h5>
+<p>Weeks with many Treasury settlement fails were weeks when the DVP repo rate sat low relative to tri-party, from 2019 to mid-2025, strongest through mid-2022. That link was absent during the late-2025 fails spike: the usual relationship did not hold in that episode. Separately, hedge-fund "reverse repo" borrowing growth in Form PF ran about four months ahead of DVP volume growth, though Form PF arrives too late to use as an early signal. Descriptive only; not a trading signal.</p></div>
+
+<h4>Where it breaks (seen in our runs)</h4>
+<ul>
+<li><b>The degenerate-RR trap</b> (Math, Step 2): full-plot RR cannot be tested by shifting. Now documented.</li>
+<li><b>Quintiles discard magnitude:</b> a big and a small fail spike in the top quintile count the same.</li>
+<li><b>Circular shift</b> wraps the end of a series onto its start; rough for trends (hence growth rates monthly).</li>
+<li><b>Overlapping windows:</b> the 96 tests are not independent; counts are descriptive.</li>
+<li><b>Speed:</b> crqa builds the full \(n\times n\) plot (8.4 s at n = 4,000); the weekly nulls took 143 s on 8 workers.</li>
+</ul>
+
+<h4>What we'd do next</h4>
+<p>Top pick (Math): an order-aware test built on \(rr_0\), the lag profile and a lead–lag contrast, with max-T control over lags and windows, against AR-matched or stationary-bootstrap surrogates instead of the wrap-around shift. Then the joint "stress-state" recurrence across all four Q1 legs.</p>

@@ -1,0 +1,13 @@
+<div class="sauce"><span class="t">1 · Engineering · Effort M</span><h5>A Python binding to the package's own Rust core, plus a faster partial order</h5>
+<p>isodistrreg 0.6.0 already compiles a Rust core, reachable only from R. Expose it through PyO3, with R as the oracle, and fix the 2-D slowdown (13.2 s at n = 1,000).</p>
+<p><b>Math sketch.</b> In 1-D, consecutive thresholds differ by one indicator flip, so PAVA can be updated incrementally (the recursive scheme cited in §2.3); in 2-D, replace the generic QP per threshold with a minimum-lower-set algorithm on the dominance DAG.</p>
+<p class="small"><b>Test.</b> CRPS parity within 1e-10 with R on all 13 leave-one-year-out folds; 2-D fits at n = 1,000 under 1 s.</p></div>
+<div class="sauce top"><span class="t">2 · Math · Effort M · ★ Top pick</span><h5>A monotone stress index: one learned direction, IDR on top</h5>
+<p>With SCB + drawdown, IDR lost to OLS (5.4% vs 10.6%) because a 2-D partial order is too weak at n = 132. Learn a weighted combination of pre-tax income, drawdown, loan losses and SCB, then fit IDR on that single score.</p>
+<p><b>Math sketch.</b> \(\hat w = \arg\min_{\|w\|=1}\ \sum_{\text{folds}} \mathrm{CRPS}\big(\mathrm{IDR}(w^\top x),\, y\big)\), the distributional single-index model of Henzi, Kleger &amp; Ziegel (JASA 2023); sign constraints on \(w\) keep the economic direction.</p>
+<p class="small"><b>Test.</b> LOYO CRPS skill above both the best single-covariate IDR (15.0% / 11.3%) and OLS on the same covariates, with a firm-block permutation p &lt; 0.05.</p></div>
+<div class="sauce"><span class="t">3 · New use on our data · Effort S</span><h5>Payout mix and the easier scenario (Q3.4, Q3.5)</h5>
+<p>Run the same LOYO IDR on dividends/RWA and net buybacks/RWA separately; for 2014–2019 use the Adverse-minus-Severely-Adverse gap as a covariate. Does stress move the mix or the total?</p>
+<p><b>Math sketch.</b> Same estimator per response; compare skills \(S_{\text{div}}\), \(S_{\text{buyback}}\) against their shuffle nulls.</p>
+<p class="small"><b>Test.</b> For each response, skill above 0 and above the shuffle 95th percentile. Stated prediction: buybacks carry the stress gradient, not dividends. (The 11-16 PIM run later found the opposite before 2020.)</p></div>
+<p class="small">👍 on the issue means go with the ★ top pick. To choose another, just say so in a comment.</p>

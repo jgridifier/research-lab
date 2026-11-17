@@ -1,0 +1,13 @@
+<div class="sauce"><span class="t">1 · Engineering · Effort S–M</span><h5>Ragged-panel port, R as oracle</h5>
+<p>ecofolio needs a complete program × year matrix, so 24–28% of programs were dropped. A NumPy/Rust port could keep entrants and exiters.</p>
+<p><b>Math sketch.</b> Replace the per-program variance with an unbiased variance on each program's observed years (detrended within its own span), weight the Taylor regression by degrees of freedom, \(\min_{a,z}\sum_i (n_i-2)\,(\log v_i - \log a - z\log m_i)^2\), and compute \(\mathrm{CV}(X)\) on years where the total is defined.</p>
+<p class="small"><b>Test.</b> Parity ≤ 1e-10 with ecofolio on <code>pinkbr</code> and on 1,000 random balanced subsets; then a 999-shuffle null on 1,404 programs in &lt; 1 s (today's vectorised R: 0.1 ms per PE vs 215 ms in the package).</p></div>
+<div class="sauce top"><span class="t">2 · Math · Effort M · ★ Top pick</span><h5>A noise-corrected Taylor's law and portfolio effect</h5>
+<p>Budget and actual are two noisy readings of each program. Their disagreement estimates observation-noise variance, which can be removed before fitting \(z\). Then split variability across program → segment → firm (α/β/γ).</p>
+<p><b>Math sketch.</b> If \(b_{it} = \theta_{it} + \delta_{it}\) and \(x_{it} = \theta_{it} + \epsilon_{it}\) with independent errors, \(\mathrm{Var}(x_{it}-b_{it}) = \sigma^2_\epsilon + \sigma^2_\delta\). With the mocks' stated noise ratio \(r = \sigma_\delta/\sigma_\epsilon\), \(\hat\sigma^2_{\epsilon,i} = \widehat{\mathrm{Var}}(x_i-b_i)/(1+r^2)\), and the corrected variance is \(\tilde v_i = \max(v_i - \hat\sigma^2_{\epsilon,i}, 0)\). Fit Taylor on \(\tilde v_i\), then partition total variability as in Wang &amp; Loreau (2014). Today noise inflated the average-CV effect from 1.54 to 3.36.</p>
+<p class="small"><b>Test.</b> On both mocks plus 20 new-seed mocks: the corrected PE is closer to the true-level PE in ≥ 80% of firm × segment cells. Pre-registered.</p></div>
+<div class="sauce"><span class="t">3 · New use on our data · Effort S</span><h5>Stability cost of FY2026 decision packages</h5>
+<p>Recompute \(z\) and the mean-variance PE under the minimum, current and enhanced package scenarios in <code>decision_packages.csv</code>. Does approving the enhanced packages concentrate volatility (Q2.3/Q2.4)?</p>
+<p><b>Math sketch.</b> For scenario \(s\), \(\Delta\mathrm{PE}_s = \mathrm{PE}_{mv}(s) - \mathrm{PE}_{mv}(\text{current})\); null distribution from 999 random package swaps of equal total cost.</p>
+<p class="small"><b>Test.</b> PE change per scenario against the 999 same-cost swaps, stated in advance.</p></div>
+<p class="small">👍 on the issue means go with the ★ top pick. To choose another, just say so in a comment.</p>

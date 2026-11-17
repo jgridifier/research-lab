@@ -1,0 +1,142 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Isotonic distributional regression (IDR) · research card · methods scout</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,400..800&family=Newsreader:ital,opsz,wght@0,6..72,400..600;1,6..72,400..500&family=JetBrains+Mono:wght@400;500;700&display=swap">
+<link rel="stylesheet" href="../../assets/brief.css">
+<link rel="stylesheet" href="../scout-cards.css">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.css"><script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.js"></script><script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/contrib/auto-render.min.js" onload="renderMathInElement(document.body,{delimiters:[{left:'$$',right:'$$',display:true},{left:'\\(',right:'\\)',display:false}]})"></script>
+<!-- Methods Scout home-screen / PWA tags. Paste into <head> of every methods-scout page.
+     Paths are root-absolute so they resolve under https://jgridifier.github.io/research-lab/. -->
+<link rel="apple-touch-icon" sizes="180x180" href="/research-lab/methods-scout/icons/apple-touch-icon.png">
+<link rel="icon" type="image/png" sizes="32x32" href="/research-lab/methods-scout/icons/favicon-32.png">
+<link rel="icon" type="image/png" sizes="192x192" href="/research-lab/methods-scout/icons/icon-192.png">
+<link rel="manifest" href="/research-lab/methods-scout/manifest.webmanifest">
+<meta name="apple-mobile-web-app-title" content="Methods Scout">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="theme-color" content="#0F2A23">
+
+</head><body>
+<header class="topbar"><a class="brand" href="../index.html">Methods scout</a>
+<span><a href="../index.html">Queue</a> · <a href="../archive.html">Archive</a></span></header>
+<div class="pz">
+<p class="crumb"><a href="../index.html">← Queue</a></p>
+<div class="chips"><span class="chip q">Q3</span><span class="chip st-proposed" data-issue="58">○ New</span><span class="chip v-rec">Recommend</span><span class="date">Scouted 2026-11-14</span></div>
+<section class="hero" style="padding-top:.5rem"><p class="kicker">Isotonic distributional regression (IDR) · from probabilistic weather forecasting</p>
+<h1>The whole payout distribution, under one order rule</h1></section>
+<div class="sum">
+<div class="row"><span class="k">What it is</span><span class="v">Predict a full distribution, not one number, assuming only “worse stress never means a bigger payout distribution.”</span></div>
+<div class="row"><span class="k">Verdict</span><span class="v"><b>Recommend.</b> Home field: not graded (the 11-14 edition predates grading).</span></div>
+<div class="row"><span class="k">Top pick</span><span class="v"><b>Math</b> (effort M): Learn one monotone stress index from several covariates, then fit IDR on that score.</span></div>
+<div class="row"><span class="k">Data</span><span class="v">Public filings (Fed DFAST results, FR Y-9C, SCB PDFs); descriptive only</span></div>
+</div>
+<p class="kicker" style="margin-top:1rem">The one picture</p>
+<div class="pair"><div><span class="lab">OLS, normal errors</span><div class="big">−2.2%</div><div class="sub">skill vs climatology on raw payout/RWA (worse than no model)</div></div><div class="new"><span class="lab">IDR</span><div class="big">+5.8%</div><div class="sub">same data, same covariate (drawdown), leave-one-year-out</div></div></div>
+<div style="margin:1rem 0 .4rem"><a class="btn big" href="https://github.com/jgridifier/research-lab/issues/58">Respond on #58</a><p class="howto">👍 go ahead · 👎 drop · or just comment what you think</p></div>
+<div class="tabs"><input type="radio" name="tab" id="t1" checked><input type="radio" name="tab" id="t2"><input type="radio" name="tab" id="t3"><input type="radio" name="tab" id="t4"><input type="radio" name="tab" id="t5"><div class="tabbar"><label for="t1">The math</label><label for="t2">On our data</label><label for="t3">Robust at home</label><label for="t4">Secret sauce</label><label for="t5">Questions</label></div><div class="panels"><div class="panel p1" id="math"><h4>Notation</h4>
+<div class="table-wrap"><table>
+<tr><th>Symbol</th><th>Meaning</th><th>Here</th></tr>
+<tr><td>\(Y\)</td><td>response</td><td>payout/RWA (raw %), or its percentile within the test year</td></tr>
+<tr><td>\(x\)</td><td>covariate with a known direction</td><td>drawdown or SCB (antitonic: worse → lower payout); pre-tax income (isotonic)</td></tr>
+<tr><td>\(F_x(y) = P(Y\le y\mid x)\)</td><td>conditional CDF</td><td>the whole payout distribution for a bank with stress result \(x\)</td></tr>
+<tr><td>\(x \preceq x'\)</td><td>partial order on covariates</td><td>"\(x'\) is at least as favourable as \(x\)"</td></tr>
+<tr><td>CRPS</td><td>continuous ranked probability score</td><td>scores a predicted distribution against the realised payout</td></tr>
+</table></div>
+
+<h4>The estimator</h4>
+<p>Score a predicted CDF \(F\) against an outcome \(y\) by</p>
+$$\mathrm{CRPS}(F,y) = \int_{-\infty}^{\infty}\big(F(z) - \mathbf 1[y\le z]\big)^2\,dz .$$
+<p>IDR picks the conditional CDFs that minimise total CRPS over the training data, subject only to stochastic order:</p>
+$$\begin{gathered}\min_{F_{x_1},\dots,F_{x_n}} \sum_{i=1}^n \mathrm{CRPS}(F_{x_i}, y_i)\\ \text{s.t. } x_i \preceq x_j \Rightarrow F_{x_i}(z) \ge F_{x_j}(z)\ \ \forall z .\end{gathered}$$
+<p>A more favourable covariate never predicts a stochastically smaller payout. No bandwidth, link, or distribution family; only the direction.</p>
+
+<h4>Why it works, step by step</h4>
+<div class="step"><b class="n">Step 1 · CRPS splits into thresholds</b>The integrand at each \(z\) only involves \(F(z)\) and \(\mathbf 1[y\le z]\). So minimising the integral means minimising, separately at every threshold \(z\), \(\sum_i (\eta_i - \mathbf 1[y_i \le z])^2\) over \(\eta_i = F_{x_i}(z)\).</div>
+<div class="step"><b class="n">Step 2 · each threshold is an isotonic regression</b>The order constraint becomes "\(\eta\) is non-increasing along the order", so each threshold is a least-squares isotonic fit of a 0/1 sequence, solved exactly by pool-adjacent-violators (PAVA) in one dimension (paper §2.3, eq. 15). The objective only changes at observed \(y\) values, so a finite number of thresholds suffices.</div>
+<div class="step"><b class="n">Step 3 · the pieces fit together</b>PAVA on nested indicator sequences gives values that are also monotone in \(z\), so the threshold fits stack into valid CDFs. The paper shows the solution is the same for a wide class of proper scores, not just CRPS ("universality", §2.2), and that it is calibrated.</div>
+<div class="step"><b class="n">Step 4 · skill and the null</b>Skill \(= 1 - \overline{\mathrm{CRPS}}_{\text{IDR}}/\overline{\mathrm{CRPS}}_{\text{clim}}\), where climatology predicts the training sample's empirical distribution for everyone. Evaluation leaves one test year out. Null: shuffle the covariate <em>within each year</em> 299 times and refit (smallest possible p = 1/300 ≈ 0.003).</div>
+
+<div class="toy"><h5>Toy example (computed on the box)</h5>
+<p>Four firms ordered by pre-tax income, \(x = 1,2,3,4\), with payouts \(y = 0.5, 2.0, 1.0, 3.0\). At threshold \(z = 1.0\) the indicators \(\mathbf 1[y\le 1]\) are \((1, 0, 1, 0)\). The CDF must be non-increasing in \(x\), but \(0\) then \(1\) violates it, so PAVA pools firms 2 and 3: \(\hat F(1.0) = (1, 0.5, 0.5, 0)\). At \(z = 0.5\): \((1,0,0,0)\); at \(z = 2.0\): \((1,1,1,0)\). Firm 3's predictive distribution is therefore 50% at or below 1.0 and 100% at or below 2.0: a step CDF learned with no tuning.</p></div>
+
+<div class="diff"><b>How it differs from the standard tool.</b> OLS with normal errors predicts a mean and a symmetric bell. Payouts are skewed and some firms issue net shares (down to −1.4% of RWA), so on the raw scale OLS scored worse than climatology (−2.2%) while IDR gained 5.8%. Quantile regression gives a few quantiles under a linear form; IDR gives every quantile under only a monotone form. The price: step functions that are coarse at our n, and a weak partial order with two or more covariates.</div>
+<p class="cite">Followed: Henzi, Ziegel &amp; Gneiting (2021), JRSS-B 83(5):963–993 (arXiv:1909.03725): §2.2 existence, uniqueness and universality; §2.3 eq. (15), threshold decomposition and PAVA; §3 partial orders. Package isodistrreg 0.6.0 (Rust core). Toy: <code>cards/_toys/toys.py</code>.</p>
+</div><div class="panel p2" id="applied"><h4>What we found</h4><article class="fcard"><div class="viz"><svg viewBox="0 0 360 194" role="img" xmlns="http://www.w3.org/2000/svg"><text x="6" y="16" font-family="JetBrains Mono, monospace" font-size="11" fill="#6f5f46" letter-spacing="1">CRPS SKILL, PAYOUT PERCENTILE, 2013–2025</text><text x="6" y="38" font-family="JetBrains Mono, monospace" font-size="12" fill="#1c150d">Pre-tax income · IDR</text><rect x="6" y="43" width="236.7" height="16" fill="#1f9e8e" stroke="#1c150d" stroke-width="1.5"/><text x="248.7" y="56" font-family="Bricolage Grotesque, sans-serif" font-weight="800" font-size="15" fill="#1c150d">15.0%</text><text x="6" y="78" font-family="JetBrains Mono, monospace" font-size="12" fill="#1c150d">Pre-tax income · OLS</text><rect x="6" y="83" width="202.0" height="16" fill="#e8902e" stroke="#1c150d" stroke-width="1.5"/><text x="214.0" y="96" font-family="Bricolage Grotesque, sans-serif" font-weight="800" font-size="15" fill="#1c150d">12.8%</text><text x="6" y="118" font-family="JetBrains Mono, monospace" font-size="12" fill="#1c150d">Drawdown · IDR</text><rect x="6" y="123" width="61.5" height="16" fill="#1f9e8e" stroke="#1c150d" stroke-width="1.5"/><text x="73.5" y="136" font-family="Bricolage Grotesque, sans-serif" font-weight="800" font-size="15" fill="#1c150d">3.9%</text><text x="6" y="158" font-family="JetBrains Mono, monospace" font-size="12" fill="#1c150d">Drawdown · OLS</text><rect x="6" y="163" width="58.4" height="16" fill="#e8902e" stroke="#1c150d" stroke-width="1.5"/><text x="70.4" y="176" font-family="Bricolage Grotesque, sans-serif" font-weight="800" font-size="15" fill="#1c150d">3.7%</text></svg></div><div class="body"><span class="chip">Finding 1</span><h3>Projected pre-tax income describes payout ranks four times better than drawdown.</h3><p class="take">Leave-one-year-out CRPS skill over climatology: 15.0% for pre-tax income vs 3.9% for drawdown (both p = 0.003, the floor with 299 shuffles).</p><p class="small"><a href="../fig/2026-11-14/q3_idr_fan.png">Original chart from the 2026-11-14 edition →</a></p></div></article><article class="fcard"><div class="viz"><svg viewBox="0 0 360 208" role="img" xmlns="http://www.w3.org/2000/svg"><text x="6" y="16" font-family="JetBrains Mono, monospace" font-size="11" fill="#6f5f46" letter-spacing="1">IDR SKILL, SCB ERA 2021–2025</text><line x1="6.0" x2="6.0" y1="40" y2="192" stroke="#df5236" stroke-width="2" stroke-dasharray="4 3" opacity=".75"/><text x="10.0" y="204" font-family="JetBrains Mono, monospace" font-size="10.5" fill="#df5236">0 = climatology</text><text x="6" y="38" font-family="JetBrains Mono, monospace" font-size="12" fill="#1c150d">Pre-tax income percentile</text><rect x="6" y="43" width="246.9" height="16" fill="#1f9e8e" stroke="#1c150d" stroke-width="1.5"/><text x="258.9" y="56" font-family="Bricolage Grotesque, sans-serif" font-weight="800" font-size="15" fill="#1c150d">11.3%</text><text x="6" y="78" font-family="JetBrains Mono, monospace" font-size="12" fill="#1c150d">Drawdown percentile</text><rect x="6" y="83" width="152.9" height="16" fill="#1f9e8e" stroke="#1c150d" stroke-width="1.5"/><text x="164.9" y="96" font-family="Bricolage Grotesque, sans-serif" font-weight="800" font-size="15" fill="#1c150d">7.0%</text><text x="6" y="118" font-family="JetBrains Mono, monospace" font-size="12" fill="#1c150d">SCB + drawdown (2-D order)</text><rect x="6" y="123" width="118.0" height="16" fill="#e8902e" stroke="#1c150d" stroke-width="1.5"/><text x="130.0" y="136" font-family="Bricolage Grotesque, sans-serif" font-weight="800" font-size="15" fill="#1c150d">5.4%</text><text x="6" y="158" font-family="JetBrains Mono, monospace" font-size="12" fill="#1c150d">SCB percentile</text><rect x="6" y="163" width="2.0" height="16" fill="#df5236" stroke="#1c150d" stroke-width="1.5"/><text x="13.1" y="176" font-family="Bricolage Grotesque, sans-serif" font-weight="800" font-size="15" fill="#1c150d">−1.9%</text></svg></div><div class="body"><span class="chip">Finding 2</span><h3>The buffer itself (SCB) says nothing about payouts.</h3><p class="take">2021–2025: SCB skill −1.9% (p = 0.24) though it tracks drawdown closely (Spearman 0.92); drawdown 7.0%, pre-tax income 11.3%. 37.9% of firm-years sit at the 2.5% floor.</p><p class="small">Bar for SCB drawn at zero; its skill is negative (−1.9%).</p><p class="small"><a href="../fig/2026-11-14/q3_skill.png">Original chart from the 2026-11-14 edition →</a></p></div></article><article class="fcard"><div class="viz"><svg viewBox="0 0 360 128" role="img" xmlns="http://www.w3.org/2000/svg"><text x="6" y="16" font-family="JetBrains Mono, monospace" font-size="11" fill="#6f5f46" letter-spacing="1">FIT ON ONE ERA, SCORED ON THE OTHER</text><line x1="6.0" x2="6.0" y1="40" y2="112" stroke="#df5236" stroke-width="2" stroke-dasharray="4 3" opacity=".75"/><text x="10.0" y="124" font-family="JetBrains Mono, monospace" font-size="10.5" fill="#df5236">0</text><text x="6" y="38" font-family="JetBrains Mono, monospace" font-size="12" fill="#1c150d">Fit 2013–19 → score 2021–25</text><rect x="6" y="43" width="248.5" height="16" fill="#1f9e8e" stroke="#1c150d" stroke-width="1.5"/><text x="260.5" y="56" font-family="Bricolage Grotesque, sans-serif" font-weight="800" font-size="15" fill="#1c150d">+7.0%</text><text x="6" y="78" font-family="JetBrains Mono, monospace" font-size="12" fill="#1c150d">Fit 2021–25 → score 2013–19</text><rect x="6" y="83" width="2.0" height="16" fill="#df5236" stroke="#1c150d" stroke-width="1.5"/><text x="13.8" y="96" font-family="Bricolage Grotesque, sans-serif" font-weight="800" font-size="15" fill="#1c150d">−6.1%</text></svg></div><div class="body"><span class="chip">Finding 3</span><h3>The relationship weakened after 2020 except for the worst decile.</h3><p class="take">A 2013–19 fit still beats 2021–25 climatology (7.0%), but not the reverse (−6.1%). Ranking persistence fell: Kendall τ 0.82–0.84 (2014–16) to 0.40–0.69 (2021–25).</p><p class="small">Negative skill drawn at zero.</p><p class="small"><a href="../fig/2026-11-14/q3_eras.png">Original chart from the 2026-11-14 edition →</a></p></div></article><h4>Who plays what</h4>
+<div class="table-wrap"><table>
+<tr><th>Home field (rain forecasts)</th><th>Our data</th></tr>
+<tr><td>Weather model's predicted rainfall</td><td>A bank's published stress result (drawdown, pre-tax income, SCB)</td></tr>
+<tr><td>Observed rainfall the next day</td><td>The bank's payout/RWA that year</td></tr>
+<tr><td>"More predicted rain never means less rain"</td><td>"Worse stress never means a bigger payout distribution"</td></tr>
+<tr><td>Climatology (the usual spread of rain)</td><td>The usual spread of payouts across banks</td></tr>
+</table></div>
+
+<h4>Inputs and preprocessing</h4>
+<ul>
+<li>All 643 rows of the Fed's <code>public_results_DFAST_2026.csv</code>, FR Y-9C payout items for 2013–2025, and 165 SCB values (effective 2021–2026), each re-verified against fresh downloads.</li>
+<li>Payout = common and preferred dividends plus net buybacks (BHCK4460 + 4598 + 4783 − 4782) over RWA, calendar year \(Y\), for test year \(Y\). 360 firm-years; 18–35 banks per year.</li>
+<li>Two response scales: within-year percentile (removes the payout cycle on purpose) and raw payout/RWA.</li>
+</ul>
+
+<h4>What we ran</h4>
+<ol>
+<li>Full-sample IDR fits for drawdown (antitonic) and pre-tax income (isotonic), percentile and raw scales; OLS with normal errors on the same inputs.</li>
+<li>Leave-one-test-year-out CRPS skill vs climatology; 299 within-year shuffles per test.</li>
+<li>SCB era 2021–2025: SCB alone, drawdown alone, pre-tax alone, and SCB + drawdown under the 2-D componentwise order.</li>
+<li>Eras: fit 2013–19, score 2021–25 and vice versa; Kendall τ of each year's ranking against the prior year's.</li>
+</ol>
+
+<div class="callouts"><h5>How to read the main chart (IDR fan)</h5>
+<ol>
+<li>x = the bank's drawdown percentile within its test year; y = its payout percentile (left) or raw payout/RWA (right). Grey dots are the 360 firm-years.</li>
+<li>The dark line is the IDR median; the bands are 25–75% and 10–90% of the predicted distribution.</li>
+<li>The steps are the estimate itself: no smoothing. A flat stretch means the data do not separate those banks.</li>
+<li>Read the band width: wide bands at a given drawdown mean the stress result says little about that bank's payout.</li>
+</ol></div>
+
+<div class="plain"><h5>What it means for a decision-maker</h5>
+<p>If you want to describe how payouts line up with stress results, use projected pre-tax income under the severely adverse scenario, not the capital buffer: it explains payout ranks about four times better than the drawdown, and the SCB adds nothing. Since 2020 the link is weaker and concentrated in the worst-hit decile of banks. This is a description, not a forecast, and it does not touch the pre-registered trading study.</p></div>
+
+<h4>Where it breaks (seen in our runs)</h4>
+<ul>
+<li><b>Two covariates:</b> with SCB + drawdown most pairs are incomparable, and IDR lost to OLS (5.4% vs 10.6%). This is the case for the Math card.</li>
+<li><b>Ties at the floor:</b> 37.9% of SCB firm-years sit at 2.5%, tying a third of the sample.</li>
+<li><b>Dependence:</b> firm-years within a firm are dependent; the within-year shuffle does not model that.</li>
+<li><b>Coarse steps</b> at n = 132–360.</li>
+<li><b>Speed:</b> 2-D partial order 13.2 s at n = 1,000 (1-D: 0.02 s).</li>
+</ul>
+
+<h4>What we'd do next</h4>
+<p>Top pick (Math): learn a single monotone stress index from pre-tax income, drawdown, loan losses and SCB (a distributional single-index model), then fit IDR on that one score, with a firm-block null.</p>
+</div><div class="panel p3" id="robust"><p><span class="grade na">Not graded</span> <span class="small">Home-field grading started with the 2026-11-16 edition. What the paper and the 11-14 page record:</span></p>
+<ul>
+<li><b>Theory:</b> Henzi, Ziegel &amp; Gneiting, JRSS-B 83(5):963–993 (2021). The abstract states that IDR learns conditional distributions that are calibrated and simultaneously optimal relative to comprehensive classes of loss functions, subject to isotonicity; isotonic quantile and binary regression are special cases. §2.4 gives consistency.</li>
+<li><b>Recommended use in its home field:</b> the authors recommend IDR as a generic benchmark for probabilistic forecasts because it needs no tuning, and report it competitive with state-of-the-art postprocessing on precipitation forecasts (§5).</li>
+<li><b>Follow-ons</b> on the 11-14 watchlist: EasyUQ (SIAM Review 2024), distributional single-index models (JASA 2023), survival IDR (arXiv 2026).</li>
+<li><b>Implementation:</b> CRAN isodistrreg 0.6.0 (2026-08-21) with a Rust core built by Cargo.</li>
+</ul>
+</div><div class="panel p4" id="sauce"><div class="sauce"><span class="t">1 · Engineering · Effort M</span><h5>A Python binding to the package's own Rust core, plus a faster partial order</h5>
+<p>isodistrreg 0.6.0 already compiles a Rust core, reachable only from R. Expose it through PyO3, with R as the oracle, and fix the 2-D slowdown (13.2 s at n = 1,000).</p>
+<p><b>Math sketch.</b> In 1-D, consecutive thresholds differ by one indicator flip, so PAVA can be updated incrementally (the recursive scheme cited in §2.3); in 2-D, replace the generic QP per threshold with a minimum-lower-set algorithm on the dominance DAG.</p>
+<p class="small"><b>Test.</b> CRPS parity within 1e-10 with R on all 13 leave-one-year-out folds; 2-D fits at n = 1,000 under 1 s.</p></div>
+<div class="sauce top"><span class="t">2 · Math · Effort M · ★ Top pick</span><h5>A monotone stress index: one learned direction, IDR on top</h5>
+<p>With SCB + drawdown, IDR lost to OLS (5.4% vs 10.6%) because a 2-D partial order is too weak at n = 132. Learn a weighted combination of pre-tax income, drawdown, loan losses and SCB, then fit IDR on that single score.</p>
+<p><b>Math sketch.</b> \(\hat w = \arg\min_{\|w\|=1}\ \sum_{\text{folds}} \mathrm{CRPS}\big(\mathrm{IDR}(w^\top x),\, y\big)\), the distributional single-index model of Henzi, Kleger &amp; Ziegel (JASA 2023); sign constraints on \(w\) keep the economic direction.</p>
+<p class="small"><b>Test.</b> LOYO CRPS skill above both the best single-covariate IDR (15.0% / 11.3%) and OLS on the same covariates, with a firm-block permutation p &lt; 0.05.</p></div>
+<div class="sauce"><span class="t">3 · New use on our data · Effort S</span><h5>Payout mix and the easier scenario (Q3.4, Q3.5)</h5>
+<p>Run the same LOYO IDR on dividends/RWA and net buybacks/RWA separately; for 2014–2019 use the Adverse-minus-Severely-Adverse gap as a covariate. Does stress move the mix or the total?</p>
+<p><b>Math sketch.</b> Same estimator per response; compare skills \(S_{\text{div}}\), \(S_{\text{buyback}}\) against their shuffle nulls.</p>
+<p class="small"><b>Test.</b> For each response, skill above 0 and above the shuffle 95th percentile. Stated prediction: buybacks carry the stress gradient, not dividends. (The 11-16 PIM run later found the opposite before 2020.)</p></div>
+<p class="small">👍 on the issue means go with the ★ top pick. To choose another, just say so in a comment.</p>
+</div><div class="panel p5" id="questions"><div class="sauce"><span class="t">Q3.1 · Cross-section</span><p>Pre-tax income percentile: 15.0% skill; drawdown 3.9%. On the raw scale IDR beats OLS (5.8% vs −2.2%).</p></div>
+<div class="sauce"><span class="t">Q3.2 · Buffer vs path</span><p>The path (pre-tax income, drawdown) carries the information; the SCB itself has none (−1.9%).</p></div>
+<div class="sauce"><span class="t">Q3.3 · Year-to-year movement</span><p>Ranking persistence weakened after 2020; the post-2020 curve is flat except in the worst decile.</p></div>
+<p class="small"><b>Still missing:</b> the October 2020 SCB PDF; firm-level baseline projections are not published. · <a href="https://github.com/jgridifier/research-lab/blob/main/docs/methods-scout/QUESTIONS.md">All questions</a></p>
+</div></div></div>
+<p class="cite">Full tables, code and data notes: <a href="../2026-11-14.html#idr">the 2026-11-14 edition</a> · scripts in <code>runs/2026-11-14/</code> · card sources in <code>cards/idr/</code>.</p>
+<div style="margin:1.4rem 0"><a class="btn" href="https://github.com/jgridifier/research-lab/issues/58">Respond on #58</a><p class="howto">👍 go ahead · 👎 drop · or just comment what you think</p></div>
+<script>(function(){var m={"math":1,"applied":2,"robust":3,"sauce":4,"questions":5};var h=location.hash.slice(1);var i=m[h]||(/^t[1-5]$/.test(h)?+h[1]:0);if(i)document.getElementById("t"+i).checked=true;})();</script>
+</div>
+<footer class="pf">Generated by <code>tools/build_cards.py</code> from <code>feedback-state.json</code> and <code>cards/</code>; page contract in <a href="https://github.com/jgridifier/research-lab/blob/main/docs/methods-scout/LAYOUT.md">LAYOUT.md</a>.
+Status chips are baked in at build time and refreshed from the GitHub issue labels on load. Q2 work so far uses SYNTHETIC mock budgets; no private rows are published.</footer>
+<script src="../status.js"></script>
+</body></html>

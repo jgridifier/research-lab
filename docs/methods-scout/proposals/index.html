@@ -1,54 +1,5 @@
-<!doctype html><html lang="en"><head><meta charset="utf-8">
-<meta name="viewport" content="width=device-width,initial-scale=1">
-<title>Methods scout layout proposals</title>
-<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,400..800&family=Newsreader:ital,opsz,wght@0,6..72,400..600;1,6..72,400..500&family=JetBrains+Mono:wght@400;500;700&display=swap">
-<link rel="stylesheet" href="/research-lab/assets/brief.css">
-<link rel="stylesheet" href="proposals.css">
-<!-- Methods Scout home-screen / PWA tags. Paste into <head> of every methods-scout page.
-     Paths are root-absolute so they resolve under https://jgridifier.github.io/research-lab/. -->
-<link rel="apple-touch-icon" sizes="180x180" href="/research-lab/methods-scout/icons/apple-touch-icon.png">
-<link rel="icon" type="image/png" sizes="32x32" href="/research-lab/methods-scout/icons/favicon-32.png">
-<link rel="icon" type="image/png" sizes="192x192" href="/research-lab/methods-scout/icons/icon-192.png">
-<link rel="manifest" href="/research-lab/methods-scout/manifest.webmanifest">
-<meta name="apple-mobile-web-app-title" content="Methods Scout">
-<meta name="apple-mobile-web-app-capable" content="yes">
-<meta name="mobile-web-app-capable" content="yes">
-<meta name="theme-color" content="#0F2A23">
-
-<meta name="robots" content="noindex">
-</head><body>
-<header class="topbar"><a class="brand" href="index.html">Methods scout <span class="mockflag">LAYOUT MOCKUP</span></a>
-<a href="/research-lab/methods-scout/index.html">Live site</a></header>
-<div class="pz wide">
-<section class="hero"><p class="kicker">Layout proposals · 2026-11-17</p>
-<h1>A cleaner scout</h1>
-<p class="lede">Settled: <b>one page per method</b> (C), with a 3-second summary and tabs. Open: which <b>front door</b> leads into those pages. Three options below, each built with real scout content and screenshotted at phone width.</p>
-<div class="legend"><span class="chip st-proposed">○ New</span><span class="chip st-approved">✓ Go</span><span class="chip st-in-progress">▶ Building</span><span class="chip st-refine">✎ Needs direction</span><span class="chip st-parked">❚❚ Parked</span><span class="chip st-dropped">✕ Dropped</span><span class="chip st-promoted">★ Promoted</span></div>
-<p class="small">One icon and one plain word per status, everywhere. Chips refresh from the GitHub issue labels on load.</p></section>
-<h2 class="sect">Pick a front door</h2>
-<div class="cmp"><div class="opt"><a class="shot" href="feed.html"><img src="img/shot-feed.png" alt="Finding feed at phone width"></a><div class="ob"><span class="chip">Front door A</span><h3><a href="feed.html">Finding feed</a></h3><ul><li>One result per card: picture, one line, method · question · status chips.</li><li>Best for “what did we learn?” on the commute.</li><li>Filter: Q2 · Q3 · Needs your call (no JS).</li></ul><p><a class="btn" href="feed.html">Open</a></p></div></div><div class="opt"><a class="shot" href="queue.html"><img src="img/shot-queue.png" alt="Ranked queue at phone width"></a><div class="ob"><span class="chip">Front door B</span><h3><a href="queue.html">Ranked queue</a></h3><ul><li>Every method in one ordered list; <b>Waiting on you</b> at the top.</li><li>Rank = verdict × question fit, shown on each row.</li><li>Tap a row: drawer with top pick, Respond, method page.</li></ul><p><a class="btn" href="queue.html">Open</a></p></div></div><div class="opt"><a class="shot" href="hybrid.html"><img src="img/shot-hybrid.png" alt="Hybrid at phone width"></a><div class="ob"><span class="chip">Front door A+B</span><h3><a href="hybrid.html">Hybrid</a></h3><ul><li>Waiting on you → top 3 of the queue → newest finding cards.</li><li>One screen answers “what do you need from me?” and “what's new?”.</li><li>Full queue and full feed one tap away.</li></ul><p><a class="btn" href="hybrid.html">Open</a></p></div></div></div>
-<h2 class="sect">The base: one page per method (C)</h2>
-<p>Top of every method page: <b>what it is</b> (one line), <b>verdict</b>, <b>top pick</b>, <b>data</b>, then <b>the one picture</b> as a “usual tool vs this method” pair, then one big Respond button. Everything else sits behind tabs: <b>Findings · How it works · Robust at home · Secret sauce · Questions</b>.</p>
-<div class="cmp" style="grid-template-columns:repeat(auto-fit,minmax(160px,1fr))"><div class="opt base"><a class="shot" href="m/ecofolio.html"><img src="img/shot-m-ecofolio.png" alt="ecofolio page at phone width"></a><div class="ob"><span class="chip">C · method page</span><h3><a href="m/ecofolio.html">ecofolio</a></h3><p class="small">Is the program book really diversified?</p></div></div><div class="opt base"><a class="shot" href="m/pim.html"><img src="img/shot-m-pim.png" alt="pim page at phone width"></a><div class="ob"><span class="chip">C · method page</span><h3><a href="m/pim.html">pim</a></h3><p class="small">How often does the more-stressed bank pay out more?</p></div></div><div class="opt base"><a class="shot" href="m/ebnm.html"><img src="img/shot-m-ebnm.png" alt="ebnm page at phone width"></a><div class="ob"><span class="chip">C · method page</span><h3><a href="m/ebnm.html">ebnm</a></h3><p class="small">How much to trust each program&#x27;s own number</p></div></div><div class="opt base"><a class="shot" href="m/denselines.html"><img src="img/shot-m-denselines.png" alt="DenseLines page at phone width"></a><div class="ob"><span class="chip">C · method page</span><h3><a href="m/denselines.html">DenseLines</a></h3><p class="small">A thousand short lines as one picture</p></div></div></div>
-<h2 class="sect">Borrowed from the Nitro proposals site</h2>
-<ul>
-<li><b>One card = one thing.</b> Picture first, one-line why, a status chip, one button. No paragraphs on the front door.</li>
-<li><b>“Today vs proposed” picture pairs.</b> Nitro shows today's screen next to the mockup; we show the usual tool's answer next to the borrowed method's.</li>
-<li><b>Status is a chip that updates itself</b> from the issue (Nitro's <code>status.js</code>), with a vote button and a one-line how-to on every card and at the top and bottom of every detail page.</li>
-<li><b>Index → one page per item.</b> Nitro links each card to <code>p/&lt;slug&gt;.html</code>; that is the method page here.</li>
-</ul>
-<p class="small">Kept ours: the paper-and-ink theme, fonts, hard shadows and the Respond-on-GitHub loop. No Nitro branding or wording was copied.</p>
-<h2 class="sect">Word budgets (enforced by the build)</h2>
-<ul><li>Finding headline ≤ 14 words; takeaway ≤ 32 words.</li><li>Queue one-liner ≤ 20 words; “what it is” and “top pick” ≤ 22 words.</li><li>Charts are drawn at 360 px wide with labels above bars, so nothing is unreadable on a phone.</li></ul>
-<div class="rec"><h3>Recommendation</h3>
-<p style="color:#f5ecd7">Hybrid front door, on top of the per-method pages.</p>
-<ul><li><b>Waiting on you first</b>, because the daily loop only moves when you react.</li>
-<li><b>Top 3 of the ranked queue</b>, so the order is decided for you, without a 17-row list every morning.</li>
-<li><b>Newest finding cards last</b>, because one picture plus one line is the fastest way to grasp a method.</li>
-<li>The full feed and the full queue stay one tap away, and the dated editions stay as the archive.</li></ul></div>
-<p class="small">Next step if you like one: switch the daily generator to write a method page per method plus the chosen front door, and keep the dated pages as the archive. Nothing on the live site changed yet.</p>
-</div>
-<footer class="pf">Layout proposal, 2026-11-17. Not the live daily page; nothing in the daily generator changed. Every number is copied from a published scout edition or feedback-state.json.
-Status chips refresh from the GitHub issue when the page loads. Q2 numbers are on SYNTHETIC mock budgets; no private rows are shown.</footer>
-<script src="status.js"></script>
-</body></html>
+<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Layout proposals (closed)</title><meta http-equiv="refresh" content="0; url=../index.html"><meta name="robots" content="noindex">
+<link rel="stylesheet" href="../../assets/brief.css"></head><body><main class="narrow">
+<p>The 2026-11-17 layout proposals are closed: the ranked queue is now the <a href="../index.html">methods scout home</a>, and each method has a research card under <code>m/</code>.</p>
+</main></body></html>

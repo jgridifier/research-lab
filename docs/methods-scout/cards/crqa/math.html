@@ -1,0 +1,28 @@
+<h4>Notation</h4>
+<div class="table-wrap"><table>
+<tr><th>Symbol</th><th>Meaning</th><th>Here</th></tr>
+<tr><td>\(a_t, b_t \in\{1,\dots,5\}\)</td><td>categorical states of the two series</td><td>quintiles of weekly fails, spread, DVP growth (local quintiles inside rolling windows)</td></tr>
+<tr><td>\(R_{ij} = \mathbf 1[a_i = b_j]\)</td><td>cross-recurrence plot</td><td>\(n\times n\) matrix, \(n = 432\) weeks</td></tr>
+<tr><td>\(k\)</td><td>lag (diagonal of \(R\))</td><td>±13 weeks; ±6 months monthly</td></tr>
+<tr><td>\(\tilde b_t = 6 - b_t\)</td><td>reversed states</td><td>"anti" mode: high here, low there</td></tr>
+<tr><td>\(\hat p^a_s\)</td><td>share of time series \(a\) spends in state \(s\)</td><td>0.2 for every quintile</td></tr>
+</table></div>
+
+<h4>The statistics</h4>
+<p>The <b>diagonal recurrence profile</b> is the match rate along each diagonal of \(R\):</p>
+$$\mathrm{DRP}(k) = \frac{1}{n-|k|}\sum_{t} \mathbf 1[a_t = b_{t+k}] .$$
+<p>A peak at \(k&gt;0\) means series \(a\) leads. \(rr_0 = \mathrm{DRP}(0)\) is the same-week match rate. <b>DET</b> is the share of recurrent points that lie on diagonal runs of length ≥ 2 (runs of matching). Anti-recurrence replaces \(b\) with \(\tilde b\).</p>
+
+<h4>Why it works, and the trap we hit</h4>
+<div class="step"><b class="n">Step 1 · chance level</b>If \(a\) and \(b\) were unrelated, \(P(a_t = b_{t+k}) = \sum_s \hat p^a_s \hat p^b_s\). With quintiles each \(\hat p_s = 0.2\), so chance is \(5 \times 0.2^2 = 0.20\). An observed same-week rate of 0.287 is 44% above chance.</div>
+<div class="step"><b class="n">Step 2 · the full-plot rate ignores time order</b>The default summary is \(\mathrm{RR} = \frac1{n^2}\sum_{i,j}\mathbf 1[a_i=b_j]\). Group by state: \(\sum_{i,j}\mathbf 1[a_i=b_j] = \sum_s \#\{i:a_i=s\}\,\#\{j:b_j=s\} = n^2\sum_s \hat p^a_s\hat p^b_s\). It depends only on how often each state occurs, not on <em>when</em>, so shifting \(b\) cannot change it: our first run got p = 1 in all 96 windows. Only order-aware statistics (\(\mathrm{DRP}(k)\), \(rr_0\), DET) can be tested by shifting.</div>
+<div class="step"><b class="n">Step 3 · why states, not correlation</b>Quintile states are unchanged by any monotone transform, and an outlier is just "state 5". The question becomes "do they visit the same (or opposite) states at the same time?", which also gives a readable sentence: high fails with a low spread.</div>
+
+<h4>Inference: circular-shift null with familywise control</h4>
+<p>Shift \(b\) circularly by \(\tau \ge 26\) weeks (12 months monthly), 999 times: \(b^{(\tau)}_t = b_{(t+\tau) \bmod n}\). Each series keeps its own persistence and state shares; only the alignment breaks. For lags, use the maximum over the lag window, \(T = \max_{|k|\le 13}\mathrm{DRP}(k)\), and compare it with the null maxima: a single familywise p-value for "a link at some lag". The lead/lag asymmetry test compares \(\sum_{k&gt;0}\) with \(\sum_{k&lt;0}\) of the profile under the same null.</p>
+
+<div class="toy"><h5>Toy example (computed on the box)</h5>
+<p>\(a = (1,2,2,3,1)\), \(b = (2,2,3,1,1)\). Same week (\(k=0\)): matches at \(t=2\) and \(t=5\), so \(\mathrm{DRP}(0) = 2/5\). One step (\(k = -1\), compare \(a_t\) with \(b_{t-1}\)): 4 of 4 match, \(\mathrm{DRP}(-1) = 1\). At \(k=+1\): 0/4. The profile peaks at \(k=-1\): \(b\) leads \(a\) by one step (\(a\) copies \(b\)). Note that \(\mathrm{RR}\) for these two series would not change if we shuffled \(b\): same state counts.</p></div>
+
+<div class="diff"><b>How it differs from the standard tool.</b> A lagged Spearman correlation measures linear-in-ranks association across the whole range. CRQA counts co-visits of discrete states, so it is blind to magnitude within a state but can say <em>which</em> states line up, and it windows naturally. On these data the lag profile mostly agreed with the rank correlation (ρ = −0.35 at lag 0); the additions are the state reading, a clean familywise lag test, and the rolling on/off picture.</div>
+<p class="cite">Followed: Coco &amp; Dale (2014), Frontiers in Psychology 5:510 (categorical CRQA, diagonal recurrence profile); Coco, Mønster, Leonardi, Dale &amp; Wallot (2021), The R Journal 13(1):112–130 (crqa package). Section and equation numbers not checked. Package crqa 2.1.0 (<code>drpfromts</code>). Toy: <code>cards/_toys/toys.py</code>.</p>

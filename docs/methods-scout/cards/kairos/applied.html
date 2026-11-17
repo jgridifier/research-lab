@@ -1,0 +1,46 @@
+<h4>Who plays what</h4>
+<div class="table-wrap"><table>
+<tr><th>Home field (archaeology)</th><th>Our data</th></tr>
+<tr><td>A grave or a dig layer</td><td>One month</td></tr>
+<tr><td>Pottery types (counts of sherds)</td><td>9 repo segments: DVP, GCF and tri-party × overnight, ≤30 days, &gt;30 days (monthly average $bn)</td></tr>
+<tr><td>"This grave looks 1450-ish"</td><td>"This month's mix looks like late 2023"</td></tr>
+<tr><td>Battleship plot</td><td>EPPM seriograph of segment shares</td></tr>
+</table></div>
+
+<h4>Inputs and preprocessing</h4>
+<ul>
+<li>OFR repo volumes, 2018-05 → 2026-09 (101 months). Tri-party uses OFR's TRIV1 series, which does not show the Fed reverse-repo balloon.</li>
+<li>OFR split ≤30 days into 2–7 and 8–30 days on 2025-08-14; summed back into one bucket.</li>
+<li>Form PF tab 8.27 total hedge-fund borrowing, 12-month log change; dated by reference month, not publication date.</li>
+</ul>
+
+<h4>What we ran</h4>
+<ol>
+<li>CA seriation (tabula / kairos 2.3.0), EPPM plot, Porčić test with 1,000 permutations.</li>
+<li>Event model on all 101 months (R² 0.93), and an honest walk-forward version: train 2018-05 → 2022-12 (56 months), date 2023-01 → 2026-09 (45 months).</li>
+<li>Mix speed vs Form PF growth at leads 0/3/6 for total, prime-broker and reverse-repo borrowing, shift null, Holm over 18 tests; robustness without the post-split months, by sub-period and on 3-month changes.</li>
+<li>Seriation on each half separately. The full R script runs in 2.5 s.</li>
+</ol>
+
+<div class="callouts"><h5>How to read the main chart (EPPM seriograph)</h5>
+<ol>
+<li>Rows are months in seriated order, which is close to calendar order; columns are the 9 segments, oldest-fashion on the left.</li>
+<li>Grey bars are each segment's share; <b>black</b> marks the part above that segment's average.</li>
+<li>Follow the black down the page: DVP &gt;30d and tri-party overnight above average in 2018–2022, GCF term in 2023–mid-2024, DVP overnight from late 2024.</li>
+<li>A segment with black in two separate places (like GCF overnight) breaks the one-rise-one-fall rule; that is why the coefficient is 0.52, not near 1.</li>
+</ol></div>
+
+<div class="plain"><h5>What it means for a decision-maker</h5>
+<p>The repo market's venue and tenor mix has been drifting steadily in one direction, toward overnight and short-term DVP, and it drifted faster after 2022. When hedge-fund borrowing grows faster, that drift speeds up three to six months later. The clock gives one number per month for "where the mix is" and a speed, which a stacked chart does not. Descriptive only.</p></div>
+
+<h4>Where it breaks (seen in our runs)</h4>
+<ul>
+<li><b>Changing categories:</b> the 2025-08 bucket split moves the clock a full year even after summing back.</li>
+<li><b>Dollars are not sherds:</b> CA weights months by volume; tri-party is transaction volume, DVP and GCF are outstanding, so shares compare like with like only within a venue.</li>
+<li><b>Independence:</b> the event model's intervals assume independent deposits; months are not.</li>
+<li><b>Linear extrapolation:</b> trained on 2018–22, the walk-forward clock lags reality after 2023 (it reads 2023–26 as "2023–2025").</li>
+<li><b>Type order is unstable</b> between halves (τ 0.28): read segments from the EPPM plot, not from one axis score.</li>
+</ul>
+
+<h4>What we'd do next</h4>
+<p>Top pick (Math): treat re-defined buckets as supplementary CA columns tied by an aggregation constraint and block-bootstrap the intervals, so the clock survives the split. Then the same clock on tri-party collateral mix and on TFF open interest by trader type.</p>

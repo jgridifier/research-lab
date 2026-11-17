@@ -1,0 +1,45 @@
+<h4>Who plays what</h4>
+<div class="table-wrap"><table>
+<tr><th>Home field (server monitoring, stock prices)</th><th>Our data</th></tr>
+<tr><td>One server's CPU trace or one stock's price</td><td>One program's spend path, indexed to its own mean</td></tr>
+<tr><td>Thousands of long, high-frequency series</td><td>About 1,000–1,800 programs with 5–6 yearly points</td></tr>
+<tr><td>Series that all span the window</td><td>Programs that start and stop (274 of 1,052 Corning-mock; 361 of 1,765 MS-mock)</td></tr>
+</table></div>
+
+<h4>Inputs and preprocessing</h4>
+<ul>
+<li>SYNTHETIC mocks (seed 20261113). Each program's log actual minus its own mean, so the picture is about shape, not size.</li>
+<li>Canvas 500 columns; display uses a 1.6-px blur and a power colour scale (presentation only).</li>
+<li>Residual view: subtract the median path from every program first, so co-moving groups stand out from the common cycle.</li>
+</ul>
+
+<h4>What we ran</h4>
+<ol>
+<li>Faithful NumPy port of the reference (Bresenham with float32 error term, set-to-1 pixels, per-series column normalisation) and a parity check against the authors' Rust on their own demo generator at 100, 1,000 and 5,000 series: same nonzero pixels, max relative difference 2.1e-7.</li>
+<li>The Q2.5 picture on 1,052 Corning-mock programs: spaghetti vs line count vs DenseLines; ink share of the noisiest 10%; distance of each chart from the chart of true paths.</li>
+<li>Residual DenseLines by stated segment and (as a reveal only) by planted cluster; a label-free "brush" selecting programs that end above the valley; recall/precision against the answer key; smoothing sensitivity.</li>
+<li>Start/stop: reference behaviour vs the gap-safe rule, plus a live-count strip.</li>
+</ol>
+
+<div class="callouts"><h5>How to read the main picture (spaghetti vs DenseLines, top of this card)</h5>
+<ol>
+<li>Both panels show the same 1,052 programs; the y-axis is log spend relative to each program's own mean.</li>
+<li>Dark teal is where many programs are. The ridge falls from 2022 to 2023–24: a dip most programs share.</li>
+<li>In 2025 the ridge splits: a band recovers and a band stays low. The spaghetti panel shows only a grey mass.</li>
+<li>Faint isolated strands are unusual programs; they stay visible because each still carries one unit per column.</li>
+</ol></div>
+
+<div class="plain"><h5>What it means for a decision-maker</h5>
+<p>One chart can show where a thousand programs went over five years: the common dip, and the split into a recovering group and a lagging group. It does not prove a group exists, but it points at where to look. Pair it with the text: the chart and the descriptions found different members of the same hidden group.</p></div>
+
+<h4>Where it breaks (seen in our runs)</h4>
+<ul>
+<li><b>Start/stop programs:</b> the reference returns NaN in every column of both mocks. Fixed with one line (gap-safe), but it shows the reference was never run on ragged data.</li>
+<li><b>Speed:</b> our exact port is 10–120× slower than the authors' Rust; a 50,000-series run hit the box's 15.6 GB memory limit.</li>
+<li><b>Short series:</b> the paper's normalisation gain needs long, steep series; ours barely benefit (12.0% vs 10.7% ink).</li>
+<li><b>Noise, not slope,</b> separates our chart from the true-path chart (Wasserstein 0.055 vs 0.053); the Math card targets that.</li>
+<li><b>The brush is bandwidth-fragile</b> (valley at 2–4 px smoothing, gone at 6–8 px). Treat it as a pointer, not a test.</li>
+</ul>
+
+<h4>What we'd do next</h4>
+<p>Status: approved 2026-11-13. Owed: the Rust parity check and a real-panel run. The top pick builds the gap-safe, weighted Rust core (parity first, then speed) with a live-count channel.</p>

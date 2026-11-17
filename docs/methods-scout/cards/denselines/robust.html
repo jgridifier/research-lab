@@ -1,0 +1,7 @@
+<p><span class="grade na">Not graded</span> <span class="small">Home-field grading started with the 2026-11-16 edition. What the 11-13 page and the paper record:</span></p>
+<ul>
+<li><b>Source:</b> Moritz &amp; Fisher (2018), arXiv:1808.06019 (cs.HC). The paper demonstrates the method on public stock prices (§4) and a server-use case study (§5); the work was started at Microsoft Research.</li>
+<li><b>Reference code:</b> the first author's own Rust (line-density-rust, BSD-3) and JavaScript/WebGL implementations; the paper reports 1 M series at 400 × 300 px in about 40 s on a 2014 laptop GPU (§3.2).</li>
+<li><b>Checked here:</b> exact parity with the reference (same nonzero pixels, ≤ 2.1e-7), and a real bug in the reference on series that do not span every column.</li>
+<li><b>Limits stated by the method itself:</b> individual lines can no longer be traced; bin size is a parameter (§3.2–3.4).</li>
+</ul>

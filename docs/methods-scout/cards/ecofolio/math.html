@@ -1,0 +1,38 @@
+<h4>Notation</h4>
+<div class="table-wrap"><table>
+<tr><th>Symbol</th><th>Meaning</th><th>Here</th></tr>
+<tr><td>\(x_{it}\)</td><td>size of unit \(i\) in period \(t\)</td><td>program \(i\)'s actual spend in fiscal year \(t\)</td></tr>
+<tr><td>\(m_i,\ v_i\)</td><td>mean and variance of unit \(i\) over time</td><td>variance of the linearly detrended spend (3–4 degrees of freedom)</td></tr>
+<tr><td>\(a,\ z\)</td><td>Taylor's power law: \(v = a\,m^{z}\)</td><td>fitted across programs on the log scale</td></tr>
+<tr><td>\(X_t = \sum_i x_{it}\),\ \(M = \mathbb{E}[X_t]\)</td><td>portfolio total and its mean</td><td>firm (or segment) total</td></tr>
+<tr><td>\(\mathrm{CV}_i = \sqrt{v_i}/m_i\)</td><td>coefficient of variation</td><td>how jumpy a program is relative to its size</td></tr>
+</table></div>
+
+<h4>The model and the statistic</h4>
+<p>Fit Taylor's power law across units on the log scale (ordinary least squares):</p>
+$$\log v_i = \log a + z\,\log m_i + \varepsilon_i .$$
+<p>Plugging a size \(m\) into the fitted law gives the CV that <em>one</em> unit of that size would have:</p>
+$$\mathrm{CV}(m) = \frac{\sqrt{a\,m^{z}}}{m} = \sqrt{a}\; m^{\,z/2-1}.$$
+<p>The mean-variance portfolio effect compares that single-unit CV at the portfolio's size \(M\) with the portfolio's observed CV; the classic average-CV effect compares the average unit CV instead:</p>
+$$\mathrm{PE}_{mv} = \frac{\mathrm{CV}(M)}{\mathrm{CV}(X)},\qquad \mathrm{PE}_{avgCV} = \frac{\tfrac1n\sum_i \mathrm{CV}_i}{\mathrm{CV}(X)} .$$
+<p>\(\mathrm{PE} > 1\) means the portfolio is steadier than the benchmark. We used the package's <code>linear_detrended</code> variant: each series is detrended before \(v_i\) and \(\mathrm{CV}(X)\) are computed, because budgets trend.</p>
+
+<h4>Why it works, step by step</h4>
+<div class="step"><b class="n">Step 1 · the size law sets the benchmark</b>From \(\mathrm{CV}(m)=\sqrt a\,m^{z/2-1}\): if \(z=2\), the exponent is 0 and \(\mathrm{CV}(m)=\sqrt a\) for every size. A unit's jumpiness does not depend on how big it is.</div>
+<div class="step"><b class="n">Step 2 · when z = 2 the two measures agree</b>Each \(\mathrm{CV}_i\) is then (on the fitted line) \(\sqrt a\), so \(\tfrac1n\sum_i \mathrm{CV}_i = \sqrt a = \mathrm{CV}(M)\) and \(\mathrm{PE}_{avgCV} = \mathrm{PE}_{mv}\). The average-CV measure is the special case that silently assumes \(z = 2\).</div>
+<div class="step"><b class="n">Step 3 · when z &lt; 2 the average-CV measure overstates</b>The exponent \(z/2-1\) is negative, so \(\mathrm{CV}(m)\) <em>falls</em> with size. The portfolio is much bigger than any single program (\(M \gg m_i\)), so \(\mathrm{CV}(M) &lt; \mathrm{CV}(m_i)\) for every \(i\), hence \(\mathrm{CV}(M) &lt; \tfrac1n\sum_i \mathrm{CV}_i\) and \(\mathrm{PE}_{avgCV} &gt; \mathrm{PE}_{mv}\). Part of what looks like diversification is just "big things are calmer".</div>
+<div class="step"><b class="n">Step 4 · what remains is co-movement</b>\(\mathrm{Var}(X) = \sum_i v_i + \sum_{i\ne j}\mathrm{Cov}(x_i,x_j)\). If units moved independently the covariance sum would vanish and \(\mathrm{CV}(X)\) would be small; positive co-movement pushes \(\mathrm{CV}(X)\) up and \(\mathrm{PE}_{mv}\) down toward (or below) 1.</div>
+
+<h4>Inference and the null</h4>
+<ul>
+<li><b>Interval:</b> the package's interval covers only the uncertainty in the Taylor fit \((a,z)\), not the sampling error of \(\mathrm{CV}(X)\). We report it as such (Corning mock: 0.99 [0.74, 1.31]).</li>
+<li><b>Null for "is there co-movement?":</b> shuffle each program's years independently (999 times). This keeps every \(m_i\) and \(v_i\) (so \(a, z\) are unchanged) and destroys the covariance term in Step 4. Observed 0.99 vs null median 7.28 (Corning mock), \(p = 0.001\).</li>
+<li><b>Fragility check:</b> refit with a robust line and a quadratic in \(\log m\); leave one year out for \(z\) (1.62–1.72 on Corning mock).</li>
+</ul>
+
+<div class="toy"><h5>Toy example (computed on the box)</h5>
+<p>Three programs of mean size \(m = 1, 4, 16\) on a law with \(a = 0.04,\ z = 1.5\). Their CVs are \(\sqrt{0.04}\,m^{-0.25} = 0.200,\ 0.141,\ 0.100\); average 0.147. The portfolio has \(M = 21\), so one program that big would have \(\mathrm{CV}(21) = 0.2 \times 21^{-0.25} = 0.093\). Suppose the observed portfolio CV is 0.060.</p>
+<p>\(\mathrm{PE}_{avgCV} = 0.147/0.060 = 2.45\) ("2.5× diversified") but \(\mathrm{PE}_{mv} = 0.093/0.060 = 1.56\). Of the apparent gain, the part from 1 to 1.56 is diversification; the part from 1.56 to 2.45 is size.</p></div>
+
+<div class="diff"><b>How it differs from the standard tool.</b> The finance diversification ratio \(\sum_i\sigma_i/\sigma_X\) and the average-CV effect both compare the portfolio with its own parts; neither asks how volatile <em>one</em> unit of the portfolio's size would be. The mean-variance effect adds one regression (the size law) and changes the benchmark, not the data. With \(z\) estimated at 1.67 / 1.77 instead of 2, that one change moves the headline from about 3× to about 1×.</div>
+<p class="cite">Followed: Anderson, Cooper &amp; Dulvy (2013), Methods in Ecology and Evolution 4:971–981 (mean-variance portfolio effect; read via the DOI summary, so section and equation numbers were not checked); Taylor (1961); Cohen &amp; Xu (2015) PNAS 112:7749 for why the law arises. Package: ecofolio 0.1.0 <code>pe_mv()</code>, reproduced to 1e-15 (<code>runs/2026-11-16/ecofolio/e1_ecofolio.R</code>). Toy: <code>cards/_toys/toys.py</code>.</p>

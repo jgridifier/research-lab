@@ -1,0 +1,149 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Empirical Bayes normal means (ebnm) · research card · methods scout</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,400..800&family=Newsreader:ital,opsz,wght@0,6..72,400..600;1,6..72,400..500&family=JetBrains+Mono:wght@400;500;700&display=swap">
+<link rel="stylesheet" href="../../assets/brief.css">
+<link rel="stylesheet" href="../scout-cards.css">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.css"><script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.js"></script><script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/contrib/auto-render.min.js" onload="renderMathInElement(document.body,{delimiters:[{left:'$$',right:'$$',display:true},{left:'\\(',right:'\\)',display:false}]})"></script>
+<!-- Methods Scout home-screen / PWA tags. Paste into <head> of every methods-scout page.
+     Paths are root-absolute so they resolve under https://jgridifier.github.io/research-lab/. -->
+<link rel="apple-touch-icon" sizes="180x180" href="/research-lab/methods-scout/icons/apple-touch-icon.png">
+<link rel="icon" type="image/png" sizes="32x32" href="/research-lab/methods-scout/icons/favicon-32.png">
+<link rel="icon" type="image/png" sizes="192x192" href="/research-lab/methods-scout/icons/icon-192.png">
+<link rel="manifest" href="/research-lab/methods-scout/manifest.webmanifest">
+<meta name="apple-mobile-web-app-title" content="Methods Scout">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="theme-color" content="#0F2A23">
+
+</head><body>
+<header class="topbar"><a class="brand" href="../index.html">Methods scout</a>
+<span><a href="../index.html">Queue</a> · <a href="../archive.html">Archive</a></span></header>
+<div class="pz">
+<p class="crumb"><a href="../index.html">← Queue</a></p>
+<div class="chips"><span class="chip q">Q2</span><span class="chip st-approved" data-issue="55">✓ Go</span><span class="chip v-rec">Recommend</span><span class="date">Scouted 2026-11-13</span></div>
+<section class="hero" style="padding-top:.5rem"><p class="kicker">Empirical Bayes normal means (ebnm) · from statistical genetics</p>
+<h1>How much to trust each program&#x27;s own number</h1></section>
+<div class="sum">
+<div class="row"><span class="k">What it is</span><span class="v">Learn from the data how programs vary, then shrink each noisy number by the right amount. No tuning.</span></div>
+<div class="row"><span class="k">Verdict</span><span class="v"><b>Recommend.</b> Home field: not graded (the 11-13 edition predates grading).</span></div>
+<div class="row"><span class="k">Top pick</span><span class="v"><b>New use</b> (effort S): An “is this move real?” flag for every program in each budget cycle.</span></div>
+<div class="row"><span class="k">Data</span><span class="v">SYNTHETIC mock budgets (Corning_mock, MS_mock), not any firm&#x27;s budget</span></div>
+</div>
+<p class="kicker" style="margin-top:1rem">The one picture</p>
+<div class="pair"><div><span class="lab">Usual test (BH)</span><div class="big">14</div><div class="sub">programs called “really changed” (Corning mock)</div></div><div class="new"><span class="lab">ebnm</span><div class="big">91</div><div class="sub">called, all with the right sign</div></div></div>
+<div style="margin:1rem 0 .4rem"><a class="btn big" href="https://github.com/jgridifier/research-lab/issues/55">Respond on #55</a><p class="howto">👍 go ahead · 👎 drop · or just comment what you think</p></div>
+<div class="tabs"><input type="radio" name="tab" id="t1" checked><input type="radio" name="tab" id="t2"><input type="radio" name="tab" id="t3"><input type="radio" name="tab" id="t4"><input type="radio" name="tab" id="t5"><div class="tabbar"><label for="t1">The math</label><label for="t2">On our data</label><label for="t3">Robust at home</label><label for="t4">Secret sauce</label><label for="t5">Questions</label></div><div class="panels"><div class="panel p1" id="math"><h4>Notation</h4>
+<div class="table-wrap"><table>
+<tr><th>Symbol</th><th>Meaning</th><th>Here</th></tr>
+<tr><td>\(x_j\)</td><td>one noisy observation per unit</td><td>a program's log 2025 level (relative to its group), or its log change 2024→2025</td></tr>
+<tr><td>\(s_j\)</td><td>its known standard error</td><td>from the spread of the program's budget-minus-actual gaps</td></tr>
+<tr><td>\(\theta_j\)</td><td>the true value</td><td>the program's true level or true change</td></tr>
+<tr><td>\(g\)</td><td>the prior: how true values are spread across units</td><td>estimated from all programs at once</td></tr>
+<tr><td>\(\mathcal G\)</td><td>the family \(g\) is chosen from</td><td>normal, point-normal, scale mixture of normals (ash), unimodal, NPMLE</td></tr>
+</table></div>
+
+<h4>The model</h4>
+$$x_j \mid \theta_j \sim \mathcal N(\theta_j, s_j^2),\qquad \theta_j \overset{\text{iid}}{\sim} g \in \mathcal G .$$
+<p>Step one estimates the prior by maximum marginal likelihood, integrating each \(\theta_j\) out:</p>
+$$\hat g = \arg\max_{g\in\mathcal G}\ \sum_j \log \int \mathcal N(x_j;\theta, s_j^2)\, g(d\theta).$$
+<p>Step two reports, for every program, the posterior mean \(\hat\theta_j = \mathbb E[\theta_j \mid x_j, \hat g]\), a posterior interval, and the <b>local false sign rate</b></p>
+$$\mathrm{lfsr}_j = \min\{P(\theta_j \ge 0 \mid x_j,\hat g),\ P(\theta_j \le 0 \mid x_j,\hat g)\},$$
+<p>the probability that we have the <em>direction</em> of the change wrong.</p>
+
+<h4>Why it works, step by step</h4>
+<div class="step"><b class="n">Step 1 · normal prior gives a closed form</b>With \(g = \mathcal N(\mu,\sigma^2)\) the posterior is normal with mean \(\hat\theta_j = \mu + B_j (x_j-\mu)\), where \(B_j = \sigma^2/(\sigma^2+s_j^2)\). Noisy programs (large \(s_j\)) get small \(B_j\) and are pulled hard toward the group; precise ones keep their own number.</div>
+<div class="step"><b class="n">Step 2 · the data tell us σ²</b>Marginally \(x_j \sim \mathcal N(\mu, \sigma^2 + s_j^2)\): the observed spread is true spread plus noise. With equal \(s\), the MLE is \(\hat\sigma^2 = \max\{0, \tfrac1n\sum (x_j-\bar x)^2 - s^2\}\): subtract the noise you know about from the spread you see. That is James–Stein shrinkage, derived rather than tuned.</div>
+<div class="step"><b class="n">Step 3 · flexible priors shrink adaptively</b>A scale mixture \(g=\sum_k \pi_k\,\mathcal N(0,\sigma_k^2)\) on a fixed grid makes the marginal \(\sum_k \pi_k \mathcal N(x_j;0,\sigma_k^2+s_j^2)\); the log-likelihood is concave in \(\pi\), so the fit is a convex problem (solved by mixsqp). Tight groups get strong shrinkage, grab-bag groups get little, without being told which is which.</div>
+<div class="step"><b class="n">Step 4 · lfsr replaces "is it significant?"</b>A z-test asks whether \(\theta_j = 0\) is implausible. lfsr asks the decision question, "how likely am I wrong about up vs down?", and because it uses \(\hat g\) it borrows strength: a modest move in a family where everything moves is believable.</div>
+
+<h4>Inference and checks</h4>
+<ul>
+<li>No null to choose and no penalty: \(\hat g\) is fitted, then posteriors follow. Calibration is checked against the answer key instead: among lfsr 0.05–0.2 calls, 11–13% of signs were wrong; 0.2–0.5, 39–40%.</li>
+<li>Uncertainty in \(\hat g\) itself is ignored (plug-in empirical Bayes); with 1,000–1,700 programs this is small.</li>
+</ul>
+
+<div class="toy"><h5>Toy example (computed on the box)</h5>
+<p>Four programs, each with \(s = 1\): \(x = (2.0,\ 0.5,\ -0.5,\ 3.0)\). Mean \(\hat\mu = 1.25\); observed spread \(1.81\); so \(\hat\sigma^2 = 1.81 - 1 = 0.81\) and \(B = 0.81/1.81 = 0.45\). Posterior means: \(1.59,\ 0.91,\ 0.47,\ 2.03\) (each pulled 55% of the way to 1.25). Posterior SD \(=\sqrt{0.81\cdot1/1.81} = 0.67\). lfsr: \(0.009,\ 0.086,\ 0.243,\ 0.001\). Only the first and last are confident "up" calls at lfsr &lt; 0.05.</p></div>
+
+<div class="diff"><b>How it differs from the standard tool.</b> Benjamini–Hochberg treats each program alone (\(z_j = x_j/s_j\)) and controls the share of false discoveries of "≠ 0". ebnm first learns what true changes look like across all programs, then judges each one against that, and reports a sign-error probability. Same data, same \(s_j\): 91 vs 14 calls on the Corning mock, with 0% wrong sign. Against complete pooling (group means) it never has to be told whether a group is a real family.</div>
+<p class="cite">Followed: Willwerscheid, Carbonetto &amp; Stephens (2025), JSS 114(3), §1 eqs (1)–(3) (model, prior family, posterior mean) and §2.1 eqs (8)–(10) (normal-prior MLE and posterior); lfsr from Stephens (2017), Biostatistics 18(2):275–294. Package ebnm 1.1-42 with ashr and mixsqp. Toy: <code>cards/_toys/toys.py</code>.</p>
+</div><div class="panel p2" id="applied"><h4>What we found</h4><article class="fcard"><div class="viz"><svg viewBox="0 0 360 194" role="img" xmlns="http://www.w3.org/2000/svg"><text x="6" y="16" font-family="JetBrains Mono, monospace" font-size="11" fill="#6f5f46" letter-spacing="1">PROGRAMS CALLED “REALLY CHANGED”</text><text x="6" y="38" font-family="JetBrains Mono, monospace" font-size="12" fill="#1c150d">BH test · Corning</text><rect x="6" y="43" width="17.3" height="16" fill="#e8902e" stroke="#1c150d" stroke-width="1.5"/><text x="29.3" y="56" font-family="Bricolage Grotesque, sans-serif" font-weight="800" font-size="15" fill="#1c150d">14</text><text x="6" y="78" font-family="JetBrains Mono, monospace" font-size="12" fill="#1c150d">ebnm · Corning (0% wrong)</text><rect x="6" y="83" width="112.4" height="16" fill="#1f9e8e" stroke="#1c150d" stroke-width="1.5"/><text x="124.4" y="96" font-family="Bricolage Grotesque, sans-serif" font-weight="800" font-size="15" fill="#1c150d">91</text><text x="6" y="118" font-family="JetBrains Mono, monospace" font-size="12" fill="#1c150d">BH test · MS</text><rect x="6" y="123" width="34.6" height="16" fill="#e8902e" stroke="#1c150d" stroke-width="1.5"/><text x="46.6" y="136" font-family="Bricolage Grotesque, sans-serif" font-weight="800" font-size="15" fill="#1c150d">28</text><text x="6" y="158" font-family="JetBrains Mono, monospace" font-size="12" fill="#1c150d">ebnm · MS (1.5% wrong)</text><rect x="6" y="163" width="247.0" height="16" fill="#1f9e8e" stroke="#1c150d" stroke-width="1.5"/><text x="259.0" y="176" font-family="Bricolage Grotesque, sans-serif" font-weight="800" font-size="15" fill="#1c150d">200</text></svg></div><div class="body"><span class="chip">Finding 1</span><h3>It finds 6–7× more real moves, with almost no wrong signs.</h3><p class="take">Calls of “this program really changed”: 91 vs 14 (Corning mock) and 200 vs 28 (MS mock). Wrong sign: 0% and 1.5%.</p><p class="small"><a href="../fig/2026-11-13/m1_lfsr.png">Original chart from the 2026-11-13 edition →</a></p></div></article><article class="fcard"><div class="viz"><svg viewBox="0 0 360 194" role="img" xmlns="http://www.w3.org/2000/svg"><text x="6" y="16" font-family="JetBrains Mono, monospace" font-size="11" fill="#6f5f46" letter-spacing="1">ERROR IN 2025 LEVEL (LOG RMSE, LOWER IS BETTER)</text><text x="6" y="38" font-family="JetBrains Mono, monospace" font-size="12" fill="#1c150d">Own number · Corning</text><rect x="6" y="43" width="243.9" height="16" fill="#e8902e" stroke="#1c150d" stroke-width="1.5"/><text x="255.9" y="56" font-family="Bricolage Grotesque, sans-serif" font-weight="800" font-size="15" fill="#1c150d">0.146</text><text x="6" y="78" font-family="JetBrains Mono, monospace" font-size="12" fill="#1c150d">ebnm · Corning</text><rect x="6" y="83" width="180.4" height="16" fill="#1f9e8e" stroke="#1c150d" stroke-width="1.5"/><text x="192.4" y="96" font-family="Bricolage Grotesque, sans-serif" font-weight="800" font-size="15" fill="#1c150d">0.108</text><text x="6" y="118" font-family="JetBrains Mono, monospace" font-size="12" fill="#1c150d">Own number · MS</text><rect x="6" y="123" width="230.5" height="16" fill="#e8902e" stroke="#1c150d" stroke-width="1.5"/><text x="242.5" y="136" font-family="Bricolage Grotesque, sans-serif" font-weight="800" font-size="15" fill="#1c150d">0.138</text><text x="6" y="158" font-family="JetBrains Mono, monospace" font-size="12" fill="#1c150d">ebnm · MS</text><rect x="6" y="163" width="182.1" height="16" fill="#1f9e8e" stroke="#1c150d" stroke-width="1.5"/><text x="194.1" y="176" font-family="Bricolage Grotesque, sans-serif" font-weight="800" font-size="15" fill="#1c150d">0.109</text></svg></div><div class="body"><span class="chip">Finding 2</span><h3>Pooling cuts each program&#x27;s level error by about a quarter.</h3><p class="take">Log RMSE 0.146 → 0.108 (Corning mock) and 0.138 → 0.109 (MS mock). Programs alone in their group lose a little (0.110 → 0.120).</p><p class="small"><a href="../fig/2026-11-13/m1_shrink.png">Original chart from the 2026-11-13 edition →</a></p></div></article><article class="fcard red"><div class="viz"><svg viewBox="0 0 360 168" role="img" xmlns="http://www.w3.org/2000/svg"><text x="6" y="16" font-family="JetBrains Mono, monospace" font-size="11" fill="#6f5f46" letter-spacing="1">FINDING “SAYS GROW, ACTUALLY SHRINKING” (MS MOCK AUC)</text><line x1="148.0" x2="148.0" y1="40" y2="152" stroke="#df5236" stroke-width="2" stroke-dasharray="4 3" opacity=".75"/><text x="152.0" y="164" font-family="JetBrains Mono, monospace" font-size="10.5" fill="#df5236">0.5 = chance</text><text x="6" y="38" font-family="JetBrains Mono, monospace" font-size="12" fill="#1c150d">Absolute slope (ebnm)</text><rect x="6" y="43" width="177.2" height="16" fill="#6f5f46" stroke="#1c150d" stroke-width="1.5"/><text x="189.2" y="56" font-family="Bricolage Grotesque, sans-serif" font-weight="800" font-size="15" fill="#1c150d">0.624</text><text x="6" y="78" font-family="JetBrains Mono, monospace" font-size="12" fill="#1c150d">Peer-relative, plain z</text><rect x="6" y="83" width="220.1" height="16" fill="#e8902e" stroke="#1c150d" stroke-width="1.5"/><text x="232.1" y="96" font-family="Bricolage Grotesque, sans-serif" font-weight="800" font-size="15" fill="#1c150d">0.775</text><text x="6" y="118" font-family="JetBrains Mono, monospace" font-size="12" fill="#1c150d">Peer-relative, ebnm</text><rect x="6" y="123" width="220.7" height="16" fill="#1f9e8e" stroke="#1c150d" stroke-width="1.5"/><text x="232.7" y="136" font-family="Bricolage Grotesque, sans-serif" font-weight="800" font-size="15" fill="#1c150d">0.777</text></svg></div><div class="body"><span class="chip">Finding 3</span><h3>Honest: shrinkage adds nothing to the text-vs-numbers check.</h3><p class="take">Comparing with peers does the work. On the MS mock: AUC 0.777 with ebnm, 0.775 with a plain z-score.</p><p class="small"><a href="../fig/2026-11-13/m1_text.png">Original chart from the 2026-11-13 edition →</a></p></div></article><h4>Who plays what</h4>
+<div class="table-wrap"><table>
+<tr><th>Home field (genomics)</th><th>Our data</th></tr>
+<tr><td>One gene's measured effect</td><td>One program's measured level or change</td></tr>
+<tr><td>Its standard error from replicates</td><td>Its standard error from budget-minus-actual gaps</td></tr>
+<tr><td>Thousands of genes measured together</td><td>1,000–1,700 programs per firm, one budget cycle</td></tr>
+<tr><td>"Is this gene really up or down?"</td><td>"Did this program really change?"</td></tr>
+</table></div>
+
+<h4>Inputs and preprocessing</h4>
+<ul>
+<li>SYNTHETIC mocks (seed 20261113): Corning mock 1,079 programs FY2020–25; MS mock 1,840 programs FY2021–25. Answer key used only for scoring.</li>
+<li>\(s_j\): observable spread of each program's budget-minus-actual gaps, scaled by the dataset README's stated budget/actual noise ratio, shrunk toward the group median.</li>
+<li>Levels: \(x_j\) = log 2025 actual minus the mean of its stated segment × function group; shrink the deviation, add the group mean back.</li>
+<li>Changes: \(x_j\) = change in log actual 2024→2025, \(s_j = \sqrt2\,\hat\sigma_j\); prior centred at 0.</li>
+<li>Text check: \(x_j\) = OLS slope of log actual over a program's years (≥ 3), \(s_j = \hat\sigma_j/\sqrt{S_{xx}}\).</li>
+</ul>
+
+<h4>What we ran</h4>
+<ol>
+<li>Borrowing strength (Q2.1): six estimators of each program's 2025 level, from no pooling to complete pooling, scored by log RMSE against the true level.</li>
+<li>Real change vs noise (Q2.3): naive |z| &gt; 1.96, BH q &lt; 0.05, and ebnm lfsr &lt; 0.05; calls and wrong-sign rates against the true change. Portfolio check: does summing denoised levels improve the mix/behaviour split?</li>
+<li>Text vs numbers (Q2.2): rank "says grow" programs by how strongly the numbers decline; AUC against 6 (Corning) and 27 (MS) planted mismatches.</li>
+<li>Each fit took 0.003–0.6 s.</li>
+</ol>
+
+<div class="callouts"><h5>How to read the main chart (observed vs true change)</h5>
+<ol>
+<li>Each dot is a program: x = its observed year-on-year change, y = its true change from the answer key.</li>
+<li>Teal dots are programs ebnm calls "really changed" (lfsr &lt; 0.05). Look for teal dots in the wrong quadrant: they are wrong-sign calls (none on the Corning mock).</li>
+<li>The right panel counts calls by rule and their wrong-sign rate: BH is safe but finds few; naive |z| finds many but is wrong 4.3% (Corning) / 2.7% (MS).</li>
+</ol></div>
+
+<div class="plain"><h5>What it means for a decision-maker</h5>
+<p>For each program in a budget cycle you get a better estimate of where it really is, and a plain "probability we have the direction wrong". On the mocks it flags six to seven times as many genuine moves as the cautious standard test, almost never in the wrong direction, with nothing to tune. It is for programs, not totals: portfolio totals were already 98% right.</p></div>
+
+<h4>Where it breaks (seen in our runs)</h4>
+<ul>
+<li><b>Lone programs</b> (no real family in their group) get slightly worse: 0.110 → 0.120 on the Corning mock. One global prior is the cause; the Math card fixes it.</li>
+<li><b>Totals:</b> shrinking in logs and summing in dollars moved the Corning behaviour term closer to truth ($345.5M vs $359.6M true) and the MS one further away ($5.151B vs $4.980B).</li>
+<li><b>Text:</b> shrinkage adds nothing over a z-score; the gain comes from peer comparison.</li>
+<li><b>Standard errors</b> are only as good as the budget-vs-actual noise model; on real data they must be re-derived.</li>
+</ul>
+
+<h4>What we'd do next</h4>
+<p>Status: approved 2026-11-13. Owed: the real-panel validation. The top pick turns this into one column per program per cycle (shrunk change, interval, lfsr), checked on a new-seed mock first and real data second.</p>
+</div><div class="panel p3" id="robust"><p><span class="grade na">Not graded</span> <span class="small">Home-field grading started with the 2026-11-16 edition. What the 11-13 page and the paper record:</span></p>
+<ul>
+<li><b>Peer-reviewed software paper:</b> Willwerscheid, Carbonetto &amp; Stephens, Journal of Statistical Software 114(3):1–33 (2025). The abstract lists multiple testing, wavelet denoising and gene-expression analysis as established uses, and illustrates the package on baseball statistics.</li>
+<li><b>Lineage:</b> the normal-prior case is the empirical-Bayes reading of James–Stein (Efron &amp; Morris 1973, cited in §2.1). The default adaptive-shrinkage prior is Stephens (2017), Biostatistics 18(2):275–294.</li>
+<li><b>Implementation:</b> CRAN ebnm 1.1-42 (2025-10-10) with ashr 2.2-63 and mixsqp 0.3-54, from the Stephens lab (University of Chicago).</li>
+<li><b>Checked here:</b> scale-mixture 90% intervals covered 89.5% of true levels on both mocks; lfsr was calibrated across its range.</li>
+</ul>
+</div><div class="panel p4" id="sauce"><div class="sauce"><span class="t">1 · Engineering · Effort M</span><h5>A Rust core for the ash and point-normal fits, R as oracle</h5>
+<p>A thousand programs × categories × cycles × bootstraps means thousands of fits. Port the mixture-weight solve (mixsqp's SQP) and the posterior summaries to Rust, with a thin Python binding.</p>
+<p><b>Math sketch.</b> With a fixed grid \(\sigma_1&lt;\dots&lt;\sigma_K\), build \(L_{jk}=\mathcal N(x_j;0,\sigma_k^2+s_j^2)\) once and maximise the concave \(\sum_j\log\sum_k \pi_k L_{jk}\) over the simplex; posteriors are then mixtures of normals with closed-form means and tail probabilities.</p>
+<p class="small"><b>Test.</b> Log-likelihood parity −145.7808 (Corning, ash) and −238.8506 (MS), posterior means within 1e-6; then wall time against R's 0.03 s per fit.</p></div>
+<div class="sauce"><span class="t">2 · Math · Effort M–L</span><h5>Let the description set the prior</h5>
+<p>Make \(g\) depend on text-derived features (stated category, intent, driver), as in covariate-powered empirical Bayes. Today one global prior made lone programs slightly worse than their own number.</p>
+<p><b>Math sketch.</b> \(\theta_j \sim g_{w(c_j)}\) with mixture weights \(\pi_k(c_j) = \mathrm{softmax}(W c_j)_k\) for text features \(c_j\); fit \(W\) by marginal likelihood, cross-fitted so a program's own text does not leak (Ignatiadis &amp; Wager, arXiv:1906.01611).</p>
+<p class="small"><b>Test.</b> On non-family programs, beat both the own number (0.110 / 0.093) and global ash (0.120 / 0.096) on both mocks, with no loss on families.</p></div>
+<div class="sauce top"><span class="t">3 · New use on our data · Effort S · ★ Top pick</span><h5>"Is this move real?" flags for every program in a budget cycle</h5>
+<p>One column per program, per cycle: shrunk change, interval, lfsr. It gives 6–7× the calls of BH at ≤ 1.5% wrong sign, needs no tuning and runs in milliseconds.</p>
+<p><b>Math sketch.</b> \(x_j = \Delta\log\) actual, \(s_j=\sqrt2\hat\sigma_j\), ash prior centred at 0; report \(\hat\theta_j\), 90% interval and \(\mathrm{lfsr}_j\); flag \(\mathrm{lfsr}_j&lt;0.05\).</p>
+<p class="small"><b>Test.</b> On a mock regenerated with a new seed (and later on real data): wrong-sign rate ≤ 5% among lfsr &lt; 0.05 calls, at least 3× BH's calls, and lfsr bins calibrated within ±5 points.</p></div>
+<p class="small">👍 on the issue means go with the ★ top pick. To choose another, just say so in a comment.</p>
+</div><div class="panel p5" id="questions"><div class="sauce"><span class="t">Q2.1 · Borrowing strength</span><p>Yes: 21–26% lower level error; 37% inside real pooling families (Corning mock 0.161 → 0.101).</p></div>
+<div class="sauce"><span class="t">Q2.3 · Real change vs noise</span><p>Calibrated program-level calls. At portfolio level noise is only about 2% of total change, and denoising does not reliably move the decomposition toward the truth.</p></div>
+<div class="sauce"><span class="t">Q2.2 · Text vs numbers</span><p>The gain comes from comparing with peers, not from shrinkage (AUC 0.777 vs 0.775).</p></div>
+<p class="small"><b>Still missing:</b> real program budgets and actuals for the owed real-panel validation. · <a href="https://github.com/jgridifier/research-lab/blob/main/docs/methods-scout/QUESTIONS.md">All questions</a></p>
+</div></div></div>
+<p class="cite">Full tables, code and data notes: <a href="../2026-11-13.html#ebnm">the 2026-11-13 edition</a> · scripts in <code>runs/2026-11-13/</code> · card sources in <code>cards/ebnm/</code>.</p>
+<div style="margin:1.4rem 0"><a class="btn" href="https://github.com/jgridifier/research-lab/issues/55">Respond on #55</a><p class="howto">👍 go ahead · 👎 drop · or just comment what you think</p></div>
+<script>(function(){var m={"math":1,"applied":2,"robust":3,"sauce":4,"questions":5};var h=location.hash.slice(1);var i=m[h]||(/^t[1-5]$/.test(h)?+h[1]:0);if(i)document.getElementById("t"+i).checked=true;})();</script>
+</div>
+<footer class="pf">Generated by <code>tools/build_cards.py</code> from <code>feedback-state.json</code> and <code>cards/</code>; page contract in <a href="https://github.com/jgridifier/research-lab/blob/main/docs/methods-scout/LAYOUT.md">LAYOUT.md</a>.
+Status chips are baked in at build time and refreshed from the GitHub issue labels on load. Q2 work so far uses SYNTHETIC mock budgets; no private rows are published.</footer>
+<script src="../status.js"></script>
+</body></html>

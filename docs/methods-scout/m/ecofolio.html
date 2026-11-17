@@ -1,0 +1,155 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Mean-variance portfolio effect · research card · methods scout</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,400..800&family=Newsreader:ital,opsz,wght@0,6..72,400..600;1,6..72,400..500&family=JetBrains+Mono:wght@400;500;700&display=swap">
+<link rel="stylesheet" href="../../assets/brief.css">
+<link rel="stylesheet" href="../scout-cards.css">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.css"><script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.js"></script><script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/contrib/auto-render.min.js" onload="renderMathInElement(document.body,{delimiters:[{left:'$$',right:'$$',display:true},{left:'\\(',right:'\\)',display:false}]})"></script>
+<!-- Methods Scout home-screen / PWA tags. Paste into <head> of every methods-scout page.
+     Paths are root-absolute so they resolve under https://jgridifier.github.io/research-lab/. -->
+<link rel="apple-touch-icon" sizes="180x180" href="/research-lab/methods-scout/icons/apple-touch-icon.png">
+<link rel="icon" type="image/png" sizes="32x32" href="/research-lab/methods-scout/icons/favicon-32.png">
+<link rel="icon" type="image/png" sizes="192x192" href="/research-lab/methods-scout/icons/icon-192.png">
+<link rel="manifest" href="/research-lab/methods-scout/manifest.webmanifest">
+<meta name="apple-mobile-web-app-title" content="Methods Scout">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="theme-color" content="#0F2A23">
+
+</head><body>
+<header class="topbar"><a class="brand" href="../index.html">Methods scout</a>
+<span><a href="../index.html">Queue</a> · <a href="../archive.html">Archive</a></span></header>
+<div class="pz">
+<p class="crumb"><a href="../index.html">← Queue</a></p>
+<div class="chips"><span class="chip q">Q2</span><span class="chip st-proposed" data-issue="62">○ New</span><span class="chip v-int">Interesting</span><span class="date">Scouted 2026-11-16</span></div>
+<section class="hero" style="padding-top:.5rem"><p class="kicker">Mean-variance portfolio effect · from salmon fisheries ecology</p>
+<h1>Is the program book really diversified?</h1></section>
+<div class="sum">
+<div class="row"><span class="k">What it is</span><span class="v">Judge how steady a portfolio is against how volatility grows with size, not against the average program.</span></div>
+<div class="row"><span class="k">Verdict</span><span class="v"><b>Interesting.</b> Home field: promising but thin.</span></div>
+<div class="row"><span class="k">Top pick</span><span class="v"><b>Math</b> (effort M): Use the budget-vs-actual gap to strip measurement noise, then refit the size law.</span></div>
+<div class="row"><span class="k">Data</span><span class="v">SYNTHETIC mock budgets (Corning_mock, MS_mock), not any firm&#x27;s budget</span></div>
+</div>
+<p class="kicker" style="margin-top:1rem">The one picture</p>
+<div class="pair"><div><span class="lab">Usual measure</span><div class="big">3.36×</div><div class="sub">steadier than its programs (average-CV, Corning mock)</div></div><div class="new"><span class="lab">Size-aware</span><div class="big">0.99×</div><div class="sub">no steadier than one program that size</div></div></div>
+<div style="margin:1rem 0 .4rem"><a class="btn big" href="https://github.com/jgridifier/research-lab/issues/62">Respond on #62</a><p class="howto">👍 go ahead · 👎 drop · or just comment what you think</p></div>
+<div class="tabs"><input type="radio" name="tab" id="t1" checked><input type="radio" name="tab" id="t2"><input type="radio" name="tab" id="t3"><input type="radio" name="tab" id="t4"><input type="radio" name="tab" id="t5"><div class="tabbar"><label for="t1">The math</label><label for="t2">On our data</label><label for="t3">Robust at home</label><label for="t4">Secret sauce</label><label for="t5">Questions</label></div><div class="panels"><div class="panel p1" id="math"><h4>Notation</h4>
+<div class="table-wrap"><table>
+<tr><th>Symbol</th><th>Meaning</th><th>Here</th></tr>
+<tr><td>\(x_{it}\)</td><td>size of unit \(i\) in period \(t\)</td><td>program \(i\)'s actual spend in fiscal year \(t\)</td></tr>
+<tr><td>\(m_i,\ v_i\)</td><td>mean and variance of unit \(i\) over time</td><td>variance of the linearly detrended spend (3–4 degrees of freedom)</td></tr>
+<tr><td>\(a,\ z\)</td><td>Taylor's power law: \(v = a\,m^{z}\)</td><td>fitted across programs on the log scale</td></tr>
+<tr><td>\(X_t = \sum_i x_{it}\),\ \(M = \mathbb{E}[X_t]\)</td><td>portfolio total and its mean</td><td>firm (or segment) total</td></tr>
+<tr><td>\(\mathrm{CV}_i = \sqrt{v_i}/m_i\)</td><td>coefficient of variation</td><td>how jumpy a program is relative to its size</td></tr>
+</table></div>
+
+<h4>The model and the statistic</h4>
+<p>Fit Taylor's power law across units on the log scale (ordinary least squares):</p>
+$$\log v_i = \log a + z\,\log m_i + \varepsilon_i .$$
+<p>Plugging a size \(m\) into the fitted law gives the CV that <em>one</em> unit of that size would have:</p>
+$$\mathrm{CV}(m) = \frac{\sqrt{a\,m^{z}}}{m} = \sqrt{a}\; m^{\,z/2-1}.$$
+<p>The mean-variance portfolio effect compares that single-unit CV at the portfolio's size \(M\) with the portfolio's observed CV; the classic average-CV effect compares the average unit CV instead:</p>
+$$\mathrm{PE}_{mv} = \frac{\mathrm{CV}(M)}{\mathrm{CV}(X)},\qquad \mathrm{PE}_{avgCV} = \frac{\tfrac1n\sum_i \mathrm{CV}_i}{\mathrm{CV}(X)} .$$
+<p>\(\mathrm{PE} > 1\) means the portfolio is steadier than the benchmark. We used the package's <code>linear_detrended</code> variant: each series is detrended before \(v_i\) and \(\mathrm{CV}(X)\) are computed, because budgets trend.</p>
+
+<h4>Why it works, step by step</h4>
+<div class="step"><b class="n">Step 1 · the size law sets the benchmark</b>From \(\mathrm{CV}(m)=\sqrt a\,m^{z/2-1}\): if \(z=2\), the exponent is 0 and \(\mathrm{CV}(m)=\sqrt a\) for every size. A unit's jumpiness does not depend on how big it is.</div>
+<div class="step"><b class="n">Step 2 · when z = 2 the two measures agree</b>Each \(\mathrm{CV}_i\) is then (on the fitted line) \(\sqrt a\), so \(\tfrac1n\sum_i \mathrm{CV}_i = \sqrt a = \mathrm{CV}(M)\) and \(\mathrm{PE}_{avgCV} = \mathrm{PE}_{mv}\). The average-CV measure is the special case that silently assumes \(z = 2\).</div>
+<div class="step"><b class="n">Step 3 · when z &lt; 2 the average-CV measure overstates</b>The exponent \(z/2-1\) is negative, so \(\mathrm{CV}(m)\) <em>falls</em> with size. The portfolio is much bigger than any single program (\(M \gg m_i\)), so \(\mathrm{CV}(M) &lt; \mathrm{CV}(m_i)\) for every \(i\), hence \(\mathrm{CV}(M) &lt; \tfrac1n\sum_i \mathrm{CV}_i\) and \(\mathrm{PE}_{avgCV} &gt; \mathrm{PE}_{mv}\). Part of what looks like diversification is just "big things are calmer".</div>
+<div class="step"><b class="n">Step 4 · what remains is co-movement</b>\(\mathrm{Var}(X) = \sum_i v_i + \sum_{i\ne j}\mathrm{Cov}(x_i,x_j)\). If units moved independently the covariance sum would vanish and \(\mathrm{CV}(X)\) would be small; positive co-movement pushes \(\mathrm{CV}(X)\) up and \(\mathrm{PE}_{mv}\) down toward (or below) 1.</div>
+
+<h4>Inference and the null</h4>
+<ul>
+<li><b>Interval:</b> the package's interval covers only the uncertainty in the Taylor fit \((a,z)\), not the sampling error of \(\mathrm{CV}(X)\). We report it as such (Corning mock: 0.99 [0.74, 1.31]).</li>
+<li><b>Null for "is there co-movement?":</b> shuffle each program's years independently (999 times). This keeps every \(m_i\) and \(v_i\) (so \(a, z\) are unchanged) and destroys the covariance term in Step 4. Observed 0.99 vs null median 7.28 (Corning mock), \(p = 0.001\).</li>
+<li><b>Fragility check:</b> refit with a robust line and a quadratic in \(\log m\); leave one year out for \(z\) (1.62–1.72 on Corning mock).</li>
+</ul>
+
+<div class="toy"><h5>Toy example (computed on the box)</h5>
+<p>Three programs of mean size \(m = 1, 4, 16\) on a law with \(a = 0.04,\ z = 1.5\). Their CVs are \(\sqrt{0.04}\,m^{-0.25} = 0.200,\ 0.141,\ 0.100\); average 0.147. The portfolio has \(M = 21\), so one program that big would have \(\mathrm{CV}(21) = 0.2 \times 21^{-0.25} = 0.093\). Suppose the observed portfolio CV is 0.060.</p>
+<p>\(\mathrm{PE}_{avgCV} = 0.147/0.060 = 2.45\) ("2.5× diversified") but \(\mathrm{PE}_{mv} = 0.093/0.060 = 1.56\). Of the apparent gain, the part from 1 to 1.56 is diversification; the part from 1.56 to 2.45 is size.</p></div>
+
+<div class="diff"><b>How it differs from the standard tool.</b> The finance diversification ratio \(\sum_i\sigma_i/\sigma_X\) and the average-CV effect both compare the portfolio with its own parts; neither asks how volatile <em>one</em> unit of the portfolio's size would be. The mean-variance effect adds one regression (the size law) and changes the benchmark, not the data. With \(z\) estimated at 1.67 / 1.77 instead of 2, that one change moves the headline from about 3× to about 1×.</div>
+<p class="cite">Followed: Anderson, Cooper &amp; Dulvy (2013), Methods in Ecology and Evolution 4:971–981 (mean-variance portfolio effect; read via the DOI summary, so section and equation numbers were not checked); Taylor (1961); Cohen &amp; Xu (2015) PNAS 112:7749 for why the law arises. Package: ecofolio 0.1.0 <code>pe_mv()</code>, reproduced to 1e-15 (<code>runs/2026-11-16/ecofolio/e1_ecofolio.R</code>). Toy: <code>cards/_toys/toys.py</code>.</p>
+</div><div class="panel p2" id="applied"><h4>What we found</h4><article class="fcard"><div class="viz"><svg viewBox="0 0 360 248" role="img" xmlns="http://www.w3.org/2000/svg"><text x="6" y="16" font-family="JetBrains Mono, monospace" font-size="11" fill="#6f5f46" letter-spacing="1">HOW MUCH STEADIER IS THE BOOK?</text><line x1="77.0" x2="77.0" y1="40" y2="232" stroke="#df5236" stroke-width="2" stroke-dasharray="4 3" opacity=".75"/><text x="81.0" y="244" font-family="JetBrains Mono, monospace" font-size="10.5" fill="#df5236">1× = one program that size</text><text x="6" y="38" font-family="JetBrains Mono, monospace" font-size="12" fill="#1c150d">Average-CV effect · Corning</text><rect x="6" y="43" width="238.6" height="16" fill="#e8902e" stroke="#1c150d" stroke-width="1.5"/><text x="250.6" y="56" font-family="Bricolage Grotesque, sans-serif" font-weight="800" font-size="15" fill="#1c150d">3.36×</text><text x="6" y="78" font-family="JetBrains Mono, monospace" font-size="12" fill="#1c150d">Diversification ratio · Corning</text><rect x="6" y="83" width="222.9" height="16" fill="#e8902e" stroke="#1c150d" stroke-width="1.5"/><text x="234.9" y="96" font-family="Bricolage Grotesque, sans-serif" font-weight="800" font-size="15" fill="#1c150d">3.14×</text><text x="6" y="118" font-family="JetBrains Mono, monospace" font-size="12" fill="#1c150d">Size-aware (mean-var) · Corning</text><rect x="6" y="123" width="70.3" height="16" fill="#1f9e8e" stroke="#1c150d" stroke-width="1.5"/><text x="82.3" y="136" font-family="Bricolage Grotesque, sans-serif" font-weight="800" font-size="15" fill="#1c150d">0.99×</text><text x="6" y="158" font-family="JetBrains Mono, monospace" font-size="12" fill="#1c150d">Average-CV effect · MS</text><rect x="6" y="163" width="230.8" height="16" fill="#e8902e" stroke="#1c150d" stroke-width="1.5"/><text x="242.8" y="176" font-family="Bricolage Grotesque, sans-serif" font-weight="800" font-size="15" fill="#1c150d">3.25×</text><text x="6" y="198" font-family="JetBrains Mono, monospace" font-size="12" fill="#1c150d">Size-aware (mean-var) · MS</text><rect x="6" y="203" width="81.6" height="16" fill="#1f9e8e" stroke="#1c150d" stroke-width="1.5"/><text x="93.6" y="216" font-family="Bricolage Grotesque, sans-serif" font-weight="800" font-size="15" fill="#1c150d">1.15×</text></svg></div><div class="body"><span class="chip">Finding 1</span><h3>The book is no steadier than one program of the same size.</h3><p class="take">Usual measures say about 3× steadier. Allowing for how volatility grows with size gives 0.99 (Corning mock) and 1.15 (MS mock).</p><p class="small"><a href="../fig/2026-11-16/eco_taylor.png">Original chart from the 2026-11-16 edition →</a></p></div></article><article class="fcard"><div class="viz"><svg viewBox="0 0 360 128" role="img" xmlns="http://www.w3.org/2000/svg"><text x="6" y="16" font-family="JetBrains Mono, monospace" font-size="11" fill="#6f5f46" letter-spacing="1">AVERAGE-CV EFFECT, CORNING MOCK</text><line x1="77.0" x2="77.0" y1="40" y2="112" stroke="#df5236" stroke-width="2" stroke-dasharray="4 3" opacity=".75"/><text x="81.0" y="124" font-family="JetBrains Mono, monospace" font-size="10.5" fill="#df5236">1×</text><text x="6" y="38" font-family="JetBrains Mono, monospace" font-size="12" fill="#1c150d">Reported numbers</text><rect x="6" y="43" width="238.6" height="16" fill="#e8902e" stroke="#1c150d" stroke-width="1.5"/><text x="250.6" y="56" font-family="Bricolage Grotesque, sans-serif" font-weight="800" font-size="15" fill="#1c150d">3.36×</text><text x="6" y="78" font-family="JetBrains Mono, monospace" font-size="12" fill="#1c150d">Noise-free true levels</text><rect x="6" y="83" width="109.3" height="16" fill="#1f9e8e" stroke="#1c150d" stroke-width="1.5"/><text x="121.3" y="96" font-family="Bricolage Grotesque, sans-serif" font-weight="800" font-size="15" fill="#1c150d">1.54×</text></svg></div><div class="body"><span class="chip">Finding 2</span><h3>Part of the apparent diversification is measurement noise.</h3><p class="take">On the mocks' noise-free true levels the average-CV effect falls from 3.36 to 1.54 (Corning mock).</p></div></article><article class="fcard red"><div class="viz"><svg viewBox="0 0 360 140" role="img" xmlns="http://www.w3.org/2000/svg"><text x="6" y="16" font-family="JetBrains Mono, monospace" font-size="11" fill="#6f5f46" letter-spacing="1">WHERE EACH PLANTED GROUP RANKS (HIGHER = FOUND)</text><text x="10" y="38" font-family="JetBrains Mono, monospace" font-size="11.5" fill="#1c150d">Plain YoY correlation</text><line x1="10" x2="346" y1="54" y2="54" stroke="#d9c8a6" stroke-width="2"/><circle cx="346.0" cy="51" r="6" fill="#54b441" fill-opacity=".8" stroke="#1c150d" stroke-width="1.5"/><circle cx="346.0" cy="54" r="6" fill="#54b441" fill-opacity=".8" stroke="#1c150d" stroke-width="1.5"/><circle cx="346.0" cy="57" r="6" fill="#54b441" fill-opacity=".8" stroke="#1c150d" stroke-width="1.5"/><circle cx="346.0" cy="51" r="6" fill="#54b441" fill-opacity=".8" stroke="#1c150d" stroke-width="1.5"/><circle cx="346.0" cy="54" r="6" fill="#54b441" fill-opacity=".8" stroke="#1c150d" stroke-width="1.5"/><circle cx="346.0" cy="57" r="6" fill="#54b441" fill-opacity=".8" stroke="#1c150d" stroke-width="1.5"/><circle cx="346.0" cy="51" r="6" fill="#54b441" fill-opacity=".8" stroke="#1c150d" stroke-width="1.5"/><circle cx="346.0" cy="54" r="6" fill="#54b441" fill-opacity=".8" stroke="#1c150d" stroke-width="1.5"/><circle cx="346.0" cy="57" r="6" fill="#54b441" fill-opacity=".8" stroke="#1c150d" stroke-width="1.5"/><text x="10" y="84" font-family="JetBrains Mono, monospace" font-size="11.5" fill="#1c150d">Portfolio effect</text><line x1="10" x2="346" y1="100" y2="100" stroke="#d9c8a6" stroke-width="2"/><circle cx="43.6" cy="97" r="6" fill="#df5236" fill-opacity=".8" stroke="#1c150d" stroke-width="1.5"/><circle cx="282.2" cy="100" r="6" fill="#df5236" fill-opacity=".8" stroke="#1c150d" stroke-width="1.5"/><circle cx="167.9" cy="103" r="6" fill="#df5236" fill-opacity=".8" stroke="#1c150d" stroke-width="1.5"/><circle cx="215.0" cy="97" r="6" fill="#df5236" fill-opacity=".8" stroke="#1c150d" stroke-width="1.5"/><circle cx="87.3" cy="100" r="6" fill="#df5236" fill-opacity=".8" stroke="#1c150d" stroke-width="1.5"/><circle cx="10.0" cy="103" r="6" fill="#df5236" fill-opacity=".8" stroke="#1c150d" stroke-width="1.5"/><circle cx="63.8" cy="97" r="6" fill="#df5236" fill-opacity=".8" stroke="#1c150d" stroke-width="1.5"/><circle cx="248.6" cy="100" r="6" fill="#df5236" fill-opacity=".8" stroke="#1c150d" stroke-width="1.5"/><circle cx="204.9" cy="103" r="6" fill="#df5236" fill-opacity=".8" stroke="#1c150d" stroke-width="1.5"/><text x="10.0" y="134" text-anchor="middle" font-family="JetBrains Mono, monospace" font-size="10" fill="#6f5f46">0th pct</text><text x="178.0" y="134" text-anchor="middle" font-family="JetBrains Mono, monospace" font-size="10" fill="#6f5f46">50th pct</text><text x="346.0" y="134" text-anchor="middle" font-family="JetBrains Mono, monospace" font-size="10" fill="#6f5f46">100th pct</text></svg></div><div class="body"><span class="chip">Finding 3</span><h3>Honest miss: a plain correlation check finds hidden groups better.</h3><p class="take">Correlation puts all 9 planted groups at the 100th percentile; the portfolio effect scatters them from the 0th to the 81st.</p><p class="small"><a href="../fig/2026-11-16/eco_screen.png">Original chart from the 2026-11-16 edition →</a></p></div></article><h4>Who plays what</h4>
+<div class="table-wrap"><table>
+<tr><th>Home field (salmon)</th><th>Our data</th></tr>
+<tr><td>One stream's yearly salmon run</td><td>One program's yearly actual spend</td></tr>
+<tr><td>The metapopulation (all streams)</td><td>The firm total, or one segment</td></tr>
+<tr><td>Taylor's \(z\): how a stream's variability scales with its abundance</td><td>How a program's volatility scales with its budget size</td></tr>
+<tr><td>Decades of yearly counts</td><td>5–6 fiscal years per program (FY2020–25 Corning mock, FY2021–25 MS mock)</td></tr>
+<tr><td>Sampling noise in counts</td><td>Accounting and planning noise in spend</td></tr>
+</table></div>
+
+<h4>Inputs and preprocessing</h4>
+<ul>
+<li>SYNTHETIC zero-based-budgeting mocks (seed 20261113): 1,079 programs (Corning mock) and 1,840 (MS mock). The answer key was used only for scoring.</li>
+<li>Balanced panel only, because the package needs every program in every year: 778 of 1,079 and 1,404 of 1,840 programs kept (28% and 24% dropped).</li>
+<li>Each series linearly detrended before computing variances (<code>linear_detrended</code>).</li>
+</ul>
+
+<h4>What we ran</h4>
+<ol>
+<li>Reproduced the package vignette on pink salmon (<code>pinkbr</code>): PE<sub>mv</sub> 1.412 and PE<sub>avgCV</sub> 1.517, exactly as published.</li>
+<li>Fitted \(z\) per firm (1.67 Corning mock, 1.77 MS mock) and per segment; computed PE<sub>mv</sub>, PE<sub>avgCV</sub> and the finance diversification ratio.</li>
+<li>Robustness: linear / robust / quadratic Taylor fits; leave-one-year-out \(z\); the same on noise-free true levels from the answer key.</li>
+<li>Null: 999 year-shuffles for the whole book; 299 random same-size sets for every subsegment, driver and function group, to see if PE finds planted co-moving groups.</li>
+<li>Per-program flag: residual from the Taylor line vs plain CV, scored by AUC against planted "movers".</li>
+</ol>
+
+<div class="callouts"><h5>How to read the main chart (Taylor plot, first finding's original chart)</h5>
+<ol>
+<li>Each dot is one mock program: x = log mean spend, y = log variance.</li>
+<li>The solid line is the fitted size law; its slope is \(z\) (1.67 on the Corning mock), flatter than the dashed \(z = 2\) line.</li>
+<li>Both lines are extended far right to the book's size (2.1 decades past the largest program).</li>
+<li>The red dot is the real book. The gap between the dashed line and the red dot is what the usual measure calls diversification; the gap between the solid line and the red dot is what is left after allowing for size (about none).</li>
+</ol></div>
+
+<div class="plain"><h5>What it means for a decision-maker</h5>
+<p>"Our program book is three times steadier than its programs" is mostly a statement about size, not about programs offsetting each other. A single program as big as the whole book would be about as steady. Do not count on diversification inside the book to absorb a bad year; the programs move together (the shuffle test says far more than chance), partly because the mock is built to add up to public totals.</p></div>
+
+<h4>Where it breaks (seen in our runs)</h4>
+<ul>
+<li><b>Extrapolation:</b> the benchmark sits about two orders of magnitude beyond the data. The quadratic fit blew up (34.7 vs 0.83 linear on the Corning mock).</li>
+<li><b>Short series:</b> 3–4 degrees of freedom per variance. Per-program flags failed (AUC 0.28–0.34 for Taylor residual and CV).</li>
+<li><b>Not a group finder:</b> small groups give wild values (up to 283 for a 12-program group) because the within-group fit is poor.</li>
+<li><b>Ragged panels:</b> a quarter of programs dropped for entering or exiting.</li>
+<li><b>Noise:</b> on noise-free levels both measures fall (Corning mock: average-CV 1.54, mean-variance 0.25), so the reported numbers include noise cancelling in the total.</li>
+</ul>
+
+<h4>What we'd do next</h4>
+<p>The top pick: estimate observation noise from the budget-vs-actual gap and remove it before fitting \(z\) (Secret sauce, card 2), pre-registered against 20 new-seed mocks. Then run it on real program budgets and actuals once we have them.</p>
+</div><div class="panel p3" id="robust"><p><span class="grade">Promising but thin</span></p>
+<h4>What the home field has established</h4>
+<ul>
+<li><b>Taylor's law is solid.</b> Reported since Taylor (1961) across insects, fish and plants. Cohen &amp; Xu (PNAS 112:7749–7754, 2015; abstract read) show that random block sampling from any skewed distribution with four finite moments produces it, with formulae for the slope and its standard error. A follow-up exchange (doi:10.1073/pnas.1507551112) disputed when samples support it.</li>
+<li><b>The portfolio metric is newer and thinner.</b> It rests on one methods paper (Anderson, Cooper &amp; Dulvy 2013; 88 citations in DOI metadata). From its summary: across 51 metapopulations and 1,070 subpopulations the average-CV effect was stronger than the mean-variance one in 84% of cases, by up to sevenfold; the gap was largest for low-\(z\) reef fishes and moths and vanished for salmon (\(z \approx 2\)).</li>
+<li><b>Package:</b> ecofolio 0.1.0, single author, no test suite, last push 2025-06. Our reproduction of its vignette matched exactly; the core is simple enough to verify by hand (we did, to 1e-15).</li>
+<li><b>Known failure modes:</b> long extrapolation of the single-unit variance; the package interval ignores the uncertainty of the portfolio CV.</li>
+</ul>
+<p class="small">Grade from the 2026-11-16 edition: "promising but thin. The scaling law is solid. The portfolio-effect metric has one primary paper and an unmaintained, untested package."</p>
+</div><div class="panel p4" id="sauce"><div class="sauce"><span class="t">1 · Engineering · Effort S–M</span><h5>Ragged-panel port, R as oracle</h5>
+<p>ecofolio needs a complete program × year matrix, so 24–28% of programs were dropped. A NumPy/Rust port could keep entrants and exiters.</p>
+<p><b>Math sketch.</b> Replace the per-program variance with an unbiased variance on each program's observed years (detrended within its own span), weight the Taylor regression by degrees of freedom, \(\min_{a,z}\sum_i (n_i-2)\,(\log v_i - \log a - z\log m_i)^2\), and compute \(\mathrm{CV}(X)\) on years where the total is defined.</p>
+<p class="small"><b>Test.</b> Parity ≤ 1e-10 with ecofolio on <code>pinkbr</code> and on 1,000 random balanced subsets; then a 999-shuffle null on 1,404 programs in &lt; 1 s (today's vectorised R: 0.1 ms per PE vs 215 ms in the package).</p></div>
+<div class="sauce top"><span class="t">2 · Math · Effort M · ★ Top pick</span><h5>A noise-corrected Taylor's law and portfolio effect</h5>
+<p>Budget and actual are two noisy readings of each program. Their disagreement estimates observation-noise variance, which can be removed before fitting \(z\). Then split variability across program → segment → firm (α/β/γ).</p>
+<p><b>Math sketch.</b> If \(b_{it} = \theta_{it} + \delta_{it}\) and \(x_{it} = \theta_{it} + \epsilon_{it}\) with independent errors, \(\mathrm{Var}(x_{it}-b_{it}) = \sigma^2_\epsilon + \sigma^2_\delta\). With the mocks' stated noise ratio \(r = \sigma_\delta/\sigma_\epsilon\), \(\hat\sigma^2_{\epsilon,i} = \widehat{\mathrm{Var}}(x_i-b_i)/(1+r^2)\), and the corrected variance is \(\tilde v_i = \max(v_i - \hat\sigma^2_{\epsilon,i}, 0)\). Fit Taylor on \(\tilde v_i\), then partition total variability as in Wang &amp; Loreau (2014). Today noise inflated the average-CV effect from 1.54 to 3.36.</p>
+<p class="small"><b>Test.</b> On both mocks plus 20 new-seed mocks: the corrected PE is closer to the true-level PE in ≥ 80% of firm × segment cells. Pre-registered.</p></div>
+<div class="sauce"><span class="t">3 · New use on our data · Effort S</span><h5>Stability cost of FY2026 decision packages</h5>
+<p>Recompute \(z\) and the mean-variance PE under the minimum, current and enhanced package scenarios in <code>decision_packages.csv</code>. Does approving the enhanced packages concentrate volatility (Q2.3/Q2.4)?</p>
+<p><b>Math sketch.</b> For scenario \(s\), \(\Delta\mathrm{PE}_s = \mathrm{PE}_{mv}(s) - \mathrm{PE}_{mv}(\text{current})\); null distribution from 999 random package swaps of equal total cost.</p>
+<p class="small"><b>Test.</b> PE change per scenario against the 999 same-cost swaps, stated in advance.</p></div>
+<p class="small">👍 on the issue means go with the ★ top pick. To choose another, just say so in a comment.</p>
+</div><div class="panel p5" id="questions"><div class="sauce"><span class="t">Q2.4 · Hidden structure</span><p>Answers "is the book diversified?": no more than one program of the same size would be. Does <b>not</b> find groups; plain correlation (or the 11-13 residual DenseLines) does.</p></div>
+<div class="sauce"><span class="t">Q2.3 · Real change vs noise</span><p>Shows observation noise inflates diversification numbers. Per-program volatility from 5–6 points did not flag planted movers (AUC 0.28–0.34).</p></div>
+<p class="small"><b>Still missing:</b> real program-level budgets and actuals. · <a href="https://github.com/jgridifier/research-lab/blob/main/docs/methods-scout/QUESTIONS.md">All questions</a></p>
+</div></div></div>
+<p class="cite">Full tables, code and data notes: <a href="../2026-11-16.html#ecofolio">the 2026-11-16 edition</a> · scripts in <code>runs/2026-11-16/</code> · card sources in <code>cards/ecofolio/</code>.</p>
+<div style="margin:1.4rem 0"><a class="btn" href="https://github.com/jgridifier/research-lab/issues/62">Respond on #62</a><p class="howto">👍 go ahead · 👎 drop · or just comment what you think</p></div>
+<script>(function(){var m={"math":1,"applied":2,"robust":3,"sauce":4,"questions":5};var h=location.hash.slice(1);var i=m[h]||(/^t[1-5]$/.test(h)?+h[1]:0);if(i)document.getElementById("t"+i).checked=true;})();</script>
+</div>
+<footer class="pf">Generated by <code>tools/build_cards.py</code> from <code>feedback-state.json</code> and <code>cards/</code>; page contract in <a href="https://github.com/jgridifier/research-lab/blob/main/docs/methods-scout/LAYOUT.md">LAYOUT.md</a>.
+Status chips are baked in at build time and refreshed from the GitHub issue labels on load. Q2 work so far uses SYNTHETIC mock budgets; no private rows are published.</footer>
+<script src="../status.js"></script>
+</body></html>

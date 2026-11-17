@@ -1,0 +1,30 @@
+<h4>Notation</h4>
+<div class="table-wrap"><table>
+<tr><th>Symbol</th><th>Meaning</th><th>Here</th></tr>
+<tr><td>\(s = 1,\dots,n\)</td><td>series</td><td>programs, each indexed to its own mean (log spend vs own mean)</td></tr>
+<tr><td>\((c, r)\)</td><td>pixel: column \(c\) (time), row \(r\) (value)</td><td>500 columns across FY2020–25</td></tr>
+<tr><td>\(B_s(c,r)\in\{0,1\}\)</td><td>1 if series \(s\)'s rasterised line passes through the pixel</td><td>Bresenham line, set-to-1</td></tr>
+<tr><td>\(k_s(c) = \sum_r B_s(c,r)\)</td><td>pixels series \(s\) lights in column \(c\)</td><td>steep segments light many</td></tr>
+<tr><td>\(D(c,r)\)</td><td>the density image</td><td>what is coloured</td></tr>
+</table></div>
+
+<h4>The statistic</h4>
+$$D(c,r) = \sum_{s=1}^{n} \frac{B_s(c,r)}{k_s(c)}\qquad\Longrightarrow\qquad \sum_r D(c,r) = n \ \text{ for every column } c .$$
+<p>Each series spreads exactly one unit of weight over the pixels it touches in each column. The naive alternative (the "line count" heatmap) is \(\sum_s B_s(c,r)\), where a steep line contributes \(k_s(c)\) units.</p>
+
+<h4>Why it works, step by step</h4>
+<div class="step"><b class="n">Step 1 · the problem: ink grows with slope</b>Over a time step \(\Delta x\), a segment with slope \(f'\) has length \(\sqrt{\Delta x^2+\Delta y^2} = \Delta x\sqrt{1+f'^2}\). Uniform drawing deposits ink proportional to length, so steep (often noisy) series are over-represented (paper §3.1).</div>
+<div class="step"><b class="n">Step 2 · divide by arc length</b>Weighting each segment by \(1/\sqrt{1+f'^2}\) gives every series the same weight per unit of <em>time</em>, whatever its slope.</div>
+<div class="step"><b class="n">Step 3 · the pixel shortcut</b>In one pixel column the arc length is proportional to the number of pixels the line lights, \(k_s(c)\) (one segment per column, paper §3.1.1). Dividing by \(k_s(c)\) is the discrete version of Step 2. A flat line has \(k=1\) and is unchanged.</div>
+<div class="step"><b class="n">Step 4 · the column is now a distribution</b>Each column sums to \(n\), so \(D(c,\cdot)/n\) is an empirical density of "where the series are" at time \(c\): ridges are common paths, faint strands are outliers. The method has no parameters beyond canvas size; colour scale and display blur are presentation (paper §3.2).</div>
+<div class="step"><b class="n">Step 5 · our fix for start/stop series</b>If series \(s\) does not cover column \(c\), \(k_s(c) = 0\) and the reference computes \(0/0 =\) NaN, which poisons the column sum. Gap-safe rule: \(B_s/k_s := 0\) when \(k_s(c)=0\). A live-count strip \(n(c) = \#\{s: k_s(c)&gt;0\}\) is drawn alongside so an entry wave is not misread as a density change.</div>
+
+<h4>Inference</h4>
+<p>DenseLines is a picture, not a test. Anything read off it (like the residual "brush" that selects programs ending above a valley) needs its own null; the valley's existence depended on smoothing (2–4 px yes, 6–8 px no), which is why the New-use card asks for a bandwidth-free dip test with a year-shuffle null.</p>
+
+<div class="toy"><h5>Toy example</h5>
+<p>Two series on a 3-column canvas. Series A is flat: it lights 1 pixel in each column. Series B is flat in columns 1 and 3 but jumps in column 2, lighting 3 pixels there.</p>
+<p>Line count: column 2 totals \(1 + 3 = 4\) units, so B's jump looks like three series. DenseLines: B's three pixels get \(1/3\) each; every column totals \(1+1 = 2 = n\). If B stopped after column 2, the reference would compute \(0/0\) in column 3 and blank it; gap-safe gives column 3 a total of 1 and the live-count strip shows 1.</p></div>
+
+<div class="diff"><b>How it differs from the standard tool.</b> A spaghetti plot draws every line on top of the others: with 1,052 lines the overlap hides where most programs are. A plain 2-D histogram of the points ignores the lines between years. A naive line heatmap over-weights steep series. DenseLines is the line heatmap with each series normalised per column, so it shows where the <em>series</em> are, one vote each.</div>
+<p class="cite">Followed: Moritz &amp; Fisher (2018), "Visualizing a Million Time Series with the Density Line Chart", arXiv:1808.06019 — §3.1 (arc-length normalisation), §3.1.1 (pixel-count approximation), §3.2 (algorithm). Reference code: line-density-rust, commit 083890c; our port <code>runs/2026-11-13/denselines.py</code> matches it to ≤ 2.1e-7.</p>

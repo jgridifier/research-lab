@@ -1,0 +1,28 @@
+<h4>Notation</h4>
+<div class="table-wrap"><table>
+<tr><th>Symbol</th><th>Meaning</th><th>Here</th></tr>
+<tr><td>\(Y\)</td><td>response</td><td>payout/RWA (raw %), or its percentile within the test year</td></tr>
+<tr><td>\(x\)</td><td>covariate with a known direction</td><td>drawdown or SCB (antitonic: worse → lower payout); pre-tax income (isotonic)</td></tr>
+<tr><td>\(F_x(y) = P(Y\le y\mid x)\)</td><td>conditional CDF</td><td>the whole payout distribution for a bank with stress result \(x\)</td></tr>
+<tr><td>\(x \preceq x'\)</td><td>partial order on covariates</td><td>"\(x'\) is at least as favourable as \(x\)"</td></tr>
+<tr><td>CRPS</td><td>continuous ranked probability score</td><td>scores a predicted distribution against the realised payout</td></tr>
+</table></div>
+
+<h4>The estimator</h4>
+<p>Score a predicted CDF \(F\) against an outcome \(y\) by</p>
+$$\mathrm{CRPS}(F,y) = \int_{-\infty}^{\infty}\big(F(z) - \mathbf 1[y\le z]\big)^2\,dz .$$
+<p>IDR picks the conditional CDFs that minimise total CRPS over the training data, subject only to stochastic order:</p>
+$$\begin{gathered}\min_{F_{x_1},\dots,F_{x_n}} \sum_{i=1}^n \mathrm{CRPS}(F_{x_i}, y_i)\\ \text{s.t. } x_i \preceq x_j \Rightarrow F_{x_i}(z) \ge F_{x_j}(z)\ \ \forall z .\end{gathered}$$
+<p>A more favourable covariate never predicts a stochastically smaller payout. No bandwidth, link, or distribution family; only the direction.</p>
+
+<h4>Why it works, step by step</h4>
+<div class="step"><b class="n">Step 1 · CRPS splits into thresholds</b>The integrand at each \(z\) only involves \(F(z)\) and \(\mathbf 1[y\le z]\). So minimising the integral means minimising, separately at every threshold \(z\), \(\sum_i (\eta_i - \mathbf 1[y_i \le z])^2\) over \(\eta_i = F_{x_i}(z)\).</div>
+<div class="step"><b class="n">Step 2 · each threshold is an isotonic regression</b>The order constraint becomes "\(\eta\) is non-increasing along the order", so each threshold is a least-squares isotonic fit of a 0/1 sequence, solved exactly by pool-adjacent-violators (PAVA) in one dimension (paper §2.3, eq. 15). The objective only changes at observed \(y\) values, so a finite number of thresholds suffices.</div>
+<div class="step"><b class="n">Step 3 · the pieces fit together</b>PAVA on nested indicator sequences gives values that are also monotone in \(z\), so the threshold fits stack into valid CDFs. The paper shows the solution is the same for a wide class of proper scores, not just CRPS ("universality", §2.2), and that it is calibrated.</div>
+<div class="step"><b class="n">Step 4 · skill and the null</b>Skill \(= 1 - \overline{\mathrm{CRPS}}_{\text{IDR}}/\overline{\mathrm{CRPS}}_{\text{clim}}\), where climatology predicts the training sample's empirical distribution for everyone. Evaluation leaves one test year out. Null: shuffle the covariate <em>within each year</em> 299 times and refit (smallest possible p = 1/300 ≈ 0.003).</div>
+
+<div class="toy"><h5>Toy example (computed on the box)</h5>
+<p>Four firms ordered by pre-tax income, \(x = 1,2,3,4\), with payouts \(y = 0.5, 2.0, 1.0, 3.0\). At threshold \(z = 1.0\) the indicators \(\mathbf 1[y\le 1]\) are \((1, 0, 1, 0)\). The CDF must be non-increasing in \(x\), but \(0\) then \(1\) violates it, so PAVA pools firms 2 and 3: \(\hat F(1.0) = (1, 0.5, 0.5, 0)\). At \(z = 0.5\): \((1,0,0,0)\); at \(z = 2.0\): \((1,1,1,0)\). Firm 3's predictive distribution is therefore 50% at or below 1.0 and 100% at or below 2.0: a step CDF learned with no tuning.</p></div>
+
+<div class="diff"><b>How it differs from the standard tool.</b> OLS with normal errors predicts a mean and a symmetric bell. Payouts are skewed and some firms issue net shares (down to −1.4% of RWA), so on the raw scale OLS scored worse than climatology (−2.2%) while IDR gained 5.8%. Quantile regression gives a few quantiles under a linear form; IDR gives every quantile under only a monotone form. The price: step functions that are coarse at our n, and a weak partial order with two or more covariates.</div>
+<p class="cite">Followed: Henzi, Ziegel &amp; Gneiting (2021), JRSS-B 83(5):963–993 (arXiv:1909.03725): §2.2 existence, uniqueness and universality; §2.3 eq. (15), threshold decomposition and PAVA; §3 partial orders. Package isodistrreg 0.6.0 (Rust core). Toy: <code>cards/_toys/toys.py</code>.</p>

@@ -1,0 +1,150 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Convergent cross mapping (CCM) · research card · methods scout</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,400..800&family=Newsreader:ital,opsz,wght@0,6..72,400..600;1,6..72,400..500&family=JetBrains+Mono:wght@400;500;700&display=swap">
+<link rel="stylesheet" href="../../assets/brief.css">
+<link rel="stylesheet" href="../scout-cards.css">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.css"><script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.js"></script><script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/contrib/auto-render.min.js" onload="renderMathInElement(document.body,{delimiters:[{left:'$$',right:'$$',display:true},{left:'\\(',right:'\\)',display:false}]})"></script>
+<!-- Methods Scout home-screen / PWA tags. Paste into <head> of every methods-scout page.
+     Paths are root-absolute so they resolve under https://jgridifier.github.io/research-lab/. -->
+<link rel="apple-touch-icon" sizes="180x180" href="/research-lab/methods-scout/icons/apple-touch-icon.png">
+<link rel="icon" type="image/png" sizes="32x32" href="/research-lab/methods-scout/icons/favicon-32.png">
+<link rel="icon" type="image/png" sizes="192x192" href="/research-lab/methods-scout/icons/icon-192.png">
+<link rel="manifest" href="/research-lab/methods-scout/manifest.webmanifest">
+<meta name="apple-mobile-web-app-title" content="Methods Scout">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="theme-color" content="#0F2A23">
+
+</head><body>
+<header class="topbar"><a class="brand" href="../index.html">Methods scout</a>
+<span><a href="../index.html">Queue</a> · <a href="../archive.html">Archive</a></span></header>
+<div class="pz">
+<p class="crumb"><a href="../index.html">← Queue</a></p>
+<div class="chips"><span class="chip q">Q1</span><span class="chip st-proposed" data-issue="59">○ New</span><span class="chip v-int">Interesting</span><span class="date">Scouted 2026-11-15</span></div>
+<section class="hero" style="padding-top:.5rem"><p class="kicker">Convergent cross mapping (CCM) · from fisheries and population ecology</p>
+<h1>Whose fingerprint is in whose dynamics?</h1></section>
+<div class="sum">
+<div class="row"><span class="k">What it is</span><span class="v">If X drives Y, Y&#x27;s own history remembers X; test whether Y&#x27;s past can reconstruct X.</span></div>
+<div class="row"><span class="k">Verdict</span><span class="v"><b>Interesting.</b> Home field: not graded (the 11-15 edition predates grading).</span></div>
+<div class="row"><span class="k">Top pick</span><span class="v"><b>Engineering</b> (effort S–M): Reuse neighbour sets so 10,000 surrogates are cheap and the p-value floor drops.</span></div>
+<div class="row"><span class="k">Data</span><span class="v">Public weekly data (CFTC TFF, NY Fed fails, OFR repo), 2019–2025; descriptive only</span></div>
+</div>
+<p class="kicker" style="margin-top:1rem">The one picture</p>
+<div class="pair"><div><span class="lab">Granger (linear)</span><div class="big">p ≤ 0.004</div><div class="sub">says positioning and fails drive each other, both ways</div></div><div class="new"><span class="lab">CCM</span><div class="big">p = 0.21–0.47</div><div class="sub">no cross-map link either way; possibly a shared cycle (untested)</div></div></div>
+<div style="margin:1rem 0 .4rem"><a class="btn big" href="https://github.com/jgridifier/research-lab/issues/59">Respond on #59</a><p class="howto">👍 go ahead · 👎 drop · or just comment what you think</p></div>
+<div class="tabs"><input type="radio" name="tab" id="t1" checked><input type="radio" name="tab" id="t2"><input type="radio" name="tab" id="t3"><input type="radio" name="tab" id="t4"><input type="radio" name="tab" id="t5"><div class="tabbar"><label for="t1">The math</label><label for="t2">On our data</label><label for="t3">Robust at home</label><label for="t4">Secret sauce</label><label for="t5">Questions</label></div><div class="panels"><div class="panel p1" id="math"><h4>Notation</h4>
+<div class="table-wrap"><table>
+<tr><th>Symbol</th><th>Meaning</th><th>Here</th></tr>
+<tr><td>\(x_t, y_t\)</td><td>candidate driver and responder</td><td>weekly fails, spread, DVP volume, leveraged-fund positioning (differences or log differences)</td></tr>
+<tr><td>\(E\)</td><td>embedding dimension</td><td>2–8, chosen per series by simplex skill</td></tr>
+<tr><td>\(\mathbf y_t = (y_t, y_{t-1},\dots,y_{t-E+1})\)</td><td>a point on \(Y\)'s shadow manifold \(M_Y\)</td><td>the last \(E\) weeks of \(Y\)</td></tr>
+<tr><td>\(L\)</td><td>library size (points allowed as neighbours)</td><td>20 → 350</td></tr>
+<tr><td>\(\rho_L\)</td><td>cross-map skill</td><td>correlation of reconstructed and actual \(x_t\)</td></tr>
+</table></div>
+
+<h4>The estimator</h4>
+<p>For each time \(t\), find the \(E+1\) nearest neighbours \(t_1,\dots,t_{E+1}\) of \(\mathbf y_t\) on \(M_Y\) (from a library of \(L\) points, excluding a 4-week radius around \(t\)), with distances \(d_1\le\dots\le d_{E+1}\). Reconstruct \(x_t\) from the \(x\)-values at those times:</p>
+$$\hat x_t \mid M_Y = \sum_{i=1}^{E+1} w_i\, x_{t_i},\qquad w_i = \frac{e^{-d_i/d_1}}{\sum_{k} e^{-d_k/d_1}},\qquad \rho_L = \operatorname{cor}(x_t,\ \hat x_t).$$
+<p>"\(X\) drives \(Y\)" is read when \(\rho_L\) is positive <b>and rises with \(L\)</b> (convergence). Note the direction: the <em>responder's</em> manifold recovers the <em>driver</em>.</p>
+
+<h4>Why it works, step by step</h4>
+<div class="step"><b class="n">Step 1 · delay embedding (Takens)</b>If \(x\) and \(y\) come from one deterministic system, the lag vectors \(\mathbf y_t\) of a single observed variable trace out a copy of the whole system's attractor (a smooth one-to-one image, for \(E\) large enough). So the full state, including \(x_t\), is a function of \(\mathbf y_t\).</div>
+<div class="step"><b class="n">Step 2 · nearby on \(M_Y\) ⇒ nearby in \(x\)</b>Because the map is smooth, points close on \(M_Y\) correspond to close system states, hence close \(x\). The weighted neighbour average \(\hat x_t\) then estimates \(x_t\).</div>
+<div class="step"><b class="n">Step 3 · convergence</b>With a bigger library, neighbours are closer (\(d_i\to 0\)), so the estimate improves and \(\rho_L\) climbs. Plain correlation does not have this signature; that is what separates causal coupling from coincidence.</div>
+<div class="step"><b class="n">Step 4 · the asymmetry</b>If \(X\) drives \(Y\) but not the reverse, \(y\) carries information about \(x\) but \(x\)'s own dynamics carry none about \(y\): \(M_Y\) recovers \(X\), \(M_X\) does not recover \(Y\). Granger asks the opposite question ("does \(X\)'s past improve a linear forecast of \(Y\)?"), which works when variables are separable and can be fooled by shared cycles.</div>
+
+<h4>Inference and checks</h4>
+<ul>
+<li><b>Null:</b> 200 circular shifts of the driver by ≥ 26 weeks, \(\rho\) recomputed at \(L = 350\). Keeps the driver's persistence, breaks alignment. Holm across the 10 directions; with 200 surrogates the smallest p is 0.005, and 0.005 × 10 = 0.05 after Holm.</li>
+<li><b>Determinism pre-check:</b> simplex and S-map skill on each series' own past; S-map with \(\theta&gt;0\) beating \(\theta=0\) (linear) means state-dependent dynamics (spread: 0.542 vs 0.451).</li>
+<li><b>Lag scan</b> (Ye et al. 2015): cross-map at lags −4…+4; a peak at a negative lag fits a delayed effect (fails → spread peaks at −1 week).</li>
+</ul>
+
+<div class="toy"><h5>Toy example (computed on the box)</h5>
+<p>Two coupled logistic maps in the style of Sugihara et al.: \(x_{t+1} = 3.8\,x_t(1-x_t)\) and \(y_{t+1} = y_t(3.5 - 3.5\,y_t - 0.1\,x_t)\). \(X\) drives \(Y\); nothing drives \(X\). With \(E = 2\) and 400 steps:</p>
+<div class="table-wrap"><table><tr><th>Library \(L\)</th><th>\(M_Y\) recovers \(X\)</th><th>\(M_X\) recovers \(Y\)</th></tr>
+<tr><td>10</td><td>0.31</td><td>−0.02</td></tr><tr><td>25</td><td>0.54</td><td>−0.01</td></tr><tr><td>100</td><td>0.84</td><td>−0.04</td></tr><tr><td>300</td><td>0.92</td><td>−0.09</td></tr></table></div>
+<p>Skill rises with \(L\) only in the true direction. Our real links (0.33, 0.25) converge too, but are far noisier than this toy.</p></div>
+
+<div class="diff"><b>How it differs from the standard tool.</b> Granger causality fits a linear autoregression and tests whether \(X\)'s lags help predict \(Y\). It needs separable, roughly linear effects and is fooled by common drivers and shared cycles. CCM needs no model, reads state-dependent coupling, and has a built-in signature (convergence). Its own assumption is near-deterministic, weakly noisy dynamics, which our weekly differences only partly meet.</div>
+<p class="cite">Followed: Sugihara, May, Ye et al. (2012), "Detecting causality in complex ecosystems", Science 338:496–500 (cross-map estimator and convergence); Ye, Deyle, Gilarranz &amp; Sugihara (2015), Scientific Reports 5:14750 (lag scan). Section and equation numbers not checked. Package pyEDM 2.5.7; lab docs sugiharalab.github.io/EDM_Documentation. Toy: <code>cards/_toys/toys.py</code>.</p>
+</div><div class="panel p2" id="applied"><h4>What we found</h4><article class="fcard"><div class="viz"><svg viewBox="0 0 360 194" role="img" xmlns="http://www.w3.org/2000/svg"><text x="6" y="16" font-family="JetBrains Mono, monospace" font-size="11" fill="#6f5f46" letter-spacing="1">CROSS-MAP SKILL Ρ AT L = 350</text><text x="6" y="38" font-family="JetBrains Mono, monospace" font-size="12" fill="#1c150d">Fails → spread</text><rect x="6" y="43" width="235.7" height="16" fill="#1f9e8e" stroke="#1c150d" stroke-width="1.5"/><text x="247.7" y="56" font-family="Bricolage Grotesque, sans-serif" font-weight="800" font-size="15" fill="#1c150d">0.33</text><text x="6" y="78" font-family="JetBrains Mono, monospace" font-size="12" fill="#1c150d">Spread → fails</text><rect x="6" y="83" width="111.5" height="16" fill="#6f5f46" stroke="#1c150d" stroke-width="1.5"/><text x="123.5" y="96" font-family="Bricolage Grotesque, sans-serif" font-weight="800" font-size="15" fill="#1c150d">0.16</text><text x="6" y="118" font-family="JetBrains Mono, monospace" font-size="12" fill="#1c150d">Positioning → spread</text><rect x="6" y="123" width="174.7" height="16" fill="#1f9e8e" stroke="#1c150d" stroke-width="1.5"/><text x="186.7" y="136" font-family="Bricolage Grotesque, sans-serif" font-weight="800" font-size="15" fill="#1c150d">0.25</text><text x="6" y="158" font-family="JetBrains Mono, monospace" font-size="12" fill="#1c150d">Spread → positioning</text><rect x="6" y="163" width="7.1" height="16" fill="#6f5f46" stroke="#1c150d" stroke-width="1.5"/><text x="19.1" y="176" font-family="Bricolage Grotesque, sans-serif" font-weight="800" font-size="15" fill="#1c150d">0.01</text></svg></div><div class="body"><span class="chip">Finding 1</span><h3>The spread&#x27;s dynamics remember fails and positioning, not the reverse.</h3><p class="take">Cross-map skill at full library: fails → spread 0.33 (reverse 0.16); positioning → spread 0.25 (reverse 0.01). Both converge as the library grows.</p><p class="small">Both teal links: shift p = 0.005 (the floor with 200 surrogates), Holm p = 0.05.</p><p class="small"><a href="../fig/2026-11-15/ccm_convergence.png">Original chart from the 2026-11-15 edition →</a></p></div></article><article class="fcard red"><div class="viz"><svg viewBox="0 0 360 208" role="img" xmlns="http://www.w3.org/2000/svg"><text x="6" y="16" font-family="JetBrains Mono, monospace" font-size="11" fill="#6f5f46" letter-spacing="1">P-VALUE (SHORTER = STRONGER)</text><line x1="34.4" x2="34.4" y1="40" y2="192" stroke="#df5236" stroke-width="2" stroke-dasharray="4 3" opacity=".75"/><text x="38.4" y="204" font-family="JetBrains Mono, monospace" font-size="10.5" fill="#df5236">0.05</text><text x="6" y="38" font-family="JetBrains Mono, monospace" font-size="12" fill="#1c150d">Granger: positioning → fails</text><rect x="6" y="43" width="2.0" height="16" fill="#e8902e" stroke="#1c150d" stroke-width="1.5"/><text x="12.6" y="56" font-family="Bricolage Grotesque, sans-serif" font-weight="800" font-size="15" fill="#1c150d">0.001</text><text x="6" y="78" font-family="JetBrains Mono, monospace" font-size="12" fill="#1c150d">Granger: fails → positioning</text><rect x="6" y="83" width="2.3" height="16" fill="#e8902e" stroke="#1c150d" stroke-width="1.5"/><text x="14.3" y="96" font-family="Bricolage Grotesque, sans-serif" font-weight="800" font-size="15" fill="#1c150d">0.004</text><text x="6" y="118" font-family="JetBrains Mono, monospace" font-size="12" fill="#1c150d">CCM: positioning → fails</text><rect x="6" y="123" width="265.8" height="16" fill="#1f9e8e" stroke="#1c150d" stroke-width="1.5"/><text x="277.8" y="136" font-family="Bricolage Grotesque, sans-serif" font-weight="800" font-size="15" fill="#1c150d">0.47</text><text x="6" y="158" font-family="JetBrains Mono, monospace" font-size="12" fill="#1c150d">CCM: fails → positioning</text><rect x="6" y="163" width="121.6" height="16" fill="#1f9e8e" stroke="#1c150d" stroke-width="1.5"/><text x="133.6" y="176" font-family="Bricolage Grotesque, sans-serif" font-weight="800" font-size="15" fill="#1c150d">0.21</text></svg></div><div class="body"><span class="chip">Finding 2</span><h3>Where Granger sees a two-way link, CCM sees none.</h3><p class="take">Positioning ↔ fails: Granger p = 0.001 and 0.004; CCM p = 0.47 and 0.21. Granger-both-ways with no cross-map skill is the classic sign of a shared linear cycle (untested here).</p></div></article><article class="fcard"><div class="viz"><svg viewBox="0 0 360 194" role="img" xmlns="http://www.w3.org/2000/svg"><text x="6" y="16" font-family="JetBrains Mono, monospace" font-size="11" fill="#6f5f46" letter-spacing="1">CROSS-MAP Ρ BY HALF (L = 172)</text><text x="6" y="38" font-family="JetBrains Mono, monospace" font-size="12" fill="#1c150d">Fails → spread, 2019–22</text><rect x="6" y="43" width="171.0" height="16" fill="#1f9e8e" stroke="#1c150d" stroke-width="1.5"/><text x="183.0" y="56" font-family="Bricolage Grotesque, sans-serif" font-weight="800" font-size="15" fill="#1c150d">0.27</text><text x="6" y="78" font-family="JetBrains Mono, monospace" font-size="12" fill="#1c150d">Fails → spread, 2022–25</text><rect x="6" y="83" width="164.7" height="16" fill="#1f9e8e" stroke="#1c150d" stroke-width="1.5"/><text x="176.7" y="96" font-family="Bricolage Grotesque, sans-serif" font-weight="800" font-size="15" fill="#1c150d">0.26</text><text x="6" y="118" font-family="JetBrains Mono, monospace" font-size="12" fill="#1c150d">Fails → DVP volume, 2019–22</text><rect x="6" y="123" width="12.6" height="16" fill="#6f5f46" stroke="#1c150d" stroke-width="1.5"/><text x="24.6" y="136" font-family="Bricolage Grotesque, sans-serif" font-weight="800" font-size="15" fill="#1c150d">0.02</text><text x="6" y="158" font-family="JetBrains Mono, monospace" font-size="12" fill="#1c150d">Fails → DVP volume, 2022–25</text><rect x="6" y="163" width="239.2" height="16" fill="#e8902e" stroke="#1c150d" stroke-width="1.5"/><text x="251.2" y="176" font-family="Bricolage Grotesque, sans-serif" font-weight="800" font-size="15" fill="#1c150d">0.38</text></svg></div><div class="body"><span class="chip">Finding 3</span><h3>Links into DVP volume appear only after mid-2022.</h3><p class="take">Fails → DVP volume: ρ 0.02 in 2019–22 vs 0.38 in 2022–25, as DVP outstanding roughly doubled. Fails → spread is stable (0.27 / 0.26).</p><p class="small"><a href="../fig/2026-11-15/ccm_lag.png">Original chart from the 2026-11-15 edition →</a></p></div></article><h4>Who plays what</h4>
+<div class="table-wrap"><table>
+<tr><th>Home field (fish populations)</th><th>Our data</th></tr>
+<tr><td>Sardine, anchovy and sea temperature series</td><td>Weekly Treasury fails, the DVP–tri-party spread, DVP volume, leveraged-fund Treasury positioning</td></tr>
+<tr><td>"Temperature's fingerprint is in sardine dynamics"</td><td>"Fails' fingerprint is in the spread's dynamics"</td></tr>
+<tr><td>Decades of noisy yearly counts</td><td>About 360 weeks, 2019-01 to 2025-12</td></tr>
+</table></div>
+
+<h4>Inputs and preprocessing</h4>
+<ul>
+<li>CFTC Traders in Financial Futures (leveraged-fund net short in 2y, 5y, 10y, an unweighted sum, not DV01-weighted), NY Fed financing fails, OFR DVP and tri-party data.</li>
+<li>Weekly differences (log differences for volumes and fails). Two holiday weeks without a fails release interpolated. The lab's TFF copy stops at 2025-12-30, so the panel ends there.</li>
+<li>Embedding \(E\) per series by simplex skill (first half fit, second half test); 4-week exclusion radius.</li>
+</ul>
+
+<h4>What we ran</h4>
+<ol>
+<li>Own-dynamics checks: simplex and S-map skill for each series (is it predictable, is it nonlinear?).</li>
+<li>Convergence curves for 10 directions (100 random libraries per point, 10 points).</li>
+<li>200 driver-shift surrogates per direction at \(L = 350\); Holm across directions.</li>
+<li>Lag scan −4…+4 weeks; linear Granger as the plain baseline; the same analysis on each half.</li>
+<li>Full run: 148 s single-threaded.</li>
+</ol>
+
+<div class="callouts"><h5>How to read the main chart (convergence curves)</h5>
+<ol>
+<li>x = library size \(L\); y = cross-map skill \(\rho\). Each panel is one direction (driver → responder).</li>
+<li>A link needs two things: the curve rises as \(L\) grows, and it ends above the grey band (below the null's 95th percentile).</li>
+<li>Fails → spread and positioning → spread rise (+0.24 and +0.19 from \(L\) = 20 to 350) and clear the band.</li>
+<li>Flat curves inside the band (positioning ↔ fails) mean no detectable coupling.</li>
+</ol></div>
+
+<div class="plain"><h5>What it means for a decision-maker</h5>
+<p>The DVP–tri-party rate spread behaves like the "listener": its week-to-week moves carry traces of settlement fails and of leveraged-fund positioning, more than the reverse. Fails and positioning are not linked to each other, even though a standard linear test says they are; that test is probably picking up shared calendar effects. These links are real but modest and sit right at the edge of significance. Descriptive only.</p></div>
+
+<h4>Where it breaks (seen in our runs)</h4>
+<ul>
+<li><b>Noise:</b> CCM assumes near-deterministic dynamics; ours are noisy weekly differences with \(\rho\) of 0.2–0.3.</li>
+<li><b>p-value floor:</b> 200 surrogates cap p at 0.005; after Holm the two links sit exactly at 0.05.</li>
+<li><b>Unpredictable driver:</b> positioning changes are nearly unpredictable from their own past (\(\rho\approx0.07\)), so they can only be tested as a driver.</li>
+<li><b>Regime change:</b> links into DVP volume exist only after mid-2022, so full-sample numbers mix two regimes.</li>
+<li><b>Circular shift</b> wraps the end of each series onto its start.</li>
+</ul>
+
+<h4>What we'd do next</h4>
+<p>Top pick (Engineering): reuse the responder's neighbour sets across surrogates, so 10,000 surrogates cost little and the p-value floor drops. Then rolling CCM on the late-2025 switch-off seen by CRQA.</p>
+</div><div class="panel p3" id="robust"><p><span class="grade na">Not graded</span> <span class="small">Home-field grading started with the 2026-11-16 edition. What the 11-15 page records:</span></p>
+<ul>
+<li><b>Origin:</b> Sugihara et al. (2012), Science 338:496–500, from fisheries and population ecology. <b>Extension:</b> Ye et al. (2015), Scientific Reports 5:14750, for time-delayed links (verified at nature.com/articles/srep14750).</li>
+<li><b>Implementation:</b> pyEDM 2.5.7 from the Sugihara Lab (GitHub, 148 stars), NumPy/SciPy in 2.x, C++ core in 1.x.</li>
+<li><b>Stated assumption:</b> weakly noisy deterministic dynamics; the page checks it with simplex and S-map skill before reading any cross map.</li>
+<li><b>Known gap noted on the page:</b> indirect links. Partial cross mapping (Leng et al., Nature Communications 11:2632, 2020) is on the watchlist as the fix.</li>
+</ul>
+</div><div class="panel p4" id="sauce"><div class="sauce top"><span class="t">1 · Engineering · Effort S–M · ★ Top pick</span><h5>Surrogate nulls for free: reuse the neighbour sets</h5>
+<p>In a shift-surrogate test the responder's shadow manifold never changes; only the driver values being predicted move. Find neighbours once; each surrogate then costs \(O(nk)\). A Rust core with this reuse, checked against pyEDM, makes 10,000 surrogates cheap and lifts today's p-value floor (1/201).</p>
+<p><b>Math sketch.</b> Neighbour indices \(t_i(t)\) and weights \(w_i(t)\) depend only on \(M_Y\). For a shifted driver \(x^{(\tau)}_t = x_{(t+\tau)\bmod n}\): \(\hat x^{(\tau)}_t = \sum_i w_i(t)\,x^{(\tau)}_{t_i(t)}\), a sparse matrix–vector product per surrogate.</p>
+<p class="small"><b>Test.</b> ρ parity ≤ 1e-12 with pyEDM 2.5.7 on all 10 directions at full library; the 10 × 200 null in &lt; 1 s (today: 148 s).</p></div>
+<div class="sauce"><span class="t">2 · Math · Effort M</span><h5>A familywise partial-CCM network</h5>
+<p>Condition each cross map on the third and fourth legs (partial cross mapping) to separate direct from indirect links, with persistence-preserving surrogates and max-T control over every edge of the 4-node graph.</p>
+<p><b>Math sketch.</b> Compare \(\rho(x, \hat x\mid M_Y)\) with the skill of an indirect route \(\rho(x, \widehat{x}\mid \widehat{M_Z}\text{ from } M_Y)\); an edge survives if the direct skill exceeds the best indirect route, with max-T over the 12 directed edges.</p>
+<p class="small"><b>Test.</b> On simulated 4-node chains at our persistence: size 5% ± 1.5 points, indirect edges removed ≥ 80% of the time. Then: does positioning → spread survive conditioning on fails?</p></div>
+<div class="sauce"><span class="t">3 · New use on our data · Effort S</span><h5>Rolling CCM on the late-2025 switch-off (Q1.2–Q1.3)</h5>
+<p>CRQA showed the fails–spread coupling turning off after July 2025. Rolling 2-year CCM would show whether the direction (fails → spread) faded first, or positioning → spread took over.</p>
+<p><b>Math sketch.</b> \(\rho_w\) at fixed \(L\) in each 2-year window \(w\), a surrogate null per window, Holm across windows.</p>
+<p class="small"><b>Test.</b> Windows and episodes fixed in advance; an honest miss counts.</p></div>
+<p class="small">👍 on the issue means go with the ★ top pick. To choose another, just say so in a comment.</p>
+</div><div class="panel p5" id="questions"><div class="sauce"><span class="t">Q1.5 · Positioning vs funding</span><p>Leveraged-fund positioning leaves a cross-map fingerprint in the spread (ρ = 0.25), not in fails.</p></div>
+<div class="sauce"><span class="t">Q1.1 · Lead / lag</span><p>Gives the 11-14 CRQA same-week link a direction: fails → spread (0.33 vs 0.16 the other way), peaking at −1 week.</p></div>
+<div class="sauce"><span class="t">Q1.3 · Does the relationship change?</span><p>Links into DVP volume appear only after mid-2022.</p></div>
+<p class="small"><a href="https://github.com/jgridifier/research-lab/blob/main/docs/methods-scout/QUESTIONS.md">All questions</a></p>
+</div></div></div>
+<p class="cite">Full tables, code and data notes: <a href="../2026-11-15.html#ccm">the 2026-11-15 edition</a> · scripts in <code>runs/2026-11-15/</code> · card sources in <code>cards/ccm/</code>.</p>
+<div style="margin:1.4rem 0"><a class="btn" href="https://github.com/jgridifier/research-lab/issues/59">Respond on #59</a><p class="howto">👍 go ahead · 👎 drop · or just comment what you think</p></div>
+<script>(function(){var m={"math":1,"applied":2,"robust":3,"sauce":4,"questions":5};var h=location.hash.slice(1);var i=m[h]||(/^t[1-5]$/.test(h)?+h[1]:0);if(i)document.getElementById("t"+i).checked=true;})();</script>
+</div>
+<footer class="pf">Generated by <code>tools/build_cards.py</code> from <code>feedback-state.json</code> and <code>cards/</code>; page contract in <a href="https://github.com/jgridifier/research-lab/blob/main/docs/methods-scout/LAYOUT.md">LAYOUT.md</a>.
+Status chips are baked in at build time and refreshed from the GitHub issue labels on load. Q2 work so far uses SYNTHETIC mock budgets; no private rows are published.</footer>
+<script src="../status.js"></script>
+</body></html>

@@ -1,0 +1,13 @@
+<div class="sauce top"><span class="t">1 · Engineering · Effort S–M · ★ Top pick</span><h5>Surrogate nulls for free: reuse the neighbour sets</h5>
+<p>In a shift-surrogate test the responder's shadow manifold never changes; only the driver values being predicted move. Find neighbours once; each surrogate then costs \(O(nk)\). A Rust core with this reuse, checked against pyEDM, makes 10,000 surrogates cheap and lifts today's p-value floor (1/201).</p>
+<p><b>Math sketch.</b> Neighbour indices \(t_i(t)\) and weights \(w_i(t)\) depend only on \(M_Y\). For a shifted driver \(x^{(\tau)}_t = x_{(t+\tau)\bmod n}\): \(\hat x^{(\tau)}_t = \sum_i w_i(t)\,x^{(\tau)}_{t_i(t)}\), a sparse matrix–vector product per surrogate.</p>
+<p class="small"><b>Test.</b> ρ parity ≤ 1e-12 with pyEDM 2.5.7 on all 10 directions at full library; the 10 × 200 null in &lt; 1 s (today: 148 s).</p></div>
+<div class="sauce"><span class="t">2 · Math · Effort M</span><h5>A familywise partial-CCM network</h5>
+<p>Condition each cross map on the third and fourth legs (partial cross mapping) to separate direct from indirect links, with persistence-preserving surrogates and max-T control over every edge of the 4-node graph.</p>
+<p><b>Math sketch.</b> Compare \(\rho(x, \hat x\mid M_Y)\) with the skill of an indirect route \(\rho(x, \widehat{x}\mid \widehat{M_Z}\text{ from } M_Y)\); an edge survives if the direct skill exceeds the best indirect route, with max-T over the 12 directed edges.</p>
+<p class="small"><b>Test.</b> On simulated 4-node chains at our persistence: size 5% ± 1.5 points, indirect edges removed ≥ 80% of the time. Then: does positioning → spread survive conditioning on fails?</p></div>
+<div class="sauce"><span class="t">3 · New use on our data · Effort S</span><h5>Rolling CCM on the late-2025 switch-off (Q1.2–Q1.3)</h5>
+<p>CRQA showed the fails–spread coupling turning off after July 2025. Rolling 2-year CCM would show whether the direction (fails → spread) faded first, or positioning → spread took over.</p>
+<p><b>Math sketch.</b> \(\rho_w\) at fixed \(L\) in each 2-year window \(w\), a surrogate null per window, Holm across windows.</p>
+<p class="small"><b>Test.</b> Windows and episodes fixed in advance; an honest miss counts.</p></div>
+<p class="small">👍 on the issue means go with the ★ top pick. To choose another, just say so in a comment.</p>
