@@ -148,3 +148,42 @@ done 2026-11-14), Extension 2 (Math: increment split, passed 2026-11-14) and the
    all three are mapped to one TIPS column. FRNs are zero before 2014 (a real new type); kept as zeros.
 6. **D.** P2's runner (`sims/run_p2.py` in ecotraj-py) was written after the P2 pre-registration merged and before the run;
    it only sets D, σ, τ² and a as the pre-registration states.
+
+## E. pim (#63): Engineering and Math avenues — 2026-11-17, 2:25 PM ET, written before either avenue runs
+
+**Go.** Jared, in chat at 2:11 PM ET on 11-17: "Yes move forward with pim". He made this call knowing that the section A
+benchmark had missed the "promising" rule. Both avenues follow the issue's secret-sauce tab. This is research only: it is
+not a promotion into analysis-skills, and Y-9C use stays descriptive (no forecasts, no new outcomes).
+
+### E1. Engineering: a streaming within-block PIM fitter (prototype in numpy; the production Rust core becomes a ticket)
+The fitter solves the logit PIM score equation \(U(\beta)=\sum_y\sum_{i<j\in y} Z_{ij}(I_{ij}-\mathrm{expit}(Z_{ij}^\top\beta))\)
+with \(Z_{ij}=X_j-X_i\) and \(I_{ij}=1\{Y_i<Y_j\}+\tfrac12 1\{Y_i=Y_j\}\). It uses the same within-year pairs as the 11-16 run, and it gets
+permutations by re-labelling \(I\) within year while \(Z\) stays fixed, solving all permutations together with batched Newton.
+- **Oracle:** pim 2.0.4 in the lab rscout env, `link='logit', model='difference'`, same `compare` matrix, nleqslv
+  `control=list(xtol=1e-13, ftol=1e-13)` so that the oracle's own stopping rule does not set the error floor.
+- **Bar Eng-1 (parity):** across all 24 fits / 29 coefficients of the 11-16 table (`runs/2026-11-16/pim/pim_q3.R`), max |Δβ| ≤ 1e-8
+  and max |ΔSE| ≤ 1e-8 (absolute; SE = pim's default sandwich). In addition, 50 random within-year permutations of the B1 joint model refit by the oracle:
+  max |Δβ| ≤ 1e-8.
+- **Bar Eng-2 (speed):** 10,000 within-year permutations of the B1 joint model (payout/RWA ~ drawdown + pre-tax income,
+  360 firm-years, 5,017 pairs), each solved to max |U| ≤ 1e-10, β for every permutation, wall time **< 2 s** on this box.
+  If the 1-minute load average is > 4 when it is measured (the ecotraj P2 run is using 6 workers), it is measured again
+  after P2 ends and the bar is judged on that unloaded run; both numbers are reported. Time with a sandwich SE for each
+  permutation, and the matching pim time (extrapolated from 20 permutations), are reported with no bar.
+- Pass = Eng-1 and Eng-2. Anything production-grade (Rust core, bindings, CI parity) goes into an Engineering ticket and is not run here.
+
+### E2. Math: firm-clustered (dyadic) variance for PIMs
+pim's sandwich treats two pairs as dependent only if they share a **firm-year**. With firm effects, pairs that share a
+**firm** in different years are also dependent. Estimator: \(\hat V_F = c\,A^{-1} B_F A^{-1}\), with \(A=-\partial U/\partial\beta\),
+\(B_F=\sum_f S_fS_f^\top-\sum_{\{a,b\}} V_{ab}V_{ab}^\top\), where \(S_f\) is the sum of pair scores \(u_p\) over pairs that involve firm \(f\) and
+\(V_{ab}\) is the sum over the pairs (in any year) made of firms \(a\) and \(b\). This counts every pair of pairs that shares at least one firm exactly once.
+Small-sample factor \(c=G/(G-1)\) with G = number of firms. Amorim et al.'s bias reduction is **not** part of this run;
+it is named as a follow-up. Identity check: with firm-year IDs in place of firm IDs and c = 1, \(\hat V_F\) equals pim's sandwich (≤ 1e-10).
+- **Simulation at our design:** 40 firms × 13 years, and in each year a random 18–35 firms (uniform) observed. \(x_{ft}=c_f+u_{ft}\),
+  \(c_f\sim N(0,0.6)\), \(u_{ft}\sim N(0,0.4)\); \(y_{ft}=\beta x_{ft}+a_f+e_{ft}\), \(a_f\sim N(0,1)\), \(e_{ft}\sim N(0,1)\).
+  Scenario A: β = 0, where the true PIM coefficient is 0. Scenario B: β = 0.5, where the pseudo-truth is the mean PIM coefficient over 20 fits on 400 firms × 13 years
+  with the same per-year sampling share. R = 2,000 replications per scenario (seed 20261117). The firm block bootstrap (percentile,
+  B = 199) runs on the first 500 replications of each scenario, for comparison.
+- **Bar Math-1:** nominal-95% Wald coverage of \(\hat V_F\) within **[93.5%, 96.5%] in both scenarios**. pim's sandwich and the
+  block bootstrap are reported beside it, with no bar.
+- **Descriptive application (no bar):** recompute the 29-row 11-16 table with \(\hat V_F\) and report, per row, the sandwich p
+  versus the firm-clustered p, with Holm over the 29 rows for each. The card says which headline findings survive.
