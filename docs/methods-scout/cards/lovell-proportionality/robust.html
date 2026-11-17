@@ -1,0 +1,7 @@
+<p><span class="grade na">Not graded</span> <span class="small">Home-field grading started with the 2026-11-16 edition. Sourced facts:</span></p>
+<ul>
+<li><b>Paper:</b> Lovell et al. (2015), PLoS Computational Biology 11(3):e1004075, a peer-reviewed methods paper making the case that correlation is invalid on relative data and proposing proportionality.</li>
+<li><b>Package:</b> propr (Quinn et al. 2017, Scientific Reports 7:16520). Its last CRAN version, 4.2.6, was archived on 2022-11-10 "as issues were not corrected in time" (CRAN record). The lab implements the published formulas instead.</li>
+<li><b>Known limits in the home field:</b> ρ needs strictly positive data (zeros must be handled first), and its significance has usually been judged with iid permutations and FDR, which ignore time dependence.</li>
+<li><b>Our checks:</b> 7 algebraic identities pass; the 11-12 E4 numbers are reproduced exactly by an independent implementation (11-17).</li>
+</ul>

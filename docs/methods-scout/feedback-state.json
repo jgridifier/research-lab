@@ -1,7 +1,7 @@
 {
   "version": 1,
   "repo": "jgridifier/research-lab",
-  "updated_at": "2026-11-16T19:41:34Z",
+  "updated_at": "2026-11-17T17:55:18Z",
   "issues": {
     "46": {
       "issue": 46,
@@ -90,16 +90,35 @@
       "page_anchor": "#ecotraj",
       "question": "Q1-retired",
       "status": "in-progress",
-      "top_pick": "math",
+      "top_pick": "all",
       "labels": [
         "scout",
         "scout:Q1-retired",
         "status:in-progress",
-        "pick:math"
+        "pick:engineering",
+        "pick:math",
+        "pick:new-use"
       ],
-      "last_processed_at": "2026-11-16T18:59:41Z",
-      "notes": "Python port exists at jgridifier/ecotraj-py (parity 1,260/1,280). Jared's choice between accepting the 20 R quirks and pre-registering the power curve (P2) is still open.",
-      "history": []
+      "last_processed_at": "2026-11-17T17:55:18Z",
+      "notes": "11-17: Jared said 'All 3 extensions' (+👍). Read as Ext 1 Engineering (done; packaging ticket drafted), Ext 2 Math (P2 power curve pre-registered in ecotraj-py and running), Ext 3 New use (run on OFR repo mixes: collateral p 0.036, Holm 0.072, honest miss). The 20 R quirks stay documented; parity work stops at 1,260/1,280.",
+      "history": [
+        {
+          "at": "2026-11-17T14:04:58Z",
+          "signal": "thumbs_up",
+          "source": "reaction",
+          "actor": "jgridifier",
+          "action": "go ahead",
+          "ref": null
+        },
+        {
+          "at": "2026-11-17T14:06:05Z",
+          "signal": "free_text",
+          "source": "comment",
+          "actor": "jgridifier",
+          "action": "all three avenues (top_pick all) -> status:in-progress",
+          "ref": 6950345958
+        }
+      ]
     },
     "51": {
       "issue": 51,
@@ -158,16 +177,17 @@
       "page": "2026-11-12-adhoc.html",
       "page_anchor": "#lovell-proportionality",
       "question": "Q1-retired",
-      "status": "refine",
+      "status": "in-progress",
       "top_pick": "math",
       "labels": [
         "scout",
         "scout:Q1-retired",
-        "status:refine",
-        "pick:math"
+        "status:in-progress",
+        "pick:math",
+        "pick:engineering"
       ],
-      "last_processed_at": "2026-11-16T18:59:46Z",
-      "notes": "Approved to move forward on 2026-11-13 at 11:51 PM ET, but direction is still TBD with Jared.",
+      "last_processed_at": "2026-11-17T17:55:18Z",
+      "notes": "11-17: Jared chose Math + Eng. Math: increment-partial rho passes size/power (6.5%/6.2%, power 0.99); the 11-12 level prototype is oversized (13%). Eng: proprlite.py parity exact, 124,750 pairs in 0.03 s. Packaging ticket drafted. Not a promotion.",
       "history": [
         {
           "at": "2026-11-14T04:51:00Z",
@@ -176,6 +196,14 @@
           "actor": "jgridifier",
           "action": "status:refine",
           "ref": null
+        },
+        {
+          "at": "2026-11-17T14:07:03Z",
+          "signal": "free_text",
+          "source": "comment",
+          "actor": "jgridifier",
+          "action": "chose avenues Math + Engineering (resolves direction TBD); both run -> status:in-progress",
+          "ref": 6950370736
         }
       ]
     },
@@ -324,17 +352,26 @@
       "page": "2026-11-15.html",
       "page_anchor": "#kairos",
       "question": "Q1",
-      "status": "proposed",
+      "status": "refine",
       "top_pick": "math",
       "labels": [
         "scout",
         "scout:Q1",
-        "status:proposed",
+        "status:refine",
         "pick:math"
       ],
-      "last_processed_at": "2026-11-16T18:59:59Z",
-      "notes": "Recommended for the promote workflow; not promoted. The taxonomy fix (OFR’s 2025-08 tenor-bucket split) should come before anything is built on the clock.",
-      "history": []
+      "last_processed_at": "2026-11-17T17:55:18Z",
+      "notes": "11-17 refresh on current questions, 5 more open datasets and both SYNTHETIC mocks. Pre-set rule: not worth building (clock passes walk-forward on 0 of 5 new datasets; no mock gain; no new Form PF link). Waiting on Jared: keep the OFR repo-mix clock as a Q1 chart, or drop.",
+      "history": [
+        {
+          "at": "2026-11-17T17:25:19Z",
+          "signal": "free_text",
+          "source": "comment",
+          "actor": "jgridifier",
+          "action": "refresh with current tests/questions, mocks and more open data; ran -> verdict not worth building; status:refine (keep as chart or drop)",
+          "ref": 6955613232
+        }
+      ]
     },
     "62": {
       "issue": 62,
@@ -364,17 +401,42 @@
       "page": "2026-11-16.html",
       "page_anchor": "#pim",
       "question": "Q3",
-      "status": "proposed",
+      "status": "refine",
       "top_pick": "new-use",
       "labels": [
         "scout",
         "scout:Q3",
-        "status:proposed",
+        "status:refine",
         "pick:new-use"
       ],
-      "last_processed_at": "2026-11-16T19:41:33Z",
-      "notes": "Public data; descriptive only; no Y-9C forecasts. Verdict on the page: recommend for promote workflow (not promoted; only Jared approves).",
-      "history": []
+      "last_processed_at": "2026-11-17T17:55:18Z",
+      "notes": "11-17: Jared asked for ARDL/SARIMAX benchmarks and, if promising, the Eng + Math avenues. Pre-set 'promising' rule narrowly missed (PIM+lag beat ARDL on payout/NI by 0.068 but trailed per-firm SARIMAX by 0.020 on its rows), so Eng/Math not started; waiting on Jared. Descriptive only.",
+      "history": [
+        {
+          "at": "2026-11-17T14:31:34Z",
+          "signal": "free_text",
+          "source": "comment",
+          "actor": "jgridifier",
+          "action": "asked for ARDL/SARIMAX benchmark beside OLS; ran (runs/2026-11-17/pim)",
+          "ref": 6951001992
+        },
+        {
+          "at": "2026-11-17T17:22:04Z",
+          "signal": "thumbs_up",
+          "source": "reaction",
+          "actor": "jgridifier",
+          "action": "read together with the 17:22 comment (conditional go)",
+          "ref": null
+        },
+        {
+          "at": "2026-11-17T17:22:55Z",
+          "signal": "free_text",
+          "source": "comment",
+          "actor": "jgridifier",
+          "action": "conditional: Eng + Math only if benchmark promising; pre-set rule missed -> status:refine, Jared's call",
+          "ref": 6955554191
+        }
+      ]
     }
   }
 }

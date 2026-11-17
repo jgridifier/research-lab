@@ -1,0 +1,18 @@
+{
+  "Corning_mock": {
+    "n_programs": 778,
+    "years": ["2020", "2021", "2022", "2023", "2024", "2025"],
+    "porcic_observed": 1547,
+    "porcic_random_q05": 1532,
+    "porcic_p": 0.251748,
+    "ca1_pct": 32.553438
+  },
+  "MorganStanley_mock": {
+    "n_programs": 1404,
+    "years": ["2021", "2022", "2023", "2024", "2025"],
+    "porcic_observed": 2325,
+    "porcic_random_q05": 2304.95,
+    "porcic_p": 0.274725,
+    "ca1_pct": 52.136883
+  }
+}

@@ -1,7 +1,126 @@
 {
   "issue": 50,
-  "stub": true,
+  "name": "Ecological trajectory analysis (ecotraj)",
+  "title": "Is a share path drifting on purpose, or just wandering?",
+  "field": "community ecology",
+  "what": "Treat each period's mix as a point; measure whether the path keeps one direction, and split market from firm-specific moves.",
   "verdict": "Recommend",
-  "one": "Python port at 1,260/1,280 parity.",
-  "your_call": "Accept the 20 R quirks and pause, or pre-register the power curve (P2)."
+  "grade": "not graded (the 11-12 edition predates grading)",
+  "pick_eff": "L",
+  "pick_line": "Port and speed done; math split passes; power curve running; new-use rerun on repo data.",
+  "data": "Public FR Y-9C proxy, public OFR repo aggregates, and simulations; descriptive only",
+  "one": "Increment split finds planted drifts 99.7% of the time; on repo collateral mix it narrowly misses.",
+  "picture": {
+    "type": "numbers",
+    "left": {
+      "lab": "Old level split (11-12)",
+      "big": "1.3%",
+      "sub": "of planted sticky swaps found at T = 62 (it hides them)"
+    },
+    "right": {
+      "lab": "Increment split (Extension 2)",
+      "big": "99.7%",
+      "sub": "found, with a 5.3% false-alarm rate when there is none"
+    }
+  },
+  "findings": [
+    {
+      "h": "Math (Extension 2): the increment split has the right size and real power.",
+      "t": "Pre-registered simulation, 2,000 runs per cell: false alarms 5.2% (T = 40) and 5.3% (T = 62); planted swap found 93.7% and 99.7%. The old level split: 0.1% and 1.3%.",
+      "chart": {
+        "type": "hbars",
+        "title": "Planted sticky swap found (T = 62)",
+        "max": 1.0,
+        "ref": [
+          0.8,
+          "0.80 bar"
+        ],
+        "rows": [
+          [
+            "Level split (11-12 m1)",
+            0.013,
+            "red",
+            "1.3%"
+          ],
+          [
+            "Increment split, P1",
+            0.997,
+            "teal",
+            "99.7%"
+          ]
+        ]
+      }
+    },
+    {
+      "h": "Engineering (Extension 1): a Python port at R parity, 160× faster than R.",
+      "t": "1,260 of 1,280 randomized checks match ecotraj 1.2.2 exactly; the other 20 are R floating-point quirks on exactly collinear points. 999 sign-flip draws on 62 × 14: 98.8 s in R, 0.59 s on one core.",
+      "chart": {
+        "type": "hbars",
+        "title": "Seconds for 999 null draws, T = 62 × 14 parts",
+        "max": 100,
+        "rows": [
+          [
+            "R ecotraj (loop, extrapolated)",
+            98.8,
+            "muted",
+            "98.8 s"
+          ],
+          [
+            "Python reference",
+            8.89,
+            "amber",
+            "8.89 s"
+          ],
+          [
+            "numba, 1 core",
+            0.593,
+            "teal",
+            "0.59 s"
+          ],
+          [
+            "numba, 8 cores",
+            0.106,
+            "teal",
+            "0.11 s"
+          ]
+        ]
+      },
+      "note": "160× = 98.8 / 0.593, computed. R time extrapolated from warm batches (ecotraj-py bench)."
+    },
+    {
+      "h": "New use (11-17): on repo collateral mix, a directional residual drift that does not survive Holm.",
+      "miss": true,
+      "t": "Market = VIX, 10-year yield, total volume. Tri-party collateral mix: residual directionality 0.628, p = 0.036 (Holm 0.072). Venue × tenor mix: 0.560, p = 0.164. Pre-set bar: Holm p ≤ 0.05 on either.",
+      "chart": {
+        "type": "hbars",
+        "title": "Residual path directionality (0.5 ≈ random walk)",
+        "max": 0.8,
+        "ref": [
+          0.5,
+          "≈ no direction"
+        ],
+        "rows": [
+          [
+            "Tri-party collateral (p 0.036, Holm 0.072)",
+            0.628,
+            "amber",
+            "0.628"
+          ],
+          [
+            "Venue × tenor (p 0.164)",
+            0.56,
+            "muted",
+            "0.560"
+          ],
+          [
+            "11-12 dealer trading assets (p 0.008)",
+            0.595,
+            "teal",
+            "0.595"
+          ]
+        ]
+      },
+      "note": "Residual drift in collateral: corporate debt up (+1.09 clr), Treasury down (−0.83). The 11-12 row is the scout's proxy panel, for scale."
+    }
+  ]
 }

@@ -10,28 +10,177 @@
   "pick_line": "Flag Q2 programs whose numbers contradict their text label; must beat the 0.78 AUC from 11-13.",
   "data": "Public filings (Fed DFAST results, FR Y-9C); descriptive only",
   "one": "Stress-test pre-tax income orders payouts; drawdown adds nothing beyond it.",
-  "picture": {"type": "numbers",
-    "left": {"lab": "Usual regression", "big": "−43%", "sub": "of the slope lost when 8 of 360 extreme rows are trimmed"},
-    "right": {"lab": "PIM", "big": "0.468 → 0.470", "sub": "same trim: the effect barely moves (0.4675 → 0.4697)"}},
+  "picture": {
+    "type": "numbers",
+    "left": {
+      "lab": "Usual regression",
+      "big": "−43%",
+      "sub": "of the slope lost when 8 of 360 extreme rows are trimmed"
+    },
+    "right": {
+      "lab": "PIM",
+      "big": "0.468 → 0.470",
+      "sub": "same trim: the effect barely moves (0.4675 → 0.4697)"
+    }
+  },
   "findings": [
-    {"h": "Stress-test pre-tax income orders payouts; drawdown adds nothing beyond it.",
-     "t": "A bank one IQR better on severely adverse pre-tax income has the higher payout/RWA 68% of the time (Holm p = 0.02).",
-     "chart": {"type": "dots", "title": "Chance the better-placed bank pays more", "lo": 0.3, "hi": 0.8, "ref": 0.5, "ref_label": "50% = no ordering",
-       "rows": [["Pre-tax income, alone", 0.68, "teal", "68%"], ["Pre-tax income, given drawdown", 0.69, "teal", "69%"],
-                ["Drawdown, alone", 0.40, "amber", "40%"], ["Drawdown, given pre-tax income", 0.50, "muted", "50%"]]},
-     "fig": "fig/2026-11-16/pim_forest.png"},
-    {"h": "It holds where the usual regression is fragile.",
-     "t": "Trimming the 8 most extreme payout ratios cuts the regression slope from −0.070 to −0.040. The PIM effect moves from 0.4675 to 0.4697.",
-     "note": "Bars computed from those numbers: 0.040/0.070, and (0.5−0.4697)/(0.5−0.4675).",
-     "chart": {"type": "hbars", "title": "Effect kept after trimming 2% of rows", "max": 100,
-       "rows": [["Usual regression (OLS + year FE)", 57, "amber", "57%"], ["PIM (distance from 0.5)", 93, "teal", "93%"]]},
-     "fig": "fig/2026-11-16/pim_trim.png"},
-    {"h": "Before 2020 stress showed up in dividends; after, maybe buybacks.",
-     "t": "Pre-2020 dividends: 36% per IQR (Holm p = 0.02); buybacks 49%. Post-2020 buybacks 44% (p = 0.034), which does not survive Holm (0.27).",
-     "note": "✓ survives Holm · ? p &lt; 0.05 but not after Holm.",
-     "chart": {"type": "dots", "title": "Deeper drawdown → pays more? (per IQR)", "lo": 0.25, "hi": 0.6, "ref": 0.5, "ref_label": "50% = no ordering",
-       "rows": [["Dividends, 2013–19", 0.36, "teal", "36% ✓"], ["Buybacks, 2013–19", 0.49, "muted", "49%"],
-                ["Dividends, 2021–25", 0.35, "muted", "35%"], ["Buybacks, 2021–25", 0.44, "amber", "44% ?"]]},
-     "fig": "fig/2026-11-16/pim_mix.png"}
-  ]
+    {
+      "h": "Stress-test pre-tax income orders payouts; drawdown adds nothing beyond it.",
+      "t": "A bank one IQR better on severely adverse pre-tax income has the higher payout/RWA 68% of the time (Holm p = 0.02).",
+      "chart": {
+        "type": "dots",
+        "title": "Chance the better-placed bank pays more",
+        "lo": 0.3,
+        "hi": 0.8,
+        "ref": 0.5,
+        "ref_label": "50% = no ordering",
+        "rows": [
+          [
+            "Pre-tax income, alone",
+            0.68,
+            "teal",
+            "68%"
+          ],
+          [
+            "Pre-tax income, given drawdown",
+            0.69,
+            "teal",
+            "69%"
+          ],
+          [
+            "Drawdown, alone",
+            0.4,
+            "amber",
+            "40%"
+          ],
+          [
+            "Drawdown, given pre-tax income",
+            0.5,
+            "muted",
+            "50%"
+          ]
+        ]
+      },
+      "fig": "fig/2026-11-16/pim_forest.png"
+    },
+    {
+      "h": "It holds where the usual regression is fragile.",
+      "t": "Trimming the 8 most extreme payout ratios cuts the regression slope from −0.070 to −0.040. The PIM effect moves from 0.4675 to 0.4697.",
+      "note": "Bars computed from those numbers: 0.040/0.070, and (0.5−0.4697)/(0.5−0.4675).",
+      "chart": {
+        "type": "hbars",
+        "title": "Effect kept after trimming 2% of rows",
+        "max": 100,
+        "rows": [
+          [
+            "Usual regression (OLS + year FE)",
+            57,
+            "amber",
+            "57%"
+          ],
+          [
+            "PIM (distance from 0.5)",
+            93,
+            "teal",
+            "93%"
+          ]
+        ]
+      },
+      "fig": "fig/2026-11-16/pim_trim.png"
+    },
+    {
+      "h": "Before 2020 stress showed up in dividends; after, maybe buybacks.",
+      "t": "Pre-2020 dividends: 36% per IQR (Holm p = 0.02); buybacks 49%. Post-2020 buybacks 44% (p = 0.034), which does not survive Holm (0.27).",
+      "note": "✓ survives Holm · ? p &lt; 0.05 but not after Holm.",
+      "chart": {
+        "type": "dots",
+        "title": "Deeper drawdown → pays more? (per IQR)",
+        "lo": 0.25,
+        "hi": 0.6,
+        "ref": 0.5,
+        "ref_label": "50% = no ordering",
+        "rows": [
+          [
+            "Dividends, 2013–19",
+            0.36,
+            "teal",
+            "36% ✓"
+          ],
+          [
+            "Buybacks, 2013–19",
+            0.49,
+            "muted",
+            "49%"
+          ],
+          [
+            "Dividends, 2021–25",
+            0.35,
+            "muted",
+            "35%"
+          ],
+          [
+            "Buybacks, 2021–25",
+            0.44,
+            "amber",
+            "44% ?"
+          ]
+        ]
+      },
+      "fig": "fig/2026-11-16/pim_mix.png"
+    },
+    {
+      "h": "Benchmark vs ARDL and SARIMAX (11-17): ties ARDL, narrowly misses our bar.",
+      "miss": true,
+      "t": "Held-out years 2016–25, share of same-year bank pairs ordered correctly. Payout/RWA: PIM with last year's payout 0.779 vs ARDL 0.775. Payout/NI: 0.688 vs ARDL 0.620, but 0.637 vs per-firm SARIMAX 0.657 on SARIMAX's rows.",
+      "note": "Pre-set rule: 'promising' needed PIM ≥ ARDL and ≥ SARIMAX on payout/NI. It beat ARDL (+0.068, 90% interval +0.030 to +0.101) but trailed SARIMAX by 0.020 (−0.095 to +0.042), so the Engineering and Math avenues did not start. Descriptive extra: ARDL's long-run drawdown effect loses 44% under the same 2% trim (OLS 43%, PIM under 2%).",
+      "chart": {
+        "type": "hbars",
+        "title": "Pairs ordered correctly, payout/NI (0.5 = coin flip)",
+        "max": 0.8,
+        "ref": [
+          0.5,
+          "0.5 = coin flip"
+        ],
+        "rows": [
+          [
+            "OLS (stress metrics only)",
+            0.579,
+            "muted",
+            "0.579"
+          ],
+          [
+            "PIM (stress metrics only)",
+            0.587,
+            "muted",
+            "0.587"
+          ],
+          [
+            "ARDL(1,0), pooled",
+            0.62,
+            "amber",
+            "0.620"
+          ],
+          [
+            "PIM + last year's payout",
+            0.688,
+            "teal",
+            "0.688"
+          ],
+          [
+            "SARIMAX per firm (its 172 rows)",
+            0.657,
+            "amber",
+            "0.657"
+          ],
+          [
+            "PIM + last year's payout (same 172)",
+            0.637,
+            "teal",
+            "0.637"
+          ]
+        ]
+      }
+    }
+  ],
+  "your_call": "ARDL/SARIMAX benchmark narrowly missed our pre-set 'promising' bar. Start Eng + Math anyway, or hold?"
 }

@@ -1,0 +1,152 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Lovell proportionality (ρ) · research card · methods scout</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,400..800&family=Newsreader:ital,opsz,wght@0,6..72,400..600;1,6..72,400..500&family=JetBrains+Mono:wght@400;500;700&display=swap">
+<link rel="stylesheet" href="../../assets/brief.css">
+<link rel="stylesheet" href="../scout-cards.css">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.css"><script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.js"></script><script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/contrib/auto-render.min.js" onload="renderMathInElement(document.body,{delimiters:[{left:'$$',right:'$$',display:true},{left:'\\(',right:'\\)',display:false}]})"></script>
+<!-- Methods Scout home-screen / PWA tags. Paste into <head> of every methods-scout page.
+     Paths are root-absolute so they resolve under https://jgridifier.github.io/research-lab/. -->
+<link rel="apple-touch-icon" sizes="180x180" href="/research-lab/methods-scout/icons/apple-touch-icon.png">
+<link rel="icon" type="image/png" sizes="32x32" href="/research-lab/methods-scout/icons/favicon-32.png">
+<link rel="icon" type="image/png" sizes="192x192" href="/research-lab/methods-scout/icons/icon-192.png">
+<link rel="manifest" href="/research-lab/methods-scout/manifest.webmanifest">
+<meta name="apple-mobile-web-app-title" content="Methods Scout">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="theme-color" content="#0F2A23">
+
+</head><body>
+<header class="topbar"><a class="brand" href="../index.html">Methods scout</a>
+<span><a href="../index.html">Queue</a> · <a href="../archive.html">Archive</a></span></header>
+<div class="pz">
+<p class="crumb"><a href="../index.html">← Queue</a></p>
+<div class="chips"><span class="chip q">Old Q1</span><span class="chip st-in-progress" data-issue="53">▶ Building</span><span class="chip v-rec">Recommend</span><span class="date">Scouted 2026-11-12</span></div>
+<section class="hero" style="padding-top:.5rem"><p class="kicker">Lovell proportionality (ρ) · from genomics (compositional data analysis)</p>
+<h1>Do two dealers swap share, or just ride the market?</h1></section>
+<div class="sum">
+<div class="row"><span class="k">What it is</span><span class="v">A correlation-like measure that is valid on shares, and now a market-partial version whose false-alarm rate we checked.</span></div>
+<div class="row"><span class="k">Verdict</span><span class="v"><b>Recommend.</b> Home field: not graded (the 11-12 edition predates grading).</span></div>
+<div class="row"><span class="k">Top pick</span><span class="v"><b>Math</b> (effort L): Math + Engineering, as Jared chose: the increment-partial ρ holds its size; the 11-12 level version does not.</span></div>
+<div class="row"><span class="k">Data</span><span class="v">Public FR Y-9C proxy (E4: 4 dealers, 62 quarters) and simulations; descriptive only</span></div>
+</div>
+<p class="kicker" style="margin-top:1rem">The one picture</p>
+<div class="pair"><div><span class="lab">11-12 prototype (level partial)</span><div class="big">13%</div><div class="sub">false alarms at a 5% test when two dealers only share the market</div></div><div class="new"><span class="lab">Increment partial (11-17)</span><div class="big">6.2%</div><div class="sub">same simulation, T = 62; power 99% on a real swap</div></div></div>
+<div style="margin:1rem 0 .4rem"><a class="btn big" href="https://github.com/jgridifier/research-lab/issues/53">Respond on #53</a><p class="howto">👍 go ahead · 👎 drop · or just comment what you think</p></div>
+<div class="tabs"><input type="radio" name="tab" id="t1" checked><input type="radio" name="tab" id="t2"><input type="radio" name="tab" id="t3"><input type="radio" name="tab" id="t4"><input type="radio" name="tab" id="t5"><div class="tabbar"><label for="t1">The math</label><label for="t2">On our data</label><label for="t3">Robust at home</label><label for="t4">Secret sauce</label><label for="t5">Questions</label></div><div class="panels"><div class="panel p1" id="math"><h4>Notation</h4>
+<div class="table-wrap"><table>
+<tr><th>Symbol</th><th>Meaning</th><th>Here</th></tr>
+<tr><td>\(x_t, y_t\)</td><td>two strictly positive parts of a composition at time \(t\)</td><td>two dealers' shares of a total (E4: JPM, GS, MS, BAC equity trading revenue)</td></tr>
+<tr><td>\(u_t, v_t\)</td><td>their clr coordinates, \(\log x_t - \overline{\log s_t}\)</td><td>log share relative to the geometric mean of all parts that quarter</td></tr>
+<tr><td>\(\rho(u,v)\)</td><td>proportionality</td><td>+1 move in proportion, −1 swap, 0 unrelated</td></tr>
+<tr><td>\(X_t\)</td><td>\(k\) observed market covariates</td><td>E4: VIX, 4-quarter Nasdaq return, BAA spread, industry revenue growth (\(k = 4\))</td></tr>
+<tr><td>\(\Delta\)</td><td>first difference over time</td><td>quarter-on-quarter change</td></tr>
+<tr><td>\(T\)</td><td>number of periods</td><td>62 quarters (E4); simulations use 40 and 62</td></tr>
+</table></div>
+
+<h4>Assumptions</h4>
+<ul><li>All parts strictly positive (logs exist); shares are compositions, so only ratios carry information.</li>
+<li>For the market-partial version: the market enters each part's log-share additively through the observed \(X_t\), and \(X_t\) is measured well (see the noisy-proxy result).</li>
+<li>For the null: the two residual series are each stationary enough that shifting one against the other in time breaks any link but keeps each one's own persistence.</li></ul>
+
+<h4>The statistic</h4>
+$$\rho(u,v) \;=\; 1-\frac{\operatorname{Var}(u-v)}{\operatorname{Var}(u)+\operatorname{Var}(v)} \;=\; \frac{2\operatorname{Cov}(u,v)}{\operatorname{Var}(u)+\operatorname{Var}(v)}.$$
+<p><b>Level partial</b> (the 11-12 prototype): regress \(u_t\) and \(v_t\) on \([1, X_t]\), take residuals \(\tilde u_t, \tilde v_t\), report \(\rho(\tilde u,\tilde v)\).</p>
+<p><b>Increment partial</b> (new): regress \(\Delta u_t\) and \(\Delta v_t\) on \([1, \Delta X_t]\), take residuals \(e^u_t, e^v_t\), report \(\rho(e^u, e^v)\).</p>
+
+<h4>Why it works, step by step</h4>
+<div class="step"><b class="n">Step 1 · why ρ is valid on shares</b>The log-ratio \(u - v = \log(x/y)\) does not depend on the total, so \(\operatorname{Var}(u-v)\) is the same for shares and for dollar amounts (Lovell et al. 2015). Pearson correlation of shares does not have this property.</div>
+<div class="step"><b class="n">Step 2 · the second form</b>Expand the numerator: \(\operatorname{Var}(u-v)=\operatorname{Var}u+\operatorname{Var}v-2\operatorname{Cov}(u,v)\). Divide by \(\operatorname{Var}u+\operatorname{Var}v\) and subtract from 1: \(\rho = 2\operatorname{Cov}(u,v)/(\operatorname{Var}u+\operatorname{Var}v)\). This is what makes all 124,750 pairs one covariance matrix away: \(R = 2C / (v_i + v_j)\).</div>
+<div class="step"><b class="n">Step 3 · why the market fakes a swap</b>If \(u_t = \lambda_u m_t + a_t\) and \(v_t = \lambda_v m_t + b_t\) with \(a, b\) independent of each other and of \(m\), then \(\operatorname{Cov}(u,v)=\lambda_u\lambda_v\operatorname{Var}(m)\). With \(\lambda_u>0>\lambda_v\) the pair looks like a swap even though nothing passes between them. Regressing out \(m\) removes that term.</div>
+<div class="step"><b class="n">Step 4 · why levels are the wrong place to remove it</b>\(m_t\) and \(a_t\) are persistent. Over a short window, two independent persistent series have sizeable sample covariance with each other and with \(m\) (spurious regression), so level residuals keep chance co-movement, and the level fit can absorb part of it unevenly. Differencing turns persistent levels into nearly independent steps, where the regression on \(\Delta X_t\) behaves like ordinary regression. The simulations show the result: level partial 12.7–13.3% false alarms, increment partial 6.2–6.5%.</div>
+
+<h4>The null and inference</h4>
+<p>Exact relative cyclic shift: keep \(u\) fixed and roll \(v\) by every shift \(s\in\{4,\dots,n-4\}\), recompute ρ, and set \(p = \bigl(1+\#\{|\rho_s|\ge|\rho_{\text{obs}}|\}\bigr)/(1+\#\text{shifts})\). Shifts under 4 periods are excluded so persistence does not leak into the null. Across many pairs, Benjamini–Hochberg. The simulation (seed 20261117, 1,000 replications per cell) checks the size of this exact procedure.</p>
+
+<div class="toy"><h5>Toy example (computed on the box)</h5>
+<p>Market \(m = (0,1,2,3)\). Two parts load on it with opposite signs plus small unrelated wiggles: \(u = 0.5m + (0.1,-0.1,-0.1,0.1) = (0.1, 0.4, 0.9, 1.6)\), \(v = -0.5m + (0.1,-0.1,0.1,-0.1) = (0.1,-0.6,-0.9,-1.6)\).</p>
+<ul><li><b>Raw:</b> Var u = 0.4300, Var v = 0.4967, Var(u−v) = 1.8267, so ρ = 1 − 1.8267/0.9267 = <b>−0.971</b>: it looks like a near-perfect swap.</li>
+<li><b>Level partial:</b> residuals on [1, m] are (0.1, −0.1, −0.1, 0.1) and (0.04, −0.12, 0.12, −0.04); their covariance is 0, so ρ = <b>0.0</b>.</li>
+<li><b>Increment partial:</b> steps are (0.3, 0.5, 0.7) and (−0.7, −0.3, −0.7); Δm is constant, so removing it just demeans them: (−0.2, 0, 0.2) and (−0.133, 0.267, −0.133); covariance 0, ρ = <b>0.0</b>.</li></ul>
+<p class="small">In this toy both versions agree because the wiggles are not persistent. The simulations are where they differ.</p></div>
+
+<div class="diff"><b>How it differs from the standard tool.</b> The usual tool is Pearson correlation on shares (or on clr levels), with an iid permutation test. Pearson on shares changes with the total and is pushed negative by the sum-to-one constraint; an iid permutation ignores persistence, so it rejects far too often on quarterly data. Here: ρ on log-ratios (scale-free), the market removed from increments, and a cyclic-shift null that keeps each series' own persistence.</div>
+<p class="cite">Followed: Lovell, Pawlowsky-Glahn, Egozcue, Marguerat &amp; Bähler (2015), PLoS Computational Biology 11(3):e1004075, definitions of VLR, φ and ρ; Quinn, Richardson, Lovell &amp; Crowley (2017), Scientific Reports 7:16520, ρ on clr as in propr. Section and equation numbers not checked. The partial versions and the cyclic-shift null are the lab's extension, not in those papers. Toy: <code>cards/_toys/toys.py</code>; simulation: <code>runs/2026-11-17/lovell/sim_partial.py</code>.</p>
+</div><div class="panel p2" id="applied"><h4>What we found</h4><article class="fcard"><div class="viz"><svg viewBox="0 0 360 168" role="img" xmlns="http://www.w3.org/2000/svg"><text x="6" y="16" font-family="JetBrains Mono, monospace" font-size="11" fill="#6f5f46" letter-spacing="1">FALSE-ALARM RATE AT A 5% TEST (MARKET-ONLY PAIRS, T = 62)</text><line x1="53.3" x2="53.3" y1="40" y2="152" stroke="#df5236" stroke-width="2" stroke-dasharray="4 3" opacity=".75"/><text x="57.3" y="164" font-family="JetBrains Mono, monospace" font-size="10.5" fill="#df5236">5% target</text><text x="6" y="38" font-family="JetBrains Mono, monospace" font-size="12" fill="#1c150d">Raw ρ (no market removal)</text><rect x="6" y="43" width="284.0" height="16" fill="#df5236" stroke="#1c150d" stroke-width="1.5"/><text x="296.0" y="56" font-family="Bricolage Grotesque, sans-serif" font-weight="800" font-size="15" fill="#1c150d">100%</text><text x="6" y="78" font-family="JetBrains Mono, monospace" font-size="12" fill="#1c150d">Level partial (11-12 prototype)</text><rect x="6" y="83" width="125.9" height="16" fill="#e8902e" stroke="#1c150d" stroke-width="1.5"/><text x="137.9" y="96" font-family="Bricolage Grotesque, sans-serif" font-weight="800" font-size="15" fill="#1c150d">13.3%</text><text x="6" y="118" font-family="JetBrains Mono, monospace" font-size="12" fill="#1c150d">Increment partial (new)</text><rect x="6" y="123" width="58.7" height="16" fill="#1f9e8e" stroke="#1c150d" stroke-width="1.5"/><text x="70.7" y="136" font-family="Bricolage Grotesque, sans-serif" font-weight="800" font-size="15" fill="#1c150d">6.2%</text></svg></div><div class="body"><span class="chip">Finding 1</span><h3>On shares, the usual correlation calls every market co-move a relationship.</h3><p class="take">Simulated pairs that move together only through the market: raw ρ on clr levels rejects 100% of the time at T = 40 and T = 62. Removing the market from levels (the 11-12 prototype) still gives 12.7–13.3%.</p><p class="small">The raw ρ bar is cut at 30%; its value is 100%. Pass band set in advance: 2–8% at both T = 40 and T = 62.</p></div></article><article class="fcard"><div class="viz"><svg viewBox="0 0 360 168" role="img" xmlns="http://www.w3.org/2000/svg"><text x="6" y="16" font-family="JetBrains Mono, monospace" font-size="11" fill="#6f5f46" letter-spacing="1">POWER ON A PLANTED SWAP</text><line x1="233.2" x2="233.2" y1="40" y2="152" stroke="#df5236" stroke-width="2" stroke-dasharray="4 3" opacity=".75"/><text x="200.0" y="164" font-family="JetBrains Mono, monospace" font-size="10.5" fill="#df5236">0.80 bar</text><text x="6" y="38" font-family="JetBrains Mono, monospace" font-size="12" fill="#1c150d">Increment partial, T = 62</text><rect x="6" y="43" width="281.2" height="16" fill="#1f9e8e" stroke="#1c150d" stroke-width="1.5"/><text x="293.2" y="56" font-family="Bricolage Grotesque, sans-serif" font-weight="800" font-size="15" fill="#1c150d">99.0%</text><text x="6" y="78" font-family="JetBrains Mono, monospace" font-size="12" fill="#1c150d">Increment partial, T = 40</text><rect x="6" y="83" width="254.7" height="16" fill="#1f9e8e" stroke="#1c150d" stroke-width="1.5"/><text x="266.7" y="96" font-family="Bricolage Grotesque, sans-serif" font-weight="800" font-size="15" fill="#1c150d">89.7%</text><text x="6" y="118" font-family="JetBrains Mono, monospace" font-size="12" fill="#1c150d">Level partial, T = 62</text><rect x="6" y="123" width="238.6" height="16" fill="#e8902e" stroke="#1c150d" stroke-width="1.5"/><text x="250.6" y="136" font-family="Bricolage Grotesque, sans-serif" font-weight="800" font-size="15" fill="#1c150d">84.0%</text></svg></div><div class="body"><span class="chip">Finding 2</span><h3>The increment version still finds a real swap.</h3><p class="take">With an independent swap planted between the two parts, the increment partial ρ detects it 99.0% of the time at T = 62 and 89.7% at T = 40 (bar: 80% at T = 62).</p></div></article><article class="fcard red"><div class="viz"><svg viewBox="0 0 360 168" role="img" xmlns="http://www.w3.org/2000/svg"><text x="6" y="16" font-family="JetBrains Mono, monospace" font-size="11" fill="#6f5f46" letter-spacing="1">FALSE-ALARM RATE WITH A NOISY MARKET PROXY (T = 62)</text><line x1="20.2" x2="20.2" y1="40" y2="152" stroke="#df5236" stroke-width="2" stroke-dasharray="4 3" opacity=".75"/><text x="24.2" y="164" font-family="JetBrains Mono, monospace" font-size="10.5" fill="#df5236">5%</text><text x="6" y="38" font-family="JetBrains Mono, monospace" font-size="12" fill="#1c150d">Raw ρ</text><rect x="6" y="43" width="284.0" height="16" fill="#df5236" stroke="#1c150d" stroke-width="1.5"/><text x="296.0" y="56" font-family="Bricolage Grotesque, sans-serif" font-weight="800" font-size="15" fill="#1c150d">100%</text><text x="6" y="78" font-family="JetBrains Mono, monospace" font-size="12" fill="#1c150d">Level partial</text><rect x="6" y="83" width="283.7" height="16" fill="#df5236" stroke="#1c150d" stroke-width="1.5"/><text x="295.7" y="96" font-family="Bricolage Grotesque, sans-serif" font-weight="800" font-size="15" fill="#1c150d">99.9%</text><text x="6" y="118" font-family="JetBrains Mono, monospace" font-size="12" fill="#1c150d">Increment partial</text><rect x="6" y="123" width="284.0" height="16" fill="#df5236" stroke="#1c150d" stroke-width="1.5"/><text x="296.0" y="136" font-family="Bricolage Grotesque, sans-serif" font-weight="800" font-size="15" fill="#1c150d">100%</text></svg></div><div class="body"><span class="chip">Finding 3</span><h3>Honest limit: a noisy market proxy breaks every version.</h3><p class="take">If the market factor is only measured with noise (sd half its own), false alarms jump to 98.8–100% for all three procedures at both lengths. Partial ρ is only as good as the market control.</p></div></article><article class="fcard"><div class="viz"><svg viewBox="0 0 360 154" role="img" xmlns="http://www.w3.org/2000/svg"><text x="6" y="16" font-family="JetBrains Mono, monospace" font-size="11" fill="#6f5f46" letter-spacing="1">JPM–GS ON E4 (PUBLIC Y-9C PROXY)</text><text x="6" y="38" font-family="JetBrains Mono, monospace" font-size="12" fill="#1c150d">Raw ρ on shares</text><rect x="6" y="43" width="198.2" height="16" fill="#6f5f46" stroke="#1c150d" stroke-width="1.5"/><text x="210.2" y="56" font-family="Bricolage Grotesque, sans-serif" font-weight="800" font-size="15" fill="#1c150d">−0.698</text><text x="6" y="78" font-family="JetBrains Mono, monospace" font-size="12" fill="#1c150d">Level partial (11-12)</text><rect x="6" y="83" width="250.5" height="16" fill="#e8902e" stroke="#1c150d" stroke-width="1.5"/><text x="262.5" y="96" font-family="Bricolage Grotesque, sans-serif" font-weight="800" font-size="15" fill="#1c150d">−0.882</text><text x="6" y="118" font-family="JetBrains Mono, monospace" font-size="12" fill="#1c150d">Increment partial (11-17)</text><rect x="6" y="123" width="223.8" height="16" fill="#1f9e8e" stroke="#1c150d" stroke-width="1.5"/><text x="235.8" y="136" font-family="Bricolage Grotesque, sans-serif" font-weight="800" font-size="15" fill="#1c150d">−0.788</text></svg></div><div class="body"><span class="chip">Finding 4</span><h3>Engineering: a small library reproduces 11-12 exactly and is fast.</h3><p class="take">E4 JPM–GS ρ −0.6976291 and level-partial −0.8820532 reproduced (error ≤ 4e-16). All 124,750 pairs for 500 parts × 62 quarters in 0.03 s. On the increment version, JPM–GS is −0.788 (exact cyclic-shift p = 0.018).</p><p class="small">Bars show the size of a negative ρ (all three are negative). The −0.788 p-value is for this one pair, not adjusted across pairs.</p></div></article><h4>Who plays what</h4>
+<div class="table-wrap"><table>
+<tr><th>Home field (genomics)</th><th>Our data</th></tr>
+<tr><td>A sequencing sample (relative abundances that sum to one)</td><td>One quarter's split of a dealer total</td></tr>
+<tr><td>A gene or a microbe</td><td>A dealer holding company</td></tr>
+<tr><td>Two genes that rise and fall in proportion</td><td>Two dealers whose shares move together (ρ near +1) or swap (ρ near −1)</td></tr>
+<tr><td>Library size (sequencing depth)</td><td>The industry total in that quarter</td></tr>
+</table></div>
+
+<h4>Inputs and preprocessing</h4>
+<ul>
+<li><b>E4</b> (public FR Y-9C proxy, as on 11-12): trailing-four-quarter equity trading revenue (HI Memo 9.c, BHCK8759) for JPM, GS, MS and BAC, 2011Q1–2026Q2, 62 quarters, turned into shares of their sum. A PROXY for the retired prime-broker question, not prime-brokerage data.</li>
+<li>Market covariates: VIX, 4-quarter Nasdaq return, BAA–Treasury spread and industry equity-revenue growth, quarterly.</li>
+<li>Simulations: 14 parts, T = 40 and 62, a persistent market factor (AR(1), φ = 0.9), persistent part noise (φ = 0.8), parts 1 and 2 loading +0.5 and −0.5 on the market, three irrelevant covariates beside the real one; with and without a planted swap.</li>
+</ul>
+
+<h4>What we ran</h4>
+<ol>
+<li>11-12 (the scout run): identity tests; ρ on all pairs of two panels; a cyclic-shift null; the level-partial prototype; BH.</li>
+<li>11-17 Math: the simulation above, 8 cells × 1,000 replications, three procedures (raw, level partial, increment partial), pass bars written first (<a href="../runs/2026-11-17/PREREG.md">PREREG.md</a>, section C). 28 s.</li>
+<li>11-17 Engineering: a small NumPy module, <code>proprlite.py</code>: the 11-12 identity suite, exact parity on E4, a speed test, and the increment partial with its exact cyclic-shift p on JPM–GS.</li>
+</ol>
+
+<div class="callouts"><h5>How to read the main chart (false-alarm rates)</h5>
+<ol>
+<li>Each bar is how often a 5% test says "these two are linked" when, by construction, they only share the market.</li>
+<li>The dashed line is 5%, the rate a correct test should give. The pass band was 2–8%.</li>
+<li>Raw ρ is far off the chart (100%): every market co-move looks like a relationship. The 11-12 level version cuts that to about 13%, still more than twice the target. The increment version is at 6%.</li>
+<li>The power chart is the other half: a test that never rejects would also have a low false-alarm rate. The increment version finds 99% of planted swaps at T = 62.</li>
+</ol></div>
+
+<div class="plain"><h5>What it means for a decision-maker</h5>
+<p>When two firms' shares of a market look like mirror images, it is usually because both react to the same market swings in opposite directions, not because business is moving from one to the other. This method separates the two, provided you take the market out of the quarter-to-quarter changes, not out of the levels, and provided you measure the market well. On the public equity-trading proxy, JPM and GS still look like they trade share after that correction (−0.79). That is a description of a proxy, not a finding about prime brokerage.</p></div>
+
+<h4>Where it breaks (seen in our runs)</h4>
+<ul>
+<li><b>Market measured with noise:</b> every version fails (98.8–100% false alarms). In practice the market control has to be good, or the result is not interpretable.</li>
+<li><b>Short series:</b> at T = 40 the exact cyclic-shift null on increments has only 32 shifts, so p cannot go below about 0.03.</li>
+<li><b>The 11-12 headline used the level version</b> (JPM–GS −0.882, BH q = 0.036), which the simulation shows is oversized. The increment version gives −0.788 with exact p = 0.018 for that one pair; across all 6 E4 pairs it would need BH again.</li>
+<li><b>Zeros:</b> ρ needs strictly positive parts.</li>
+</ul>
+
+<h4>What we'd do next</h4>
+<p>Retire the level version and use the increment partial as the default. Package <code>proprlite</code> as a small maintained library (a ticket is drafted; it needs a decision about where it lives). New use stays parked until a real prime-broker or Form ADV share panel exists.</p>
+</div><div class="panel p3" id="robust"><p><span class="grade na">Not graded</span> <span class="small">Home-field grading started with the 2026-11-16 edition. Sourced facts:</span></p>
+<ul>
+<li><b>Paper:</b> Lovell et al. (2015), PLoS Computational Biology 11(3):e1004075, a peer-reviewed methods paper making the case that correlation is invalid on relative data and proposing proportionality.</li>
+<li><b>Package:</b> propr (Quinn et al. 2017, Scientific Reports 7:16520). Its last CRAN version, 4.2.6, was archived on 2022-11-10 "as issues were not corrected in time" (CRAN record). The lab implements the published formulas instead.</li>
+<li><b>Known limits in the home field:</b> ρ needs strictly positive data (zeros must be handled first), and its significance has usually been judged with iid permutations and FDR, which ignore time dependence.</li>
+<li><b>Our checks:</b> 7 algebraic identities pass; the 11-12 E4 numbers are reproduced exactly by an independent implementation (11-17).</li>
+</ul>
+</div><div class="panel p4" id="sauce"><div class="sauce top"><span class="t">1 · Engineering · Effort M · ★ Chosen by Jared (with Math)</span><h5>A maintained library with the right null — done as a module, packaging drafted</h5>
+<p><code>proprlite.py</code> (NumPy): clr, VLR, φ, ρ, vectorised pairwise ρ, level- and increment-partial ρ, the exact cyclic-shift p-value and BH.</p>
+<p><b>Math sketch.</b> All pairs at once: \(R = 2C/(v_i+v_j)\) from one covariance matrix \(C\) of the clr columns, so the cost is one \(D\times D\) covariance, not \(D^2/2\) loops.</p>
+<p class="small"><b>Test (set in advance) and result.</b> Identity suite: passed. E4 JPM–GS ρ = −0.6976291 and level partial −0.8820532: reproduced, error ≤ 4e-16. 124,750 pairs (500 parts × 62 quarters) under 1 s: 0.03 s. <b>Pass.</b> Packaging into its own repository is drafted as a ticket, not done.</p></div>
+<div class="sauce top"><span class="t">2 · Math · Effort L · ★ Chosen by Jared (with Engineering)</span><h5>Partial proportionality given the market, with a persistence-aware null</h5>
+<p>Remove the market from each part's clr <i>increments</i> (not levels), then compute ρ on the residual increments, with an exact relative cyclic-shift null.</p>
+<p><b>Math sketch.</b> \(e = (I - Z(Z^\top Z)^{-1}Z^\top)\,\Delta u\) with \(Z = [1, \Delta X]\); \(\rho_{\text{partial}} = 2\operatorname{Cov}(e^u,e^v)/(\operatorname{Var}e^u+\operatorname{Var}e^v)\).</p>
+<p class="small"><b>Test (set in advance) and result.</b> Size 2–8% at T = 40 and 62 when the pair shares only the market; power ≥ 80% at T = 62 on a planted swap. Increment partial: 6.5% / 6.2%, power 99.0% (<b>pass</b>). Level partial (11-12 prototype): 12.7% / 13.3% (<b>fails size</b>). Raw ρ: 100% (<b>fails</b>). With a noisy market proxy all three fail.</p></div>
+<div class="sauce"><span class="t">3 · New use on our data · Effort S · not chosen</span><h5>A pre-registered "who swaps with whom" on real prime-broker shares</h5>
+<p>Once prime-broker or Form ADV shares exist, run the increment partial on a short pre-registered pair list (JPM–GS, foreign vs US).</p>
+<p><b>Math sketch.</b> Same statistic; BH over the short list only.</p>
+<p class="small"><b>Test.</b> Recurrence of a signed, BH-surviving JPM–GS partial ρ on the real series, or an honest miss. Waiting on data.</p></div>
+<p class="small">Jared's 2026-11-17 comment "Math + Eng" chose avenues 1 and 2.</p>
+</div><div class="panel p5" id="questions"><p>Scouted on 2026-11-12 for the <b>retired</b> prime-broker Q1 (top-25 shares). See <a href="https://github.com/jgridifier/research-lab/blob/main/docs/methods-scout/QUESTIONS.md">QUESTIONS.md</a>.</p>
+<div class="sauce"><span class="t">Retired Q1 · Which dealers move together, and is a swap the market or a real migration?</span><p>On the public Y-9C proxy, JPM–GS look like they swap equity-trading share even after the market is removed from quarterly changes (−0.79, p = 0.018 for that pair). The 11-17 simulation shows the tool now answers the "market or migration" part correctly when the market is well measured.</p></div>
+<div class="sauce"><span class="t">Current Q1 · Tenor and venue mix (Q1.4)</span><p>Not run yet. ρ on the OFR repo venue × tenor mix, with the market removed from increments, would say which segments trade volume with each other once overall funding conditions are taken out.</p></div>
+<div class="sauce"><span class="t">Q2.4 · Programs that trade off against each other</span><p>Not run yet. On the SYNTHETIC mocks, ρ on program shares within a subsegment could find planted trade-off clusters, but 5–6 years per program is very short for any null.</p></div>
+<p class="small">Still missing for the original question: a real prime-broker or Form ADV share panel.</p>
+</div></div></div>
+<p class="cite">Full tables, code and data notes: <a href="../2026-11-12-adhoc.html#lovell-proportionality">the 2026-11-12 edition</a> · scripts in <code>runs/2026-11-12/</code> · card sources in <code>cards/lovell-proportionality/</code>.</p>
+<div style="margin:1.4rem 0"><a class="btn" href="https://github.com/jgridifier/research-lab/issues/53">Respond on #53</a><p class="howto">👍 go ahead · 👎 drop · or just comment what you think</p></div>
+<script>(function(){var m={"math":1,"applied":2,"robust":3,"sauce":4,"questions":5};var h=location.hash.slice(1);var i=m[h]||(/^t[1-5]$/.test(h)?+h[1]:0);if(i)document.getElementById("t"+i).checked=true;})();</script>
+</div>
+<footer class="pf">Generated by <code>tools/build_cards.py</code> from <code>feedback-state.json</code> and <code>cards/</code>; page contract in <a href="https://github.com/jgridifier/research-lab/blob/main/docs/methods-scout/LAYOUT.md">LAYOUT.md</a>.
+Status chips are baked in at build time and refreshed from the GitHub issue labels on load. Q2 work so far uses SYNTHETIC mock budgets; no private rows are published.</footer>
+<script src="../status.js"></script>
+</body></html>

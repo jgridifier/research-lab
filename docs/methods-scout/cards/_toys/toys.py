@@ -107,3 +107,25 @@ b = np.linalg.lstsq(X, t, rcond=None)[0]
 print("event model beta", b.round(3), "fitted", (X @ b).round(2))
 new = np.array([50, 35, 15.]); f = (new / new.sum()) @ Gstd
 print("new mix 50/35/15: coord", round(f, 3), "event date", round(b[0] + b[1] * f, 2))
+
+print("== Lovell rho: clr series u, v over 4 periods; market m = (0,1,2,3)")
+m = np.array([0, 1, 2, 3.])
+u = 0.5 * m + np.array([0.1, -0.1, -0.1, 0.1]); v = -0.5 * m + np.array([0.1, -0.1, 0.1, -0.1])
+sv = lambda x: np.var(x, ddof=1)
+rho = lambda a, b: 1 - sv(a - b) / (sv(a) + sv(b))
+print("u", u.round(2), "v", v.round(2), "var u", round(sv(u), 4), "var v", round(sv(v), 4), "var(u-v)", round(sv(u - v), 4), "raw rho", round(rho(u, v), 3))
+Z = np.c_[np.ones(4), m]; ru = u - Z @ np.linalg.lstsq(Z, u, rcond=None)[0]; rv = v - Z @ np.linalg.lstsq(Z, v, rcond=None)[0]
+print("level residuals u", ru.round(3), "v", rv.round(3), "level-partial rho", round(rho(ru, rv), 3))
+du, dv, dm = np.diff(u), np.diff(v), np.diff(m)
+Zi = np.c_[np.ones(3), dm]
+print("increments du", du.round(2), "dv", dv.round(2), "dm", dm, "(dm is constant, so [1, dm] is rank 1: partial on increments = demeaned increments)")
+eu, ev = du - du.mean(), dv - dv.mean()
+print("demeaned increments u", eu.round(3), "v", ev.round(3), "increment-partial rho", round(rho(eu, ev), 3))
+
+print("== ecotraj directionality: path y1=(0,0), y2=(1,0), y3=(2,1)")
+y = np.array([[0, 0], [1, 0], [2, 1.]])
+s12 = np.linalg.norm(y[1] - y[0]); s23 = np.linalg.norm(y[2] - y[1])
+a = y[1] - y[0]; b = y[2] - y[1]; th = np.degrees(np.arccos(a @ b / (s12 * s23)))
+print("s12", round(s12, 3), "s23", round(s23, 3), "theta", round(th, 1), "dir", round(1 - th / 180, 3))
+print("sign-flip null with 2 steps: flips (+,+) dir", round(1 - th / 180, 3), "(+,-) or (-,+): angle", round(180 - th, 1), "dir", round(1 - (180 - th) / 180, 3), "(-,-) dir", round(1 - th / 180, 3))
+print("p = share of the 4 sign vectors with dir >= observed =", 2 / 4)

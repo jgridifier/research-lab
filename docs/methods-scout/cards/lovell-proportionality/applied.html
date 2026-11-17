@@ -1,0 +1,44 @@
+<h4>Who plays what</h4>
+<div class="table-wrap"><table>
+<tr><th>Home field (genomics)</th><th>Our data</th></tr>
+<tr><td>A sequencing sample (relative abundances that sum to one)</td><td>One quarter's split of a dealer total</td></tr>
+<tr><td>A gene or a microbe</td><td>A dealer holding company</td></tr>
+<tr><td>Two genes that rise and fall in proportion</td><td>Two dealers whose shares move together (ρ near +1) or swap (ρ near −1)</td></tr>
+<tr><td>Library size (sequencing depth)</td><td>The industry total in that quarter</td></tr>
+</table></div>
+
+<h4>Inputs and preprocessing</h4>
+<ul>
+<li><b>E4</b> (public FR Y-9C proxy, as on 11-12): trailing-four-quarter equity trading revenue (HI Memo 9.c, BHCK8759) for JPM, GS, MS and BAC, 2011Q1–2026Q2, 62 quarters, turned into shares of their sum. A PROXY for the retired prime-broker question, not prime-brokerage data.</li>
+<li>Market covariates: VIX, 4-quarter Nasdaq return, BAA–Treasury spread and industry equity-revenue growth, quarterly.</li>
+<li>Simulations: 14 parts, T = 40 and 62, a persistent market factor (AR(1), φ = 0.9), persistent part noise (φ = 0.8), parts 1 and 2 loading +0.5 and −0.5 on the market, three irrelevant covariates beside the real one; with and without a planted swap.</li>
+</ul>
+
+<h4>What we ran</h4>
+<ol>
+<li>11-12 (the scout run): identity tests; ρ on all pairs of two panels; a cyclic-shift null; the level-partial prototype; BH.</li>
+<li>11-17 Math: the simulation above, 8 cells × 1,000 replications, three procedures (raw, level partial, increment partial), pass bars written first (<a href="../runs/2026-11-17/PREREG.md">PREREG.md</a>, section C). 28 s.</li>
+<li>11-17 Engineering: a small NumPy module, <code>proprlite.py</code>: the 11-12 identity suite, exact parity on E4, a speed test, and the increment partial with its exact cyclic-shift p on JPM–GS.</li>
+</ol>
+
+<div class="callouts"><h5>How to read the main chart (false-alarm rates)</h5>
+<ol>
+<li>Each bar is how often a 5% test says "these two are linked" when, by construction, they only share the market.</li>
+<li>The dashed line is 5%, the rate a correct test should give. The pass band was 2–8%.</li>
+<li>Raw ρ is far off the chart (100%): every market co-move looks like a relationship. The 11-12 level version cuts that to about 13%, still more than twice the target. The increment version is at 6%.</li>
+<li>The power chart is the other half: a test that never rejects would also have a low false-alarm rate. The increment version finds 99% of planted swaps at T = 62.</li>
+</ol></div>
+
+<div class="plain"><h5>What it means for a decision-maker</h5>
+<p>When two firms' shares of a market look like mirror images, it is usually because both react to the same market swings in opposite directions, not because business is moving from one to the other. This method separates the two, provided you take the market out of the quarter-to-quarter changes, not out of the levels, and provided you measure the market well. On the public equity-trading proxy, JPM and GS still look like they trade share after that correction (−0.79). That is a description of a proxy, not a finding about prime brokerage.</p></div>
+
+<h4>Where it breaks (seen in our runs)</h4>
+<ul>
+<li><b>Market measured with noise:</b> every version fails (98.8–100% false alarms). In practice the market control has to be good, or the result is not interpretable.</li>
+<li><b>Short series:</b> at T = 40 the exact cyclic-shift null on increments has only 32 shifts, so p cannot go below about 0.03.</li>
+<li><b>The 11-12 headline used the level version</b> (JPM–GS −0.882, BH q = 0.036), which the simulation shows is oversized. The increment version gives −0.788 with exact p = 0.018 for that one pair; across all 6 E4 pairs it would need BH again.</li>
+<li><b>Zeros:</b> ρ needs strictly positive parts.</li>
+</ul>
+
+<h4>What we'd do next</h4>
+<p>Retire the level version and use the increment partial as the default. Package <code>proprlite</code> as a small maintained library (a ticket is drafted; it needs a decision about where it lives). New use stays parked until a real prime-broker or Form ADV share panel exists.</p>

@@ -1,0 +1,176 @@
+{
+ "datasets": {
+  "O1_venue_tenor": {
+   "T1_porcic_p": 0.000999,
+   "T1_pass": true,
+   "spearman": -0.964054,
+   "mae_clock": 0.754059,
+   "mae_naive": 1.75,
+   "mae_ridge": 1.7878584111837725,
+   "clock_vs_naive": 0.4308908571428572,
+   "T2_pass": true,
+   "n_months": 101,
+   "first": "2018-05",
+   "last": "2026-09",
+   "train_end": "2023-04",
+   "ca1_pct": 69.337087
+  },
+  "O2_triparty_collateral": {
+   "T1_porcic_p": 0.000999,
+   "T1_pass": true,
+   "spearman": -0.667674,
+   "mae_clock": 4.249037,
+   "mae_naive": 2.5,
+   "mae_ridge": 3.1113721293512238,
+   "clock_vs_naive": 1.6996148000000002,
+   "T2_pass": false,
+   "n_months": 146,
+   "first": "2014-08",
+   "last": "2026-09",
+   "train_end": "2021-10",
+   "ca1_pct": 58.398615
+  },
+  "O3_tff_ust_positioning": {
+   "T1_porcic_p": 0.000999,
+   "T1_pass": true,
+   "spearman": -0.743147,
+   "mae_clock": 3.466844,
+   "mae_naive": 2.304012,
+   "mae_ridge": 3.389599581410085,
+   "clock_vs_naive": 1.5046987602495125,
+   "T2_pass": false,
+   "n_months": 133,
+   "first": "2015-01",
+   "last": "2026-09",
+   "train_end": "2021-07",
+   "ca1_pct": 79.622575
+  },
+  "O4_cp_maturity": {
+   "T1_porcic_p": 0.001998,
+   "T1_pass": true,
+   "spearman": -0.959877,
+   "mae_clock": 4.551216,
+   "mae_naive": 5.208333,
+   "mae_ridge": 3.7990132682858135,
+   "clock_vs_naive": 0.8738335279253459,
+   "T2_pass": false,
+   "n_months": 310,
+   "first": "2001-01",
+   "last": "2026-10",
+   "train_end": "2016-06",
+   "ca1_pct": 72.434098
+  },
+  "O5_treasury_debt_mix": {
+   "T1_porcic_p": 0.000999,
+   "T1_pass": true,
+   "spearman": -0.330029,
+   "mae_clock": 8.512018,
+   "mae_naive": 5.208333,
+   "mae_ridge": 11.506615897489924,
+   "clock_vs_naive": 1.6343075605956838,
+   "T2_pass": false,
+   "n_months": 308,
+   "first": "2001-01",
+   "last": "2026-08",
+   "train_end": "2016-04",
+   "ca1_pct": 59.423785
+  },
+  "O6_formpf_creditor": {
+   "T1_porcic_p": 0.003996,
+   "T1_pass": true,
+   "spearman": -0.568282,
+   "mae_clock": 5.489487,
+   "mae_naive": 2.666667,
+   "mae_ridge": 5.24420868642269,
+   "clock_vs_naive": 2.058557367680329,
+   "T2_pass": false,
+   "n_months": 156,
+   "first": "2013-01",
+   "last": "2025-12",
+   "train_end": "2020-09",
+   "ca1_pct": 86.645464
+  }
+ },
+ "T3": [
+  {
+   "dataset": "O1_venue_tenor",
+   "lead": 3,
+   "r": 0.5545437951657292,
+   "p": 0.0004997501249375312,
+   "n": 80,
+   "holm": 0.004997501249375312
+  },
+  {
+   "dataset": "O1_venue_tenor",
+   "lead": 6,
+   "r": 0.518839668750532,
+   "p": 0.0004997501249375312,
+   "n": 80,
+   "holm": 0.004997501249375312
+  },
+  {
+   "dataset": "O2_triparty_collateral",
+   "lead": 3,
+   "r": -0.054925689727529196,
+   "p": 0.8975512243878061,
+   "n": 125,
+   "holm": 1.0
+  },
+  {
+   "dataset": "O2_triparty_collateral",
+   "lead": 6,
+   "r": 0.16123150692472046,
+   "p": 0.6531734132933533,
+   "n": 125,
+   "holm": 1.0
+  },
+  {
+   "dataset": "O3_tff_ust_positioning",
+   "lead": 3,
+   "r": -0.07464631695792769,
+   "p": 0.8580709645177411,
+   "n": 120,
+   "holm": 1.0
+  },
+  {
+   "dataset": "O3_tff_ust_positioning",
+   "lead": 6,
+   "r": -0.03312855728887577,
+   "p": 0.9485257371314343,
+   "n": 120,
+   "holm": 1.0
+  },
+  {
+   "dataset": "O4_cp_maturity",
+   "lead": 3,
+   "r": -0.054490663156881565,
+   "p": 0.7071464267866067,
+   "n": 141,
+   "holm": 1.0
+  },
+  {
+   "dataset": "O4_cp_maturity",
+   "lead": 6,
+   "r": -0.18057086065042238,
+   "p": 0.2273863068465767,
+   "n": 138,
+   "holm": 1.0
+  },
+  {
+   "dataset": "O5_treasury_debt_mix",
+   "lead": 3,
+   "r": 0.297277139816253,
+   "p": 0.16491754122938532,
+   "n": 141,
+   "holm": 1.0
+  },
+  {
+   "dataset": "O5_treasury_debt_mix",
+   "lead": 6,
+   "r": 0.27006902910583896,
+   "p": 0.2433783108445777,
+   "n": 138,
+   "holm": 1.0
+  }
+ ]
+}

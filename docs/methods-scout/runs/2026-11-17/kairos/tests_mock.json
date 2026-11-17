@@ -1,0 +1,66 @@
+{
+ "Corning_mock": {
+  "M1_porcic_p": 0.251748,
+  "M1_pass": false,
+  "ca1_pct": 32.553438,
+  "n_programs": 778,
+  "clusters": {
+   "ai_datacenter_demand": {
+    "n_members_full_history": 122,
+    "auc_ca1": 0.8944797081167533,
+    "auc_slope": 0.8741003598560575,
+    "desc_auc_ca1_pos_loading": 0.8944797081167533,
+    "desc_auc_slope_pos_loading": 0.8741003598560575
+   },
+   "display_specialty_tradeoff": {
+    "n_members_full_history": 84,
+    "auc_ca1": 0.6536297516124605,
+    "auc_slope": 0.6320330725950323,
+    "desc_auc_ca1_pos_loading": 0.7906273620559334,
+    "desc_auc_slope_pos_loading": 0.7460037512947566
+   },
+   "auto_ice_aftertreatment": {
+    "n_members_full_history": 27,
+    "auc_ca1": 0.7535631503674114,
+    "auc_slope": 0.7321102727227894,
+    "desc_auc_ca1_pos_loading": 0.7535631503674114,
+    "desc_auc_slope_pos_loading": 0.7321102727227894
+   }
+  },
+  "mean_auc_ca1": 0.7672242033655418,
+  "mean_auc_slope": 0.7460812350579596,
+  "M2_pass": false
+ },
+ "MorganStanley_mock": {
+  "M1_porcic_p": 0.274725,
+  "M1_pass": false,
+  "ca1_pct": 52.136883,
+  "n_programs": 1404,
+  "clusters": {
+   "equity_market_activity": {
+    "n_members_full_history": 163,
+    "auc_ca1": 0.5144525244335905,
+    "auc_slope": 0.7588675271772715,
+    "desc_auc_ca1_pos_loading": 0.5144525244335905,
+    "desc_auc_slope_pos_loading": 0.7588675271772715
+   },
+   "wealth_fee_based_growth": {
+    "n_members_full_history": 251,
+    "auc_ca1": 0.8339720044367197,
+    "auc_slope": 0.7290422006682723,
+    "desc_auc_ca1_pos_loading": 0.8339720044367197,
+    "desc_auc_slope_pos_loading": 0.7290422006682723
+   },
+   "branch_vs_digital": {
+    "n_members_full_history": 45,
+    "auc_ca1": 0.5762406998610089,
+    "auc_slope": 0.5163927724634126,
+    "desc_auc_ca1_pos_loading": 0.5674773485932284,
+    "desc_auc_slope_pos_loading": 0.7612064854554125
+   }
+  },
+  "mean_auc_ca1": 0.6415550762437731,
+  "mean_auc_slope": 0.6681008334363189,
+  "M2_pass": false
+ }
+}

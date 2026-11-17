@@ -1,0 +1,13 @@
+<div class="sauce top"><span class="t">1 · Engineering · Effort M · ★ Chosen by Jared (with Math)</span><h5>A maintained library with the right null — done as a module, packaging drafted</h5>
+<p><code>proprlite.py</code> (NumPy): clr, VLR, φ, ρ, vectorised pairwise ρ, level- and increment-partial ρ, the exact cyclic-shift p-value and BH.</p>
+<p><b>Math sketch.</b> All pairs at once: \(R = 2C/(v_i+v_j)\) from one covariance matrix \(C\) of the clr columns, so the cost is one \(D\times D\) covariance, not \(D^2/2\) loops.</p>
+<p class="small"><b>Test (set in advance) and result.</b> Identity suite: passed. E4 JPM–GS ρ = −0.6976291 and level partial −0.8820532: reproduced, error ≤ 4e-16. 124,750 pairs (500 parts × 62 quarters) under 1 s: 0.03 s. <b>Pass.</b> Packaging into its own repository is drafted as a ticket, not done.</p></div>
+<div class="sauce top"><span class="t">2 · Math · Effort L · ★ Chosen by Jared (with Engineering)</span><h5>Partial proportionality given the market, with a persistence-aware null</h5>
+<p>Remove the market from each part's clr <i>increments</i> (not levels), then compute ρ on the residual increments, with an exact relative cyclic-shift null.</p>
+<p><b>Math sketch.</b> \(e = (I - Z(Z^\top Z)^{-1}Z^\top)\,\Delta u\) with \(Z = [1, \Delta X]\); \(\rho_{\text{partial}} = 2\operatorname{Cov}(e^u,e^v)/(\operatorname{Var}e^u+\operatorname{Var}e^v)\).</p>
+<p class="small"><b>Test (set in advance) and result.</b> Size 2–8% at T = 40 and 62 when the pair shares only the market; power ≥ 80% at T = 62 on a planted swap. Increment partial: 6.5% / 6.2%, power 99.0% (<b>pass</b>). Level partial (11-12 prototype): 12.7% / 13.3% (<b>fails size</b>). Raw ρ: 100% (<b>fails</b>). With a noisy market proxy all three fail.</p></div>
+<div class="sauce"><span class="t">3 · New use on our data · Effort S · not chosen</span><h5>A pre-registered "who swaps with whom" on real prime-broker shares</h5>
+<p>Once prime-broker or Form ADV shares exist, run the increment partial on a short pre-registered pair list (JPM–GS, foreign vs US).</p>
+<p><b>Math sketch.</b> Same statistic; BH over the short list only.</p>
+<p class="small"><b>Test.</b> Recurrence of a signed, BH-surviving JPM–GS partial ρ on the real series, or an honest miss. Waiting on data.</p></div>
+<p class="small">Jared's 2026-11-17 comment "Math + Eng" chose avenues 1 and 2.</p>

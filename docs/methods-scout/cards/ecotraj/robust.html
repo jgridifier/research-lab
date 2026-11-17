@@ -1,0 +1,7 @@
+<p><span class="grade na">Not graded</span> <span class="small">Home-field grading started with the 2026-11-16 edition. Sourced facts:</span></p>
+<ul>
+<li><b>Paper:</b> De Cáceres et al. (2019), Ecological Monographs, the ETA framework (lengths, angles, directionality, segment and trajectory distances).</li>
+<li><b>Package:</b> ecotraj on CRAN (1.2.2 used as the oracle), R only before ecotraj-py.</li>
+<li><b>Our replication:</b> ecotraj-py reproduces the scout's numbers exactly (A dir 0.577301, E4 dir 0.431413, A residual-increment dir 0.595092; sign-flip p exact on R's draws) and 1,260/1,280 randomized checks.</li>
+<li><b>Known limits:</b> no built-in significance test for directionality in ecotraj; the sign-flip null and the increment split are lab extensions, checked by simulation, not taken from the paper.</li>
+</ul>

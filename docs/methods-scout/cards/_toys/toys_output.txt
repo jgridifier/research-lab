@@ -31,3 +31,12 @@ inertia share axis1 0.947
 row coords axis1 [-0.446 -0.106  0.553] check via profiles [-0.446 -0.106  0.553]
 event model beta [2020.       3.873] fitted [2018.27 2019.59 2022.14]
 new mix 50/35/15: coord -0.276 event date 2018.93
+== Lovell rho: clr series u, v over 4 periods; market m = (0,1,2,3)
+u [0.1 0.4 0.9 1.6] v [ 0.1 -0.6 -0.9 -1.6] var u 0.43 var v 0.4967 var(u-v) 1.8267 raw rho -0.971
+level residuals u [ 0.1 -0.1 -0.1  0.1] v [ 0.04 -0.12  0.12 -0.04] level-partial rho -0.0
+increments du [0.3 0.5 0.7] dv [-0.7 -0.3 -0.7] dm [1. 1. 1.] (dm is constant, so [1, dm] is rank 1: partial on increments = demeaned increments)
+demeaned increments u [-0.2  0.   0.2] v [-0.133  0.267 -0.133] increment-partial rho -0.0
+== ecotraj directionality: path y1=(0,0), y2=(1,0), y3=(2,1)
+s12 1.0 s23 1.414 theta 45.0 dir 0.75
+sign-flip null with 2 steps: flips (+,+) dir 0.75 (+,-) or (-,+): angle 135.0 dir 0.25 (-,-) dir 0.75
+p = share of the 4 sign vectors with dir >= observed = 0.5

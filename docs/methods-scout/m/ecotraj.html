@@ -1,0 +1,151 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Ecological trajectory analysis (ecotraj) · research card · methods scout</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,400..800&family=Newsreader:ital,opsz,wght@0,6..72,400..600;1,6..72,400..500&family=JetBrains+Mono:wght@400;500;700&display=swap">
+<link rel="stylesheet" href="../../assets/brief.css">
+<link rel="stylesheet" href="../scout-cards.css">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.css"><script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.js"></script><script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/contrib/auto-render.min.js" onload="renderMathInElement(document.body,{delimiters:[{left:'$$',right:'$$',display:true},{left:'\\(',right:'\\)',display:false}]})"></script>
+<!-- Methods Scout home-screen / PWA tags. Paste into <head> of every methods-scout page.
+     Paths are root-absolute so they resolve under https://jgridifier.github.io/research-lab/. -->
+<link rel="apple-touch-icon" sizes="180x180" href="/research-lab/methods-scout/icons/apple-touch-icon.png">
+<link rel="icon" type="image/png" sizes="32x32" href="/research-lab/methods-scout/icons/favicon-32.png">
+<link rel="icon" type="image/png" sizes="192x192" href="/research-lab/methods-scout/icons/icon-192.png">
+<link rel="manifest" href="/research-lab/methods-scout/manifest.webmanifest">
+<meta name="apple-mobile-web-app-title" content="Methods Scout">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="theme-color" content="#0F2A23">
+
+</head><body>
+<header class="topbar"><a class="brand" href="../index.html">Methods scout</a>
+<span><a href="../index.html">Queue</a> · <a href="../archive.html">Archive</a></span></header>
+<div class="pz">
+<p class="crumb"><a href="../index.html">← Queue</a></p>
+<div class="chips"><span class="chip q">Old Q1</span><span class="chip st-in-progress" data-issue="50">▶ Building</span><span class="chip v-rec">Recommend</span><span class="date">Scouted 2026-11-12</span></div>
+<section class="hero" style="padding-top:.5rem"><p class="kicker">Ecological trajectory analysis (ecotraj) · from community ecology</p>
+<h1>Is a share path drifting on purpose, or just wandering?</h1></section>
+<div class="sum">
+<div class="row"><span class="k">What it is</span><span class="v">Treat each period&#x27;s mix as a point; measure whether the path keeps one direction, and split market from firm-specific moves.</span></div>
+<div class="row"><span class="k">Verdict</span><span class="v"><b>Recommend.</b> Home field: not graded (the 11-12 edition predates grading).</span></div>
+<div class="row"><span class="k">Top pick</span><span class="v"><b>All three</b> (effort L): Port and speed done; math split passes; power curve running; new-use rerun on repo data.</span></div>
+<div class="row"><span class="k">Data</span><span class="v">Public FR Y-9C proxy, public OFR repo aggregates, and simulations; descriptive only</span></div>
+</div>
+<p class="kicker" style="margin-top:1rem">The one picture</p>
+<div class="pair"><div><span class="lab">Old level split (11-12)</span><div class="big">1.3%</div><div class="sub">of planted sticky swaps found at T = 62 (it hides them)</div></div><div class="new"><span class="lab">Increment split (Extension 2)</span><div class="big">99.7%</div><div class="sub">found, with a 5.3% false-alarm rate when there is none</div></div></div>
+<div style="margin:1rem 0 .4rem"><a class="btn big" href="https://github.com/jgridifier/research-lab/issues/50">Respond on #50</a><p class="howto">👍 go ahead · 👎 drop · or just comment what you think</p></div>
+<div class="tabs"><input type="radio" name="tab" id="t1" checked><input type="radio" name="tab" id="t2"><input type="radio" name="tab" id="t3"><input type="radio" name="tab" id="t4"><input type="radio" name="tab" id="t5"><div class="tabbar"><label for="t1">The math</label><label for="t2">On our data</label><label for="t3">Robust at home</label><label for="t4">Secret sauce</label><label for="t5">Questions</label></div><div class="panels"><div class="panel p1" id="math"><h4>Notation</h4>
+<div class="table-wrap"><table>
+<tr><th>Symbol</th><th>Meaning</th><th>Here</th></tr>
+<tr><td>\(S_t\)</td><td>composition (shares summing to 1) at time \(t\)</td><td>a month's or quarter's mix: dealers' trading assets, repo collateral types</td></tr>
+<tr><td>\(C_t = \operatorname{clr}(S_t)\)</td><td>centred log-ratio coordinates</td><td>Euclidean distance between them is the Aitchison distance between mixes</td></tr>
+<tr><td>\(s_{ij}\), \(\theta_{ijk}\)</td><td>distance between points, angle between consecutive legs</td><td>how far the mix moved; whether it kept heading the same way</td></tr>
+<tr><td>\(X_t\), \(\Delta X_t\)</td><td>\(k\) market covariates and their changes</td><td>VIX, 10-year yield, log total volume (repo); VIX, Nasdaq, BAA spread, industry growth (Y-9C proxy)</td></tr>
+<tr><td>\(\hat B\), \(\hat E\)</td><td>market loadings; residual (non-market) increments</td><td>how much of each step the market explains, and what is left</td></tr>
+<tr><td>\(M\)</td><td>residual-maker \(I-\Delta X(\Delta X^\top\Delta X)^{-1}\Delta X^\top\)</td><td>projects any step sequence off the market changes</td></tr>
+</table></div>
+
+<h4>Assumptions</h4>
+<ul><li>All shares strictly positive (clr exists).</li>
+<li>Market effects enter the clr <i>increments</i> linearly through observed \(\Delta X_t\).</li>
+<li>Under the null, residual increments are symmetric around zero and roughly exchangeable in sign (what the sign-flip uses).</li></ul>
+
+<h4>The statistics</h4>
+<p><b>Directionality</b> (De Cáceres et al. 2019), on a path \(y_1,\dots,y_T\):</p>
+$$\operatorname{dir} = \frac{\sum_{i<j<k}(s_{ij}+s_{jk})\,(1-\theta_{ijk}/180^\circ)}{\sum_{i<j<k}(s_{ij}+s_{jk})}.$$
+<p><b>Increment split</b> (Extension 2): \(\hat B = (\Delta X^\top\Delta X)^{-1}\Delta X^\top\Delta C\), \(\hat E = \Delta C - \Delta X\hat B = M\,\Delta C\); the residual path is \(R_t = C_1 + \sum_{s<t}\hat E_s\), and the market path is the same sum of \(\Delta X\hat B\). Test \(\operatorname{dir}(R)\).</p>
+
+<h4>Why it works, step by step</h4>
+<div class="step"><b class="n">Step 1 · clr makes geometry valid</b>Euclidean distance on clr coordinates equals the Aitchison distance on the simplex, so lengths and angles of the path are statistics of the mixes themselves, unchanged by reordering parts.</div>
+<div class="step"><b class="n">Step 2 · the split adds back exactly</b>Each row of \(\Delta C\) sums to zero, so each row of the fitted \(\Delta X\hat B\) and of \(\hat E\) also sums to zero. Therefore \(C_t = C_1 + m_t + r_t\) exactly, and in shares \(S_t = S_1 \oplus \operatorname{softmax}(m_t) \oplus \operatorname{softmax}(r_t)\): the market and residual sub-paths are themselves valid mixes.</div>
+<div class="step"><b class="n">Step 3 · why levels hide a drift</b>Regressing clr <i>levels</i> on \([1,X_t]\) lets a persistent market covariate, which is itself a near-random walk, soak up a slow residual drift. Differencing first removes that: \(\Delta X_t\) is close to independent noise, so it cannot track a steady drift. Simulation: level split finds 1.3% of planted swaps, increment split 99.7%.</div>
+<div class="step"><b class="n">Step 4 · the null</b>Flip the sign of each residual step at random, re-project with \(M\) so the null path lives in the same space as the observed residuals, rebuild the path and recompute dir. 199 (simulations) or 999 (data) draws; \(p = (1+\#\{\text{null}\ge\text{obs}\})/(1+B)\).</div>
+<p><b>Multiple testing:</b> Holm across panels (two on 11-17). <b>Size</b> is checked by simulation, not assumed: re-projection makes it approximate (Freedman–Lane / ter Braak style).</p>
+
+<div class="toy"><h5>Toy example (computed on the box)</h5>
+<p>Path \(y_1=(0,0)\), \(y_2=(1,0)\), \(y_3=(2,1)\). One triple: \(s_{12}=1\), \(s_{23}=1.414\), angle between the legs 45°, so dir = 1 − 45/180 = <b>0.75</b>.</p>
+<p>Sign-flip null with 2 steps: flipping both or neither keeps the 45° turn (dir 0.75); flipping one makes it a 135° turn (dir 0.25). Two of the four sign vectors reach 0.75, so p = 2/4 = <b>0.5</b>. Two steps can never be significant; the real panels have 61–145.</p></div>
+
+<div class="diff"><b>How it differs from the standard tool.</b> The usual view is a stacked-area chart of shares, or a regression of each share on market variables. Neither asks whether the <i>path</i> keeps one direction, and share regressions ignore the simplex. ETA works on the whole mix at once with valid geometry, and the increment split separates "everyone moved with the market" from "this mix drifted on its own".</div>
+<p class="cite">Followed: De Cáceres, Coll, Legendre et al. (2019), Ecological Monographs 89(2):e01350, directionality and segment distances (eqs. 8–10 for directed segments, as cited in ecotraj-py's PARITY.md); package ecotraj 1.2.2 (CRAN) as the oracle. The increment split and its test are the lab's Extension 2 (<a href="https://github.com/jgridifier/ecotraj-py/blob/main/prereg/EXT2_PREREG.md">pre-registration</a>). Other section numbers not checked. Toy: <code>cards/_toys/toys.py</code>.</p>
+</div><div class="panel p2" id="applied"><h4>What we found</h4><article class="fcard"><div class="viz"><svg viewBox="0 0 360 128" role="img" xmlns="http://www.w3.org/2000/svg"><text x="6" y="16" font-family="JetBrains Mono, monospace" font-size="11" fill="#6f5f46" letter-spacing="1">PLANTED STICKY SWAP FOUND (T = 62)</text><line x1="233.2" x2="233.2" y1="40" y2="112" stroke="#df5236" stroke-width="2" stroke-dasharray="4 3" opacity=".75"/><text x="200.0" y="124" font-family="JetBrains Mono, monospace" font-size="10.5" fill="#df5236">0.80 bar</text><text x="6" y="38" font-family="JetBrains Mono, monospace" font-size="12" fill="#1c150d">Level split (11-12 m1)</text><rect x="6" y="43" width="3.7" height="16" fill="#df5236" stroke="#1c150d" stroke-width="1.5"/><text x="15.7" y="56" font-family="Bricolage Grotesque, sans-serif" font-weight="800" font-size="15" fill="#1c150d">1.3%</text><text x="6" y="78" font-family="JetBrains Mono, monospace" font-size="12" fill="#1c150d">Increment split, P1</text><rect x="6" y="83" width="283.1" height="16" fill="#1f9e8e" stroke="#1c150d" stroke-width="1.5"/><text x="295.1" y="96" font-family="Bricolage Grotesque, sans-serif" font-weight="800" font-size="15" fill="#1c150d">99.7%</text></svg></div><div class="body"><span class="chip">Finding 1</span><h3>Math (Extension 2): the increment split has the right size and real power.</h3><p class="take">Pre-registered simulation, 2,000 runs per cell: false alarms 5.2% (T = 40) and 5.3% (T = 62); planted swap found 93.7% and 99.7%. The old level split: 0.1% and 1.3%.</p></div></article><article class="fcard"><div class="viz"><svg viewBox="0 0 360 194" role="img" xmlns="http://www.w3.org/2000/svg"><text x="6" y="16" font-family="JetBrains Mono, monospace" font-size="11" fill="#6f5f46" letter-spacing="1">SECONDS FOR 999 NULL DRAWS, T = 62 × 14 PARTS</text><text x="6" y="38" font-family="JetBrains Mono, monospace" font-size="12" fill="#1c150d">R ecotraj (loop, extrapolated)</text><rect x="6" y="43" width="280.6" height="16" fill="#6f5f46" stroke="#1c150d" stroke-width="1.5"/><text x="292.6" y="56" font-family="Bricolage Grotesque, sans-serif" font-weight="800" font-size="15" fill="#1c150d">98.8 s</text><text x="6" y="78" font-family="JetBrains Mono, monospace" font-size="12" fill="#1c150d">Python reference</text><rect x="6" y="83" width="25.2" height="16" fill="#e8902e" stroke="#1c150d" stroke-width="1.5"/><text x="37.2" y="96" font-family="Bricolage Grotesque, sans-serif" font-weight="800" font-size="15" fill="#1c150d">8.89 s</text><text x="6" y="118" font-family="JetBrains Mono, monospace" font-size="12" fill="#1c150d">numba, 1 core</text><rect x="6" y="123" width="2.0" height="16" fill="#1f9e8e" stroke="#1c150d" stroke-width="1.5"/><text x="13.7" y="136" font-family="Bricolage Grotesque, sans-serif" font-weight="800" font-size="15" fill="#1c150d">0.59 s</text><text x="6" y="158" font-family="JetBrains Mono, monospace" font-size="12" fill="#1c150d">numba, 8 cores</text><rect x="6" y="163" width="2.0" height="16" fill="#1f9e8e" stroke="#1c150d" stroke-width="1.5"/><text x="12.3" y="176" font-family="Bricolage Grotesque, sans-serif" font-weight="800" font-size="15" fill="#1c150d">0.11 s</text></svg></div><div class="body"><span class="chip">Finding 2</span><h3>Engineering (Extension 1): a Python port at R parity, 160× faster than R.</h3><p class="take">1,260 of 1,280 randomized checks match ecotraj 1.2.2 exactly; the other 20 are R floating-point quirks on exactly collinear points. 999 sign-flip draws on 62 × 14: 98.8 s in R, 0.59 s on one core.</p><p class="small">160× = 98.8 / 0.593, computed. R time extrapolated from warm batches (ecotraj-py bench).</p></div></article><article class="fcard red"><div class="viz"><svg viewBox="0 0 360 168" role="img" xmlns="http://www.w3.org/2000/svg"><text x="6" y="16" font-family="JetBrains Mono, monospace" font-size="11" fill="#6f5f46" letter-spacing="1">RESIDUAL PATH DIRECTIONALITY (0.5 ≈ RANDOM WALK)</text><line x1="183.5" x2="183.5" y1="40" y2="152" stroke="#df5236" stroke-width="2" stroke-dasharray="4 3" opacity=".75"/><text x="187.5" y="164" font-family="JetBrains Mono, monospace" font-size="10.5" fill="#df5236">≈ no direction</text><text x="6" y="38" font-family="JetBrains Mono, monospace" font-size="12" fill="#1c150d">Tri-party collateral (p 0.036, Holm 0.072)</text><rect x="6" y="43" width="222.9" height="16" fill="#e8902e" stroke="#1c150d" stroke-width="1.5"/><text x="234.9" y="56" font-family="Bricolage Grotesque, sans-serif" font-weight="800" font-size="15" fill="#1c150d">0.628</text><text x="6" y="78" font-family="JetBrains Mono, monospace" font-size="12" fill="#1c150d">Venue × tenor (p 0.164)</text><rect x="6" y="83" width="198.8" height="16" fill="#6f5f46" stroke="#1c150d" stroke-width="1.5"/><text x="210.8" y="96" font-family="Bricolage Grotesque, sans-serif" font-weight="800" font-size="15" fill="#1c150d">0.560</text><text x="6" y="118" font-family="JetBrains Mono, monospace" font-size="12" fill="#1c150d">11-12 dealer trading assets (p 0.008)</text><rect x="6" y="123" width="211.2" height="16" fill="#1f9e8e" stroke="#1c150d" stroke-width="1.5"/><text x="223.2" y="136" font-family="Bricolage Grotesque, sans-serif" font-weight="800" font-size="15" fill="#1c150d">0.595</text></svg></div><div class="body"><span class="chip">Finding 3</span><h3>New use (11-17): on repo collateral mix, a directional residual drift that does not survive Holm.</h3><p class="take">Market = VIX, 10-year yield, total volume. Tri-party collateral mix: residual directionality 0.628, p = 0.036 (Holm 0.072). Venue × tenor mix: 0.560, p = 0.164. Pre-set bar: Holm p ≤ 0.05 on either.</p><p class="small">Residual drift in collateral: corporate debt up (+1.09 clr), Treasury down (−0.83). The 11-12 row is the scout's proxy panel, for scale.</p></div></article><h4>Who plays what</h4>
+<div class="table-wrap"><table>
+<tr><th>Home field (ecology)</th><th>Our data</th></tr>
+<tr><td>A plot of land surveyed each year</td><td>One panel (dealer shares, or repo segments)</td></tr>
+<tr><td>Species abundances in a survey</td><td>Each part's share in a quarter or month</td></tr>
+<tr><td>Succession after a fire: does the community head somewhere?</td><td>Does the mix drift one way, or just wander?</td></tr>
+<tr><td>Climate as the shared driver</td><td>Market covariates (VIX, rates, total volume)</td></tr>
+</table></div>
+
+<h4>Inputs and preprocessing</h4>
+<ul>
+<li><b>11-12 scout (PROXY):</b> FR Y-9C trading assets of 14 dealer holding companies, 2016Q3–2026Q2; equity trading revenue of JPM, GS, MS, BAC (E4).</li>
+<li><b>11-17 new use (live Q1 data):</b> OFR repo, monthly 2018-05 → 2026-09: venue × tenor volumes (9 segments, 101 months); tri-party collateral volumes (Treasury, agency, corporate debt, other), 2014-08 → 2026-09 (146 months). OFR's 2025-08 tenor split is summed back. Market: monthly mean VIX, monthly mean 10-year Treasury yield, log total panel volume.</li>
+<li><b>Simulations:</b> 14 parts (6 in P2), 4 market covariates, T = 40 and 62, planted sticky swap of 0.10 per step (smaller in P2).</li>
+</ul>
+
+<h4>What we ran</h4>
+<ol>
+<li>11-12: ecotraj 1.2.2 on the proxy panels; the increment split found a directional residual walk the level split hid.</li>
+<li>11-14 Extension 1 (Engineering): clean-room Python port (jgridifier/ecotraj-py) with randomized R-oracle parity and numba kernels.</li>
+<li>11-14 Extension 2 (Math): pre-registered simulation of size and power; merged before running.</li>
+<li>11-17 Extension 3 (New use): the Extension 2 procedure, unchanged, on the two OFR panels; 999 sign-flip draws; Holm over 2. Plus a DSPD map of stress episodes.</li>
+<li>11-17 P2: pre-registered power curve for smaller swaps and fewer parts (running; results added when done).</li>
+</ol>
+
+<div class="callouts"><h5>How to read the main chart (directionality)</h5>
+<ol>
+<li>Each bar is how consistently a residual path keeps its heading: 1 = straight line, about 0.5 = turns at random.</li>
+<li>The p-value compares it with paths built from the same steps with random signs.</li>
+<li>Tri-party collateral sits at 0.628 (p = 0.036): its non-market drift, corporate debt up and Treasury down, is more one-way than chance, but not after correcting for testing two panels (Holm 0.072).</li>
+<li>Venue × tenor (0.560, p = 0.164) shows no non-market direction: after the market, its moves look like wandering.</li>
+</ol></div>
+
+<div class="plain"><h5>What it means for a decision-maker</h5>
+<p>The tool now does what it claims: on simulated data it finds a steady non-market shift almost every time and raises a false alarm only about 5% of the time. On the real repo data, the collateral mix shows a hint of a steady move from Treasuries toward corporate debt beyond what volatility, rates and volume explain, but the evidence isn't strong enough to call it. Descriptive only.</p></div>
+
+<h4>Stress-episode map (descriptive, DSPD)</h4>
+<p>Distances between 6-month residual sub-paths on tri-party collateral: the 2020-03 dash is closest to quiet 2019 (0.20), the 2023-03 bank stress to quiet 2024 (0.17), and the 2025-08-onward window is far from all (0.41–0.79). On collateral mix, the late-2025 window is the odd one out; the earlier stresses looked like their neighbours. Source: <code>runs/2026-11-17/ecotraj/ext3_results.json</code>.</p>
+
+<h4>Where it breaks (seen in our runs)</h4>
+<ul>
+<li><b>Market measured badly → wrong split.</b> The split is only as good as \(X_t\); three monthly covariates are a coarse market.</li>
+<li><b>Data-definition changes</b> (OFR's 2025-08 tenor split) create steps that are not behaviour.</li>
+<li><b>Parity:</b> 20 of 1,280 randomized checks differ from R on exactly collinear points (R floating-point noise); none touches directionality, the null or the split.</li>
+<li><b>Stationary levels</b> (no drift, mean-reverting mix): the test is conservative (0.0% false alarms), so it can under-call.</li>
+</ul>
+
+<h4>What we'd do next</h4>
+<p>Finish P2 (how small a swap, and how few parts, it can see). If Jared wants a package, release ecotraj-py (drafted as a ticket). Rerun Extension 3 on Form PF and fails mixes only with a pre-registered list, not panel by panel.</p>
+</div><div class="panel p3" id="robust"><p><span class="grade na">Not graded</span> <span class="small">Home-field grading started with the 2026-11-16 edition. Sourced facts:</span></p>
+<ul>
+<li><b>Paper:</b> De Cáceres et al. (2019), Ecological Monographs, the ETA framework (lengths, angles, directionality, segment and trajectory distances).</li>
+<li><b>Package:</b> ecotraj on CRAN (1.2.2 used as the oracle), R only before ecotraj-py.</li>
+<li><b>Our replication:</b> ecotraj-py reproduces the scout's numbers exactly (A dir 0.577301, E4 dir 0.431413, A residual-increment dir 0.595092; sign-flip p exact on R's draws) and 1,260/1,280 randomized checks.</li>
+<li><b>Known limits:</b> no built-in significance test for directionality in ecotraj; the sign-flip null and the increment split are lab extensions, checked by simulation, not taken from the paper.</li>
+</ul>
+</div><div class="panel p4" id="sauce"><div class="sauce top"><span class="t">1 · Engineering · Effort M · ★ All three (Jared, 11-17)</span><h5>Extension 1: a faithful Python port, fast</h5>
+<p>jgridifier/ecotraj-py: clean-room port of directionality, convergence, segment and trajectory distances (DSPD), the sign-flip null and the split; numba kernels.</p>
+<p><b>Math sketch.</b> The null is a batch of 999 independent paths, each a cumulative sum of flipped residual steps; the kernel builds each path once and evaluates dir over all \(\binom{T}{3}\) triples without Python overhead.</p>
+<p class="small"><b>Test and result.</b> Parity on the scout's numbers: exact. Randomized oracle: 1,260/1,280 exact (20 documented R quirks). 999 draws on 62 × 14: 0.59 s on one core vs 98.8 s in R. <b>Done.</b> Packaging (PyPI) drafted as a ticket.</p></div>
+<div class="sauce top"><span class="t">2 · Math · Effort L · ★ All three</span><h5>Extension 2: the increment split with a sign-flip test of the right size</h5>
+<p>Pre-registered and passed on 11-14. The 11-17 follow-up (P2) maps power for smaller swaps (0.025–0.10 per step) and fewer parts (6 vs 14).</p>
+<p><b>Math sketch.</b> \(\hat E = M\,\Delta C\); null \(E^* = M\,\operatorname{diag}(s)\,\hat E\), \(s\in\{\pm1\}^{T-1}\).</p>
+<p class="small"><b>Test and result.</b> Size in [0.030, 0.070]: 0.052 / 0.053. Power ≥ 0.80 at T = 62: 0.997. <b>Pass.</b> P2 (pre-registered in ecotraj-py, merged before the run): D = 6 size 0.051 / 0.042, inside the band; the power curve is still running.</p></div>
+<div class="sauce top"><span class="t">3 · New use on our data · Effort S · ★ All three</span><h5>Extension 3: the same split on live Q1 repo mixes</h5>
+<p>Run the Extension 2 procedure unchanged on OFR venue × tenor and tri-party collateral mixes, with VIX, the 10-year yield and total volume as the market; keep a stress-episode DSPD map.</p>
+<p><b>Math sketch.</b> Same statistic and null; Holm over the two panels.</p>
+<p class="small"><b>Test (set in advance) and result.</b> Holm p ≤ 0.05 on at least one panel. Collateral 0.036 (Holm 0.072), venue × tenor 0.164. <b>Honest miss.</b></p></div>
+<p class="small">Jared's 2026-11-17 comment "All 3 extensions" chose all three avenues.</p>
+</div><div class="panel p5" id="questions"><p>Scouted on 2026-11-12 for the <b>retired</b> prime-broker Q1; the 11-17 new-use run points it at the current Q1 (<a href="https://github.com/jgridifier/research-lab/blob/main/docs/methods-scout/QUESTIONS.md">QUESTIONS.md</a>).</p>
+<div class="sauce"><span class="t">Q1.4 · Tenor, venue and collateral mix</span><p><b>Partly.</b> After VIX, rates and volume are removed, the tri-party collateral mix drifts toward corporate debt and away from Treasuries more steadily than chance (p = 0.036), but not after Holm. The venue × tenor mix shows no non-market direction.</p></div>
+<div class="sauce"><span class="t">Q1.2 · Stress versus quiet periods</span><p><b>Descriptive.</b> On collateral, the 2020-03 and 2023-03 windows look like nearby quiet windows; the window from 2025-08 onward is unlike all of them.</p></div>
+<div class="sauce"><span class="t">Retired Q1 · Sticky migration vs market</span><p>The question this was built for. Answered for the tool (it now separates the two at the right error rate), not for the data: there is still no prime-broker or Form ADV share panel.</p></div>
+</div></div></div>
+<p class="cite">Full tables, code and data notes: <a href="../2026-11-12.html#ecotraj">the 2026-11-12 edition</a> · scripts in <code>runs/2026-11-12/</code> · card sources in <code>cards/ecotraj/</code>.</p>
+<div style="margin:1.4rem 0"><a class="btn" href="https://github.com/jgridifier/research-lab/issues/50">Respond on #50</a><p class="howto">👍 go ahead · 👎 drop · or just comment what you think</p></div>
+<script>(function(){var m={"math":1,"applied":2,"robust":3,"sauce":4,"questions":5};var h=location.hash.slice(1);var i=m[h]||(/^t[1-5]$/.test(h)?+h[1]:0);if(i)document.getElementById("t"+i).checked=true;})();</script>
+</div>
+<footer class="pf">Generated by <code>tools/build_cards.py</code> from <code>feedback-state.json</code> and <code>cards/</code>; page contract in <a href="https://github.com/jgridifier/research-lab/blob/main/docs/methods-scout/LAYOUT.md">LAYOUT.md</a>.
+Status chips are baked in at build time and refreshed from the GitHub issue labels on load. Q2 work so far uses SYNTHETIC mock budgets; no private rows are published.</footer>
+<script src="../status.js"></script>
+</body></html>

@@ -132,3 +132,19 @@ done 2026-11-14), Extension 2 (Math: increment split, passed 2026-11-14) and the
   monthly mean VIX, monthly mean 10-year Treasury yield, log total volume of the panel. Primary: residual directionality
   p per panel, Holm over the 2 panels. "Recurrence" = Holm p ≤ 0.05 on at least one panel; otherwise an honest miss.
   Descriptive: the DSPD stress-episode map (2020-03, 2023-03, 2025-08 onward) as a recurring chart.
+
+## Addendum 1 — 2026-11-17 (ET), written after the runs; the text above is unchanged
+
+1. **Timing (A, pim).** This file was committed (60526b3, 12:35 PM ET) and pushed in PR #67 before any analysis ran.
+   The pim benchmark ran 12:36–12:39 PM ET, i.e. after the commit but **before** PR #67 was merged (12:40 PM ET).
+   The text was not changed between commit and merge. All other analyses (B, C, D, and the ecotraj-py P2 run) started
+   after the merge.
+2. **B, O3.** The lab's harmonized CFTC panel has no Ultra contracts; O3 sums the 2Y, 5Y, 10Y and bond futures only.
+3. **B, mocks.** The program × year table keeps programs observed in every fiscal year (Corning mock 778 of 1,079;
+   Morgan Stanley mock 1,404 of 1,840), so the CA profile and the slope baseline see the same years. Not stated above.
+4. **B, O1.** O1 is the 11-15 table unchanged, but T2 uses this file's 60% split (train to 2023-04), not the 11-15 split
+   (train to 2022-12), so its walk-forward error differs from the 1.06 years on the 11-15 page.
+5. **B, O5.** Treasury's TIPS label changes (Inflation-Indexed Notes/Bonds → Inflation-Protected Securities → TIPS);
+   all three are mapped to one TIPS column. FRNs are zero before 2014 (a real new type); kept as zeros.
+6. **D.** P2's runner (`sims/run_p2.py` in ecotraj-py) was written after the P2 pre-registration merged and before the run;
+   it only sets D, σ, τ² and a as the pre-registration states.
