@@ -1,0 +1,111 @@
+{
+ "O1_venue_tenor": {
+  "n_months": 101,
+  "first": "2018-05",
+  "last": "2026-09",
+  "k": 3,
+  "market_step_energy_share": 0.059903415907399754,
+  "P1_residual_dir": 0.5601866405248919,
+  "P1_p": 0.164,
+  "W_whole_path_dir": 0.43316450050531985,
+  "W_p": 0.759,
+  "residual_net_top3": {
+   "GCF_G30": -2.6158408167216356,
+   "DVP_G30": -2.0384954356173264,
+   "TRI_G30": 1.2959615932034425
+  },
+  "episode_dspd": {
+   "2020-03 Covid dash": {
+    "2020-03 Covid dash": 0.0,
+    "2023-03 bank stress": 0.9421,
+    "2025-08 onward": 2.3979,
+    "quiet 2019": 0.6874,
+    "quiet 2024": 1.3476
+   },
+   "2023-03 bank stress": {
+    "2020-03 Covid dash": 0.9421,
+    "2023-03 bank stress": 0.0,
+    "2025-08 onward": 1.9424,
+    "quiet 2019": 1.2015,
+    "quiet 2024": 0.6347
+   },
+   "2025-08 onward": {
+    "2020-03 Covid dash": 2.3979,
+    "2023-03 bank stress": 1.9424,
+    "2025-08 onward": 0.0,
+    "quiet 2019": 2.7614,
+    "quiet 2024": 1.6545
+   },
+   "quiet 2019": {
+    "2020-03 Covid dash": 0.6874,
+    "2023-03 bank stress": 1.2015,
+    "2025-08 onward": 2.7614,
+    "quiet 2019": 0.0,
+    "quiet 2024": 1.5559
+   },
+   "quiet 2024": {
+    "2020-03 Covid dash": 1.3476,
+    "2023-03 bank stress": 0.6347,
+    "2025-08 onward": 1.6545,
+    "quiet 2019": 1.5559,
+    "quiet 2024": 0.0
+   }
+  },
+  "P1_holm": 0.164
+ },
+ "O2_triparty_collateral": {
+  "n_months": 146,
+  "first": "2014-08",
+  "last": "2026-09",
+  "k": 3,
+  "market_step_energy_share": 0.26361795261361853,
+  "P1_residual_dir": 0.6282304878572303,
+  "P1_p": 0.036,
+  "W_whole_path_dir": 0.46728771184604595,
+  "W_p": 0.603,
+  "residual_net_top3": {
+   "CorpDebt": 1.086808313521978,
+   "Treasury": -0.8305169436214561,
+   "Agency": -0.44973283524565877
+  },
+  "episode_dspd": {
+   "2020-03 Covid dash": {
+    "2020-03 Covid dash": 0.0,
+    "2023-03 bank stress": 0.3224,
+    "2025-08 onward": 0.6825,
+    "quiet 2019": 0.2039,
+    "quiet 2024": 0.4135
+   },
+   "2023-03 bank stress": {
+    "2020-03 Covid dash": 0.3224,
+    "2023-03 bank stress": 0.0,
+    "2025-08 onward": 0.6354,
+    "quiet 2019": 0.4032,
+    "quiet 2024": 0.1741
+   },
+   "2025-08 onward": {
+    "2020-03 Covid dash": 0.6825,
+    "2023-03 bank stress": 0.6354,
+    "2025-08 onward": 0.0,
+    "quiet 2019": 0.7887,
+    "quiet 2024": 0.4137
+   },
+   "quiet 2019": {
+    "2020-03 Covid dash": 0.2039,
+    "2023-03 bank stress": 0.4032,
+    "2025-08 onward": 0.7887,
+    "quiet 2019": 0.0,
+    "quiet 2024": 0.514
+   },
+   "quiet 2024": {
+    "2020-03 Covid dash": 0.4135,
+    "2023-03 bank stress": 0.1741,
+    "2025-08 onward": 0.4137,
+    "quiet 2019": 0.514,
+    "quiet 2024": 0.0
+   }
+  },
+  "P1_holm": 0.072
+ },
+ "recurrence": false
+}

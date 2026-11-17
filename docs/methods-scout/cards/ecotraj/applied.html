@@ -1,0 +1,49 @@
+<h4>Who plays what</h4>
+<div class="table-wrap"><table>
+<tr><th>Home field (ecology)</th><th>Our data</th></tr>
+<tr><td>A plot of land surveyed each year</td><td>One panel (dealer shares, or repo segments)</td></tr>
+<tr><td>Species abundances in a survey</td><td>Each part's share in a quarter or month</td></tr>
+<tr><td>Succession after a fire: does the community head somewhere?</td><td>Does the mix drift one way, or just wander?</td></tr>
+<tr><td>Climate as the shared driver</td><td>Market covariates (VIX, rates, total volume)</td></tr>
+</table></div>
+
+<h4>Inputs and preprocessing</h4>
+<ul>
+<li><b>11-12 scout (PROXY):</b> FR Y-9C trading assets of 14 dealer holding companies, 2016Q3–2026Q2; equity trading revenue of JPM, GS, MS, BAC (E4).</li>
+<li><b>11-17 new use (live Q1 data):</b> OFR repo, monthly 2018-05 → 2026-09: venue × tenor volumes (9 segments, 101 months); tri-party collateral volumes (Treasury, agency, corporate debt, other), 2014-08 → 2026-09 (146 months). OFR's 2025-08 tenor split is summed back. Market: monthly mean VIX, monthly mean 10-year Treasury yield, log total panel volume.</li>
+<li><b>Simulations:</b> 14 parts (6 in P2), 4 market covariates, T = 40 and 62, planted sticky swap of 0.10 per step (smaller in P2).</li>
+</ul>
+
+<h4>What we ran</h4>
+<ol>
+<li>11-12: ecotraj 1.2.2 on the proxy panels; the increment split found a directional residual walk the level split hid.</li>
+<li>11-14 Extension 1 (Engineering): clean-room Python port (jgridifier/ecotraj-py) with randomized R-oracle parity and numba kernels.</li>
+<li>11-14 Extension 2 (Math): pre-registered simulation of size and power; merged before running.</li>
+<li>11-17 Extension 3 (New use): the Extension 2 procedure, unchanged, on the two OFR panels; 999 sign-flip draws; Holm over 2. Plus a DSPD map of stress episodes.</li>
+<li>11-17 P2: pre-registered power curve for smaller swaps and fewer parts (running; results added when done).</li>
+</ol>
+
+<div class="callouts"><h5>How to read the main chart (directionality)</h5>
+<ol>
+<li>Each bar is how consistently a residual path keeps its heading: 1 = straight line, about 0.5 = turns at random.</li>
+<li>The p-value compares it with paths built from the same steps with random signs.</li>
+<li>Tri-party collateral sits at 0.628 (p = 0.036): its non-market drift, corporate debt up and Treasury down, is more one-way than chance, but not after correcting for testing two panels (Holm 0.072).</li>
+<li>Venue × tenor (0.560, p = 0.164) shows no non-market direction: after the market, its moves look like wandering.</li>
+</ol></div>
+
+<div class="plain"><h5>What it means for a decision-maker</h5>
+<p>The tool now does what it claims: on simulated data it finds a steady non-market shift almost every time and raises a false alarm only about 5% of the time. On the real repo data, the collateral mix shows a hint of a steady move from Treasuries toward corporate debt beyond what volatility, rates and volume explain, but the evidence isn't strong enough to call it. Descriptive only.</p></div>
+
+<h4>Stress-episode map (descriptive, DSPD)</h4>
+<p>Distances between 6-month residual sub-paths on tri-party collateral: the 2020-03 dash is closest to quiet 2019 (0.20), the 2023-03 bank stress to quiet 2024 (0.17), and the 2025-08-onward window is far from all (0.41–0.79). On collateral mix, the late-2025 window is the odd one out; the earlier stresses looked like their neighbours. Source: <code>runs/2026-11-17/ecotraj/ext3_results.json</code>.</p>
+
+<h4>Where it breaks (seen in our runs)</h4>
+<ul>
+<li><b>Market measured badly → wrong split.</b> The split is only as good as \(X_t\); three monthly covariates are a coarse market.</li>
+<li><b>Data-definition changes</b> (OFR's 2025-08 tenor split) create steps that are not behaviour.</li>
+<li><b>Parity:</b> 20 of 1,280 randomized checks differ from R on exactly collinear points (R floating-point noise); none touches directionality, the null or the split.</li>
+<li><b>Stationary levels</b> (no drift, mean-reverting mix): the test is conservative (0.0% false alarms), so it can under-call.</li>
+</ul>
+
+<h4>What we'd do next</h4>
+<p>Finish P2 (how small a swap, and how few parts, it can see). If Jared wants a package, release ecotraj-py (drafted as a ticket). Rerun Extension 3 on Form PF and fails mixes only with a pre-registered list, not panel by panel.</p>

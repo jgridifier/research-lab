@@ -1,0 +1,13 @@
+<div class="sauce top"><span class="t">1 · Engineering · Effort M · ★ All three (Jared, 11-17)</span><h5>Extension 1: a faithful Python port, fast</h5>
+<p>jgridifier/ecotraj-py: clean-room port of directionality, convergence, segment and trajectory distances (DSPD), the sign-flip null and the split; numba kernels.</p>
+<p><b>Math sketch.</b> The null is a batch of 999 independent paths, each a cumulative sum of flipped residual steps; the kernel builds each path once and evaluates dir over all \(\binom{T}{3}\) triples without Python overhead.</p>
+<p class="small"><b>Test and result.</b> Parity on the scout's numbers: exact. Randomized oracle: 1,260/1,280 exact (20 documented R quirks). 999 draws on 62 × 14: 0.59 s on one core vs 98.8 s in R. <b>Done.</b> Packaging (PyPI) drafted as a ticket.</p></div>
+<div class="sauce top"><span class="t">2 · Math · Effort L · ★ All three</span><h5>Extension 2: the increment split with a sign-flip test of the right size</h5>
+<p>Pre-registered and passed on 11-14. The 11-17 follow-up (P2) maps power for smaller swaps (0.025–0.10 per step) and fewer parts (6 vs 14).</p>
+<p><b>Math sketch.</b> \(\hat E = M\,\Delta C\); null \(E^* = M\,\operatorname{diag}(s)\,\hat E\), \(s\in\{\pm1\}^{T-1}\).</p>
+<p class="small"><b>Test and result.</b> Size in [0.030, 0.070]: 0.052 / 0.053. Power ≥ 0.80 at T = 62: 0.997. <b>Pass.</b> P2 (pre-registered in ecotraj-py, merged before the run): D = 6 size 0.051 / 0.042, inside the band; the power curve is still running.</p></div>
+<div class="sauce top"><span class="t">3 · New use on our data · Effort S · ★ All three</span><h5>Extension 3: the same split on live Q1 repo mixes</h5>
+<p>Run the Extension 2 procedure unchanged on OFR venue × tenor and tri-party collateral mixes, with VIX, the 10-year yield and total volume as the market; keep a stress-episode DSPD map.</p>
+<p><b>Math sketch.</b> Same statistic and null; Holm over the two panels.</p>
+<p class="small"><b>Test (set in advance) and result.</b> Holm p ≤ 0.05 on at least one panel. Collateral 0.036 (Holm 0.072), venue × tenor 0.164. <b>Honest miss.</b></p></div>
+<p class="small">Jared's 2026-11-17 comment "All 3 extensions" chose all three avenues.</p>

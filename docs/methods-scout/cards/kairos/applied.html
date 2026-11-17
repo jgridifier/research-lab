@@ -44,3 +44,20 @@
 
 <h4>What we'd do next</h4>
 <p>Top pick (Math): treat re-defined buckets as supplementary CA columns tied by an aggregation constraint and block-bootstrap the intervals, so the clock survives the split. Then the same clock on tri-party collateral mix and on TFF open interest by trader type.</p>
+
+<h4>2026-11-17 refresh: more open datasets and the mock datasets</h4>
+<p>Jared asked to see kairos against the questions we have now, on our mock datasets and on more open datasets, "to tell if it's worth building". The tests and the worth-building rule were written down before anything ran (<a href="../runs/2026-11-17/PREREG.md">PREREG.md</a>, section B).</p>
+<p><b>Open datasets</b> (public aggregates, monthly, each treated like a table of pottery counts):</p>
+<div class="table-wrap"><table>
+<tr><th>Dataset</th><th>Months</th><th>Seriation exists? (Porčić p)</th><th>Order vs calendar (Spearman)</th><th>Unseen-month error: clock / naive / ridge (years)</th><th>Pass?</th></tr>
+<tr><td>O1 OFR repo, venue × tenor (11-15 reference)</td><td>101, 2018-05 → 2026-09</td><td>0.001</td><td>−0.96</td><td>0.75 / 1.75 / 1.79</td><td>✓</td></tr>
+<tr><td>O2 OFR tri-party collateral (Treasury, agency, corporate, other)</td><td>146, 2014-08 → 2026-09</td><td>0.001</td><td>−0.67</td><td>4.25 / 2.50 / 3.11</td><td>✕</td></tr>
+<tr><td>O3 CFTC Treasury-futures positioning (5 trader types × long/short)</td><td>133, 2015-01 → 2026-09</td><td>0.001</td><td>−0.74</td><td>3.47 / 2.30 / 3.39</td><td>✕</td></tr>
+<tr><td>O4 Fed commercial paper issuance by maturity (6 buckets)</td><td>310, 2001-01 → 2026-10</td><td>0.002</td><td>−0.96</td><td>4.55 / 5.21 / 3.80</td><td>✕</td></tr>
+<tr><td>O5 Treasury marketable debt by type (bills, notes, bonds, TIPS, FRN)</td><td>308, 2001-01 → 2026-08</td><td>0.001</td><td>−0.33</td><td>8.51 / 5.21 / 11.51</td><td>✕</td></tr>
+<tr><td>O6 Form PF borrowing by creditor (prime broker, repo, other secured, unsecured)</td><td>156, 2013-01 → 2025-12</td><td>0.004</td><td>−0.57</td><td>5.49 / 2.67 / 5.24</td><td>✕</td></tr>
+</table></div>
+<p class="small">Walk-forward: train on the first 60% of months, date the rest. Pass = clock error ≤ 0.75 × naive (naive = "it's the last training month") <b>and</b> ≤ the usual tool (ridge regression of date on log-ratio shares). Form PF lead test (Q1.4): total borrowing growth leading clock speed by 3 and 6 months, circular-shift null, Holm over 10 tests: only O1 survives (r = 0.55 and 0.52, Holm p = 0.005 each); on O2–O5 the largest |r| is 0.30 (O5, lead 3, p = 0.16). Source: <code>runs/2026-11-17/kairos/tests_open.json</code>.</p>
+<p><b>SYNTHETIC mock ZBB datasets</b> (Corning- and Morgan Stanley-modeled; 778 and 1,404 programs observed in every year): each program's spend over 2020/21–2025 is one row. Seriation found no time order (Porčić p = 0.25 and 0.27). For the planted clusters (Q2.4), CA axis 1 separated members from non-members with mean AUC 0.767 vs 0.746 for the plain growth slope on the Corning mock, and 0.642 vs 0.668 on the Morgan Stanley mock. The pre-set bar was +0.03 on both. Battleship charts of all programs: <a href="../fig/2026-11-17/kairos_mock_eppm_corning.png">Corning mock</a>, <a href="../fig/2026-11-17/kairos_mock_eppm_ms.png">Morgan Stanley mock</a> (SYNTHETIC). With 1,000 programs they are a texture rather than a readable chart, so they don't answer Q2.5 either.</p>
+<div class="plain"><h5>Verdict: not worth building</h5>
+<p>The rule we wrote first: build it (a Python port plus the taxonomy-robust clock) only if the clock dates unseen months on at least 3 of the 5 new open datasets <i>and</i> either helps on the mocks or finds a new Form PF link. It passed on 0 of 5, did not help on the mocks, and found no new link. Most of these mixes swing back and forth (collateral, positioning, borrowing type) instead of moving through one fashion cycle, which is the shape seriation needs. The one place it works, the OFR repo venue × tenor mix, is worth keeping as a Q1 chart. It isn't worth an engineering build.</p></div>

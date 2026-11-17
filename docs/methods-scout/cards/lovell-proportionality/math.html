@@ -1,0 +1,39 @@
+<h4>Notation</h4>
+<div class="table-wrap"><table>
+<tr><th>Symbol</th><th>Meaning</th><th>Here</th></tr>
+<tr><td>\(x_t, y_t\)</td><td>two strictly positive parts of a composition at time \(t\)</td><td>two dealers' shares of a total (E4: JPM, GS, MS, BAC equity trading revenue)</td></tr>
+<tr><td>\(u_t, v_t\)</td><td>their clr coordinates, \(\log x_t - \overline{\log s_t}\)</td><td>log share relative to the geometric mean of all parts that quarter</td></tr>
+<tr><td>\(\rho(u,v)\)</td><td>proportionality</td><td>+1 move in proportion, −1 swap, 0 unrelated</td></tr>
+<tr><td>\(X_t\)</td><td>\(k\) observed market covariates</td><td>E4: VIX, 4-quarter Nasdaq return, BAA spread, industry revenue growth (\(k = 4\))</td></tr>
+<tr><td>\(\Delta\)</td><td>first difference over time</td><td>quarter-on-quarter change</td></tr>
+<tr><td>\(T\)</td><td>number of periods</td><td>62 quarters (E4); simulations use 40 and 62</td></tr>
+</table></div>
+
+<h4>Assumptions</h4>
+<ul><li>All parts strictly positive (logs exist); shares are compositions, so only ratios carry information.</li>
+<li>For the market-partial version: the market enters each part's log-share additively through the observed \(X_t\), and \(X_t\) is measured well (see the noisy-proxy result).</li>
+<li>For the null: the two residual series are each stationary enough that shifting one against the other in time breaks any link but keeps each one's own persistence.</li></ul>
+
+<h4>The statistic</h4>
+$$\rho(u,v) \;=\; 1-\frac{\operatorname{Var}(u-v)}{\operatorname{Var}(u)+\operatorname{Var}(v)} \;=\; \frac{2\operatorname{Cov}(u,v)}{\operatorname{Var}(u)+\operatorname{Var}(v)}.$$
+<p><b>Level partial</b> (the 11-12 prototype): regress \(u_t\) and \(v_t\) on \([1, X_t]\), take residuals \(\tilde u_t, \tilde v_t\), report \(\rho(\tilde u,\tilde v)\).</p>
+<p><b>Increment partial</b> (new): regress \(\Delta u_t\) and \(\Delta v_t\) on \([1, \Delta X_t]\), take residuals \(e^u_t, e^v_t\), report \(\rho(e^u, e^v)\).</p>
+
+<h4>Why it works, step by step</h4>
+<div class="step"><b class="n">Step 1 · why ρ is valid on shares</b>The log-ratio \(u - v = \log(x/y)\) does not depend on the total, so \(\operatorname{Var}(u-v)\) is the same for shares and for dollar amounts (Lovell et al. 2015). Pearson correlation of shares does not have this property.</div>
+<div class="step"><b class="n">Step 2 · the second form</b>Expand the numerator: \(\operatorname{Var}(u-v)=\operatorname{Var}u+\operatorname{Var}v-2\operatorname{Cov}(u,v)\). Divide by \(\operatorname{Var}u+\operatorname{Var}v\) and subtract from 1: \(\rho = 2\operatorname{Cov}(u,v)/(\operatorname{Var}u+\operatorname{Var}v)\). This is what makes all 124,750 pairs one covariance matrix away: \(R = 2C / (v_i + v_j)\).</div>
+<div class="step"><b class="n">Step 3 · why the market fakes a swap</b>If \(u_t = \lambda_u m_t + a_t\) and \(v_t = \lambda_v m_t + b_t\) with \(a, b\) independent of each other and of \(m\), then \(\operatorname{Cov}(u,v)=\lambda_u\lambda_v\operatorname{Var}(m)\). With \(\lambda_u>0>\lambda_v\) the pair looks like a swap even though nothing passes between them. Regressing out \(m\) removes that term.</div>
+<div class="step"><b class="n">Step 4 · why levels are the wrong place to remove it</b>\(m_t\) and \(a_t\) are persistent. Over a short window, two independent persistent series have sizeable sample covariance with each other and with \(m\) (spurious regression), so level residuals keep chance co-movement, and the level fit can absorb part of it unevenly. Differencing turns persistent levels into nearly independent steps, where the regression on \(\Delta X_t\) behaves like ordinary regression. The simulations show the result: level partial 12.7–13.3% false alarms, increment partial 6.2–6.5%.</div>
+
+<h4>The null and inference</h4>
+<p>Exact relative cyclic shift: keep \(u\) fixed and roll \(v\) by every shift \(s\in\{4,\dots,n-4\}\), recompute ρ, and set \(p = \bigl(1+\#\{|\rho_s|\ge|\rho_{\text{obs}}|\}\bigr)/(1+\#\text{shifts})\). Shifts under 4 periods are excluded so persistence does not leak into the null. Across many pairs, Benjamini–Hochberg. The simulation (seed 20261117, 1,000 replications per cell) checks the size of this exact procedure.</p>
+
+<div class="toy"><h5>Toy example (computed on the box)</h5>
+<p>Market \(m = (0,1,2,3)\). Two parts load on it with opposite signs plus small unrelated wiggles: \(u = 0.5m + (0.1,-0.1,-0.1,0.1) = (0.1, 0.4, 0.9, 1.6)\), \(v = -0.5m + (0.1,-0.1,0.1,-0.1) = (0.1,-0.6,-0.9,-1.6)\).</p>
+<ul><li><b>Raw:</b> Var u = 0.4300, Var v = 0.4967, Var(u−v) = 1.8267, so ρ = 1 − 1.8267/0.9267 = <b>−0.971</b>: it looks like a near-perfect swap.</li>
+<li><b>Level partial:</b> residuals on [1, m] are (0.1, −0.1, −0.1, 0.1) and (0.04, −0.12, 0.12, −0.04); their covariance is 0, so ρ = <b>0.0</b>.</li>
+<li><b>Increment partial:</b> steps are (0.3, 0.5, 0.7) and (−0.7, −0.3, −0.7); Δm is constant, so removing it just demeans them: (−0.2, 0, 0.2) and (−0.133, 0.267, −0.133); covariance 0, ρ = <b>0.0</b>.</li></ul>
+<p class="small">In this toy both versions agree because the wiggles are not persistent. The simulations are where they differ.</p></div>
+
+<div class="diff"><b>How it differs from the standard tool.</b> The usual tool is Pearson correlation on shares (or on clr levels), with an iid permutation test. Pearson on shares changes with the total and is pushed negative by the sum-to-one constraint; an iid permutation ignores persistence, so it rejects far too often on quarterly data. Here: ρ on log-ratios (scale-free), the market removed from increments, and a cyclic-shift null that keeps each series' own persistence.</div>
+<p class="cite">Followed: Lovell, Pawlowsky-Glahn, Egozcue, Marguerat &amp; Bähler (2015), PLoS Computational Biology 11(3):e1004075, definitions of VLR, φ and ρ; Quinn, Richardson, Lovell &amp; Crowley (2017), Scientific Reports 7:16520, ρ on clr as in propr. Section and equation numbers not checked. The partial versions and the cyclic-shift null are the lab's extension, not in those papers. Toy: <code>cards/_toys/toys.py</code>; simulation: <code>runs/2026-11-17/lovell/sim_partial.py</code>.</p>

@@ -46,3 +46,30 @@
 
 <h4>What we'd do next</h4>
 <p>Top pick: carry the PIM to Q2 as a text-versus-numbers check, "within a subsegment, how often does a program labelled <em>grow</em> actually grow faster than its peers?", and require it to beat the 0.78 AUC from the 11-13 peer comparison. In parallel, the Math card would give a proper firm-clustered variance so we stop relying on the bootstrap.</p>
+
+<h4>Benchmark against ARDL and SARIMAX (added 2026-11-17, at Jared's request)</h4>
+<p>Jared asked for ARDL and SARIMAX benchmarks beside OLS, and said to start the Engineering and Math avenues only if the benchmark "looks promising". We wrote down what "promising" means before running anything (<a href="../runs/2026-11-17/PREREG.md">PREREG.md</a>, section A).</p>
+<ul>
+<li><b>Design.</b> For each test year 2016–2025, every model is fitted only on earlier years, then asked to order the banks tested that year. The common yardstick is the share of same-year bank pairs put in the right order by payout (0.5 = coin flip). This is a model-comparison check, not a forecast; no bank-level predictions are published.</li>
+<li><b>Models.</b> OLS and PIM on the two stress metrics (drawdown and pre-tax income); a pooled ARDL(1,0) adding last year's payout; a per-firm SARIMAX(1,0,0) with the stress metrics as exogenous inputs (annual data, so no seasonal part; needs 5+ years of the firm's own history, which leaves 172 of 281 test rows); and PIM given the same information as ARDL.</li>
+</ul>
+<div class="table-wrap"><table>
+<tr><th>Model</th><th>Payout/RWA, all 281 rows</th><th>Payout/NI, all 281 rows</th><th>Payout/RWA, SARIMAX's 172 rows</th><th>Payout/NI, SARIMAX's 172 rows</th></tr>
+<tr><td>OLS (stress metrics)</td><td>0.666</td><td>0.579</td><td>0.654</td><td>0.572</td></tr>
+<tr><td>PIM (stress metrics)</td><td>0.668</td><td>0.587</td><td>0.664</td><td>0.576</td></tr>
+<tr><td>ARDL(1,0), pooled</td><td>0.775</td><td>0.620</td><td>0.713</td><td>0.600</td></tr>
+<tr><td>SARIMAX(1,0,0)+exog, per firm</td><td>—</td><td>—</td><td>0.692</td><td>0.657</td></tr>
+<tr><td><b>PIM + last year's payout</b></td><td><b>0.779</b></td><td><b>0.688</b></td><td><b>0.716</b></td><td><b>0.637</b></td></tr>
+</table></div>
+<p class="small">3,890 same-year pairs on all rows, 1,846 on SARIMAX's rows. Mean absolute error for the level models on payout/RWA (percent of RWA): OLS 0.66, ARDL 0.57, SARIMAX 0.64 (SARIMAX on its own rows). Source: <code>runs/2026-11-17/pim/bench_results.json</code>.</p>
+<div class="callouts"><h5>How to read the benchmark</h5>
+<ol>
+<li>Last year's payout does most of the work: adding it lifts every model from about 0.67 to about 0.78 on payout/RWA. Payout rankings are sticky.</li>
+<li>Given the same inputs, PIM and ARDL are level on payout/RWA (+0.004; 90% firm-bootstrap interval −0.003 to +0.013).</li>
+<li>On the unstable payout/NI ratio, PIM beats ARDL clearly (+0.068; +0.030 to +0.101), the same robustness the 11-16 trimming check showed.</li>
+<li>Against per-firm SARIMAX on payout/NI, PIM is 0.020 behind (−0.095 to +0.042): inside the noise, but our pre-set rule needed PIM at or above SARIMAX there.</li>
+</ol></div>
+<div class="plain"><h5>What it means for a decision-maker</h5>
+<p>On the ordinary payout ratio, PIM does as well as the standard time-series models. On the noisy payout-to-income ratio it does better than ARDL and about as well as SARIMAX. By the bar we set in advance, that is "close but not promising", so we have not started the Rust fitter or the clustered-variance math. Whether "close" is good enough is Jared's call.</p></div>
+<p><b>Same trimming test, applied to ARDL (descriptive).</b> Dropping the 8 most extreme payout/NI ratios cuts ARDL's long-run drawdown effect from −0.078 to −0.043 (−44%), about the same as OLS (−43%); the PIM effect moved under 2% on 11-16.</p>
+<p><b>Where the benchmark breaks.</b> Per-firm SARIMAX has at most 12 annual points per bank and skips untested years, so it covers only 172 test rows and is noisy. Ten of the 40 PIM fits ended on nleqslv's step-size tolerance rather than its function tolerance (reported, not hidden).</p>

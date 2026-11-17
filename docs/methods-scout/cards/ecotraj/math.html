@@ -1,0 +1,34 @@
+<h4>Notation</h4>
+<div class="table-wrap"><table>
+<tr><th>Symbol</th><th>Meaning</th><th>Here</th></tr>
+<tr><td>\(S_t\)</td><td>composition (shares summing to 1) at time \(t\)</td><td>a month's or quarter's mix: dealers' trading assets, repo collateral types</td></tr>
+<tr><td>\(C_t = \operatorname{clr}(S_t)\)</td><td>centred log-ratio coordinates</td><td>Euclidean distance between them is the Aitchison distance between mixes</td></tr>
+<tr><td>\(s_{ij}\), \(\theta_{ijk}\)</td><td>distance between points, angle between consecutive legs</td><td>how far the mix moved; whether it kept heading the same way</td></tr>
+<tr><td>\(X_t\), \(\Delta X_t\)</td><td>\(k\) market covariates and their changes</td><td>VIX, 10-year yield, log total volume (repo); VIX, Nasdaq, BAA spread, industry growth (Y-9C proxy)</td></tr>
+<tr><td>\(\hat B\), \(\hat E\)</td><td>market loadings; residual (non-market) increments</td><td>how much of each step the market explains, and what is left</td></tr>
+<tr><td>\(M\)</td><td>residual-maker \(I-\Delta X(\Delta X^\top\Delta X)^{-1}\Delta X^\top\)</td><td>projects any step sequence off the market changes</td></tr>
+</table></div>
+
+<h4>Assumptions</h4>
+<ul><li>All shares strictly positive (clr exists).</li>
+<li>Market effects enter the clr <i>increments</i> linearly through observed \(\Delta X_t\).</li>
+<li>Under the null, residual increments are symmetric around zero and roughly exchangeable in sign (what the sign-flip uses).</li></ul>
+
+<h4>The statistics</h4>
+<p><b>Directionality</b> (De Cáceres et al. 2019), on a path \(y_1,\dots,y_T\):</p>
+$$\operatorname{dir} = \frac{\sum_{i<j<k}(s_{ij}+s_{jk})\,(1-\theta_{ijk}/180^\circ)}{\sum_{i<j<k}(s_{ij}+s_{jk})}.$$
+<p><b>Increment split</b> (Extension 2): \(\hat B = (\Delta X^\top\Delta X)^{-1}\Delta X^\top\Delta C\), \(\hat E = \Delta C - \Delta X\hat B = M\,\Delta C\); the residual path is \(R_t = C_1 + \sum_{s<t}\hat E_s\), and the market path is the same sum of \(\Delta X\hat B\). Test \(\operatorname{dir}(R)\).</p>
+
+<h4>Why it works, step by step</h4>
+<div class="step"><b class="n">Step 1 · clr makes geometry valid</b>Euclidean distance on clr coordinates equals the Aitchison distance on the simplex, so lengths and angles of the path are statistics of the mixes themselves, unchanged by reordering parts.</div>
+<div class="step"><b class="n">Step 2 · the split adds back exactly</b>Each row of \(\Delta C\) sums to zero, so each row of the fitted \(\Delta X\hat B\) and of \(\hat E\) also sums to zero. Therefore \(C_t = C_1 + m_t + r_t\) exactly, and in shares \(S_t = S_1 \oplus \operatorname{softmax}(m_t) \oplus \operatorname{softmax}(r_t)\): the market and residual sub-paths are themselves valid mixes.</div>
+<div class="step"><b class="n">Step 3 · why levels hide a drift</b>Regressing clr <i>levels</i> on \([1,X_t]\) lets a persistent market covariate, which is itself a near-random walk, soak up a slow residual drift. Differencing first removes that: \(\Delta X_t\) is close to independent noise, so it cannot track a steady drift. Simulation: level split finds 1.3% of planted swaps, increment split 99.7%.</div>
+<div class="step"><b class="n">Step 4 · the null</b>Flip the sign of each residual step at random, re-project with \(M\) so the null path lives in the same space as the observed residuals, rebuild the path and recompute dir. 199 (simulations) or 999 (data) draws; \(p = (1+\#\{\text{null}\ge\text{obs}\})/(1+B)\).</div>
+<p><b>Multiple testing:</b> Holm across panels (two on 11-17). <b>Size</b> is checked by simulation, not assumed: re-projection makes it approximate (Freedman–Lane / ter Braak style).</p>
+
+<div class="toy"><h5>Toy example (computed on the box)</h5>
+<p>Path \(y_1=(0,0)\), \(y_2=(1,0)\), \(y_3=(2,1)\). One triple: \(s_{12}=1\), \(s_{23}=1.414\), angle between the legs 45°, so dir = 1 − 45/180 = <b>0.75</b>.</p>
+<p>Sign-flip null with 2 steps: flipping both or neither keeps the 45° turn (dir 0.75); flipping one makes it a 135° turn (dir 0.25). Two of the four sign vectors reach 0.75, so p = 2/4 = <b>0.5</b>. Two steps can never be significant; the real panels have 61–145.</p></div>
+
+<div class="diff"><b>How it differs from the standard tool.</b> The usual view is a stacked-area chart of shares, or a regression of each share on market variables. Neither asks whether the <i>path</i> keeps one direction, and share regressions ignore the simplex. ETA works on the whole mix at once with valid geometry, and the increment split separates "everyone moved with the market" from "this mix drifted on its own".</div>
+<p class="cite">Followed: De Cáceres, Coll, Legendre et al. (2019), Ecological Monographs 89(2):e01350, directionality and segment distances (eqs. 8–10 for directed segments, as cited in ecotraj-py's PARITY.md); package ecotraj 1.2.2 (CRAN) as the oracle. The increment split and its test are the lab's Extension 2 (<a href="https://github.com/jgridifier/ecotraj-py/blob/main/prereg/EXT2_PREREG.md">pre-registration</a>). Other section numbers not checked. Toy: <code>cards/_toys/toys.py</code>.</p>

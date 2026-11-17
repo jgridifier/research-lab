@@ -1,0 +1,21 @@
+{
+ "identity_suite": "passed (7 identities + vectorised==scalar + BH)",
+ "E4": {
+  "rho_share": -0.6976291186378243,
+  "target_share": -0.6976291186378243,
+  "err_share": 0.0,
+  "rho_partial_level": -0.8820532158226102,
+  "target_partial": -0.8820532158226098,
+  "err_partial": 4.440892098500626e-16,
+  "rho_partial_increment": -0.7876965365694264,
+  "p_partial_increment_cyclic": 0.01818181818181818,
+  "p_partial_level_cyclic_exact": 0.017857142857142856
+ },
+ "speed": {
+  "parts": 500,
+  "T": 62,
+  "pairs": 124750,
+  "seconds": 0.0318005470035132,
+  "pass_under_1s": true
+ }
+}

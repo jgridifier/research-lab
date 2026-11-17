@@ -1,0 +1,59 @@
+{
+ "S0|T40|exact": {
+  "Raw": 1.0,
+  "PL": 0.127,
+  "PI": 0.065
+ },
+ "S0|T62|exact": {
+  "Raw": 1.0,
+  "PL": 0.133,
+  "PI": 0.062
+ },
+ "S1|T40|exact": {
+  "Raw": 1.0,
+  "PL": 0.748,
+  "PI": 0.897
+ },
+ "S1|T62|exact": {
+  "Raw": 1.0,
+  "PL": 0.84,
+  "PI": 0.99
+ },
+ "S0|T40|noisy": {
+  "Raw": 0.999,
+  "PL": 0.988,
+  "PI": 1.0
+ },
+ "S0|T62|noisy": {
+  "Raw": 1.0,
+  "PL": 0.999,
+  "PI": 1.0
+ },
+ "S1|T40|noisy": {
+  "Raw": 1.0,
+  "PL": 0.997,
+  "PI": 1.0
+ },
+ "S1|T62|noisy": {
+  "Raw": 1.0,
+  "PL": 0.999,
+  "PI": 1.0
+ },
+ "verdict": {
+  "Raw": {
+   "size_ok": false,
+   "power_ok": true,
+   "passes": false
+  },
+  "PL": {
+   "size_ok": false,
+   "power_ok": true,
+   "passes": false
+  },
+  "PI": {
+   "size_ok": true,
+   "power_ok": true,
+   "passes": true
+  }
+ }
+}
