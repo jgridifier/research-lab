@@ -20,7 +20,7 @@
 <li>11-14 Extension 1 (Engineering): clean-room Python port (jgridifier/ecotraj-py) with randomized R-oracle parity and numba kernels.</li>
 <li>11-14 Extension 2 (Math): pre-registered simulation of size and power; merged before running.</li>
 <li>11-17 Extension 3 (New use): the Extension 2 procedure, unchanged, on the two OFR panels; 999 sign-flip draws; Holm over 2. Plus a DSPD map of stress episodes.</li>
-<li>11-17 P2: pre-registered power curve for smaller swaps and fewer parts (running; results added when done).</li>
+<li>11-17 P2: pre-registered power curve for smaller swaps and fewer parts. The size check passes (6 parts: 0.051 at T = 40, 0.042 at T = 62). Minimum detectable swap at T = 62: 0.075 per step (14 parts) and 0.10 (6 parts). At T = 40, 0.10 gives 92% (14 parts) and 62% (6 parts). The Wilcoxon and level baselines stay well below P1 in every cell.</li>
 </ol>
 
 <div class="callouts"><h5>How to read the main chart (directionality)</h5>
@@ -46,4 +46,4 @@
 </ul>
 
 <h4>What we'd do next</h4>
-<p>Finish P2 (how small a swap, and how few parts, it can see). If Jared wants a package, release ecotraj-py (drafted as a ticket). Rerun Extension 3 on Form PF and fails mixes only with a pre-registered list, not panel by panel.</p>
+<p>P2 is done: with about 5 years of monthly data it reliably sees swaps of 0.075–0.10 per step, not smaller. If Jared wants a package, release ecotraj-py (drafted as a ticket). Rerun Extension 3 on Form PF and fails mixes only with a pre-registered list, not panel by panel.</p>

@@ -1,0 +1,18 @@
+{
+ "label": "afterP2",
+ "load1": 4.376953125,
+ "n": 360,
+ "pairs": 5017,
+ "nperm": 10000,
+ "wall_s": [
+  14.496406537014991,
+  9.088265995000256,
+  5.601963055989472
+ ],
+ "median_s": 9.088265995000256,
+ "newton_iters_total": 25,
+ "with_sandwich_scalar_s_extrap": 9.48785780055914,
+ "pim_R_s_extrap": 74.954867362976,
+ "threads": "default",
+ "ncpu": 8
+}

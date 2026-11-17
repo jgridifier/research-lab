@@ -121,6 +121,46 @@
         ]
       },
       "note": "Residual drift in collateral: corporate debt up (+1.09 clr), Treasury down (−0.83). The 11-12 row is the scout's proxy panel, for scale."
+    },
+    {
+      "h": "P2 (11-17): it reliably sees swaps of 0.075 per step or more; smaller ones are mostly missed.",
+      "t": "Pre-registered power curve, 1,000 runs per cell. The size check passes (6 parts: 0.051 and 0.042, band 0.03–0.07). At T = 62 the smallest swap with ≥ 80% power is 0.075 with 14 parts and 0.10 with 6 parts. A 0.05 swap is caught 50% of the time with 14 parts and 28% with 6.",
+      "note": "Source: jgridifier/ecotraj-py results/P2_RESULTS.md (PR #12); pre-registration prereg/P2_PREREG.md (PR #11, merged before the run). Synthetic data.",
+      "chart": {
+        "type": "hbars",
+        "title": "Power at T = 62 by swap size (14 parts)",
+        "max": 1,
+        "ref": [
+          0.8,
+          "80% power"
+        ],
+        "rows": [
+          [
+            "a = 0.025",
+            0.147,
+            "muted",
+            "15%"
+          ],
+          [
+            "a = 0.05",
+            0.495,
+            "amber",
+            "50%"
+          ],
+          [
+            "a = 0.075",
+            0.9,
+            "teal",
+            "90%"
+          ],
+          [
+            "a = 0.10",
+            0.997,
+            "teal",
+            "99.7%"
+          ]
+        ]
+      }
     }
   ]
 }

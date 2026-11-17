@@ -187,3 +187,15 @@ it is named as a follow-up. Identity check: with firm-year IDs in place of firm 
   block bootstrap are reported beside it, with no bar.
 - **Descriptive application (no bar):** recompute the 29-row 11-16 table with \(\hat V_F\) and report, per row, the sandwich p
   versus the firm-clustered p, with Holm over the 29 rows for each. The card says which headline findings survive.
+
+## Addendum 2 — 2026-11-17 (ET), written after the section E runs; the text above is unchanged
+
+1. **Timing (E).** The section E heading says "2:25 PM ET". That is wrong: the section was committed and merged in PR #69 at
+   2:13 PM ET (19:13 UTC), before any section E code ran. The oracle, parity, speed and simulation runs started after the merge.
+2. **Eng-2 load.** The 1-minute load average stayed above 4 even after the ecotraj P2 run ended (2:35 PM ET), because other
+   jobs share the box. So no unloaded measurement was possible. Both numbers are reported: 11.2 s while P2 ran and 9.1 s at load 4.4.
+   Each is far over the 2 s bar, so the verdict (miss) does not depend on which one is used.
+3. **Post-hoc extra (E1).** After the numpy prototype missed Eng-2, a small Rust/rayon permutation fitter (`pim2/pimperm-rs`)
+   was written and timed on the same task. It is reported as a post-hoc extra and does not turn the pre-registered miss into a pass.
+4. **E2.** The identity check (firm-year IDs give pim's sandwich) holds by construction in the code, since both go through the
+   same meat function. The binding check is SE parity with pim 2.0.4 itself (Eng-1), which passed.

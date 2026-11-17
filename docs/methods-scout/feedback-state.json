@@ -100,7 +100,7 @@
         "pick:new-use"
       ],
       "last_processed_at": "2026-11-17T17:55:18Z",
-      "notes": "11-17: Jared said 'All 3 extensions' (+👍). Read as Ext 1 Engineering (done; packaging ticket drafted), Ext 2 Math (P2 power curve pre-registered in ecotraj-py and running), Ext 3 New use (run on OFR repo mixes: collateral p 0.036, Holm 0.072, honest miss). The 20 R quirks stay documented; parity work stops at 1,260/1,280.",
+      "notes": "11-17: Jared said 'All 3 extensions' (+👍). Read as Ext 1 Engineering (done; packaging ticket drafted), Ext 2 Math (P2 power curve pre-registered in ecotraj-py and done: size PASS 0.051/0.042; min detectable swap at T=62 0.075 (D=14), 0.10 (D=6); ecotraj-py PR #12), Ext 3 New use (run on OFR repo mixes: collateral p 0.036, Holm 0.072, honest miss). The 20 R quirks stay documented; parity work stops at 1,260/1,280.",
       "history": [
         {
           "at": "2026-11-17T14:04:58Z",
@@ -117,6 +117,14 @@
           "actor": "jgridifier",
           "action": "all three avenues (top_pick all) -> status:in-progress",
           "ref": 6950345958
+        },
+        {
+          "at": "2026-11-17T19:35:46Z",
+          "signal": "result",
+          "source": "bot",
+          "actor": "quant-scout-bot",
+          "action": "P2 finished and merged (ecotraj-py #12); card updated",
+          "ref": null
         }
       ]
     },
@@ -401,16 +409,18 @@
       "page": "2026-11-16.html",
       "page_anchor": "#pim",
       "question": "Q3",
-      "status": "refine",
+      "status": "in-progress",
       "top_pick": "new-use",
       "labels": [
         "scout",
         "scout:Q3",
-        "status:refine",
+        "status:in-progress",
+        "pick:engineering",
+        "pick:math",
         "pick:new-use"
       ],
-      "last_processed_at": "2026-11-17T17:55:18Z",
-      "notes": "11-17: Jared asked for ARDL/SARIMAX benchmarks and, if promising, the Eng + Math avenues. Pre-set 'promising' rule narrowly missed (PIM+lag beat ARDL on payout/NI by 0.068 but trailed per-firm SARIMAX by 0.020 on its rows), so Eng/Math not started; waiting on Jared. Descriptive only.",
+      "last_processed_at": "2026-11-17T19:40:00Z",
+      "notes": "11-17: benchmark narrowly missed 'promising'; Jared then said in chat (2:11 PM ET) 'Yes move forward with pim'. Eng + Math pre-registered (PREREG.md E, PR #69) and run. Eng-1 parity pass (3e-15); Eng-2 numpy speed miss; post-hoc Rust 0.57 s. Math-1 coverage miss (firm-clustered 91.7/91.8% vs bar 93.5-96.5; pim default 72%). Pre-tax income survives firm-clustered Holm (0.005); drawdown-alone and pre-2020 dividends do not. Rust core ticket drafted, not filed. Not a promotion; descriptive only.",
       "history": [
         {
           "at": "2026-11-17T14:31:34Z",
@@ -435,6 +445,14 @@
           "actor": "jgridifier",
           "action": "conditional: Eng + Math only if benchmark promising; pre-set rule missed -> status:refine, Jared's call",
           "ref": 6955554191
+        },
+        {
+          "at": "2026-11-17T19:11:00Z",
+          "signal": "free_text",
+          "source": "chat",
+          "actor": "jgridifier",
+          "action": "'Yes move forward with pim' (said in chat, not on GitHub): go on Eng + Math despite the benchmark miss; pre-registered (PR #69) and ran",
+          "ref": null
         }
       ]
     }

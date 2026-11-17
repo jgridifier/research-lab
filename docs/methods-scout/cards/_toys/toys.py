@@ -129,3 +129,14 @@ a = y[1] - y[0]; b = y[2] - y[1]; th = np.degrees(np.arccos(a @ b / (s12 * s23))
 print("s12", round(s12, 3), "s23", round(s23, 3), "theta", round(th, 1), "dir", round(1 - th / 180, 3))
 print("sign-flip null with 2 steps: flips (+,+) dir", round(1 - th / 180, 3), "(+,-) or (-,+): angle", round(180 - th, 1), "dir", round(1 - (180 - th) / 180, 3), "(-,-) dir", round(1 - th / 180, 3))
 print("p = share of the 4 sign vectors with dir >= observed =", 2 / 4)
+
+print("== pim firm-clustered meat: firms A,B,C in two years; pair scores u (one covariate)")
+u1 = {('A', 'B'): 0.2, ('A', 'C'): -0.1, ('B', 'C'): 0.3}; u2 = {('A', 'B'): 0.25, ('A', 'C'): -0.05, ('B', 'C'): 0.2}
+def meat(groups):  # groups: list of (pair key in cluster ids, u)
+    S = {}; V = {}
+    for (a, b), u in groups:
+        S[a] = S.get(a, 0) + u; S[b] = S.get(b, 0) + u; k = tuple(sorted((a, b))); V[k] = V.get(k, 0) + u
+    return sum(s * s for s in S.values()) - sum(v * v for v in V.values())
+fy = [((a + '1', b + '1'), u) for (a, b), u in u1.items()] + [((a + '2', b + '2'), u) for (a, b), u in u2.items()]
+fm = [((a, b), u) for (a, b), u in list(u1.items()) + list(u2.items())]
+print("firm-year meat (pim sandwich)", round(meat(fy), 4), " firm meat", round(meat(fm), 4), " ratio", round(meat(fm) / meat(fy), 3))

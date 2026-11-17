@@ -1,0 +1,24 @@
+{
+ "label": "loaded",
+ "load1": 7.9921875,
+ "runs": [
+  {
+   "wall_s": 0.5854789649893064,
+   "inner": "pairs 5017 perms 10000 seconds 0.5729 threads 8"
+  },
+  {
+   "wall_s": 0.5988137059903238,
+   "inner": "pairs 5017 perms 10000 seconds 0.5868 threads 8"
+  },
+  {
+   "wall_s": 0.5656667769944761,
+   "inner": "pairs 5017 perms 10000 seconds 0.5561 threads 8"
+  }
+ ],
+ "parity50_max_dbeta": 5.204170427930421e-16,
+ "perms_are_within_year": true,
+ "perm_sd_beta": [
+  0.03734891454802802,
+  0.05153658678234224
+ ]
+}
