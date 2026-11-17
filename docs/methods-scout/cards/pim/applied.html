@@ -73,3 +73,22 @@
 <p>On the ordinary payout ratio, PIM does as well as the standard time-series models. On the noisy payout-to-income ratio it does better than ARDL and about as well as SARIMAX. By the bar we set in advance, that is "close but not promising", so we have not started the Rust fitter or the clustered-variance math. Whether "close" is good enough is Jared's call.</p></div>
 <p><b>Same trimming test, applied to ARDL (descriptive).</b> Dropping the 8 most extreme payout/NI ratios cuts ARDL's long-run drawdown effect from −0.078 to −0.043 (−44%), about the same as OLS (−43%); the PIM effect moved under 2% on 11-16.</p>
 <p><b>Where the benchmark breaks.</b> Per-firm SARIMAX has at most 12 annual points per bank and skips untested years, so it covers only 172 test rows and is noisy. Ten of the 40 PIM fits ended on nleqslv's step-size tolerance rather than its function tolerance (reported, not hidden).</p>
+
+<h4>Engineering and Math avenues (added 2026-11-17, after Jared's "Yes move forward with pim")</h4>
+<p>Pre-registered in <code>runs/2026-11-17/PREREG.md</code> section E, merged (PR #69) before either ran. Descriptive Y-9C use only; this is not a promotion.</p>
+<table class="t"><tr><th>Avenue</th><th>Bar</th><th>Result</th><th></th></tr>
+<tr><td>Eng-1 parity with pim 2.0.4 (24 fits, 29 coefficients, 50 permutations)</td><td>≤ 1e-8</td><td>β 3.3e-15, SE 6.6e-15, permutations 5.3e-16</td><td>✓ pass</td></tr>
+<tr><td>Eng-2 speed, 10,000 permutations, 360 rows / 5,017 pairs</td><td>&lt; 2 s</td><td>numpy prototype 9.1 s (measured after P2 ended, load 4.4; 11.2 s while P2 ran)</td><td>✕ miss</td></tr>
+<tr><td>Extra (not pre-registered): Rust core, same task</td><td>none</td><td>0.29 s on 8 threads after P2 ended (0.57 s while P2 ran); parity 5.2e-16</td><td>post hoc</td></tr>
+<tr><td>Math-1 coverage of firm-clustered SE</td><td>93.5–96.5% in both scenarios</td><td>91.7% / 91.8% (pim default 72.3% / 72.0%)</td><td>✕ miss</td></tr></table>
+<h5>The 11-16 table with firm-clustered errors (Holm over all 29 rows)</h5>
+<table class="t"><tr><th>Row</th><th>PI per IQR</th><th>SE ratio (firm / pim)</th><th>Holm p, pim</th><th>Holm p, firm</th></tr>
+<tr><td>Pre-tax income → payout/RWA</td><td>68%</td><td>2.05</td><td>&lt; 0.001</td><td><b>0.005</b></td></tr>
+<tr><td>Pre-tax income, given drawdown</td><td>69%</td><td>1.71</td><td>&lt; 0.001</td><td><b>0.021</b></td></tr>
+<tr><td>Drawdown alone → payout/RWA</td><td>40%</td><td>1.83</td><td>&lt; 0.001</td><td>0.51</td></tr>
+<tr><td>Drawdown → payout/NI</td><td>42%</td><td>1.70</td><td>0.003</td><td>0.51</td></tr>
+<tr><td>Pre-2020 drawdown → dividends/RWA</td><td>36%</td><td>1.77</td><td>&lt; 0.001</td><td>0.42</td></tr>
+<tr><td>SCB era, SCB and drawdown jointly</td><td>89% / 7%</td><td>1.17 / 1.25</td><td>&lt; 0.001</td><td><b>0.004 / &lt; 0.001</b></td></tr></table>
+<p>Across the 29 rows, 8 pass Holm with pim's errors and 4 with firm-clustered errors. The firm-clustered errors still run about 9% narrow, so treat even these 4 as slightly optimistic. Full table: <code>runs/2026-11-17/pim2/math_apply.csv</code>.</p>
+<div class="plain"><h5>What it means for a decision-maker</h5><p>The card's main claim survives: banks with better stress-test pre-tax income pay out more, about 2 times in 3. The weaker claims (drawdown alone, pre-2020 dividends) depended on treating each bank-year as a new bank and should be read as suggestive. A fast permutation engine is easy to build (0.29 s in Rust), but within-year permutation shares the same blind spot, so speed is not the bottleneck.</p></div>
+<h5>What we'd do next</h5><p>Add Amorim et al.'s bias reduction, or a firm-level wild bootstrap, and pre-register a second coverage test. Put the Rust core behind a firm-level (not firm-year) permutation or bootstrap before it is packaged. An Engineering ticket is drafted, not filed.</p>

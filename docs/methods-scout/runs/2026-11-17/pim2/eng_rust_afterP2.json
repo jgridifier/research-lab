@@ -1,0 +1,24 @@
+{
+ "label": "afterP2",
+ "load1": 5.77294921875,
+ "runs": [
+  {
+   "wall_s": 0.29262374600511976,
+   "inner": "pairs 5017 perms 10000 seconds 0.2828 threads 8"
+  },
+  {
+   "wall_s": 0.28764046099968255,
+   "inner": "pairs 5017 perms 10000 seconds 0.2782 threads 8"
+  },
+  {
+   "wall_s": 0.29557548198499717,
+   "inner": "pairs 5017 perms 10000 seconds 0.2866 threads 8"
+  }
+ ],
+ "parity50_max_dbeta": 5.204170427930421e-16,
+ "perms_are_within_year": true,
+ "perm_sd_beta": [
+  0.03734891454802802,
+  0.05153658678234224
+ ]
+}

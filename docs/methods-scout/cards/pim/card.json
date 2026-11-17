@@ -7,7 +7,7 @@
   "verdict": "Recommend",
   "grade": "well established",
   "pick_eff": "S",
-  "pick_line": "Flag Q2 programs whose numbers contradict their text label; must beat the 0.78 AUC from 11-13.",
+  "pick_line": "Jared chose Engineering + Math (11-17). Top pick was: flag Q2 programs whose numbers contradict their text label.",
   "data": "Public filings (Fed DFAST results, FR Y-9C); descriptive only",
   "one": "Stress-test pre-tax income orders payouts; drawdown adds nothing beyond it.",
   "picture": {
@@ -180,7 +180,76 @@
           ]
         ]
       }
+    },
+    {
+      "h": "Math avenue (11-17): firm-clustered errors are wider, and only pre-tax income keeps its result.",
+      "miss": true,
+      "t": "Banks recur across years, so pim's default errors are too narrow. In a simulation at our design, nominal 95% intervals covered the truth 72% of the time; the new firm-clustered errors covered 91.7% (β = 0) and 91.8% (β = 0.5). The pre-set bar was 93.5–96.5%, so this is a miss. On the 11-16 table the errors are 1.5× wider (median). Pre-tax income still orders payouts (68%, Holm p = 0.005 over 29 rows). Drawdown alone (40%) and pre-2020 dividends (36%) no longer survive Holm.",
+      "note": "Holm over all 29 rows of the 11-16 table, for both kinds of error. Firm-block bootstrap: 95.0% / 93.2% (500 runs). The new errors still run about 9% narrow, so even the firm-clustered p-values are a little optimistic.",
+      "chart": {
+        "type": "hbars",
+        "title": "95% intervals that cover the truth (simulation, β = 0)",
+        "max": 100,
+        "ref": [
+          95,
+          "95% = nominal"
+        ],
+        "rows": [
+          [
+            "pim default sandwich",
+            72.3,
+            "amber",
+            "72.3%"
+          ],
+          [
+            "Firm-clustered (new)",
+            91.7,
+            "amber",
+            "91.7%"
+          ],
+          [
+            "Firm-block bootstrap",
+            95.0,
+            "teal",
+            "95.0%"
+          ]
+        ]
+      }
+    },
+    {
+      "h": "Engineering avenue (11-17): exact match with pim; the numpy prototype is too slow, a Rust core is fast enough.",
+      "t": "All 24 fits and 29 coefficients match pim 2.0.4 to 3e-15 (β) and 7e-15 (SE). For 10,000 within-year permutations of the 360-row joint model, the pre-registered numpy prototype took 9.1 s against a bar of under 2 s: a miss. A Rust core, built afterwards and not pre-registered, took 0.29 s on 8 threads (0.57 s while the ecotraj run was using 6 cores; parity 5e-16). pim itself would take about 75 s.",
+      "miss": true,
+      "chart": {
+        "type": "hbars",
+        "title": "10,000 permutation refits, seconds (bar: under 2 s)",
+        "max": 80,
+        "ref": [
+          2,
+          "2 s bar"
+        ],
+        "rows": [
+          [
+            "pim 2.0.4 (extrapolated from 20)",
+            75.0,
+            "muted",
+            "≈75 s"
+          ],
+          [
+            "numpy prototype (pre-registered)",
+            9.1,
+            "amber",
+            "9.1 s"
+          ],
+          [
+            "Rust core (post-hoc extra)",
+            0.29,
+            "teal",
+            "0.29 s"
+          ]
+        ]
+      },
+      "note": "Speed measured on the shared box (load 4.4 after the ecotraj run ended; 11.2 s for numpy while it ran). Parity is exact either way."
     }
-  ],
-  "your_call": "ARDL/SARIMAX benchmark narrowly missed our pre-set 'promising' bar. Start Eng + Math anyway, or hold?"
+  ]
 }

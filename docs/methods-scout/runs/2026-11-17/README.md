@@ -15,3 +15,10 @@ dimensio 0.14.2); Python 3.13 (statsmodels 0.15.0, scikit-learn); ecotrajpy at j
   `sim_partial.py` → `math_results.json`.
 - `ecotraj/` (#50): `ext3_newuse.py` (Extension-2 procedure unchanged on O1 and O2) → `ext3_results.json`. The P2 power
   curve lives in jgridifier/ecotraj-py (`prereg/P2_PREREG.md`, `sims/run_p2.py`, `results/p2/`).
+
+## pim2/ — #63 Engineering + Math avenues (PREREG.md section E; go from Jared, chat, 2:11 PM ET)
+- `pimfast.py`: numpy within-block logit PIM fitter (batched-Newton permutations) + pim's sandwich + firm-clustered (dyadic) vcov.
+- `oracle.R` → `oracle.json` (pim 2.0.4, tight nleqslv) · `eng_parity.py` → `eng_parity.json` (Eng-1) · `eng_speed.py` → `eng_speed_*.json` (Eng-2).
+- `pimperm-rs/` + `eng_rust.py` → `eng_rust_*.json`: post-hoc Rust/rayon permutation fitter (not pre-registered).
+- `math_sim.py` → `math_sim.json` (Math-1 coverage, seed 20261117) · `math_apply.py` → `math_apply.csv` (11-16 table with firm-clustered SEs).
+- Input panel = `runs/2026-11-16/pim` panel (`prep_q3.py`, public DFAST + FR Y-9C); not re-committed.

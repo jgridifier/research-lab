@@ -1,0 +1,259 @@
+{
+ "summary": {
+  "n_fits": 24,
+  "n_coefs": 29,
+  "max_dbeta": 3.3306690738754696e-15,
+  "max_dse": 6.5780714209040525e-15,
+  "perm50_max_dbeta": 5.273559366969494e-16,
+  "identity_firmyear_vs_sandwich": 0,
+  "pass_eng1": true,
+  "oracle": "pim 2.0.4"
+ },
+ "fits": [
+  {
+   "label": "B1 all years",
+   "y": "payout_rwa",
+   "xs": [
+    "drawdown"
+   ],
+   "npairs": 5017,
+   "max_dbeta": 2.7755575615628914e-16,
+   "max_dse": 3.469446951953614e-17
+  },
+  {
+   "label": "B1 all years",
+   "y": "payout_rwa",
+   "xs": [
+    "income_pretax_net_rate"
+   ],
+   "npairs": 5017,
+   "max_dbeta": 4.440892098500626e-16,
+   "max_dse": 1.3183898417423734e-16
+  },
+  {
+   "label": "B1 all years joint",
+   "y": "payout_rwa",
+   "xs": [
+    "drawdown",
+    "income_pretax_net_rate"
+   ],
+   "npairs": 5017,
+   "max_dbeta": 1.1102230246251565e-16,
+   "max_dse": 2.42861286636753e-16
+  },
+  {
+   "label": "B1 2013-2019",
+   "y": "payout_rwa",
+   "xs": [
+    "drawdown"
+   ],
+   "npairs": 2759,
+   "max_dbeta": 4.579669976578771e-16,
+   "max_dse": 6.938893903907228e-18
+  },
+  {
+   "label": "B1 2021-2025",
+   "y": "payout_rwa",
+   "xs": [
+    "drawdown"
+   ],
+   "npairs": 1730,
+   "max_dbeta": 1.6653345369377348e-16,
+   "max_dse": 2.7755575615628914e-17
+  },
+  {
+   "label": "B1 SCB era",
+   "y": "payout_rwa",
+   "xs": [
+    "scb"
+   ],
+   "npairs": 1730,
+   "max_dbeta": 0.0,
+   "max_dse": 4.163336342344337e-17
+  },
+  {
+   "label": "B1 SCB era joint",
+   "y": "payout_rwa",
+   "xs": [
+    "scb",
+    "drawdown"
+   ],
+   "npairs": 1730,
+   "max_dbeta": 3.3306690738754696e-15,
+   "max_dse": 6.5780714209040525e-15
+  },
+  {
+   "label": "B1 timing: next-year payouts",
+   "y": "payout_rwa_next",
+   "xs": [
+    "drawdown"
+   ],
+   "npairs": 4639,
+   "max_dbeta": 5.551115123125783e-17,
+   "max_dse": 2.0816681711721685e-17
+  },
+  {
+   "label": "B1 payout/NI (unstable ratio)",
+   "y": "payout_ni",
+   "xs": [
+    "drawdown"
+   ],
+   "npairs": 5017,
+   "max_dbeta": 1.3877787807814457e-16,
+   "max_dse": 6.938893903907228e-18
+  },
+  {
+   "label": "B2 SA drawdown + SA-A gap",
+   "y": "payout_rwa",
+   "xs": [
+    "drawdown",
+    "gap_dd"
+   ],
+   "npairs": 2606,
+   "max_dbeta": 4.440892098500626e-16,
+   "max_dse": 2.914335439641036e-16
+  },
+  {
+   "label": "B2 Adverse drawdown only",
+   "y": "payout_rwa",
+   "xs": [
+    "dd_A"
+   ],
+   "npairs": 2606,
+   "max_dbeta": 1.3877787807814457e-17,
+   "max_dse": 0.0
+  },
+  {
+   "label": "B2 SA drawdown only (same rows)",
+   "y": "payout_rwa",
+   "xs": [
+    "drawdown"
+   ],
+   "npairs": 2606,
+   "max_dbeta": 1.249000902703301e-16,
+   "max_dse": 5.551115123125783e-17
+  },
+  {
+   "label": "B2 gap, next-year payouts",
+   "y": "payout_rwa_next",
+   "xs": [
+    "drawdown",
+    "gap_dd"
+   ],
+   "npairs": 2511,
+   "max_dbeta": 3.0531133177191805e-16,
+   "max_dse": 3.3306690738754696e-16
+  },
+  {
+   "label": "B2 pre-tax SA + A-SA gap",
+   "y": "payout_rwa",
+   "xs": [
+    "income_pretax_net_rate",
+    "gap_pt"
+   ],
+   "npairs": 2606,
+   "max_dbeta": 4.996003610813204e-16,
+   "max_dse": 1.942890293094024e-16
+  },
+  {
+   "label": "B3 2013-2019",
+   "y": "div_rwa",
+   "xs": [
+    "drawdown"
+   ],
+   "npairs": 2759,
+   "max_dbeta": 3.0531133177191805e-16,
+   "max_dse": 6.938893903907228e-17
+  },
+  {
+   "label": "B3 2021-2025",
+   "y": "div_rwa",
+   "xs": [
+    "drawdown"
+   ],
+   "npairs": 1730,
+   "max_dbeta": 4.718447854656915e-16,
+   "max_dse": 3.3306690738754696e-16
+  },
+  {
+   "label": "B3 SCB era",
+   "y": "div_rwa",
+   "xs": [
+    "scb"
+   ],
+   "npairs": 1730,
+   "max_dbeta": 6.938893903907228e-17,
+   "max_dse": 1.3877787807814457e-17
+  },
+  {
+   "label": "B3 2013-2019",
+   "y": "bb_rwa",
+   "xs": [
+    "drawdown"
+   ],
+   "npairs": 2759,
+   "max_dbeta": 2.949029909160572e-17,
+   "max_dse": 2.0816681711721685e-17
+  },
+  {
+   "label": "B3 2021-2025",
+   "y": "bb_rwa",
+   "xs": [
+    "drawdown"
+   ],
+   "npairs": 1730,
+   "max_dbeta": 4.85722573273506e-16,
+   "max_dse": 4.85722573273506e-17
+  },
+  {
+   "label": "B3 SCB era",
+   "y": "bb_rwa",
+   "xs": [
+    "scb"
+   ],
+   "npairs": 1730,
+   "max_dbeta": 5.551115123125783e-17,
+   "max_dse": 6.938893903907228e-17
+  },
+  {
+   "label": "B3 2013-2019",
+   "y": "div_share",
+   "xs": [
+    "drawdown"
+   ],
+   "npairs": 2044,
+   "max_dbeta": 1.3877787807814457e-16,
+   "max_dse": 4.85722573273506e-17
+  },
+  {
+   "label": "B3 2021-2025",
+   "y": "div_share",
+   "xs": [
+    "drawdown"
+   ],
+   "npairs": 1243,
+   "max_dbeta": 3.469446951953614e-17,
+   "max_dse": 6.938893903907228e-18
+  },
+  {
+   "label": "B3 SCB era",
+   "y": "div_share",
+   "xs": [
+    "scb"
+   ],
+   "npairs": 1243,
+   "max_dbeta": 0.0,
+   "max_dse": 6.938893903907228e-18
+  },
+  {
+   "label": "B3 timing: next-year div share",
+   "y": "div_share_next",
+   "xs": [
+    "drawdown"
+   ],
+   "npairs": 3519,
+   "max_dbeta": 2.0816681711721685e-17,
+   "max_dse": 2.7755575615628914e-17
+  }
+ ]
+}

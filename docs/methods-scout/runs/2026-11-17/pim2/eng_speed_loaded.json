@@ -1,0 +1,18 @@
+{
+ "label": "loaded",
+ "load1": 7.52392578125,
+ "n": 360,
+ "pairs": 5017,
+ "nperm": 10000,
+ "wall_s": [
+  11.843149300984805,
+  11.200874698988628,
+  11.093237483000848
+ ],
+ "median_s": 11.200874698988628,
+ "newton_iters_total": 25,
+ "with_sandwich_scalar_s_extrap": 11.211926766554825,
+ "pim_R_s_extrap": 74.954867362976,
+ "threads": "default",
+ "ncpu": 8
+}

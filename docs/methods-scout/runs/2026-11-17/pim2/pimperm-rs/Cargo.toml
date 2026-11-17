@@ -1,0 +1,10 @@
+[package]
+name = "pimperm"
+version = "0.0.1"
+edition = "2021"
+[dependencies]
+rayon = "1"
+[profile.release]
+opt-level = 3
+codegen-units = 1
+lto = true
