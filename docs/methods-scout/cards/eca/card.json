@@ -1,0 +1,47 @@
+{
+  "issue": 70,
+  "name": "Event coincidence analysis (ECA)",
+  "title": "Do leveraged-fund unwinds come right before settlement-fail spikes?",
+  "field": "climate-impact science",
+  "what": "Counts how often extreme weeks in one series fall just after extreme weeks in another, with direction, lag and a null.",
+  "verdict": "Recommend",
+  "grade": "promising but thin",
+  "pick_eff": "S",
+  "pick_line": "Conditional ECA: does unwind → fails survive once equity-vol and repo-spread spike weeks are conditioned out?",
+  "data": "Public aggregates (NY Fed fails, OFR repo, CFTC TFF, SEC Form PF); descriptive only",
+  "one": "A quarter of fails spikes follow a big leveraged-fund unwind a week earlier; builds show nothing.",
+  "picture": {
+    "type": "images",
+    "la": "Usual tool: cross-correlation (weak r = −0.16 at lag 1)",
+    "a": "../fig/2026-11-17/eca_std_xcorr.png",
+    "lb": "ECA: unwinds precede fails spikes; builds don't",
+    "b": "../fig/2026-11-17/eca_rates.png"
+  },
+  "findings": [
+    {
+      "h": "Fails spikes follow big leveraged-fund unwinds by one week.",
+      "t": "Of 39 financing-fails spike weeks (top 10% of weekly log change, 2018-05 to 2025-12), 26% come exactly one week after a big unwind week (bottom 10% change in leveraged-fund net short, UST 2Y+5Y+10Y futures). Random placement gives about 10% (circular-shift p = 0.008). Same or previous week: 38% vs 18%, Holm p = 0.0096 over 48 pre-registered tests.",
+      "note": "Big build weeks: 10% one week before (p = 0.54), no different from chance. Reverse direction (unwind one week after a fails spike): 15%, p = 0.16.",
+      "chart": {"type": "images", "la": "Usual tool", "a": "../fig/2026-11-17/eca_std_xcorr.png", "lb": "ECA by exact lag", "b": "../fig/2026-11-17/eca_rates.png"}
+    },
+    {
+      "h": "It holds in both halves and at other thresholds.",
+      "t": "The same/previous-week precursor rate beats its null 95th percentile in 2018-05..2022-06 (42% vs 37%) and 2022-07..2025-12 (35% vs 30%), and at 80% (55% vs 44%) and 95% (25% vs 20%) event thresholds: all five pre-registered checks pass.",
+      "note": "The trigger-rate version fails in the second half (39% vs 39%). The coincident weeks include 2020-03-04, -11 and -18 and 2025-02-19, 2025-03-05 and 2025-09-24.",
+      "chart": {"type": "images", "la": "Event raster (coincidences coloured)", "a": "../fig/2026-11-17/eca_raster.png", "lb": "Rolling 104-week rate vs chance", "b": "../fig/2026-11-17/eca_rolling.png"}
+    },
+    {
+      "h": "The textbook Poisson test is too generous on these clustered series.",
+      "t": "On 2,000 circularly shifted (independent by construction) pairs, CoinCalc's Poisson test rejects at 5% in 9.2% (fails ← spread) and 9.4% (DVP ← fails) of cases. Overall, 15 of 48 tests have Poisson p < 0.05; only 10 pass the circular-shift null and 3 survive Holm.",
+      "note": "Below our pre-set 'miscalibrated' flag of 10%, but nearly double the nominal 5%. That motivates the Math avenue.",
+      "chart": {"type": "hbars", "title": "False-positive rate at nominal 5%", "max": 12, "ref": [5, "5% = nominal"], "rows": [["Fails ← spread", 9.15, "amber", "9.2%"], ["DVP ← fails", 9.4, "amber", "9.4%"], ["Fails ← lev unwind", 4.05, "teal", "4.1%"]]}
+    },
+    {
+      "h": "Monthly Form PF borrowing spikes do not line up with fails.",
+      "miss": true,
+      "t": "Form PF tab 8.27 prime-broker and total borrowing growth (top 20% months, 2013-05..2025-12, 152 months) shows no coincidence with fails-spike months at lags 0, 3 or 6 months, in either direction (smallest p = 0.24; all Holm p = 1).",
+      "note": "Consistent with the 11-14 CRQA (prime-broker growth: no link). Low power: with 3-month windows and 31 events, the null 95th percentile is already about 0.6.",
+      "chart": {"type": "hbars", "title": "Fails months preceded by a PF spike (lag 6)", "max": 0.8, "ref": [0.6129, "null 95th pct"], "rows": [["Prime-broker borrowing", 0.548, "muted", "0.55"], ["Total borrowing", 0.452, "muted", "0.45"]]}
+    }
+  ]
+}

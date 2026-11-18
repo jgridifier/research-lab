@@ -1,0 +1,42 @@
+<h4>Notation</h4>
+<div class="table-wrap"><table>
+<tr><th>Symbol</th><th>Meaning</th><th>Here</th></tr>
+<tr><td>\(k=1..K\)</td><td>tables ("assessors", "dates")</td><td>13 stress-test exercises, 2013–2025</td></tr>
+<tr><td>\(R_k\)</td><td>a \(J\times J\) similarity matrix for table \(k\)</td><td>Spearman correlations among \(J=7\) variables across that year's firms (18–35)</td></tr>
+<tr><td>\(S_k\)</td><td>double-centred, normalised \(R_k\)</td><td>\(S_k = JR_kJ/\lambda_1(JR_kJ)\), \(J=I-\tfrac1{7}\mathbf 1\mathbf 1^\top\)</td></tr>
+<tr><td>\(\mathrm{RV}(S_a,S_b)\)</td><td>matrix correlation</td><td>how alike two years' whole correlation patterns are (1 = identical up to scale)</td></tr>
+<tr><td>\(\alpha_k\)</td><td>table weight</td><td>0.075–0.078 here: all years count about equally</td></tr>
+<tr><td>\(S_+\)</td><td>the compromise</td><td>the "typical year" correlation structure</td></tr>
+<tr><td>\(F,\ F_k\)</td><td>compromise and partial factor scores</td><td>where each variable sits overall, and in year \(k\)</td></tr>
+</table></div>
+
+<h4>Assumptions</h4>
+<ul>
+<li>Each table describes the same objects (here the same 7 variables; the firms may differ by year, which is why we compare variable-by-variable correlation matrices: the "dual" or COVSTATIS form).</li>
+<li>Each \(R_k\) is a reasonable estimate of that year's structure. With 18–35 firms this is the weak point (finding 4).</li>
+<li>Exploratory: no distributional model; inference comes from permutations of year labels.</li>
+</ul>
+
+<h4>The estimator</h4>
+$$\mathrm{RV}(S_a,S_b)=\frac{\operatorname{tr}(S_aS_b)}{\sqrt{\operatorname{tr}(S_a^2)\operatorname{tr}(S_b^2)}},\qquad
+C_{ab}=\mathrm{RV}(S_a,S_b),\qquad C\,u=\gamma_1 u,\quad \alpha=\frac{u}{\mathbf 1^\top u}$$
+$$S_+=\sum_k\alpha_kS_k=Q\Lambda Q^\top,\qquad F=Q\Lambda^{1/2},\qquad F_k=S_kQ\Lambda^{-1/2}.$$
+<p>Three steps: the <b>interstructure</b> \(C\) (how alike the years are), the <b>compromise</b> \(S_+\) (the weighted typical year) and the <b>intrastructure</b> \(F_k\) (each year projected into the compromise map).</p>
+
+<h4>Why it works, step by step</h4>
+<div class="step"><b class="n">Step 1 · RV is a correlation between matrices</b>Write \(\langle A,B\rangle=\operatorname{tr}(AB)=\sum_{ij}A_{ij}B_{ij}\) for symmetric \(A,B\). Then \(\mathrm{RV}=\langle S_a,S_b\rangle/(\|S_a\|\|S_b\|)\), the cosine between the two matrices seen as vectors of \(J^2\) entries. It is 1 when one is a positive multiple of the other.</div>
+<div class="step"><b class="n">Step 2 · the weights come from an eigenvector</b>Scale each table to unit norm, \(\tilde S_k=S_k/\|S_k\|\). For any weights \(u\), \(\big\|\sum_k u_k\tilde S_k\big\|^2=\sum_{a,b}u_au_b\langle\tilde S_a,\tilde S_b\rangle=u^\top C u\). So the unit-length \(u\) that makes the weighted sum as large as possible (the direction the tables share most) maximises the Rayleigh quotient \(u^\top Cu\): the first eigenvector of \(C\). Because \(C\) has positive entries, that eigenvector is all-positive (Perron–Frobenius), and years that disagree with the rest get smaller weights.</div>
+<div class="step"><b class="n">Step 3 · partial points average to the compromise</b>Because \(F_k=S_kQ\Lambda^{-1/2}\), \(\sum_k\alpha_kF_k=S_+Q\Lambda^{-1/2}=Q\Lambda Q^\top Q\Lambda^{-1/2}=Q\Lambda^{1/2}=F\). Each variable's 13 yearly points (small dots on the map) have the compromise point as their weighted barycentre, so the spread of the dots is each year's disagreement.</div>
+
+<h4>The null and inference</h4>
+<ul>
+<li><b>Era test (pre-registered).</b> \(D=\overline{C}_{\text{within era}}-\overline{C}_{\text{between eras}}\) for 2013–19 vs 2020–25. Null: years are exchangeable; enumerate all \(\binom{13}{6}=1{,}716\) assignments of six "after" years (exact p).</li>
+<li><b>Pair changes.</b> For each of the 21 pairs, the after − before difference in mean yearly Spearman \(\rho\), with the same 1,716 assignments; familywise control by the max-|Δ| over pairs (max-T).</li>
+<li><b>Year-level noise.</b> Firm bootstrap within year (299). This failed: RV is biased downward under resampling (finding 4).</li>
+</ul>
+
+<div class="toy"><h5>Toy example (computed by <code>cards/_toys/toys.py</code>)</h5>
+<p>Three "years", three variables. Years 1 and 2 have similar correlations (0.8/0.2/0.1 and 0.7/0.3/0.2); year 3 differs (0.1/0.6/0.5). After double-centring and normalising: \(\mathrm{RV}_{12}=0.991\), \(\mathrm{RV}_{13}=0.489\), \(\mathrm{RV}_{23}=0.603\). Weights \(\alpha=(0.354,\,0.367,\,0.279)\): the odd year is down-weighted. RV to the compromise: 0.944, 0.980, 0.749, so year 3 stands out.</p></div>
+
+<div class="diff"><b>How it differs from the standard tool.</b> The usual check is one correlation per year (payout vs drawdown) or a pooled regression with year interactions: one coefficient at a time, each with its own noise, and 21 pairs means 21 tests. STATIS compares the whole \(7\times7\) pattern at once (one test), weights years by how typical they are, and shows on one map which variables move. A pooled PCA would ignore years entirely.</div>
+<p class="cite">Followed: Lavit, Escoufier, Sabatier &amp; Traissac (1994), "The ACT (STATIS method)", CSDA 18(1):97–119 (bibliographic record read); Abdi, Williams, Valentin &amp; Bennani-Dosse (2012), WIREs Comp Stat 4:124–167 (abstract read; COVSTATIS and partial triadic analysis variants); formulas follow the DistatisR documentation and ade4's <code>statis</code>. Section and equation numbers not checked. Our NumPy core matches <code>ade4::statis</code> (RV matrix, weights, compromise eigenvalues) to 3e-13. Toy: <code>cards/_toys/toys.py</code>.</p>

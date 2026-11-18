@@ -1,0 +1,171 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>STATIS multi-table analysis · research card · methods scout</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,400..800&family=Newsreader:ital,opsz,wght@0,6..72,400..600;1,6..72,400..500&family=JetBrains+Mono:wght@400;500;700&display=swap">
+<link rel="stylesheet" href="../../assets/brief.css">
+<link rel="stylesheet" href="../scout-cards.css">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.css"><script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.js"></script><script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/contrib/auto-render.min.js" onload="renderMathInElement(document.body,{delimiters:[{left:'$$',right:'$$',display:true},{left:'\\(',right:'\\)',display:false}]})"></script>
+<!-- Methods Scout home-screen / PWA tags. Paste into <head> of every methods-scout page.
+     Paths are root-absolute so they resolve under https://jgridifier.github.io/research-lab/. -->
+<link rel="apple-touch-icon" sizes="180x180" href="/research-lab/methods-scout/icons/apple-touch-icon.png">
+<link rel="icon" type="image/png" sizes="32x32" href="/research-lab/methods-scout/icons/favicon-32.png">
+<link rel="icon" type="image/png" sizes="192x192" href="/research-lab/methods-scout/icons/icon-192.png">
+<link rel="manifest" href="/research-lab/methods-scout/manifest.webmanifest">
+<meta name="apple-mobile-web-app-title" content="Methods Scout">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="theme-color" content="#0F2A23">
+
+</head><body>
+<header class="topbar"><a class="brand" href="../index.html">Methods scout</a>
+<span><a href="../index.html">Queue</a> · <a href="../archive.html">Archive</a></span></header>
+<div class="pz">
+<p class="crumb"><a href="../index.html">← Queue</a></p>
+<div class="chips"><span class="chip q">Q3</span><span class="chip st-proposed" data-issue="71">○ New</span><span class="chip v-int">Interesting</span><span class="date">Scouted 2026-11-17</span></div>
+<section class="hero" style="padding-top:.5rem"><p class="kicker">STATIS multi-table analysis · from sensory science and ecology (multi-table PCA)</p>
+<h1>Did the whole stress-test–payout pattern change after 2020?</h1></section>
+<div class="sum">
+<div class="row"><span class="k">What it is</span><span class="v">Treats each test year as a table, scores how alike the years&#x27; correlation patterns are, and maps years and variables together.</span></div>
+<div class="row"><span class="k">Verdict</span><span class="v"><b>Interesting.</b> Home field: well established.</span></div>
+<div class="row"><span class="k">Top pick</span><span class="v"><b>Math</b> (effort M): Reliability-corrected RV so single odd years can be tested; must be unbiased within ±0.01 in simulation.</span></div>
+<div class="row"><span class="k">Data</span><span class="v">Public filings (Fed DFAST results, FR Y-9C); descriptive only</span></div>
+</div>
+<p class="kicker" style="margin-top:1rem">The one picture</p>
+<div class="pair"><div><span class="lab">Usual tool: one correlation per year (noisy)</span><img src="../fig/2026-11-17/statis_std.png" alt="Usual tool: one correlation per year (noisy)"></div><div class="new"><span class="lab">STATIS: whole-pattern similarity peaks at a 2021 cut</span><img src="../fig/2026-11-17/statis_split.png" alt="STATIS: whole-pattern similarity peaks at a 2021 cut"></div></div>
+<div style="margin:1rem 0 .4rem"><a class="btn big" href="https://github.com/jgridifier/research-lab/issues/71">Respond on #71</a><p class="howto">👍 go ahead · 👎 drop · or just comment what you think</p></div>
+<div class="tabs"><input type="radio" name="tab" id="t1" checked><input type="radio" name="tab" id="t2"><input type="radio" name="tab" id="t3"><input type="radio" name="tab" id="t4"><input type="radio" name="tab" id="t5"><div class="tabbar"><label for="t1">The math</label><label for="t2">On our data</label><label for="t3">Robust at home</label><label for="t4">Secret sauce</label><label for="t5">Questions</label></div><div class="panels"><div class="panel p1" id="math"><h4>Notation</h4>
+<div class="table-wrap"><table>
+<tr><th>Symbol</th><th>Meaning</th><th>Here</th></tr>
+<tr><td>\(k=1..K\)</td><td>tables ("assessors", "dates")</td><td>13 stress-test exercises, 2013–2025</td></tr>
+<tr><td>\(R_k\)</td><td>a \(J\times J\) similarity matrix for table \(k\)</td><td>Spearman correlations among \(J=7\) variables across that year's firms (18–35)</td></tr>
+<tr><td>\(S_k\)</td><td>double-centred, normalised \(R_k\)</td><td>\(S_k = JR_kJ/\lambda_1(JR_kJ)\), \(J=I-\tfrac1{7}\mathbf 1\mathbf 1^\top\)</td></tr>
+<tr><td>\(\mathrm{RV}(S_a,S_b)\)</td><td>matrix correlation</td><td>how alike two years' whole correlation patterns are (1 = identical up to scale)</td></tr>
+<tr><td>\(\alpha_k\)</td><td>table weight</td><td>0.075–0.078 here: all years count about equally</td></tr>
+<tr><td>\(S_+\)</td><td>the compromise</td><td>the "typical year" correlation structure</td></tr>
+<tr><td>\(F,\ F_k\)</td><td>compromise and partial factor scores</td><td>where each variable sits overall, and in year \(k\)</td></tr>
+</table></div>
+
+<h4>Assumptions</h4>
+<ul>
+<li>Each table describes the same objects (here the same 7 variables; the firms may differ by year, which is why we compare variable-by-variable correlation matrices: the "dual" or COVSTATIS form).</li>
+<li>Each \(R_k\) is a reasonable estimate of that year's structure. With 18–35 firms this is the weak point (finding 4).</li>
+<li>Exploratory: no distributional model; inference comes from permutations of year labels.</li>
+</ul>
+
+<h4>The estimator</h4>
+$$\mathrm{RV}(S_a,S_b)=\frac{\operatorname{tr}(S_aS_b)}{\sqrt{\operatorname{tr}(S_a^2)\operatorname{tr}(S_b^2)}},\qquad
+C_{ab}=\mathrm{RV}(S_a,S_b),\qquad C\,u=\gamma_1 u,\quad \alpha=\frac{u}{\mathbf 1^\top u}$$
+$$S_+=\sum_k\alpha_kS_k=Q\Lambda Q^\top,\qquad F=Q\Lambda^{1/2},\qquad F_k=S_kQ\Lambda^{-1/2}.$$
+<p>Three steps: the <b>interstructure</b> \(C\) (how alike the years are), the <b>compromise</b> \(S_+\) (the weighted typical year) and the <b>intrastructure</b> \(F_k\) (each year projected into the compromise map).</p>
+
+<h4>Why it works, step by step</h4>
+<div class="step"><b class="n">Step 1 · RV is a correlation between matrices</b>Write \(\langle A,B\rangle=\operatorname{tr}(AB)=\sum_{ij}A_{ij}B_{ij}\) for symmetric \(A,B\). Then \(\mathrm{RV}=\langle S_a,S_b\rangle/(\|S_a\|\|S_b\|)\), the cosine between the two matrices seen as vectors of \(J^2\) entries. It is 1 when one is a positive multiple of the other.</div>
+<div class="step"><b class="n">Step 2 · the weights come from an eigenvector</b>Scale each table to unit norm, \(\tilde S_k=S_k/\|S_k\|\). For any weights \(u\), \(\big\|\sum_k u_k\tilde S_k\big\|^2=\sum_{a,b}u_au_b\langle\tilde S_a,\tilde S_b\rangle=u^\top C u\). So the unit-length \(u\) that makes the weighted sum as large as possible (the direction the tables share most) maximises the Rayleigh quotient \(u^\top Cu\): the first eigenvector of \(C\). Because \(C\) has positive entries, that eigenvector is all-positive (Perron–Frobenius), and years that disagree with the rest get smaller weights.</div>
+<div class="step"><b class="n">Step 3 · partial points average to the compromise</b>Because \(F_k=S_kQ\Lambda^{-1/2}\), \(\sum_k\alpha_kF_k=S_+Q\Lambda^{-1/2}=Q\Lambda Q^\top Q\Lambda^{-1/2}=Q\Lambda^{1/2}=F\). Each variable's 13 yearly points (small dots on the map) have the compromise point as their weighted barycentre, so the spread of the dots is each year's disagreement.</div>
+
+<h4>The null and inference</h4>
+<ul>
+<li><b>Era test (pre-registered).</b> \(D=\overline{C}_{\text{within era}}-\overline{C}_{\text{between eras}}\) for 2013–19 vs 2020–25. Null: years are exchangeable; enumerate all \(\binom{13}{6}=1{,}716\) assignments of six "after" years (exact p).</li>
+<li><b>Pair changes.</b> For each of the 21 pairs, the after − before difference in mean yearly Spearman \(\rho\), with the same 1,716 assignments; familywise control by the max-|Δ| over pairs (max-T).</li>
+<li><b>Year-level noise.</b> Firm bootstrap within year (299). This failed: RV is biased downward under resampling (finding 4).</li>
+</ul>
+
+<div class="toy"><h5>Toy example (computed by <code>cards/_toys/toys.py</code>)</h5>
+<p>Three "years", three variables. Years 1 and 2 have similar correlations (0.8/0.2/0.1 and 0.7/0.3/0.2); year 3 differs (0.1/0.6/0.5). After double-centring and normalising: \(\mathrm{RV}_{12}=0.991\), \(\mathrm{RV}_{13}=0.489\), \(\mathrm{RV}_{23}=0.603\). Weights \(\alpha=(0.354,\,0.367,\,0.279)\): the odd year is down-weighted. RV to the compromise: 0.944, 0.980, 0.749, so year 3 stands out.</p></div>
+
+<div class="diff"><b>How it differs from the standard tool.</b> The usual check is one correlation per year (payout vs drawdown) or a pooled regression with year interactions: one coefficient at a time, each with its own noise, and 21 pairs means 21 tests. STATIS compares the whole \(7\times7\) pattern at once (one test), weights years by how typical they are, and shows on one map which variables move. A pooled PCA would ignore years entirely.</div>
+<p class="cite">Followed: Lavit, Escoufier, Sabatier &amp; Traissac (1994), "The ACT (STATIS method)", CSDA 18(1):97–119 (bibliographic record read); Abdi, Williams, Valentin &amp; Bennani-Dosse (2012), WIREs Comp Stat 4:124–167 (abstract read; COVSTATIS and partial triadic analysis variants); formulas follow the DistatisR documentation and ade4's <code>statis</code>. Section and equation numbers not checked. Our NumPy core matches <code>ade4::statis</code> (RV matrix, weights, compromise eigenvalues) to 3e-13. Toy: <code>cards/_toys/toys.py</code>.</p>
+</div><div class="panel p2" id="applied"><h4>What we found</h4><article class="fcard"><div class="viz"><div class="pair"><div><span class="lab">Year map (interstructure)</span><img src="../fig/2026-11-17/statis_years.png" alt="Year map (interstructure)"></div><div class="new"><span class="lab">Variable map with yearly positions</span><img src="../fig/2026-11-17/statis_vars.png" alt="Variable map with yearly positions"></div></div></div><div class="body"><span class="chip">Finding 1</span><h3>The whole correlation pattern splits into a pre-2020 and a 2020+ era.</h3><p class="take">Across 13 exercises (2013–2025) and 7 variables, years in the same era are more alike than years in different eras: within − between RV = 0.0108, exact permutation p = 0.023 (rank 39 of all 1,716 ways to pick six 'after' years). Modified RV: p = 0.016; without double-centring: p = 0.019.</p><p class="small">Exploratory: among contiguous cuts the gap is largest when the 'after' era starts in 2021 (0.015), the first year with a stress capital buffer in force. That cut was not pre-registered. Years' sample sizes do not drive it (Spearman 0.19 between RV-to-compromise and firm count, p = 0.53).</p></div></article><article class="fcard"><div class="viz"><svg viewBox="0 0 360 208" role="img" xmlns="http://www.w3.org/2000/svg"><text x="6" y="16" font-family="JetBrains Mono, monospace" font-size="11" fill="#6f5f46" letter-spacing="1">ERA CHANGE IN SPEARMAN Ρ (AFTER − BEFORE)</text><line x1="162.7" x2="162.7" y1="26" y2="184" stroke="#df5236" stroke-width="2" stroke-dasharray="4 3"/><text x="10" y="38" font-family="JetBrains Mono, monospace" font-size="11.5" fill="#1c150d">Drawdown ~ loan losses</text><text x="354" y="38" text-anchor="end" font-family="Bricolage Grotesque, sans-serif" font-weight="800" font-size="14" fill="#1c150d">+0.24</text><line x1="10" x2="346" y1="51" y2="51" stroke="#d9c8a6" stroke-width="2"/><line x1="162.7" x2="310.0" y1="51" y2="51" stroke="#1f9e8e" stroke-width="4"/><circle cx="310.0" cy="51" r="7.5" fill="#1f9e8e" stroke="#1c150d" stroke-width="2"/><text x="10" y="76" font-family="JetBrains Mono, monospace" font-size="11.5" fill="#1c150d">Pre-tax income ~ loan losses</text><text x="354" y="76" text-anchor="end" font-family="Bricolage Grotesque, sans-serif" font-weight="800" font-size="14" fill="#1c150d">−0.16</text><line x1="10" x2="346" y1="89" y2="89" stroke="#d9c8a6" stroke-width="2"/><line x1="162.7" x2="62.5" y1="89" y2="89" stroke="#e8902e" stroke-width="4"/><circle cx="62.5" cy="89" r="7.5" fill="#e8902e" stroke="#1c150d" stroke-width="2"/><text x="10" y="114" font-family="JetBrains Mono, monospace" font-size="11.5" fill="#1c150d">Payout ~ net buybacks</text><text x="354" y="114" text-anchor="end" font-family="Bricolage Grotesque, sans-serif" font-weight="800" font-size="14" fill="#1c150d">−0.16</text><line x1="10" x2="346" y1="127" y2="127" stroke="#d9c8a6" stroke-width="2"/><line x1="162.7" x2="67.4" y1="127" y2="127" stroke="#e8902e" stroke-width="4"/><circle cx="67.4" cy="127" r="7.5" fill="#e8902e" stroke="#1c150d" stroke-width="2"/><text x="10" y="152" font-family="JetBrains Mono, monospace" font-size="11.5" fill="#1c150d">Payout ~ drawdown (usual)</text><text x="354" y="152" text-anchor="end" font-family="Bricolage Grotesque, sans-serif" font-weight="800" font-size="14" fill="#1c150d">−0.13</text><line x1="10" x2="346" y1="165" y2="165" stroke="#d9c8a6" stroke-width="2"/><line x1="162.7" x2="83.9" y1="165" y2="165" stroke="#6f5f46" stroke-width="4"/><circle cx="83.9" cy="165" r="7.5" fill="#6f5f46" stroke="#1c150d" stroke-width="2"/><text x="162.7" y="196" text-anchor="middle" font-family="JetBrains Mono, monospace" font-size="10" fill="#df5236">0 = no change</text></svg></div><div class="body"><span class="chip">Finding 2</span><h3>No single correlation change explains it.</h3><p class="take">Of 21 variable pairs, the largest era change is CET1 drawdown ~ SA loan losses (Spearman −0.05 → +0.19; pair p = 0.009, familywise max-T p = 0.11). Payout/RWA ~ drawdown, the usual check, goes −0.24 → −0.37 (p = 0.10, max-T 0.92). Payout ~ net buybacks loosens 0.87 → 0.71 (p = 0.030, max-T 0.75).</p><p class="small">Read as: many small moves in the same direction add up to a significant whole-pattern shift that no one-pair test sees. Era means are of yearly Spearman correlations; exact permutation over 1,716 era splits.</p></div></article><article class="fcard"><div class="viz"><svg viewBox="0 0 360 208" role="img" xmlns="http://www.w3.org/2000/svg"><text x="6" y="16" font-family="JetBrains Mono, monospace" font-size="11" fill="#6f5f46" letter-spacing="1">ERA-SPLIT P, LEAVE ONE YEAR OUT</text><line x1="148.0" x2="148.0" y1="40" y2="192" stroke="#df5236" stroke-width="2" stroke-dasharray="4 3" opacity=".75"/><text x="152.0" y="204" font-family="JetBrains Mono, monospace" font-size="10.5" fill="#df5236">0.05</text><text x="6" y="38" font-family="JetBrains Mono, monospace" font-size="12" fill="#1c150d">All 13 years</text><rect x="6" y="43" width="65.3" height="16" fill="#1f9e8e" stroke="#1c150d" stroke-width="1.5"/><text x="77.3" y="56" font-family="Bricolage Grotesque, sans-serif" font-weight="800" font-size="15" fill="#1c150d">0.023</text><text x="6" y="78" font-family="JetBrains Mono, monospace" font-size="12" fill="#1c150d">Best drop (2019)</text><rect x="6" y="83" width="36.9" height="16" fill="#1f9e8e" stroke="#1c150d" stroke-width="1.5"/><text x="48.9" y="96" font-family="Bricolage Grotesque, sans-serif" font-weight="800" font-size="15" fill="#1c150d">0.013</text><text x="6" y="118" font-family="JetBrains Mono, monospace" font-size="12" fill="#1c150d">Median of 13 drops</text><rect x="6" y="123" width="92.3" height="16" fill="#1f9e8e" stroke="#1c150d" stroke-width="1.5"/><text x="104.3" y="136" font-family="Bricolage Grotesque, sans-serif" font-weight="800" font-size="15" fill="#1c150d">0.033</text><text x="6" y="158" font-family="JetBrains Mono, monospace" font-size="12" fill="#1c150d">Worst drop (2015)</text><rect x="6" y="163" width="251.9" height="16" fill="#e8902e" stroke="#1c150d" stroke-width="1.5"/><text x="263.9" y="176" font-family="Bricolage Grotesque, sans-serif" font-weight="800" font-size="15" fill="#1c150d">0.089</text></svg></div><div class="body"><span class="chip">Finding 3</span><h3>The split is moderate, not robust.</h3><p class="take">Dropping one exercise at a time, the era test stays below 0.05 in 9 of 13 cases; dropping 2015, 2016, 2021 or 2022 pushes p to 0.057–0.089.</p></div></article><article class="fcard red"><div class="viz"><svg viewBox="0 0 360 74" role="img" xmlns="http://www.w3.org/2000/svg"><text x="6" y="16" font-family="JetBrains Mono, monospace" font-size="11" fill="#6f5f46" letter-spacing="1">YEARS WITH OBSERVED RV ABOVE ITS OWN BAND</text><text x="6" y="38" font-family="JetBrains Mono, monospace" font-size="12" fill="#1c150d">Years</text><rect x="6" y="43" width="131.1" height="16" fill="#df5236" stroke="#1c150d" stroke-width="1.5"/><text x="143.1" y="56" font-family="Bricolage Grotesque, sans-serif" font-weight="800" font-size="15" fill="#1c150d">6 of 13</text></svg></div><div class="body"><span class="chip">Finding 4</span><h3>Our &#x27;which single year departs&#x27; check failed: RV&#x27;s small-sample bias.</h3><p class="take">The pre-registered firm-bootstrap rule flagged 2013, 2019, 2022 and 2025. But in 6 of 13 years the observed RV to the compromise lies above its own bootstrap 97.5% bound: resampling 18–35 firms adds noise that lowers RV, so the bands are shifted down and the rule is not valid.</p><p class="small">This is the known RV bias (Smilde et al. 2009). The Math avenue (top pick) is a bias-corrected RV.</p></div></article><article class="fcard"><div class="viz"><div class="pair"><div><span class="lab">Firm paths 2022→2025</span><img src="../fig/2026-11-17/statis_firms.png" alt="Firm paths 2022→2025"></div><div class="new"><span class="lab">Variable map (for orientation)</span><img src="../fig/2026-11-17/statis_vars.png" alt="Variable map (for orientation)"></div></div></div><div class="body"><span class="chip">Finding 5</span><h3>Firm paths: who moves in the joint stress–payout space.</h3><p class="take">Partial triadic analysis on the 21 firms in every test 2022–25: the longest paths are Barclays US, Charles Schwab, UBS Americas and State Street. Path length tracks payout-rank changes only weakly (Spearman 0.11; 0.45 for the 28 firms in every test 2015–18).</p><p class="small">So in recent years firms move mostly on the stress side (drawdown, losses, capital), not on payouts. Descriptive; firm paths use public data only.</p></div></article><h4>Who plays what</h4>
+<div class="table-wrap"><table>
+<tr><th>Home field</th><th>Our data (Q3)</th></tr>
+<tr><td>Sensory panel: one assessor's table (wines × attributes); ecology: one sampling date (sites × species)</td><td>One stress-test exercise: firms × 7 variables</td></tr>
+<tr><td>Attributes or species</td><td>SA CET1 drawdown, SA pre-tax income, SA loan losses, starting CET1, payout/RWA, dividends/RWA, net buybacks/RWA</td></tr>
+<tr><td>Wines or sites</td><td>Bank holding companies (18–35 a year; different sets each year)</td></tr>
+<tr><td>"Do assessors agree?" / "Is the community stable over dates?"</td><td>Is the cross-firm pattern linking stress results and payouts the same each year?</td></tr>
+</table></div>
+
+<h4>Inputs and preprocessing</h4>
+<ul>
+<li>The lab's verified public copies (11-14 and 11-16 runs): Fed <code>public_results_DFAST_2026.csv</code> severely adverse rows, 2013–2025 exercises (2020 = June 2020 DFAST); FR Y-9C HI-A Q4 payouts (BHCK4460, 4598, 4783, 4782) over RWA, calendar year \(Y\) for test year \(Y\). 360 firm-years with all 7 variables.</li>
+<li>Per year: Spearman correlation matrix of the 7 variables (ranks, so heavy-tailed payout ratios do not dominate).</li>
+<li>Balanced firm windows for the partial triadic view: 28 firms in every test 2015–18; 21 firms in every test 2022–25 (ranks within year, standardised).</li>
+<li>No SCB variable in the main run: it exists only from 2021, so it cannot be compared across eras.</li>
+</ul>
+
+<h4>What we ran</h4>
+<ol>
+<li>Parity: our NumPy STATIS vs <code>ade4::statis</code> 1.7.24 on both balanced windows (max differences 3.8e-14 in RV, 4.7e-14 in weights, 3.0e-13 in compromise eigenvalues).</li>
+<li>COVSTATIS on the 13 yearly matrices: interstructure, weights, compromise (47%, 21%, 17% of compromise inertia on axes 1–3), partial points.</li>
+<li>Era test (pre-registered), with modified RV and no-centring variants; contiguous cuts (exploratory); leave-one-year-out.</li>
+<li>Pair changes with max-T; the standard year-by-year payout–drawdown correlation with 999 firm bootstraps.</li>
+<li>Firm-bootstrap year departures (pre-registered; failed, finding 4). Partial triadic firm paths on the balanced windows. Everything runs in under 5 s.</li>
+</ol>
+
+<div class="callouts"><h5>How to read the main charts</h5>
+<ol>
+<li><b>Contiguous-cut curve:</b> the x-axis is the first year of the "after" era; the y-axis is how much more alike years are within eras than across them. Above 0 means the cut separates real regimes; the peak is at 2021.</li>
+<li><b>Variable map:</b> big black dots are where each variable sits in the typical year. Variables close together move together across firms (payout, dividends, buybacks and pre-tax income on the right; drawdown and loan losses on the left).</li>
+<li>Small dots are the same variable in each year (amber before 2020, teal after). A tight cloud means a stable role; a cloud split by colour means the variable's role changed with the era.</li>
+<li><b>Year map:</b> one dot per year; axis 1 is closeness to the typical year (all between 0.94 and 0.99, the common structure dominates: 94% of the interstructure), axis 2 shows how the odd years differ.</li>
+</ol></div>
+
+<div class="plain"><h5>What it means for a decision-maker</h5>
+<p>Looked at one number at a time, the link between stress-test results and payouts seems to drift around without a clear break. Looked at all together, the pattern did change around 2020–21, when the stress capital buffer started: years after it resemble each other more than they resemble the years before. The change is spread over many small shifts (for example, the capital drawdown now tracks projected loan losses more closely, and total payouts track buybacks a bit less), rather than one big one. The evidence is moderate: removing some single years weakens it. Descriptive only.</p></div>
+
+<h4>Where it breaks (seen in our runs)</h4>
+<ul>
+<li><b>Small samples.</b> 18 firms in 2013 and 2019; RV is biased with few firms, which invalidated our year-departure check.</li>
+<li><b>Map angles are not correlations.</b> In the 3-axis compromise map, the cosine between two variables can differ a lot from their correlation (start CET1 ~ payout: −0.74 in the map vs about 0 in the data). Read pair changes from the matrices, as in finding 2.</li>
+<li><b>Changing firm sets.</b> Odd-year tests drop many Category IV firms, so part of a year's difference is who is in it. The balanced-firm view addresses this only for short windows.</li>
+<li><b>Timing.</b> Calendar-year payouts partly precede that year's results.</li>
+</ul>
+
+<h4>What we'd do next</h4>
+<ul>
+<li>Bias-corrected RV (top pick), then retest single-year departures.</li>
+<li>Repeat with the SCB-era variables (SCB, gap to the floor) as a separate 2021–25 STATIS.</li>
+<li>Separate firm-composition from structure: rerun on the 11 firms present in all 13 exercises.</li>
+</ul>
+</div><div class="panel p3" id="robust"><p><span class="grade ok">Well established</span></p>
+<h4>What the home field has established</h4>
+<ul>
+<li><b>Origin.</b> STATIS (ACT) goes back to the French data-analysis school; Lavit, Escoufier, Sabatier &amp; Traissac (1994, CSDA 18(1):97–119; bibliographic record read) describe it as comparing several data matrices on the same observations through their Euclidean structures: interstructure, compromise and trajectories.</li>
+<li><b>Review and variants.</b> Abdi et al. (2012, WIREs Comp Stat 4:124–167; abstract read) present STATIS as optimum multi-table PCA and review partial triadic analysis, COVSTATIS, DISTATIS and others, including inferential extensions.</li>
+<li><b>Practice.</b> Long use in sensory evaluation (DISTATIS for sorting tasks, Abdi et al. 2007, cited in DistatisR) and in ecology: Thioulouse (2011, Annals of Applied Statistics; title and PDF link found, not read) compares several K-table methods for sequences of ecological tables, and ade4 ships <code>statis</code> and <code>pta</code> with a vignette on co-structure change.</li>
+<li><b>Implementations.</b> ade4 1.7.24 (CRAN; used here, maintained by the adeverse group), DistatisR 1.1.2 (CRAN; would not install on the box because of its car/lme4 dependency chain). Our NumPy core reproduces ade4 to 1e-13.</li>
+<li><b>Known failure modes.</b> The RV coefficient is high even for unrelated matrices when samples are small or dimensions large; Smilde et al. (2009, Bioinformatics 25(3):401–405; abstract and results read) propose a modified RV, and Josse, Pagès &amp; Husson (2008, CSDA 53(1):82–91; abstract read) show asymptotic RV tests fail in many situations and recommend permutation or approximations. We hit exactly this (finding 4).</li>
+</ul>
+<p><b>Verdict: well established.</b> Thirty-plus years of use, a maintained reference implementation and a literature on its main weakness. Rarely used in finance.</p>
+<p class="small"><b>Found via.</b> Web search, 2026-11-17 14:20 ET ("DISTATIS STATIS Abdi multiple distance matrices compromise RV coefficient DistatisR") → <a href="https://doi.org/10.1002/wics.198">doi:10.1002/wics.198</a>, DistatisR docs. ade4 <a href="https://adeverse.github.io/ade4/reference/pta.html">pta reference</a> and the Thioulouse 2011 PDF by web search at 14:23 ET. RV critiques by web search at 14:21 ET. X search (built-in tool) at 14:22 ET: 0 posts. Novelty: exotic-transfer (sensory science / ecology → supervisory stress tests).</p>
+</div><div class="panel p4" id="sauce"><div class="sauce"><span class="t">1 · Engineering · Effort M</span><h5>One multi-table engine for unbalanced panels</h5>
+<p>A NumPy core (Rust if Q2 scale needs it) for STATIS, COVSTATIS, partial triadic analysis and DISTATIS that accepts firms or programs entering and leaving, with exact era permutations and block bootstraps built in. ade4 is the oracle (parity already at 1e-13 on balanced windows); DistatisR is the second oracle once installable.</p>
+<p><b>Math sketch.</b> For unbalanced object sets, compute each table's cross-product on its own objects, then embed it in the union with zero rows/columns and a per-table mask \(M_k\); use \(\mathrm{RV}_M(S_a,S_b)=\langle M_{ab}\circ S_a,M_{ab}\circ S_b\rangle/\|M_{ab}\circ S_a\|\|M_{ab}\circ S_b\|\) on the shared objects \(M_{ab}=M_a\wedge M_b\).</p>
+<p><b>Why it matters here.</b> Only 11 firms are in all 13 exercises; Q2 programs start and stop. Today we had to switch to variable-by-variable tables to avoid dropping firms.</p>
+<p class="cite">Closest prior work: ade4 <code>statis</code>/<code>pta</code> (balanced only; docs read); DistatisR (balanced cubes).</p>
+<p class="small"><b>Test (pass bar set now).</b> Parity ≤ 1e-12 with ade4 on balanced cases; on balanced data with the mask path, identical results; the Q2 Morgan Stanley mock (1,840 programs × 5 years × features) in under 1 s.</p></div>
+<div class="sauce top"><span class="t">2 · Math · Effort M · ★ Top pick</span><h5>A reliability-corrected RV for small samples</h5>
+<p>Our year-level check failed because RV computed from 18–35 firms is pulled around by sampling noise. Correct each year's RV for the reliability of its own correlation matrix, the way psychometrics corrects a correlation for attenuation.</p>
+<p><b>Math sketch.</b> Split each year's firms at random into halves \(h,h'\); reliability \(\hat\rho_k=\overline{\mathrm{RV}(S_k^{h},S_k^{h'})}\) over many splits, stepped up (Spearman–Brown) \(\rho_k=2\hat\rho_k/(1+\hat\rho_k)\). Corrected \(\mathrm{RV}^{c}_{ab}=\mathrm{RV}_{ab}/\sqrt{\rho_a\rho_b}\), capped at 1, on the modified (diagonal-free) RV of Smilde et al. Bootstrap the whole procedure for intervals.</p>
+<p><b>Why it matters here.</b> It would let us say which single exercises (2019? 2022?) depart, not just that two eras differ, and compare years with 18 firms to years with 35.</p>
+<p class="cite">Closest prior work: Smilde et al. (2009, Bioinformatics 25(3):401–405), modified RV; Josse, Pagès &amp; Husson (2008, CSDA 53(1):82–91), RV tests. No split-half disattenuated RV found.</p>
+<p class="small"><b>Test (pass bar set now).</b> Simulation at our design (13 tables, 18–35 objects, 7 variables, known true structures with a planted break): bias of the corrected RV within ±0.01 of the truth (raw RV and modified RV as comparators), 95% bootstrap coverage between 93% and 97%, and the planted break year detected in ≥ 80% of runs at a 5% false-flag rate.</p></div>
+<div class="sauce"><span class="t">3 · New use on our data · Effort S</span><h5>Partial triadic paths on the Q2 mock budgets (Q2.2, Q2.4)</h5>
+<p>Treat each fiscal year as a table (programs × spend, headcount, text-implied features). Programs whose path through the compromise map is longest are candidates for "quietly changed category" (Q2.2); groups whose paths run parallel are hidden co-movers (Q2.4).</p>
+<p><b>Math sketch.</b> Partial points \(F_{k,i}\) for program \(i\) in year \(k\); path length \(L_i=\sum_k\|F_{k+1,i}-F_{k,i}\|\); flag the top \(L_i\) within each segment. For Q2.4, cluster programs on their partial trajectories \((F_{1,i},\dots,F_{K,i})\).</p>
+<p><b>Why it matters here.</b> It uses all features at once, which neither ebnm (one number per program) nor DenseLines (one series per program) does.</p>
+<p class="cite">Closest prior work: ade4 partial triadic analysis (Thioulouse 2011 comparison, title found, not read). No budget application found.</p>
+<p class="small"><b>Test (pass bar set now).</b> SYNTHETIC mocks only: AUC of \(L_i\) against the planted category-switch key ≥ 0.75 and above a baseline of raw year-to-year feature change; a new-seed mock for confirmation.</p></div>
+<p class="small">👍 on the issue means go with the ★ top pick. To choose another, just say so in a comment.</p>
+</div><div class="panel p5" id="questions"><div class="sauce"><span class="t">Q3.3 · How cross-firm patterns move from year to year</span><p>First whole-pattern test: the joint correlation structure of stress results and payouts differs between 2013–19 and 2020–25 (exact p = 0.023), best separated at a 2021 cut (exploratory). The year-to-year similarity is lowest for 2018→2019 (RV 0.907) and 2022→2023 (0.910), both into years with only 18 and 23 firms. Moderate evidence (leave-one-year-out p < 0.05 in 9 of 13).</p></div>
+<div class="sauce"><span class="t">Q3.1 / Q3.2 · Stress path vs payouts</span><p>No single pair change survives familywise control. The usual payout–drawdown correlation strengthens from −0.24 to −0.37 but is not significant (p = 0.10). This agrees with the 11-14 IDR finding that the 2013–19 structure does not transfer cleanly to 2021–25.</p></div>
+<div class="sauce"><span class="t">Q3.5 · Dividends vs buybacks</span><p>Tentative: total payouts track net buybacks a little less after 2020 (0.87 → 0.71, pair p = 0.030, not familywise significant), consistent with the 11-16 pim note.</p></div>
+<p class="small"><b>Still missing:</b> firm-level baseline projections (not published); the October 2020 SCB PDF. · <a href="https://github.com/jgridifier/research-lab/blob/main/docs/methods-scout/QUESTIONS.md">All questions</a></p>
+</div></div></div>
+<p class="cite">Full tables, code and data notes: <a href="../2026-11-17.html#statis">the 2026-11-17 edition</a> · scripts in <code>runs/2026-11-17/</code> · card sources in <code>cards/statis/</code>.</p>
+<div style="margin:1.4rem 0"><a class="btn" href="https://github.com/jgridifier/research-lab/issues/71">Respond on #71</a><p class="howto">👍 go ahead · 👎 drop · or just comment what you think</p></div>
+<script>(function(){var m={"math":1,"applied":2,"robust":3,"sauce":4,"questions":5};var h=location.hash.slice(1);var i=m[h]||(/^t[1-5]$/.test(h)?+h[1]:0);if(i)document.getElementById("t"+i).checked=true;})();</script>
+</div>
+<footer class="pf">Generated by <code>tools/build_cards.py</code> from <code>feedback-state.json</code> and <code>cards/</code>; page contract in <a href="https://github.com/jgridifier/research-lab/blob/main/docs/methods-scout/LAYOUT.md">LAYOUT.md</a>.
+Status chips are baked in at build time and refreshed from the GitHub issue labels on load. Q2 work so far uses SYNTHETIC mock budgets; no private rows are published.</footer>
+<script src="../status.js"></script>
+</body></html>

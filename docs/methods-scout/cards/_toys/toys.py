@@ -140,3 +140,25 @@ def meat(groups):  # groups: list of (pair key in cluster ids, u)
 fy = [((a + '1', b + '1'), u) for (a, b), u in u1.items()] + [((a + '2', b + '2'), u) for (a, b), u in u2.items()]
 fm = [((a, b), u) for (a, b), u in list(u1.items()) + list(u2.items())]
 print("firm-year meat (pim sandwich)", round(meat(fy), 4), " firm meat", round(meat(fm), 4), " ratio", round(meat(fm) / meat(fy), 3))
+
+print("== ECA: T=10 weeks, A events {3,7}, B events {2,6,9}, delT=1, tau=0")
+T, Aev, Bev, dT = 10, [3, 7], [2, 6, 9], 1
+kp = sum(any(t - dT <= s <= t for s in Bev) for t in Aev)
+kt = sum(any(s <= t <= s + dT for t in Aev) for s in Bev)
+q_p = (1 - (dT + 1) / T) ** len(Bev); q_t = (1 - (dT + 1) / T) ** len(Aev)
+pp = sum(math.comb(len(Aev), k) * (1 - q_p) ** k * q_p ** (len(Aev) - k) for k in range(kp, len(Aev) + 1))
+pt = sum(math.comb(len(Bev), k) * (1 - q_t) ** k * q_t ** (len(Bev) - k) for k in range(kt, len(Bev) + 1))
+print("K_p", kp, "r_p", kp / len(Aev), "K_t", kt, "r_t", round(kt / len(Bev), 3),
+      "P(no B in a window) =", round(q_p, 3), "Poisson p_prec", round(pp, 3), "p_trig", round(pt, 3))
+
+print("== STATIS: three 3x3 correlation matrices (years); R3 is the odd one")
+R = [np.array([[1, .8, .2], [.8, 1, .1], [.2, .1, 1]]), np.array([[1, .7, .3], [.7, 1, .2], [.3, .2, 1]]),
+     np.array([[1, .1, .6], [.1, 1, .5], [.6, .5, 1]])]
+J = np.eye(3) - np.ones((3, 3)) / 3
+S = [J @ r @ J for r in R]; S = [s / np.linalg.eigvalsh(s)[-1] for s in S]
+rvf = lambda A, B: np.trace(A @ B) / math.sqrt(np.trace(A @ A) * np.trace(B @ B))
+C = np.array([[rvf(a, b) for b in S] for a in S])
+w, U = np.linalg.eigh(C); u = U[:, -1] * np.sign(U[:, -1].sum()); alpha = u / u.sum()
+Sp = sum(a * s for a, s in zip(alpha, S))
+print("RV matrix", C.round(3).tolist(), "weights", alpha.round(3).tolist(),
+      "RV to compromise", [round(float(rvf(s, Sp)), 3) for s in S])
