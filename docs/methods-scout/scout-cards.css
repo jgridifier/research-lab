@@ -149,3 +149,20 @@ details.qrow p{color:var(--body)}
 .panel h4{font-size:1.12rem;margin:1.4rem 0 .4rem}
 .panel p{max-width:none}
 .navrow{display:flex;flex-wrap:wrap;gap:.4rem;margin:.4rem 0 .2rem}
+
+/* Research-to-production tracker on the queue home page */
+.prod-card{background:var(--card);border:2px solid var(--ink);margin:0 0 .7rem;padding:.75rem .85rem}
+.prod-head{display:flex;flex-wrap:wrap;align-items:center;gap:.45rem;margin:0 0 .45rem}
+.prod-head .nm{font-family:var(--f-head);font-weight:800;font-size:1.06rem;line-height:1.15;flex:1 1 auto}
+.stage-pipe{display:flex;flex-wrap:wrap;align-items:center;gap:.25rem;font-family:var(--f-mono);font-size:.66rem;letter-spacing:.08em;text-transform:uppercase;margin:0 0 .55rem;color:var(--muted);line-height:1.4}
+.stage-pipe .done{color:var(--ink)}
+.stage-pipe .now{border:2px solid var(--ink);padding:.08rem .35rem;font-weight:700;color:var(--ink);background:var(--green)}
+.stage-pipe .now.building{background:var(--teal);color:#fff}
+.stage-pipe .now.released{background:var(--ink);color:#ffd27a}
+.stage-pipe .todo{opacity:.55}
+.stage-pipe .arrow{opacity:.45}
+.prod-links{list-style:none;padding:0;margin:0;font-size:.9rem;line-height:1.45}
+.prod-links li{display:grid;grid-template-columns:5.8rem 1fr;gap:.45rem;margin:.18rem 0;align-items:start}
+.prod-links .k{font-family:var(--f-mono);font-size:.66rem;letter-spacing:.1em;text-transform:uppercase;color:var(--muted);padding-top:.2rem}
+.prod-links .missing{color:var(--muted)}
+.prod-links a{overflow-wrap:anywhere}

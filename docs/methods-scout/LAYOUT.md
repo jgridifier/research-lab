@@ -6,8 +6,9 @@ How the methods scout is laid out on the site, and what every research card must
 
 | Path | What it is | Written by |
 |---|---|---|
-| `index.html` | **Home: the ranked queue** | `tools/build_cards.py` (do not edit by hand) |
+| `index.html` | **Home: the ranked queue**, including the research-to-production tracker | `tools/build_cards.py` (do not edit by hand) |
 | `m/<slug>.html` | One **research card** per method | `tools/build_cards.py` |
+| `production-links.json` | Build repo, docs site, and published-package URLs, keyed by slug | by hand, when a repo or package exists |
 | `cards/<slug>/card.json` | Summary box, one picture, findings | the daily scout |
 | `cards/<slug>/{math,applied,robust,sauce,questions}.html` | The five tab bodies (HTML fragments, KaTeX allowed) | the daily scout |
 | `cards/_toys/toys.py` | Every toy-example number on every card, reproducible | the daily scout |
@@ -34,8 +35,24 @@ Sections, in this order, each shown only if non-empty:
 2. **Undecided, ranked**: status `proposed`, ranked by the rule below, with the rule printed above the list.
 3. **Moving**: `approved`, `in-progress`, `refine`.
 4. **Parked**, then **Closed** (`dropped`, `done`).
+5. **Research to production**: every method whose status is `approved` (Go) or `in-progress` (Building). Each row shows the stage along `research → go → building → released`, then the lineage: originating and later edition pages, the research card, the GitHub issue, then the build repo, docs site, and published package. Missing build artifacts are written in plain words, never as a broken link.
 
-Each row: rank (or status icon), method name, the `one` line, chips (status, question, verdict, "Research card"). Tapping opens a drawer with the rank-score arithmetic, top pick, the Respond button, a link to the card, and the response line.
+Each queue row: rank (or status icon), method name, the `one` line, chips (status, question, verdict, "Research card"). Tapping opens a drawer with the rank-score arithmetic, top pick, the Respond button, a link to the card, and the response line.
+
+**Research-to-production links.** Status and the originating edition come from `feedback-state.json`. Later editions are picked up automatically when a dated page (`YYYY-MM-DD.html` or `YYYY-MM-DD-adhoc.html`) has `id="<slug>"`. Repos, docs sites, and packages live in `production-links.json`, keyed by slug, with optional notes:
+
+| Field | What it is |
+|---|---|
+| `repo` | URL of the build repository (only if it exists) |
+| `repo_note` | Plain-language stand-in when there is no repo yet (default: "repo not yet created") |
+| `source` | Optional URL of research code in this lab, shown next to a missing repo |
+| `docs` | URL of the docs site (only if it exists) |
+| `docs_note` | Stand-in when there is no docs site (default: "docs site not yet published") |
+| `package` | URL of a published package (only after the URL returns 200; never invent one) |
+| `package_label` | Link text for a published package |
+| `package_note` | Stand-in when nothing is published (default: "not on PyPI yet") |
+
+A Go or Building method with no entry in the file still appears, with the default missing notes. Stage is `released` when `package` is set, otherwise `building` if the status is `in-progress`, otherwise `go`. A future scout run that changes a status, or a new edition page that carries the slug, updates the tracker on the next `build_cards.py` run. When a repo, docs site, or package comes into being, add the verified URL to `production-links.json`.
 
 **Ranking rule.** `score = verdict × question fit`. Verdict: Recommend or Adopt-candidate = 3, Interesting = 2, Watchlist = 0. Question fit: live Q1/Q2/Q3 = 2, old Q1 (`Q1-retired`) or none = 1, `watchlist` = 0. Ties go to the newest edition, then slug. Both inputs are printed in each drawer.
 
@@ -110,6 +127,6 @@ It lives in one place, `RESPOND_HINT` in `tools/scout_feedback.py`. How the scan
 1. Write the dated edition page and open or adopt the issue (FEEDBACK.md).
 2. Add the toy to `cards/_toys/toys.py`, run it, and update `toys_output.txt`.
 3. Write `cards/<slug>/card.json` and the five tab fragments.
-4. Run `build_cards.py` (writes `m/<slug>.html`, the queue and `status.js`) and `build_board.py`.
-5. Add the edition to `archive.html`.
+4. Run `build_cards.py` (writes `m/<slug>.html`, the queue, the production tracker and `status.js`) and `build_board.py`.
+5. Add the edition to `archive.html`. If a Go or Building method now has a repo, docs site, or published package, add the verified URL to `production-links.json`.
 6. Check the card on a 390-px-wide screen: the math scrolls sideways inside its box, the tabs wrap.
