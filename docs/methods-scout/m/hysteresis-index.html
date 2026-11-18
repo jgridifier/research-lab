@@ -1,0 +1,167 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Storm hysteresis index · research card · methods scout</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,400..800&family=Newsreader:ital,opsz,wght@0,6..72,400..600;1,6..72,400..500&family=JetBrains+Mono:wght@400;500;700&display=swap">
+<link rel="stylesheet" href="../../assets/brief.css">
+<link rel="stylesheet" href="../scout-cards.css">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.css"><script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.js"></script><script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/contrib/auto-render.min.js" onload="renderMathInElement(document.body,{delimiters:[{left:'$$',right:'$$',display:true},{left:'\\(',right:'\\)',display:false}]})"></script>
+<!-- Methods Scout home-screen / PWA tags. Paste into <head> of every methods-scout page.
+     Paths are root-absolute so they resolve under https://jgridifier.github.io/research-lab/. -->
+<link rel="apple-touch-icon" sizes="180x180" href="/research-lab/methods-scout/icons/apple-touch-icon.png">
+<link rel="icon" type="image/png" sizes="32x32" href="/research-lab/methods-scout/icons/favicon-32.png">
+<link rel="icon" type="image/png" sizes="192x192" href="/research-lab/methods-scout/icons/icon-192.png">
+<link rel="manifest" href="/research-lab/methods-scout/manifest.webmanifest">
+<meta name="apple-mobile-web-app-title" content="Methods Scout">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="theme-color" content="#0F2A23">
+
+</head><body>
+<header class="topbar"><a class="brand" href="../index.html">Methods scout</a>
+<span><a href="../index.html">Queue</a> · <a href="../archive.html">Archive</a></span></header>
+<div class="pz">
+<p class="crumb"><a href="../index.html">← Queue</a></p>
+<div class="chips"><span class="chip q">Q1</span><span class="chip st-proposed" data-issue="75">○ New</span><span class="chip v-int">Interesting</span><span class="date">Scouted 2026-11-18</span></div>
+<section class="hero" style="padding-top:.5rem"><p class="kicker">Storm hysteresis index · from catchment hydrology (storm concentration–discharge loops)</p>
+<h1>In a fails spike, does repo stress come before or after?</h1></section>
+<div class="sum">
+<div class="row"><span class="k">What it is</span><span class="v">Plots one series against another through each stress episode; the loop&#x27;s direction says which peaked first, scored −1 to 1.</span></div>
+<div class="row"><span class="k">Verdict</span><span class="v"><b>Interesting.</b> Home field: established, light on inference.</span></div>
+<div class="row"><span class="k">Top pick</span><span class="v"><b>Math</b> (effort M): A calendar-locked null (shift by whole quarters) to test whether any loop survives quarter-end timing.</span></div>
+<div class="row"><span class="k">Data</span><span class="v">Public aggregates (NY Fed fails, OFR repo, CFTC TFF); descriptive only</span></div>
+</div>
+<p class="kicker" style="margin-top:1rem">The one picture</p>
+<div class="pair"><div><span class="lab">Usual tool: one symmetric, same-week link (r = −0.43)</span><img src="../fig/2026-11-18/hyst_std_xcorr.png" alt="Usual tool: one symmetric, same-week link (r = −0.43)"></div><div class="new"><span class="lab">Hysteresis: 13 storm loops, mostly anticlockwise</span><img src="../fig/2026-11-18/hyst_loops.png" alt="Hysteresis: 13 storm loops, mostly anticlockwise"></div></div>
+<div style="margin:1rem 0 .4rem"><a class="btn big" href="https://github.com/jgridifier/research-lab/issues/75">Respond on #75</a><p class="howto">👍 go ahead · 👎 drop · or just comment what you think</p></div>
+<div class="tabs"><input type="radio" name="tab" id="t1" checked><input type="radio" name="tab" id="t2"><input type="radio" name="tab" id="t3"><input type="radio" name="tab" id="t4"><input type="radio" name="tab" id="t5"><div class="tabbar"><label for="t1">The math</label><label for="t2">On our data</label><label for="t3">Robust at home</label><label for="t4">Secret sauce</label><label for="t5">Questions</label></div><div class="panels"><div class="panel p1" id="math"><h4>Notation</h4>
+<div class="table-wrap"><table>
+<tr><th>Symbol</th><th>Meaning</th><th>Here</th></tr>
+<tr><td>\(Q_t\)</td><td>discharge, the driver that defines a storm</td><td>NY Fed primary-dealer financing fails in Treasuries, weekly ($ bn)</td></tr>
+<tr><td>\(C_t\)</td><td>concentration, the response series</td><td>DVP − tri-party overnight repo spread (bp); DVP outstanding; leveraged-fund net short (UST 2Y+5Y+10Y futures)</td></tr>
+<tr><td>\([s,k,e]\)</td><td>storm start, peak, end</td><td>13 fails storms, e.g. 2020-02-26 / 2020-03-18 / 2020-05-13</td></tr>
+<tr><td>\(\hat Q,\hat C\)</td><td>series rescaled to [0,1] within the storm</td><td>\((Q-\min Q)/(\max Q-\min Q)\) over \([s,e]\)</td></tr>
+<tr><td>\(C^{\uparrow}(q),C^{\downarrow}(q)\)</td><td>\(\hat C\) interpolated at discharge level \(q\) on the rising and falling limb</td><td>\(q=0.05,0.10,\dots,0.95\)</td></tr>
+<tr><td>\(\mathrm{HI},\ \mathrm{FI}\)</td><td>hysteresis index; flushing index</td><td>one value per storm, in [−1, 1]</td></tr>
+</table></div>
+
+<h4>Assumptions</h4>
+<ul>
+<li>Storms can be delineated by a rule fixed in advance (here: a fails peak at least 1.5× its trailing 26-week median and in the top 10% of that ratio; start and end = the lowest fails in the 8 weeks before and after; at least 2 weeks on each limb; overlapping storms merged).</li>
+<li>Within a storm, \(Q\) rises to one peak and falls; the index is read at levels both limbs reach.</li>
+<li>Min–max rescaling makes storms of different sizes comparable (Lloyd's reason for the new index).</li>
+</ul>
+
+<h4>The statistic</h4>
+$$\mathrm{HI}_j=C^{\uparrow}(q_j)-C^{\downarrow}(q_j),\qquad \mathrm{HI}=\frac1{|J|}\sum_{j\in J}\mathrm{HI}_j,\qquad \mathrm{FI}=\hat C_k-\hat C_s,$$
+<p>where \(J\) is the set of levels reached on both limbs. \(\mathrm{HI}>0\) (clockwise in the \(Q\)–\(C\) plane): \(C\) is higher on the way up, so \(C\) peaks first. \(\mathrm{HI}<0\) (anticlockwise): \(C\) is higher on the way down, so it peaks after \(Q\). FI &gt; 0 means \(C\) rises from storm start to the \(Q\) peak.</p>
+
+<h4>Why it works, step by step</h4>
+<div class="step"><b class="n">Step 1 · a lag makes a loop</b>Take \(Q(\theta)=\sin\theta\) and \(C(\theta)=\sin(\theta-\phi)\) for \(\theta\in[0,\pi]\), with \(C\) lagging by \(\phi&gt;0\). At the level \(Q=q\) the rising limb is at \(\theta_1=\arcsin q\) and the falling limb at \(\theta_2=\pi-\theta_1\). Then \(C^{\uparrow}-C^{\downarrow}=\sin(\theta_1-\phi)-\sin(\pi-\theta_1-\phi)=\sin(\theta_1-\phi)-\sin(\theta_1+\phi)=-2\cos\theta_1\sin\phi&lt;0\). A lag gives an anticlockwise loop; a lead (\(\phi&lt;0\)) a clockwise one; the size grows with \(|\phi|\).</div>
+<div class="step"><b class="n">Step 2 · the index averages the loop width</b>Averaging \(-2\cos\theta_1\sin\phi\) over levels gives a single number with the sign of \(-\phi\). Our code returns +0.575 and −0.575 for \(\phi=\mp0.6\) rad (check in <code>hyst.py</code>). Using differences of rescaled values, not ratios, keeps it in [−1, 1] and removes the dependence on the storm's starting level that broke the older ratio index (Lloyd Fig. 1a–b).</div>
+<div class="step"><b class="n">Step 3 · from one storm to many</b>The mean HI over storms is the summary. Storm HIs are not independent of each series' own persistence, so we judge it against circular shifts of \(C\) relative to \(Q\) (4,999 shifts of at least 8 weeks), which keep both series' autocorrelation and the storm dates.</div>
+
+<h4>The null and multiple testing</h4>
+<ul>
+<li>Pre-registered: three response series (spread, DVP outstanding, leveraged-fund net short); two-sided circular-shift p for the mean HI; Holm over the three.</li>
+<li>Post hoc and labelled as such: quarter-end weeks masked; daily repo-only storms (trigger adapted because the spread can be ≤ 0).</li>
+<li>Power check: 13 idealised weekly storms (Gaussian bumps, noise 0.1–0.3): a one-week lag is found in 200 of 200 runs; no lag gives 7% rejections.</li>
+</ul>
+
+<div class="toy"><h5>Toy example (computed by <code>cards/_toys/toys.py</code>)</h5>
+<p>One storm over five weeks: \(Q=(1,3,5,2,1)\), \(C=(2,2,4,6,2)\), so \(C\) peaks one week after \(Q\). Rescaled: \(\hat Q=(0,0.5,1,0.25,0)\), \(\hat C=(0,0,0.5,1,0)\). At \(q=0.25\): rising limb \(\hat C=0\), falling 1.0, \(\mathrm{HI}_j=-1\). At 0.5: 0 vs 0.833, −0.833. At 0.75: 0.25 vs 0.667, −0.417. Mean HI \(=-0.75\): strongly anticlockwise. FI \(=0.5-0=0.5\).</p></div>
+
+<div class="diff"><b>How it differs from the standard tool.</b> Cross-correlation and ARDL fit one linear lag structure to all weeks and treat the way up and the way down alike: a symmetric model cannot produce a loop. The hysteresis index looks only inside episodes and compares the two limbs, so it can say "in stress, \(C\) comes after" even when the full-sample lag correlation is flat or same-week. It gives up the ordinary weeks and has no built-in significance test; the null has to be supplied.</div>
+<p class="cite">Followed: Lloyd, Freer, Johnes &amp; Collins (2016), HESS 20:625–632, §2.3 eq. (5) (HInew) and eqs. (1)–(2) (Lawler HI), read; Fig. 1 values reproduced. Vaughan et al. (2017), WRR 53, §3.4 eqs. (2)–(4) and the flushing index, read in a web-search extract of the journal page. Toy: <code>cards/_toys/toys.py</code>.</p>
+</div><div class="panel p2" id="applied"><h4>What we found</h4><article class="fcard"><div class="viz"><div class="pair"><div><span class="lab">Usual tool: lagged correlation + ARDL</span><img src="../fig/2026-11-18/hyst_std_xcorr.png" alt="Usual tool: lagged correlation + ARDL"></div><div class="new"><span class="lab">Index by storm, three series</span><img src="../fig/2026-11-18/hyst_hi_bars.png" alt="Index by storm, three series"></div></div></div><div class="body"><span class="chip">Finding 1</span><h3>The repo spread runs anticlockwise through fails storms: it peaks after fails.</h3><p class="take">Across 13 financing-fails storms (peaks 2019-09 to 2026-04), the DVP minus tri-party overnight spread has mean hysteresis index −0.17: 6 storms at or below −0.2, none at or above +0.2. Circular-shift null (4,999): p = 0.042; Holm over the three pre-registered series: 0.126, so not a pre-registered finding. Dropping any one storm leaves the mean between −0.20 and −0.14.</p><p class="small">Usual tools see one symmetric, near-simultaneous link: correlation of log fails with the spread −0.43 in the same week; ARDL picks spread lags 0–2 with mixed signs, and the reverse ARDL picks only the same week.</p></div></article><article class="fcard"><div class="viz"><div class="pair"><div><span class="lab">Mean index vs null, three series</span><img src="../fig/2026-11-18/hyst_mean_null.png" alt="Mean index vs null, three series"></div><div class="new"><span class="lab">Loops (see year-end storms)</span><img src="../fig/2026-11-18/hyst_loops.png" alt="Loops (see year-end storms)"></div></div></div><div class="body"><span class="chip">Finding 2</span><h3>Most of the loop is quarter-end timing.</h3><p class="take">Post hoc (not pre-registered): masking the 44 quarter-end and year-end weeks and interpolating the spread through them shrinks the mean index to −0.08 (p = 0.35); 4 storms stay at or below −0.2. Several storms end in late December or early October, where the spread jumps for balance-sheet reasons.</p><p class="small">So the loop shape is real in the data, but the reason is largely the calendar, not fails driving repo stress. The top pick tests this properly.</p></div></article><article class="fcard red"><div class="viz"><svg viewBox="0 0 360 194" role="img" xmlns="http://www.w3.org/2000/svg"><text x="6" y="16" font-family="JetBrains Mono, monospace" font-size="11" fill="#6f5f46" letter-spacing="1">SIZE OF MEAN HYSTERESIS INDEX (SIGN IN LABEL; 0 = NO LOOP)</text><text x="6" y="38" font-family="JetBrains Mono, monospace" font-size="12" fill="#1c150d">DVP−TP spread</text><rect x="6" y="43" width="238.6" height="16" fill="#e8902e" stroke="#1c150d" stroke-width="1.5"/><text x="250.6" y="56" font-family="Bricolage Grotesque, sans-serif" font-weight="800" font-size="15" fill="#1c150d">−0.17 (p 0.042)</text><text x="6" y="78" font-family="JetBrains Mono, monospace" font-size="12" fill="#1c150d">DVP outstanding</text><rect x="6" y="83" width="193.1" height="16" fill="#6f5f46" stroke="#1c150d" stroke-width="1.5"/><text x="205.1" y="96" font-family="Bricolage Grotesque, sans-serif" font-weight="800" font-size="15" fill="#1c150d">−0.14 (p 0.20)</text><text x="6" y="118" font-family="JetBrains Mono, monospace" font-size="12" fill="#1c150d">Daily: DVP volume</text><rect x="6" y="123" width="80.9" height="16" fill="#6f5f46" stroke="#1c150d" stroke-width="1.5"/><text x="92.9" y="136" font-family="Bricolage Grotesque, sans-serif" font-weight="800" font-size="15" fill="#1c150d">−0.06 (p 0.33)</text><text x="6" y="158" font-family="JetBrains Mono, monospace" font-size="12" fill="#1c150d">Lev-fund net short</text><rect x="6" y="163" width="44.0" height="16" fill="#6f5f46" stroke="#1c150d" stroke-width="1.5"/><text x="56.0" y="176" font-family="Bricolage Grotesque, sans-serif" font-weight="800" font-size="15" fill="#1c150d">+0.03 (p 0.75)</text></svg></div><div class="body"><span class="chip">Finding 3</span><h3>DVP volume and leveraged-fund positioning show no loop.</h3><p class="take">DVP outstanding: mean index −0.14, p = 0.20 (Holm 0.40), though its flushing index is +0.45 (volume rises into the fails peak). Leveraged-fund net short (11 storms to 2025-12): +0.03, p = 0.75. Daily repo-only storms (21 spread spikes, 2018-05 to 2026-06) against DVP volume: −0.06, p = 0.33.</p><p class="small">Power check: 13 idealised weekly storms with a one-week lag are detected every time (200 of 200); with no lag, 7% false alarms. Weekly sampling is not what limits it; the storms differ from each other.</p></div></article><article class="fcard red"><div class="viz"><div class="pair"><div><span class="lab">Walk-forward RMSE</span><img src="../fig/2026-11-18/hyst_walkforward.png" alt="Walk-forward RMSE"></div><div class="new"><span class="lab">Mean index vs null</span><img src="../fig/2026-11-18/hyst_mean_null.png" alt="Mean index vs null"></div></div></div><div class="body"><span class="chip">Finding 4</span><h3>A rising-limb term does not improve forecasts.</h3><p class="take">Walk-forward 1-week-ahead log fails, 221 weeks (2022-07-06 to 2026-09-23), training from 2018: ARDL RMSE 0.2607; ARDL plus spread × rising-limb term 0.2619 (+0.5%, Diebold–Mariano p = 0.25; pre-set bar −3% and p < 0.10); SARIMAX(1,0,1) with lagged spread 0.2582; random walk 0.2934.</p><p class="small">Low priority (forecasting), reported because it was pre-registered.</p></div></article><h4>Who plays what</h4>
+<div class="table-wrap"><table>
+<tr><th>Home field (hydrology)</th><th>Our data (Q1)</th></tr>
+<tr><td>Storm hydrograph (discharge)</td><td>A financing-fails spike (weekly NY Fed financing fails in Treasuries)</td></tr>
+<tr><td>Solute or sediment concentration</td><td>DVP − tri-party overnight spread; DVP outstanding; leveraged-fund net short</td></tr>
+<tr><td>Clockwise loop: source near the stream, flushed early</td><td>The series moves first (leads fails within the episode)</td></tr>
+<tr><td>Anticlockwise loop: distant source, arrives late</td><td>The series moves after fails peak (lags)</td></tr>
+<tr><td>Flushing index: concentration rises with flow</td><td>The series rises from episode start into the fails peak</td></tr>
+</table></div>
+
+<h4>Inputs and preprocessing</h4>
+<ul>
+<li>Lab copies of public files (built 11-14/11-17): NY Fed financing fails (weekly, Wednesday), OFR DVP overnight and tri-party overnight rates and DVP outstanding (daily → weekly), CFTC TFF leveraged-fund net short in UST 2Y + 5Y + 10Y futures (to 2025-12-30; later weeks missing in the lab copy).</li>
+<li>Window 2018-05-09..2026-09-23, 436 weeks; single-week gaps interpolated.</li>
+<li>Storm rule fixed before any loop was computed (see The math): 17 qualifying peaks → 13 storms after the limb and merge rules. The 2019 storm is a merge of overlapping peaks and runs from 2019-01-30 to 2019-10-16.</li>
+<li>Daily leg: OFR final-vintage daily series 2018-05-08..2026-06-30 (1,947 days).</li>
+</ul>
+
+<h4>What we ran</h4>
+<ol>
+<li>Home field: Lloyd et al. Fig. 1 (ratio index 0.66, 4, 0.33, −0.66; new index 0.5 at both levels with ratio 1.25 and 5) reproduced exactly; sine loops signed correctly.</li>
+<li>Per storm: HI at 5% discharge steps and FI; mean over storms vs 4,999 circular shifts; Holm over 3 series.</li>
+<li>Leave-one-storm-out; post-hoc quarter-end masking; daily repo-only storms; power simulation.</li>
+<li>Standard tools on the same weeks: lagged correlations (levels and changes), ARDL by BIC both ways, SARIMAX(1,0,1) with lagged spread; walk-forward 1-week-ahead from 2022-07-06 with and without the pre-registered rising-limb term.</li>
+</ol>
+
+<div class="callouts"><h5>How to read the main chart (the loop grid)</h5>
+<ol>
+<li>Each panel is one fails storm. Horizontal axis: fails, rescaled to 0–1 within the storm. Vertical: the DVP − tri-party spread, rescaled the same way.</li>
+<li>Orange points are weeks while fails rise, teal while they fall; arrows show time order.</li>
+<li>If the teal path sits above the orange one, the spread was higher after the fails peak than before: an anticlockwise loop, negative HI (red titles: HI ≤ −0.2).</li>
+<li>The pattern to see: many loops close with a late jump in the spread on the falling side; several of those jumps are in late December or around quarter-ends.</li>
+</ol></div>
+
+<div class="plain"><h5>What it means for a decision-maker</h5>
+<p>When Treasury settlement fails spike, the gap between the two main repo rates tends to widen after the fails peak rather than before, so in these episodes the repo-rate signal does not give early warning of fails. But most of that pattern comes from fails episodes happening to end near quarter- and year-ends, when repo rates jump anyway. Funding volumes and hedge-fund futures positions show no consistent before/after pattern. Public aggregates; descriptive; not a trading signal.</p></div>
+
+<h4>Where it breaks (seen in our runs)</h4>
+<ul>
+<li><b>Calendar confound.</b> Quarter-end weeks carry most of the loop (−0.17 → −0.08 when masked).</li>
+<li><b>Few storms.</b> 13 weekly episodes; one long merged 2019 storm with many wiggles.</li>
+<li><b>Storm rule matters.</b> Hydrology papers flag event delineation as a main source of disagreement; we fixed ours in advance but did not test alternatives.</li>
+<li><b>Daily trigger had to change.</b> The pre-registered 1.5× ratio rule is undefined for a spread that can be zero or negative; we used excess over the trailing median (labelled).</li>
+<li><b>Positioning gap.</b> TFF in the lab copy stops at 2025-12-30, so the last two storms have no positioning loop.</li>
+</ul>
+
+<h4>What we'd do next</h4>
+<ul>
+<li>A calendar-locked null (top pick).</li>
+<li>Loops around the 11-17 ECA unwind weeks (New-use avenue).</li>
+<li>Refresh TFF from CFTC to cover the 2025-12 and 2026-04 storms.</li>
+</ul>
+</div><div class="panel p3" id="robust"><p><span class="grade">Established, light on inference</span></p>
+<h4>What the home field has established</h4>
+<ul>
+<li><b>Origin and the index we used.</b> Lloyd, Freer, Johnes &amp; Collins (2016, HESS 20:625–632; read) review ratio-based hysteresis indices (Lawler et al. 2006), show they depend on the storm's starting level and size (Fig. 1), and propose the difference index on rescaled data. On 66 River Wylye storms (15-minute turbidity and discharge), 5% discharge steps gave stable index distributions for 98% of storms (Table 1). That storm data is not published with the paper, so we reproduced only the Fig. 1 values (exactly).</li>
+<li><b>Adoption.</b> Vaughan et al. (2017, WRR; §3.4 read in a search extract) use the Lloyd index with a flushing index for nitrate and DOC storms; a 2024 WRR review of suspended-sediment hysteresis (doi:10.1029/2024wr037216; search extract read) calls the Lloyd HI and Vaughan FI "widely adopted" and recommends the differential index for complex and figure-eight loops. R package loadflux carries other indices (SHI, Aich's AHI); a 2026 reproducibility repository (Tabo, Jacobs &amp; Breuer) implements Lloyd HI, loop area and FI in R (code listing read; not run).</li>
+<li><b>Known failure modes.</b> An exactly symmetric figure-of-eight gives 0 (Lloyd §2.3); results depend on how events are cut and on the rescaling; the index has no standard significance test, so storms are usually compared descriptively (Kruskal–Wallis across sites in Vaughan et al.).</li>
+</ul>
+<p><b>Verdict: established, light on inference.</b> The index is simple, well specified, and in routine use across catchment studies, and its published worked values reproduce. But its validation is about stability and comparability, not about error rates, and every user picks their own storm rule. Here the null had to be built (circular shifts), and a calendar confound showed up that the home field would not face.</p>
+<p class="small"><b>Found via.</b> Web search, 2026-11-18 14:26 ET ("concentration discharge hysteresis index Lloyd 2016 HESS Zuecco 2016 hysteresis index comparison Vaughan 2017 R package") → <a href="https://hess.copernicus.org/articles/20/625/2016/hess-20-625-2016.pdf">Lloyd et al. 2016 (HESS)</a>, <a href="https://agupubs.onlinelibrary.wiley.com/doi/full/10.1002/2017WR020491">Vaughan et al. 2017 (WRR)</a>, <a href="https://doi.org/10.1029/2024wr037216">2024 WRR review</a>. Novelty: exotic-transfer (catchment hydrology → funding-market stress episodes).</p>
+</div><div class="panel p4" id="sauce"><div class="sauce"><span class="t">1 · Engineering · Effort S</span><h5>A storm-loop module for any pair of series</h5>
+<p>One small module: storm finder (pre-registered rule as parameters), Lloyd HI, flushing index, loop area, circular-shift and block nulls, weekly or daily, with the loop-grid chart. Today's code in <code>runs/2026-11-18/hyst/</code> is the start.</p>
+<p><b>Math sketch.</b> For each storm precompute the limb crossing points of \(\hat Q\) once; a shift of \(C\) only changes which \(C\) values are read, so each surrogate is a gather of \(C\) at fixed (index, weight) pairs: \(C^{\uparrow}(q_j)=(1-w_j)C_{i_j}+w_jC_{i_j+1}\), then rescale per storm.</p>
+<p><b>Why it matters here.</b> Q1 has a dozen candidate series (venues, tenors, fail types, positioning by contract) and two frequencies; loops are the most readable view of "who moves first in stress".</p>
+<p class="cite">Closest prior work: loadflux (R; SHI, AHI) and the Mau reproducibility R script (Lloyd HI, loop area, FI); neither has a null.</p>
+<p class="small"><b>Test (pass bar set now).</b> Lloyd Fig. 1 values exact; sine loops ±0.575 at ∓0.6 rad; 13 storms × 4,999 shifts in under 2 s on the box (today's loop: about 19 s).</p></div>
+<div class="sauce top"><span class="t">2 · Math · Effort M · ★ Top pick</span><h5>A calendar-locked null (Q1.2)</h5>
+<p>Shift the response series only by whole quarters (13 weeks), so quarter-end weeks in \(C\) always land on quarter-end weeks in time, then ask whether the loop is still more anticlockwise than chance. This separates "spread lags fails" from "storms end at quarter-ends".</p>
+<p><b>Math sketch.</b> Let \(S=\{13k:\ k=1,\dots,\lfloor L/13\rfloor-1\}\). Under \(H_0\): \(C\) and \(Q\) are unrelated beyond a shared quarterly calendar, so \(\overline{\mathrm{HI}}(C_{\cdot+s})\), \(s\in S\), are exchangeable with the observed one. With \(L=436\) weeks there are 32 shifts, so the smallest attainable p is \(1/33\approx 0.03\) (computed); add within-quarter block permutation of non-quarter-end weeks to get more resolution.</p>
+<p><b>Why it matters here.</b> Today's loop drops from −0.17 to −0.08 when quarter-end weeks are masked; masking throws data away, a locked null does not.</p>
+<p class="cite">Closest prior work: none found in the hysteresis literature; calendar-preserving surrogates are standard in climate (seasonal block bootstrap) but not used with this index.</p>
+<p class="small"><b>Test (pass bar set now).</b> The spread loop counts as real only if the mean HI is below the 5th percentile of the calendar-locked null (one-sided, direction fixed by today's sign) and stays negative with the 44 quarter-end weeks masked.</p></div>
+<div class="sauce"><span class="t">3 · New use on our data · Effort S</span><h5>Loops around leveraged-fund unwinds (Q1.5)</h5>
+<p>The 11-17 ECA found fails spikes one week after big leveraged-fund unwinds. Use the unwind weeks as "storms" (discharge = size of the unwind, cumulated) and draw fails and the spread as responses: does fails come after the unwind inside every episode, or only in March 2020?</p>
+<p><b>Math sketch.</b> Storm on \(Q_t=-\sum_{u\le t}\Delta\mathrm{NS}_u\) over a fixed 8-week window around each bottom-10% unwind week; HI of fails on that loop; a clockwise loop (positive HI) means fails rise after positioning has moved.</p>
+<p><b>Why it matters here.</b> It turns a count ("26% of spikes follow an unwind") into an episode-by-episode picture that shows which episodes carry the link.</p>
+<p class="cite">Closest prior work: 11-17 ECA card (#70) in this lab.</p>
+<p class="small"><b>Test (pass bar set now).</b> Fails loops have HI &gt; 0 in at least two thirds of unwind episodes and the mean HI beats the circular-shift null at p &lt; 0.05; repeated with March 2020 removed.</p></div>
+<p class="small">👍 on the issue means go with the ★ top pick. To choose another, just say so in a comment.</p>
+</div><div class="panel p5" id="questions"><div class="sauce"><span class="t">Q1.1 · Lead/lag</span><p>Inside fails storms the repo spread moves after fails (anticlockwise; mean index −0.17, p = 0.042, Holm 0.126), which a full-sample ARDL or cross-correlation cannot express. DVP volume and leveraged-fund positioning show no before/after pattern. Form PF is quarterly or monthly and has too few points per storm for this method.</p></div>
+<div class="sauce"><span class="t">Q1.2 · Co-movement vs coincidence in stress</span><p>Most of the spread's late jump is calendar: with quarter-end weeks masked, −0.08 (p = 0.35). The March 2020 storm is almost loop-free (+0.01); the late-2024 and year-end storms carry the anticlockwise shape. The calendar-locked null (top pick) settles it.</p></div>
+<div class="sauce"><span class="t">Q1.5 · Positioning vs funding</span><p>No loop between leveraged-fund net short and fails across 11 storms (+0.03, p = 0.75). The New-use avenue looks at the ECA unwind weeks instead.</p></div>
+<p class="small"><b>Still missing:</b> CFTC TFF after 2025-12-30 in the lab copy (public, refresh from CFTC); Form PF publication dates. · <a href="https://github.com/jgridifier/research-lab/blob/main/docs/methods-scout/QUESTIONS.md">All questions</a></p>
+</div></div></div>
+<p class="cite">Full tables, code and data notes: <a href="../2026-11-18.html#hysteresis-index">the 2026-11-18 edition</a> · scripts in <code>runs/2026-11-18/</code> · card sources in <code>cards/hysteresis-index/</code>.</p>
+<div style="margin:1.4rem 0"><a class="btn" href="https://github.com/jgridifier/research-lab/issues/75">Respond on #75</a><p class="howto">👍 go ahead · 👎 drop · or just comment what you think</p></div>
+<script>(function(){var m={"math":1,"applied":2,"robust":3,"sauce":4,"questions":5};var h=location.hash.slice(1);var i=m[h]||(/^t[1-5]$/.test(h)?+h[1]:0);if(i)document.getElementById("t"+i).checked=true;})();</script>
+</div>
+<footer class="pf">Generated by <code>tools/build_cards.py</code> from <code>feedback-state.json</code> and <code>cards/</code>; page contract in <a href="https://github.com/jgridifier/research-lab/blob/main/docs/methods-scout/LAYOUT.md">LAYOUT.md</a>.
+Status chips are baked in at build time and refreshed from the GitHub issue labels on load. Q2 work so far uses SYNTHETIC mock budgets; no private rows are published.</footer>
+<script src="../status.js"></script>
+</body></html>

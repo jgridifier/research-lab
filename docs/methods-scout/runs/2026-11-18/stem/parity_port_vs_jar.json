@@ -1,0 +1,26 @@
+{
+ "Corning_actual_c1": {
+  "max_abs_count_diff": 0.0,
+  "max_abs_expected_diff": 0.0,
+  "max_rel_p_diff_sig": 0.007977509239470493,
+  "sig_agree": true,
+  "n_sig_port": 7,
+  "n_sig_jar": 7
+ },
+ "MS_actual_c1": {
+  "max_abs_count_diff": 0.0,
+  "max_abs_expected_diff": 0.0,
+  "max_rel_p_diff_sig": 0.016067559314660862,
+  "sig_agree": true,
+  "n_sig_port": 5,
+  "n_sig_jar": 5
+ },
+ "Corning_shuffled_c1": {
+  "max_abs_count_diff": 0.0,
+  "max_abs_expected_diff": 0.0,
+  "max_rel_p_diff_sig": 0.0014781440931619372,
+  "sig_agree": true,
+  "n_sig_port": 1,
+  "n_sig_jar": 1
+ }
+}

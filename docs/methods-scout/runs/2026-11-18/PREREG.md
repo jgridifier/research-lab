@@ -1,0 +1,28 @@
+# Pre-registration, scheduled methods scout 2026-11-18 (written 14:45 ET, before any run on our data)
+
+Rotation: Q2 was least recently targeted (last 2026-11-16); Q1 and Q3 both 2026-11-17, Q1's previous run (11-15) is older than Q3's (11-16), so today = Q2 + Q1. TRACE nightly paused; no traceot work.
+
+## Method 1 — STEM (Short Time-series Expression Miner), Q2 (SYNTHETIC mock ZBB only)
+Home field: genomics (Ernst, Nau & Bar-Joseph, Bioinformatics 21 Suppl 1:i159–i168, 2005; Ernst & Bar-Joseph, BMC Bioinformatics 7:191, 2006).
+Home-field reproduction (pass = matches the published statement):
+- H0 sim (paper supplement "Simulated Data"): 5,000 genes × 5 points Uniform[10,100] → 0 significant profiles; with 150 planted genes (three planted profiles, 50 each) → exactly the 3 planted profiles significant, no false positives. Run with our NumPy port and, if Java runs, with stem.jar 1.3.15 batch mode.
+- H1 bio (supplement "robust.html"): G27 data (g27_1/g27_2 from the STEM zip), 50 model profiles, c = 1, 2, 3 → "9 or 10 of 50 significant"; 2,243 genes pass filter; 1,255 / 1,306 / 1,352 genes in significant profiles. Pass = genes passing filter within ±1% and significant-profile count in {9,10} for each c (jar; port parity vs jar on the profile table).
+Our data: Corning_mock (FY2020–25, 6 points) and MorganStanley_mock (FY2021–25, 5 points) `actual_usd`, log scale, balanced programs only; STEM transform v_t − v_0; model profiles m = 50, c = 1 (also 2 as sensitivity); permutation null over all orderings of time points (720 / 120), Bonferroni at 0.05 (STEM default); significant profiles merged at correlation ≥ 0.7. Answer key used only for scoring.
+- S1 (Q2.4 structure): does any significant profile (or cluster) concentrate the planted latent co-move clusters? Score: precision/recall of the best significant profile-cluster for each planted cluster; standard comparator = k-means (k chosen by silhouette, 2..10) on z-scored log series, and "category mix" (segment × function) — same scoring. Pass: STEM best-cluster F1 ≥ k-means best-cluster F1 + 0.05 for at least one planted cluster on each mock.
+- S2 (Q2.3 real vs noise): how many programs land in significant profiles on (a) the real mock, (b) a pure-noise version (programs' log actuals replaced by true level × fresh noise with zero co-movement: time-shuffled per program), (c) noise-free true levels. Pass (method useful): (b) gives 0–1 significant profiles at Bonferroni 0.05.
+- S3 (Q2.2 text vs numbers / open question): among programs whose stated intent is "grow"/"transform", share assigned to significant falling profiles vs planted mismatch (stated_growth_actually_declining) — AUC of "assigned to a significant falling profile" vs per-program OLS slope (standard tool). Pass: STEM-membership flag precision ≥ OLS-slope flag precision at matched count.
+- S4 (Q2.5 seeing it): the STEM profile grid as a one-chart view of ~1,000 series; descriptive (no pass bar).
+Standard baseline for growth per program: OLS log-linear trend with HC1 SE. Q2 is not a forecasting question; no walk-forward here.
+
+## Method 2 — Storm concentration–discharge hysteresis index (hydrology), Q1 (public aggregates)
+Home field: catchment hydrology (Lloyd, Freer, Johnes & Collins, HESS 20:625–632, 2016, HInew; Vaughan et al., WRR 53, 2017, flushing index FI).
+Home-field reproduction: Lloyd 2016 Fig. 1c idealised normalised storm (HILA = 1.25 and 5; HInew = 0.5 at both intervals) and Fig. 1a/b (HIL = 0.66, 4, 0.33, −0.66) reproduced to the printed digits. Data for the 66 River Wylye storms are not public with the paper; we say so. Power study: planted lead/lag loops sampled weekly.
+Data: weekly (Wednesday) 2018-05-09..2026-09-23 lab copies: NY Fed financing fails (Q = "discharge"), OFR DVP − tri-party overnight spread (bp), OFR DVP outstanding, CFTC TFF leveraged-fund net short UST 2Y+5Y+10Y (to 2025-12-30).
+Storm definition (fixed before looking at loops): a fails storm = a local peak of weekly financing fails whose level is ≥ 1.5× its trailing 26-week median and in the top 10% of that ratio; start = minimum fails in the 8 weeks before the peak, end = minimum fails in the 8 weeks after; storms need ≥ 2 points on each limb; overlapping storms merged (higher peak kept).
+Index: per storm, normalise Q and C to [0,1] within storm; interpolate C at Q increments of 5% on rising and falling limbs (Lloyd); HI_j = C_rise − C_fall; HI = mean over j with both limbs; FI = C_norm(at Q peak) − C_norm(start). HI > 0 clockwise = C high early = C leads/peaks before fails; HI < 0 anticlockwise = C lags fails.
+Null: circular shift of C vs Q (shift ≥ 8 weeks), 4,999 surrogates; statistic = mean HI across storms; two-sided. Holm over the three C series (spread, DVP outstanding, lev net short).
+- H1 (Q1 lead/lag in stress): sign and size of mean HI for each C. Finding = Holm p < 0.05.
+- H2 (heterogeneity / disconnect): share of storms with |HI| ≥ 0.2 and direction by storm; descriptive, listed by date.
+- H3 (standard tools): ARDL(p,q) with BIC (p,q ≤ 4) of fails log-level on spread (and reverse), full sample; OLS cross-correlation lags; SARIMAX(1,0,1) with exog = spread. Walk-forward expanding window, train to 2022-06-29, 1-step-ahead weekly forecasts 2022-07-06..2026-09-23: ARDL vs ARDL + limb-asymmetry term (C × causal rising-limb indicator: fails above trailing 8-week median and up on the week). Pass bar for the hysteresis term: walk-forward RMSE reduction ≥ 3% and Diebold–Mariano p < 0.10. Low priority (forecasting); reported either way.
+- H4 (repo internal, daily): storms on daily DVP − tri-party spread spikes (OFR daily, same rule with 20-business-day windows) vs DVP volume as C; descriptive + same null.
+Descriptive only; no trading signals.

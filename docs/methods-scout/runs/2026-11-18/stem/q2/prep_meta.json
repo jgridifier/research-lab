@@ -1,0 +1,25 @@
+{
+ "Corning_mock": {
+  "years": [
+   2020,
+   2021,
+   2022,
+   2023,
+   2024,
+   2025
+  ],
+  "n_programs": 1079,
+  "n_balanced": 778
+ },
+ "MorganStanley_mock": {
+  "years": [
+   2021,
+   2022,
+   2023,
+   2024,
+   2025
+  ],
+  "n_programs": 1840,
+  "n_balanced": 1404
+ }
+}

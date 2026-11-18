@@ -1,0 +1,39 @@
+<h4>Notation</h4>
+<div class="table-wrap"><table>
+<tr><th>Symbol</th><th>Meaning</th><th>Here</th></tr>
+<tr><td>\(Q_t\)</td><td>discharge, the driver that defines a storm</td><td>NY Fed primary-dealer financing fails in Treasuries, weekly ($ bn)</td></tr>
+<tr><td>\(C_t\)</td><td>concentration, the response series</td><td>DVP − tri-party overnight repo spread (bp); DVP outstanding; leveraged-fund net short (UST 2Y+5Y+10Y futures)</td></tr>
+<tr><td>\([s,k,e]\)</td><td>storm start, peak, end</td><td>13 fails storms, e.g. 2020-02-26 / 2020-03-18 / 2020-05-13</td></tr>
+<tr><td>\(\hat Q,\hat C\)</td><td>series rescaled to [0,1] within the storm</td><td>\((Q-\min Q)/(\max Q-\min Q)\) over \([s,e]\)</td></tr>
+<tr><td>\(C^{\uparrow}(q),C^{\downarrow}(q)\)</td><td>\(\hat C\) interpolated at discharge level \(q\) on the rising and falling limb</td><td>\(q=0.05,0.10,\dots,0.95\)</td></tr>
+<tr><td>\(\mathrm{HI},\ \mathrm{FI}\)</td><td>hysteresis index; flushing index</td><td>one value per storm, in [−1, 1]</td></tr>
+</table></div>
+
+<h4>Assumptions</h4>
+<ul>
+<li>Storms can be delineated by a rule fixed in advance (here: a fails peak at least 1.5× its trailing 26-week median and in the top 10% of that ratio; start and end = the lowest fails in the 8 weeks before and after; at least 2 weeks on each limb; overlapping storms merged).</li>
+<li>Within a storm, \(Q\) rises to one peak and falls; the index is read at levels both limbs reach.</li>
+<li>Min–max rescaling makes storms of different sizes comparable (Lloyd's reason for the new index).</li>
+</ul>
+
+<h4>The statistic</h4>
+$$\mathrm{HI}_j=C^{\uparrow}(q_j)-C^{\downarrow}(q_j),\qquad \mathrm{HI}=\frac1{|J|}\sum_{j\in J}\mathrm{HI}_j,\qquad \mathrm{FI}=\hat C_k-\hat C_s,$$
+<p>where \(J\) is the set of levels reached on both limbs. \(\mathrm{HI}>0\) (clockwise in the \(Q\)–\(C\) plane): \(C\) is higher on the way up, so \(C\) peaks first. \(\mathrm{HI}<0\) (anticlockwise): \(C\) is higher on the way down, so it peaks after \(Q\). FI &gt; 0 means \(C\) rises from storm start to the \(Q\) peak.</p>
+
+<h4>Why it works, step by step</h4>
+<div class="step"><b class="n">Step 1 · a lag makes a loop</b>Take \(Q(\theta)=\sin\theta\) and \(C(\theta)=\sin(\theta-\phi)\) for \(\theta\in[0,\pi]\), with \(C\) lagging by \(\phi&gt;0\). At the level \(Q=q\) the rising limb is at \(\theta_1=\arcsin q\) and the falling limb at \(\theta_2=\pi-\theta_1\). Then \(C^{\uparrow}-C^{\downarrow}=\sin(\theta_1-\phi)-\sin(\pi-\theta_1-\phi)=\sin(\theta_1-\phi)-\sin(\theta_1+\phi)=-2\cos\theta_1\sin\phi&lt;0\). A lag gives an anticlockwise loop; a lead (\(\phi&lt;0\)) a clockwise one; the size grows with \(|\phi|\).</div>
+<div class="step"><b class="n">Step 2 · the index averages the loop width</b>Averaging \(-2\cos\theta_1\sin\phi\) over levels gives a single number with the sign of \(-\phi\). Our code returns +0.575 and −0.575 for \(\phi=\mp0.6\) rad (check in <code>hyst.py</code>). Using differences of rescaled values, not ratios, keeps it in [−1, 1] and removes the dependence on the storm's starting level that broke the older ratio index (Lloyd Fig. 1a–b).</div>
+<div class="step"><b class="n">Step 3 · from one storm to many</b>The mean HI over storms is the summary. Storm HIs are not independent of each series' own persistence, so we judge it against circular shifts of \(C\) relative to \(Q\) (4,999 shifts of at least 8 weeks), which keep both series' autocorrelation and the storm dates.</div>
+
+<h4>The null and multiple testing</h4>
+<ul>
+<li>Pre-registered: three response series (spread, DVP outstanding, leveraged-fund net short); two-sided circular-shift p for the mean HI; Holm over the three.</li>
+<li>Post hoc and labelled as such: quarter-end weeks masked; daily repo-only storms (trigger adapted because the spread can be ≤ 0).</li>
+<li>Power check: 13 idealised weekly storms (Gaussian bumps, noise 0.1–0.3): a one-week lag is found in 200 of 200 runs; no lag gives 7% rejections.</li>
+</ul>
+
+<div class="toy"><h5>Toy example (computed by <code>cards/_toys/toys.py</code>)</h5>
+<p>One storm over five weeks: \(Q=(1,3,5,2,1)\), \(C=(2,2,4,6,2)\), so \(C\) peaks one week after \(Q\). Rescaled: \(\hat Q=(0,0.5,1,0.25,0)\), \(\hat C=(0,0,0.5,1,0)\). At \(q=0.25\): rising limb \(\hat C=0\), falling 1.0, \(\mathrm{HI}_j=-1\). At 0.5: 0 vs 0.833, −0.833. At 0.75: 0.25 vs 0.667, −0.417. Mean HI \(=-0.75\): strongly anticlockwise. FI \(=0.5-0=0.5\).</p></div>
+
+<div class="diff"><b>How it differs from the standard tool.</b> Cross-correlation and ARDL fit one linear lag structure to all weeks and treat the way up and the way down alike: a symmetric model cannot produce a loop. The hysteresis index looks only inside episodes and compares the two limbs, so it can say "in stress, \(C\) comes after" even when the full-sample lag correlation is flat or same-week. It gives up the ordinary weeks and has no built-in significance test; the null has to be supplied.</div>
+<p class="cite">Followed: Lloyd, Freer, Johnes &amp; Collins (2016), HESS 20:625–632, §2.3 eq. (5) (HInew) and eqs. (1)–(2) (Lawler HI), read; Fig. 1 values reproduced. Vaughan et al. (2017), WRR 53, §3.4 eqs. (2)–(4) and the flushing index, read in a web-search extract of the journal page. Toy: <code>cards/_toys/toys.py</code>.</p>

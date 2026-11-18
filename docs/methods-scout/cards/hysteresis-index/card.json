@@ -1,0 +1,48 @@
+{
+  "issue": 75,
+  "name": "Storm hysteresis index",
+  "title": "In a fails spike, does repo stress come before or after?",
+  "field": "catchment hydrology (storm concentration–discharge loops)",
+  "what": "Plots one series against another through each stress episode; the loop's direction says which peaked first, scored −1 to 1.",
+  "verdict": "Interesting",
+  "grade": "established, light on inference",
+  "pick_eff": "M",
+  "pick_line": "A calendar-locked null (shift by whole quarters) to test whether any loop survives quarter-end timing.",
+  "data": "Public aggregates (NY Fed fails, OFR repo, CFTC TFF); descriptive only",
+  "one": "In fails spikes the repo spread peaks after fails, but mostly because storms end at quarter-ends.",
+  "picture": {
+    "type": "images",
+    "la": "Usual tool: one symmetric, same-week link (r = −0.43)",
+    "a": "../fig/2026-11-18/hyst_std_xcorr.png",
+    "lb": "Hysteresis: 13 storm loops, mostly anticlockwise",
+    "b": "../fig/2026-11-18/hyst_loops.png"
+  },
+  "findings": [
+    {
+      "h": "The repo spread runs anticlockwise through fails storms: it peaks after fails.",
+      "t": "Across 13 financing-fails storms (peaks 2019-09 to 2026-04), the DVP minus tri-party overnight spread has mean hysteresis index −0.17: 6 storms at or below −0.2, none at or above +0.2. Circular-shift null (4,999): p = 0.042; Holm over the three pre-registered series: 0.126, so not a pre-registered finding. Dropping any one storm leaves the mean between −0.20 and −0.14.",
+      "note": "Usual tools see one symmetric, near-simultaneous link: correlation of log fails with the spread −0.43 in the same week; ARDL picks spread lags 0–2 with mixed signs, and the reverse ARDL picks only the same week.",
+      "chart": {"type": "images", "la": "Usual tool: lagged correlation + ARDL", "a": "../fig/2026-11-18/hyst_std_xcorr.png", "lb": "Index by storm, three series", "b": "../fig/2026-11-18/hyst_hi_bars.png"}
+    },
+    {
+      "h": "Most of the loop is quarter-end timing.",
+      "t": "Post hoc (not pre-registered): masking the 44 quarter-end and year-end weeks and interpolating the spread through them shrinks the mean index to −0.08 (p = 0.35); 4 storms stay at or below −0.2. Several storms end in late December or early October, where the spread jumps for balance-sheet reasons.",
+      "note": "So the loop shape is real in the data, but the reason is largely the calendar, not fails driving repo stress. The top pick tests this properly.",
+      "chart": {"type": "images", "la": "Mean index vs null, three series", "a": "../fig/2026-11-18/hyst_mean_null.png", "lb": "Loops (see year-end storms)", "b": "../fig/2026-11-18/hyst_loops.png"}
+    },
+    {
+      "h": "DVP volume and leveraged-fund positioning show no loop.",
+      "miss": true,
+      "t": "DVP outstanding: mean index −0.14, p = 0.20 (Holm 0.40), though its flushing index is +0.45 (volume rises into the fails peak). Leveraged-fund net short (11 storms to 2025-12): +0.03, p = 0.75. Daily repo-only storms (21 spread spikes, 2018-05 to 2026-06) against DVP volume: −0.06, p = 0.33.",
+      "note": "Power check: 13 idealised weekly storms with a one-week lag are detected every time (200 of 200); with no lag, 7% false alarms. Weekly sampling is not what limits it; the storms differ from each other.",
+      "chart": {"type": "hbars", "title": "Size of mean hysteresis index (sign in label; 0 = no loop)", "max": 0.2, "rows": [["DVP−TP spread", 0.168, "amber", "−0.17 (p 0.042)"], ["DVP outstanding", 0.136, "muted", "−0.14 (p 0.20)"], ["Daily: DVP volume", 0.057, "muted", "−0.06 (p 0.33)"], ["Lev-fund net short", 0.031, "muted", "+0.03 (p 0.75)"]]}
+    },
+    {
+      "h": "A rising-limb term does not improve forecasts.",
+      "miss": true,
+      "t": "Walk-forward 1-week-ahead log fails, 221 weeks (2022-07-06 to 2026-09-23), training from 2018: ARDL RMSE 0.2607; ARDL plus spread × rising-limb term 0.2619 (+0.5%, Diebold–Mariano p = 0.25; pre-set bar −3% and p < 0.10); SARIMAX(1,0,1) with lagged spread 0.2582; random walk 0.2934.",
+      "note": "Low priority (forecasting), reported because it was pre-registered.",
+      "chart": {"type": "images", "la": "Walk-forward RMSE", "a": "../fig/2026-11-18/hyst_walkforward.png", "lb": "Mean index vs null", "b": "../fig/2026-11-18/hyst_mean_null.png"}
+    }
+  ]
+}

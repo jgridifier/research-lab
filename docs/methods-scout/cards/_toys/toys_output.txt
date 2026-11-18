@@ -46,3 +46,11 @@ firm-year meat (pim sandwich) 0.32  firm meat 0.64  ratio 2.0
 K_p 2 r_p 1.0 K_t 2 r_t 0.667 P(no B in a window) = 0.512 Poisson p_prec 0.238 p_trig 0.295
 == STATIS: three 3x3 correlation matrices (years); R3 is the odd one
 RV matrix [[1.0, 0.991, 0.489], [0.991, 1.0, 0.603], [0.489, 0.603, 1.0]] weights [0.354, 0.367, 0.279] RV to compromise [0.944, 0.98, 0.749]
+== STEM: 4 programs x 3 years (log levels), two model profiles (0,1,2) up and (0,-1,0) dip
+assigned [0, 0, 1, 0] counts [3, 1] expected over 6 orderings [1.833, 2.167] binomial p [0.253, 0.956]
+== Hysteresis index (Lloyd 2016): one storm, Q and C at 5 weekly steps; C peaks one week after Q
+Q norm [0.0, 0.5, 1.0, 0.25, 0.0] C norm [0.0, 0.0, 0.5, 1.0, 0.0]
+Q level 0.25 C rising 0.0 C falling 1.0 HI_j -1.0
+Q level 0.5 C rising 0.0 C falling 0.833 HI_j -0.833
+Q level 0.75 C rising 0.25 C falling 0.667 HI_j -0.417
+HI (mean of 3 levels) -0.75  FI = C_norm(peak) - C_norm(start) = 0.5

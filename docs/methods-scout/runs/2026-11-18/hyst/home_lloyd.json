@@ -1,0 +1,20 @@
+{
+ "fig1c_25pct": {
+  "HILA": 5.0,
+  "HInew": 0.5
+ },
+ "fig1c_75pct": {
+  "HILA": 1.25,
+  "HInew": 0.5
+ },
+ "fig1a_HIL": {
+  "(5,1)": 4.0,
+  "(10,6)": 0.6667
+ },
+ "fig1b_HIL": {
+  "(8,6)": 0.3333,
+  "(3,5) anticlockwise": -0.6667
+ },
+ "synthetic_lead": 0.5749,
+ "synthetic_lag": -0.5749
+}

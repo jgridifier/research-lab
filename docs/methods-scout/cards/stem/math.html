@@ -1,0 +1,44 @@
+<h4>Notation</h4>
+<div class="table-wrap"><table>
+<tr><th>Symbol</th><th>Meaning</th><th>Here</th></tr>
+<tr><td>\(x_g=(x_{g0},\dots,x_{g,T-1})\)</td><td>one unit's short series (a gene in the home field)</td><td>one program's log actual spend, FY2020–25 (\(T=6\), Corning-like) or FY2021–25 (\(T=5\), MS-like)</td></tr>
+<tr><td>\(v_g=x_g-x_{g0}\)</td><td>the series moved to start at 0</td><td>log change since the first year</td></tr>
+<tr><td>\(c\)</td><td>maximum step of a model shape between two points</td><td>1 (main), 2 (sensitivity)</td></tr>
+<tr><td>\(\mathcal M\), \(m\)</td><td>the set of candidate shapes and the number kept</td><td>\((2c+1)^{T-1}\) candidates (243 or 81 at \(c=1\)); \(m=50\) kept</td></tr>
+<tr><td>\(\rho(a,b)\)</td><td>Pearson correlation across the \(T\) points</td><td>similarity of a program's path to a shape</td></tr>
+<tr><td>\(n_j,\ e_j\)</td><td>units assigned to shape \(j\); expected number if time points were exchangeable</td><td>e.g. 69 vs 14 for the top Corning-like shape</td></tr>
+<tr><td>\(N\)</td><td>number of units</td><td>778 and 1,404 programs with all years present</td></tr>
+</table></div>
+
+<h4>Assumptions</h4>
+<ul>
+<li>Few time points, many units (the method enumerates shapes; it is meant for \(T\le 8\)).</li>
+<li>Only the <i>shape</i> matters: assignment by correlation ignores the size of a move, so a nearly flat noisy program still gets a shape.</li>
+<li>Under "no real shape", the time points of each unit are exchangeable: any reordering of a program's years is equally likely. A shared trend (inflation, raking to totals) breaks this and will make trending shapes significant.</li>
+<li>Units are independent for the binomial count test.</li>
+</ul>
+
+<h4>The estimator and the statistic</h4>
+<p>Model shapes start at 0 and move by an integer step in \(\{-c,\dots,c\}\) at each time point. A greedy max–min rule keeps \(m\) shapes that are as different as possible (the exact max–min set is NP-hard, proved in the paper's supplement). Each unit goes to its most correlated shape, ties split equally:</p>
+$$j^*(g)=\arg\max_{j\in\mathcal M}\rho(v_g,\,p_j),\qquad n_j=\sum_g \frac{\mathbf 1[j\in J^*(g)]}{|J^*(g)|}.$$
+<p>The expected count averages the same assignment over all reorderings \(\pi\) of the time points (\(T!\) of them: 720 or 120), each re-anchored to start at 0:</p>
+$$e_j=\frac1{T!}\sum_{\pi}\sum_g \frac{\mathbf 1[j\in J^*(g;\pi)]}{|J^*(g;\pi)|},\qquad p_j=P\big(\mathrm{Bin}(N,\,e_j/N)\ge n_j\big).$$
+
+<h4>Why it works, step by step</h4>
+<div class="step"><b class="n">Step 1 · shapes are chosen before seeing data</b>Because \(\mathcal M\) depends only on \(T\) and \(c\), the 50 shapes are the same for the real data, the shuffled data and the noise-free data (we checked: identical profile tables). So counts are comparable across runs and the test is not "the cluster centre was fitted to the data, then found significant".</div>
+<div class="step"><b class="n">Step 2 · what a shuffle does to one unit</b>Reorder unit \(g\)'s values by \(\pi\) and re-anchor: \(v_g^{\pi}=x_{g\pi}-x_{g\pi(0)}\). Correlation is unchanged by adding a constant, so \(\rho(v_g^\pi,p_j)=\rho(x_{g\pi},p_j)\): the anchoring step does not matter for assignment, only the order does. Averaging over all \(\pi\) gives each unit's chance of landing on shape \(j\) when its own values are kept but their time order carries no information.</div>
+<div class="step"><b class="n">Step 3 · from per-unit chances to a count test</b>If units are independent and each lands on \(j\) with probability \(q_{gj}\), then \(n_j\) is Poisson-binomial with mean \(\sum_g q_{gj}=e_j\). STEM approximates it by \(\mathrm{Bin}(N,e_j/N)\), which has the same mean and a variance \(\ge\) the Poisson-binomial's, so the tail is, if anything, conservative. Bonferroni over the \(m\) shapes gives the 5% familywise level used here (\(p_j<0.001\)).</div>
+<div class="step"><b class="n">Step 4 · merging</b>Significant shapes whose shapes correlate at \(\ge 0.7\) are grouped greedily into clusters (same colour in the grid), the cluster built around the shape that gathers most units.</div>
+
+<h4>The null and multiple testing</h4>
+<ul>
+<li>Null: time points exchangeable within each unit (all \(T!\) orderings, including the first point, the STEM default).</li>
+<li>Bonferroni over the 50 shapes (STEM default; FDR is an option we did not use).</li>
+<li>Calibration seen: in 20 pure-noise simulations of the paper's design, 2 runs had one false shape (10% familywise); on our shuffled mocks, 1 and 0 shapes.</li>
+</ul>
+
+<div class="toy"><h5>Toy example (computed by <code>cards/_toys/toys.py</code>)</h5>
+<p>Four programs over three years (log levels): (10, 10.2, 10.5), (8, 8.3, 8.5), (9, 8.7, 9.1), (7, 7.4, 7.2). Two shapes: up (0, 1, 2) and dip (0, −1, 0). Programs 1, 2 and 4 correlate best with "up", program 3 with "dip": counts (3, 1). Averaging the assignment over the 6 orderings of the three years gives expected counts (1.833, 2.167). Binomial tail \(P(\mathrm{Bin}(4,1.833/4)\ge 3)=0.253\) for "up" and 0.956 for "dip". With four programs nothing is significant; with 778 the same arithmetic gives 69 vs 14 for the top shape.</p></div>
+
+<div class="diff"><b>How it differs from the standard tool.</b> K-means (or hierarchical clustering) fits centres to the data and always returns \(k\) clusters; it is blind to time order (shuffling the columns of every unit the same way changes nothing), and it has no notion of "more units than chance". STEM fixes the shapes in advance, uses time order through the shuffle null, and reports only shapes that are over-full. The price: it ignores move size, and with few, noisy points a group must be large to show (finding 3).</div>
+<p class="cite">Followed: Ernst, Nau &amp; Bar-Joseph (2005), Bioinformatics 21 Suppl. 1:i159–i168 — the paper itself was not read (journal page timed out); method description from the STEM manual v1.3.15 §1.1 and the supporting PDF (Lemma 0.1, Lemma 2.1 read), and the STEM source code (<code>STEM_DataSet.java</code>: <code>tallyassignments</code>, <code>computeaveragetally</code>, <code>computePvaluesAssignments</code>, <code>compactprofiles2</code>, read). Ernst &amp; Bar-Joseph (2006), BMC Bioinformatics 7:191 (background, implementation and results sections read). Section and equation numbers in the 2005 paper not checked. Toy: <code>cards/_toys/toys.py</code>.</p>

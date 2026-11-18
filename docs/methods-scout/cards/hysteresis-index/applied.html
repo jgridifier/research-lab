@@ -1,0 +1,52 @@
+<h4>Who plays what</h4>
+<div class="table-wrap"><table>
+<tr><th>Home field (hydrology)</th><th>Our data (Q1)</th></tr>
+<tr><td>Storm hydrograph (discharge)</td><td>A financing-fails spike (weekly NY Fed financing fails in Treasuries)</td></tr>
+<tr><td>Solute or sediment concentration</td><td>DVP − tri-party overnight spread; DVP outstanding; leveraged-fund net short</td></tr>
+<tr><td>Clockwise loop: source near the stream, flushed early</td><td>The series moves first (leads fails within the episode)</td></tr>
+<tr><td>Anticlockwise loop: distant source, arrives late</td><td>The series moves after fails peak (lags)</td></tr>
+<tr><td>Flushing index: concentration rises with flow</td><td>The series rises from episode start into the fails peak</td></tr>
+</table></div>
+
+<h4>Inputs and preprocessing</h4>
+<ul>
+<li>Lab copies of public files (built 11-14/11-17): NY Fed financing fails (weekly, Wednesday), OFR DVP overnight and tri-party overnight rates and DVP outstanding (daily → weekly), CFTC TFF leveraged-fund net short in UST 2Y + 5Y + 10Y futures (to 2025-12-30; later weeks missing in the lab copy).</li>
+<li>Window 2018-05-09..2026-09-23, 436 weeks; single-week gaps interpolated.</li>
+<li>Storm rule fixed before any loop was computed (see The math): 17 qualifying peaks → 13 storms after the limb and merge rules. The 2019 storm is a merge of overlapping peaks and runs from 2019-01-30 to 2019-10-16.</li>
+<li>Daily leg: OFR final-vintage daily series 2018-05-08..2026-06-30 (1,947 days).</li>
+</ul>
+
+<h4>What we ran</h4>
+<ol>
+<li>Home field: Lloyd et al. Fig. 1 (ratio index 0.66, 4, 0.33, −0.66; new index 0.5 at both levels with ratio 1.25 and 5) reproduced exactly; sine loops signed correctly.</li>
+<li>Per storm: HI at 5% discharge steps and FI; mean over storms vs 4,999 circular shifts; Holm over 3 series.</li>
+<li>Leave-one-storm-out; post-hoc quarter-end masking; daily repo-only storms; power simulation.</li>
+<li>Standard tools on the same weeks: lagged correlations (levels and changes), ARDL by BIC both ways, SARIMAX(1,0,1) with lagged spread; walk-forward 1-week-ahead from 2022-07-06 with and without the pre-registered rising-limb term.</li>
+</ol>
+
+<div class="callouts"><h5>How to read the main chart (the loop grid)</h5>
+<ol>
+<li>Each panel is one fails storm. Horizontal axis: fails, rescaled to 0–1 within the storm. Vertical: the DVP − tri-party spread, rescaled the same way.</li>
+<li>Orange points are weeks while fails rise, teal while they fall; arrows show time order.</li>
+<li>If the teal path sits above the orange one, the spread was higher after the fails peak than before: an anticlockwise loop, negative HI (red titles: HI ≤ −0.2).</li>
+<li>The pattern to see: many loops close with a late jump in the spread on the falling side; several of those jumps are in late December or around quarter-ends.</li>
+</ol></div>
+
+<div class="plain"><h5>What it means for a decision-maker</h5>
+<p>When Treasury settlement fails spike, the gap between the two main repo rates tends to widen after the fails peak rather than before, so in these episodes the repo-rate signal does not give early warning of fails. But most of that pattern comes from fails episodes happening to end near quarter- and year-ends, when repo rates jump anyway. Funding volumes and hedge-fund futures positions show no consistent before/after pattern. Public aggregates; descriptive; not a trading signal.</p></div>
+
+<h4>Where it breaks (seen in our runs)</h4>
+<ul>
+<li><b>Calendar confound.</b> Quarter-end weeks carry most of the loop (−0.17 → −0.08 when masked).</li>
+<li><b>Few storms.</b> 13 weekly episodes; one long merged 2019 storm with many wiggles.</li>
+<li><b>Storm rule matters.</b> Hydrology papers flag event delineation as a main source of disagreement; we fixed ours in advance but did not test alternatives.</li>
+<li><b>Daily trigger had to change.</b> The pre-registered 1.5× ratio rule is undefined for a spread that can be zero or negative; we used excess over the trailing median (labelled).</li>
+<li><b>Positioning gap.</b> TFF in the lab copy stops at 2025-12-30, so the last two storms have no positioning loop.</li>
+</ul>
+
+<h4>What we'd do next</h4>
+<ul>
+<li>A calendar-locked null (top pick).</li>
+<li>Loops around the 11-17 ECA unwind weeks (New-use avenue).</li>
+<li>Refresh TFF from CFTC to cover the 2025-12 and 2026-04 storms.</li>
+</ul>

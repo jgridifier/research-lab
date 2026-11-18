@@ -162,3 +162,32 @@ w, U = np.linalg.eigh(C); u = U[:, -1] * np.sign(U[:, -1].sum()); alpha = u / u.
 Sp = sum(a * s for a, s in zip(alpha, S))
 print("RV matrix", C.round(3).tolist(), "weights", alpha.round(3).tolist(),
       "RV to compromise", [round(float(rvf(s, Sp)), 3) for s in S])
+
+print("== STEM: 4 programs x 3 years (log levels), two model profiles (0,1,2) up and (0,-1,0) dip")
+X = np.array([[10.0, 10.2, 10.5], [8.0, 8.3, 8.5], [9.0, 8.7, 9.1], [7.0, 7.4, 7.2]])
+P = np.array([[0, 1, 2], [0, -1, 0]], float)
+def assign(X):
+    V = X - X[:, [0]]
+    return [int(np.argmax([np.corrcoef(v, p)[0, 1] for p in P])) for v in V]
+lab = assign(X); cnt = np.bincount(lab, minlength=2)
+import itertools
+perms = list(itertools.permutations(range(3)))
+exp = sum(np.bincount(assign(X[:, list(q)]), minlength=2) for q in perms) / len(perms)
+btail = lambda x, n, p: sum(math.comb(n, k) * p ** k * (1 - p) ** (n - k) for k in range(x, n + 1))
+pv = [btail(int(cnt[i]), 4, exp[i] / 4) for i in range(2)]
+print("assigned", lab, "counts", cnt.tolist(), "expected over 6 orderings", [round(float(e), 3) for e in exp],
+      "binomial p", [round(float(v), 3) for v in pv])
+
+print("== Hysteresis index (Lloyd 2016): one storm, Q and C at 5 weekly steps; C peaks one week after Q")
+q = np.array([1.0, 3.0, 5.0, 2.0, 1.0]); c = np.array([2.0, 2.0, 4.0, 6.0, 2.0])
+qn = (q - q.min()) / np.ptp(q); cn = (c - c.min()) / np.ptp(c)
+print("Q norm", qn.round(3).tolist(), "C norm", cn.round(3).tolist())
+def limb(qs, cs, lev):
+    for i in range(len(qs) - 1):
+        a, b = qs[i], qs[i + 1]
+        if (a - lev) * (b - lev) <= 0 and a != b: return cs[i] + (cs[i + 1] - cs[i]) * (lev - a) / (b - a)
+k = int(np.argmax(q)); vals = []
+for lev in [0.25, 0.5, 0.75]:
+    r = limb(qn[:k + 1], cn[:k + 1], lev); f = limb(qn[k:], cn[k:], lev); vals.append(r - f)
+    print("Q level", lev, "C rising", round(r, 3), "C falling", round(f, 3), "HI_j", round(r - f, 3))
+print("HI (mean of 3 levels)", round(float(np.mean(vals)), 3), " FI = C_norm(peak) - C_norm(start) =", round(float(cn[k] - cn[0]), 3))

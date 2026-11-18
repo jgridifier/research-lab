@@ -1,7 +1,7 @@
 {
   "version": 1,
   "repo": "jgridifier/research-lab",
-  "updated_at": "2026-11-17T19:34:38Z",
+  "updated_at": "2026-11-18T19:40:07Z",
   "issues": {
     "46": {
       "issue": 46,
@@ -493,6 +493,46 @@
         "pick:math"
       ],
       "last_processed_at": "2026-11-17T19:34:38Z",
+      "notes": "",
+      "history": []
+    },
+    "74": {
+      "issue": 74,
+      "slug": "stem",
+      "method": "STEM short time-series clustering",
+      "scout_date": "2026-11-18",
+      "page": "2026-11-18.html",
+      "page_anchor": "#stem",
+      "question": "Q2",
+      "status": "proposed",
+      "top_pick": "new-use",
+      "labels": [
+        "scout",
+        "scout:Q2",
+        "status:proposed",
+        "pick:new-use"
+      ],
+      "last_processed_at": "2026-11-18T19:39:53Z",
+      "notes": "",
+      "history": []
+    },
+    "75": {
+      "issue": 75,
+      "slug": "hysteresis-index",
+      "method": "Storm hysteresis index",
+      "scout_date": "2026-11-18",
+      "page": "2026-11-18.html",
+      "page_anchor": "#hysteresis-index",
+      "question": "Q1",
+      "status": "proposed",
+      "top_pick": "math",
+      "labels": [
+        "scout",
+        "scout:Q1",
+        "status:proposed",
+        "pick:math"
+      ],
+      "last_processed_at": "2026-11-18T19:40:06Z",
       "notes": "",
       "history": []
     }
