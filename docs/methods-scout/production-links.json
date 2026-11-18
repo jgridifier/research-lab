@@ -1,0 +1,20 @@
+{
+  "version": 1,
+  "methods": {
+    "ecotraj": {
+      "repo": "https://github.com/jgridifier/ecotraj-py",
+      "docs": "https://jgridifier.github.io/ecotraj-py/",
+      "package_note": "PyPI: not yet released"
+    },
+    "lovell-proportionality": {
+      "repo_note": "repo not yet created (proprlite ticket drafted)",
+      "source": "https://github.com/jgridifier/research-lab/tree/main/docs/methods-scout/runs/2026-11-17/lovell",
+      "package_note": "not on PyPI yet"
+    },
+    "pim": {
+      "repo_note": "repo not yet created (pimfast-rs ticket drafted)",
+      "source": "https://github.com/jgridifier/research-lab/tree/main/docs/methods-scout/runs/2026-11-17/pim2",
+      "package_note": "not on PyPI or crates.io yet"
+    }
+  }
+}
