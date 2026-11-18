@@ -1,0 +1,19 @@
+<div class="sauce"><span class="t">1 · Engineering · Effort S</span><h5>A storm-loop module for any pair of series</h5>
+<p>One small module: storm finder (pre-registered rule as parameters), Lloyd HI, flushing index, loop area, circular-shift and block nulls, weekly or daily, with the loop-grid chart. Today's code in <code>runs/2026-11-18/hyst/</code> is the start.</p>
+<p><b>Math sketch.</b> For each storm precompute the limb crossing points of \(\hat Q\) once; a shift of \(C\) only changes which \(C\) values are read, so each surrogate is a gather of \(C\) at fixed (index, weight) pairs: \(C^{\uparrow}(q_j)=(1-w_j)C_{i_j}+w_jC_{i_j+1}\), then rescale per storm.</p>
+<p><b>Why it matters here.</b> Q1 has a dozen candidate series (venues, tenors, fail types, positioning by contract) and two frequencies; loops are the most readable view of "who moves first in stress".</p>
+<p class="cite">Closest prior work: loadflux (R; SHI, AHI) and the Mau reproducibility R script (Lloyd HI, loop area, FI); neither has a null.</p>
+<p class="small"><b>Test (pass bar set now).</b> Lloyd Fig. 1 values exact; sine loops ±0.575 at ∓0.6 rad; 13 storms × 4,999 shifts in under 2 s on the box (today's loop: about 19 s).</p></div>
+<div class="sauce top"><span class="t">2 · Math · Effort M · ★ Top pick</span><h5>A calendar-locked null (Q1.2)</h5>
+<p>Shift the response series only by whole quarters (13 weeks), so quarter-end weeks in \(C\) always land on quarter-end weeks in time, then ask whether the loop is still more anticlockwise than chance. This separates "spread lags fails" from "storms end at quarter-ends".</p>
+<p><b>Math sketch.</b> Let \(S=\{13k:\ k=1,\dots,\lfloor L/13\rfloor-1\}\). Under \(H_0\): \(C\) and \(Q\) are unrelated beyond a shared quarterly calendar, so \(\overline{\mathrm{HI}}(C_{\cdot+s})\), \(s\in S\), are exchangeable with the observed one. With \(L=436\) weeks there are 32 shifts, so the smallest attainable p is \(1/33\approx 0.03\) (computed); add within-quarter block permutation of non-quarter-end weeks to get more resolution.</p>
+<p><b>Why it matters here.</b> Today's loop drops from −0.17 to −0.08 when quarter-end weeks are masked; masking throws data away, a locked null does not.</p>
+<p class="cite">Closest prior work: none found in the hysteresis literature; calendar-preserving surrogates are standard in climate (seasonal block bootstrap) but not used with this index.</p>
+<p class="small"><b>Test (pass bar set now).</b> The spread loop counts as real only if the mean HI is below the 5th percentile of the calendar-locked null (one-sided, direction fixed by today's sign) and stays negative with the 44 quarter-end weeks masked.</p></div>
+<div class="sauce"><span class="t">3 · New use on our data · Effort S</span><h5>Loops around leveraged-fund unwinds (Q1.5)</h5>
+<p>The 11-17 ECA found fails spikes one week after big leveraged-fund unwinds. Use the unwind weeks as "storms" (discharge = size of the unwind, cumulated) and draw fails and the spread as responses: does fails come after the unwind inside every episode, or only in March 2020?</p>
+<p><b>Math sketch.</b> Storm on \(Q_t=-\sum_{u\le t}\Delta\mathrm{NS}_u\) over a fixed 8-week window around each bottom-10% unwind week; HI of fails on that loop; a clockwise loop (positive HI) means fails rise after positioning has moved.</p>
+<p><b>Why it matters here.</b> It turns a count ("26% of spikes follow an unwind") into an episode-by-episode picture that shows which episodes carry the link.</p>
+<p class="cite">Closest prior work: 11-17 ECA card (#70) in this lab.</p>
+<p class="small"><b>Test (pass bar set now).</b> Fails loops have HI &gt; 0 in at least two thirds of unwind episodes and the mean HI beats the circular-shift null at p &lt; 0.05; repeated with March 2020 removed.</p></div>
+<p class="small">👍 on the issue means go with the ★ top pick. To choose another, just say so in a comment.</p>

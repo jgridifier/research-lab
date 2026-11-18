@@ -1,6 +1,6 @@
 # Secret sauce plans
 
-*Edition 1 · 2026-11-12 · America/New_York (EST), four already-scouted methods. Edition 2 · same day, ad hoc exotic scout: codyn and Lovell proportionality, grounded in [2026-11-12-adhoc](2026-11-12-adhoc.html). Edition 3 · scheduled 2026-11-12 scout (catch-up published 2026-11-13): ecotraj and lphom, grounded in [2026-11-12](2026-11-12.html). Edition 4 · scheduled 2026-11-13 scout: ebnm and DenseLines, aimed at Q2, grounded in [2026-11-13](2026-11-13.html) (SYNTHETIC mock data). Edition 5 · scheduled 2026-11-14 scout (interrupted, completed 2026-11-15): CRQA and IDR, aimed at Q1 and Q3, grounded in [2026-11-14](2026-11-14.html) (public data). Later editions append the 11-15, 11-16 and 11-17 scouts; edition 8 · 2026-11-17: event coincidence analysis (Q1) and STATIS (Q3), grounded in [2026-11-17](2026-11-17.html) (public data). Plans only.*
+*Edition 1 · 2026-11-12 · America/New_York (EST), four already-scouted methods. Edition 2 · same day, ad hoc exotic scout: codyn and Lovell proportionality, grounded in [2026-11-12-adhoc](2026-11-12-adhoc.html). Edition 3 · scheduled 2026-11-12 scout (catch-up published 2026-11-13): ecotraj and lphom, grounded in [2026-11-12](2026-11-12.html). Edition 4 · scheduled 2026-11-13 scout: ebnm and DenseLines, aimed at Q2, grounded in [2026-11-13](2026-11-13.html) (SYNTHETIC mock data). Edition 5 · scheduled 2026-11-14 scout (interrupted, completed 2026-11-15): CRQA and IDR, aimed at Q1 and Q3, grounded in [2026-11-14](2026-11-14.html) (public data). Later editions append the 11-15, 11-16 and 11-17 scouts; edition 8 · 2026-11-17: event coincidence analysis (Q1) and STATIS (Q3), grounded in [2026-11-17](2026-11-17.html) (public data); edition 9 · 2026-11-18: STEM (Q2, SYNTHETIC mocks) and the storm hysteresis index (Q1, public data), grounded in [2026-11-18](2026-11-18.html). Plans only.*
 
 This is a running file. Each daily methods scout should append plans for that day's methods in the same form. Edition 1 covers the four methods already scouted: changeforest and partykit ([2026-11-10](2026-11-10.html); [RESULTS](https://github.com/jgridifier/analysis-skills/blob/main/methods/changeforest/RESULTS.md) and [RESULTS](https://github.com/jgridifier/analysis-skills/blob/main/methods/partykit/RESULTS.md)) and MARSS and InspectChangepoint ([2026-11-11](2026-11-11.html), aimed at [Q1](QUESTIONS.md)). No new fits were run. Every number below is from those pages, their run JSON, or the RESULTS files. Nothing is being built, nothing is promoted, and no `APPROVAL.md` is written.
 
@@ -36,6 +36,10 @@ For each avenue: what it is in plain math, why it matters on our data (tied to a
 | IDR (isodistrreg) | **Math** | A monotone stress index (distributional single index) so several stress covariates can be combined without the weak 2-D partial order that lost to OLS. |
 | ecofolio (mean-variance PE) | **Math** | A noise-corrected Taylor's law: budget–actual disagreement estimates observation noise, which inflated the average-CV portfolio effect from 1.54 to 3.36 on the Corning mock. |
 | pim (probabilistic index models) | **New use** | Text versus numbers as a within-subsegment probabilistic index (Q2.2), against the 11-13 benchmark AUC of 0.78. |
+| Event coincidence analysis (ECA) | **New use** | Conditional ECA: does "fails spike one week after an unwind" survive with VIX and DVP-spread spike weeks held out? |
+| STATIS multi-table analysis | **Math** | A reliability-corrected RV so single odd years can be tested, unbiased within ±0.01 in simulation at our design. |
+| STEM short time-series clustering | **New use** | Text enrichment per real shape (STEM's GO-enrichment analogue) on the Q2 mocks: which description terms sit in which real shape. |
+| Storm hysteresis index | **Math** | A calendar-locked null (shift by whole quarters) to test whether the anticlockwise spread loop survives quarter-end timing. |
 
 ---
 
@@ -676,6 +680,54 @@ Partial triadic paths on the Q2 mock budgets (Q2.2, Q2.4): fiscal years as table
 
 ---
 
+## STEM short time-series clustering
+
+Ernst, J., Nau, G. J. & Bar-Joseph, Z. (2005), "Clustering short time series gene expression data", *Bioinformatics* 21 Suppl. 1:i159–i168, doi:10.1093/bioinformatics/bti1022; Ernst, J. & Bar-Joseph, Z. (2006), "STEM: a tool for the analysis of short time series gene expression data", *BMC Bioinformatics* 7:191, doi:10.1186/1471-2105-7-191. STEM 1.3.15 (Java, GPL-3 per its home page). Scouted on the [2026-11-18 scheduled edition](2026-11-18.html#stem), aimed at [Q2](QUESTIONS.md#q2) (Q2.3, Q2.4, Q2.5; Q2.2 miss), SYNTHETIC mock data. Novelty: exotic-transfer (genomics). Home-field verdict: well established. Status: proposed (interesting). Issue [#74](https://github.com/jgridifier/research-lab/issues/74). Research card: [m/stem.html](m/stem.html). Plans only.
+
+**Found via.** Web search 2026-11-18 14:26 ET ("STEM Short Time-series Expression Miner Ernst Bar-Joseph download jar sample data") → [ernstlab.github.io/STEM](https://ernstlab.github.io/STEM/), [ISMB 2005 supplement](https://ernstlab.github.io/STEM/ISMB2005_Supplement/). Field: genomics.
+
+**What our run showed.** 7 and 5 of 50 shapes real on the Corning-like and MS-like mocks; 1 and 0 with years shuffled (k-means still returns 10 and 5 clusters). Budget as a same-year replicate (exploratory): share of programs on their noise-free shape 0.31 → 0.47 and 0.75 → 0.82. Planted groups: k-means with the same k matches or beats STEM on 5 of 7; text-vs-numbers flag loses to an OLS slope. Paper simulation reproduced in 20 of 20 seeds; G27: 10 significant shapes (printed 9 or 10), filter count 2,137 vs 2,243 printed. NumPy port identical to the jar on counts and expected counts.
+
+### 1 · Engineering (effort S)
+
+A display-free STEM core. With unit and shape vectors centred and scaled once, \(\rho(v_g^\pi,p_j)=\tilde v_{g\pi}^\top\tilde p_j\): one \((N\times T)(T\times m)\) product per ordering; \(T!\le720\) products for 10,000 programs is about \(2\times10^9\) multiply-adds (computed). stem.jar is the oracle (it needs an X display even in batch mode). Closest prior work: STEM itself; our port in `runs/2026-11-18/stem/stem_port.py`. **Test:** counts, expected counts and significant shapes identical to the jar on G27 and both mocks; 10,000 × 6 with all 720 orderings in under 5 s.
+
+### 2 · Math (effort M)
+
+Replicate-aware assignment: \(a_{gt}=\mu_{gt}+\varepsilon_{gt}\), \(b_{gt}=\mu_{gt}+\beta+\eta_{gt}\); under shape \(j\), \(\mu_g-\mu_{g0}=\lambda_g p_j\), \(\lambda_g>0\) integrated out to give \(P(j\mid a_g,b_g)\); counts and expected counts use the posterior, with both readings shuffled by the same ordering. Closest prior work: STEM's repeat handling (median of repeats, repeat-correlation filter). No posterior-assignment version found. **Test:** share on the true shape ≥ 0.55 (Corning-like; 0.47 now) and ≥ 0.85 (MS-like; 0.82 now) with ≤ 1 real shape on shuffled data.
+
+### 3 · New use on our data (top pick, effort S)
+
+Text enrichment per real shape (Q2.2, Q2.4): hypergeometric \(P(X_{jk}\ge x)\) for term \(k\) in shape \(j\), Bonferroni or STEM's label-shuffling correction. Closest prior work: STEM's GO enrichment (actual-size and expected-size). **Test:** for every planted group whose text reveals it, its archetype term enriched in at least one real shape at Bonferroni p < 0.01 on both mocks; on shuffled copies at most one term–shape pair passes Bonferroni 5%.
+
+**Why New use is the top pick.** It joins the text and numbers halves of Q2 at the level a reviewer reads (shapes), reuses STEM's main home-field use, and is a day of work.
+
+---
+
+## Storm hysteresis index
+
+Lloyd, C. E. M., Freer, J. E., Johnes, P. J. & Collins, A. L. (2016), "Technical Note: Testing an improved index for analysing storm discharge–concentration hysteresis", *Hydrology and Earth System Sciences* 20:625–632, doi:10.5194/hess-20-625-2016; Vaughan, M. C. H. et al. (2017), *Water Resources Research* 53, doi:10.1002/2017WR020491. Scouted on the [2026-11-18 scheduled edition](2026-11-18.html#hysteresis-index), aimed at [Q1](QUESTIONS.md#q1) (Q1.1, Q1.2, Q1.5), public aggregates. Novelty: exotic-transfer (catchment hydrology). Home-field verdict: established, light on inference. Status: proposed (interesting). Issue [#75](https://github.com/jgridifier/research-lab/issues/75). Research card: [m/hysteresis-index.html](m/hysteresis-index.html). Plans only.
+
+**Found via.** Web search 2026-11-18 14:26 ET ("concentration discharge hysteresis index Lloyd 2016 HESS Zuecco 2016 hysteresis index comparison Vaughan 2017 R package") → [Lloyd et al. 2016 PDF](https://hess.copernicus.org/articles/20/625/2016/hess-20-625-2016.pdf), [Vaughan et al. 2017](https://agupubs.onlinelibrary.wiley.com/doi/full/10.1002/2017WR020491). Field: catchment hydrology.
+
+**What our run showed.** 13 fails storms 2019–2026: DVP − tri-party spread mean HI −0.17 (6 of 13 ≤ −0.2, none ≥ +0.2; p = 0.042, Holm 0.126); post hoc, quarter-end weeks masked: −0.08 (p = 0.35). DVP volume, leveraged-fund positioning and the daily repo leg: no loop. Walk-forward: limb term +0.5% RMSE vs ARDL (miss). Lloyd Fig. 1 values reproduced exactly.
+
+### 1 · Engineering (effort S)
+
+A storm-loop module: storm finder, Lloyd HI, FI, loop area, circular-shift and block nulls, weekly or daily. Limb crossings of \(\hat Q\) are fixed per storm, so each surrogate is a gather \(C^{\uparrow}(q_j)=(1-w_j)C_{i_j}+w_jC_{i_j+1}\). Closest prior work: loadflux (R; SHI, AHI); the Tabo–Jacobs–Breuer reproducibility script (Lloyd HI, loop area, FI); neither has a null. **Test:** Lloyd Fig. 1 exact; sine loops ±0.575; 13 storms × 4,999 shifts in under 2 s (today about 19 s).
+
+### 2 · Math (top pick, effort M)
+
+A calendar-locked null: shift \(C\) only by whole quarters, \(s\in\{13k\}\), so quarter-end weeks stay aligned; 32 shifts on 436 weeks (smallest p ≈ 0.03, computed), refined by within-quarter block permutation of non-quarter-end weeks. Closest prior work: seasonal block bootstraps in climate; none found with this index. **Test:** the spread loop counts as real only if the mean HI is below the 5th percentile of the calendar-locked null (one-sided, today's sign) and stays negative with the 44 quarter-end weeks masked.
+
+### 3 · New use on our data (effort S)
+
+Loops around leveraged-fund unwinds (Q1.5): storms on cumulative unwind size around each bottom-10% week from the 11-17 ECA run; fails as the response; clockwise (positive HI) = fails rise after positioning moves. Closest prior work: the 11-17 ECA card (#70). **Test:** HI > 0 in at least two thirds of unwind episodes, mean HI beating the circular-shift null at p < 0.05, repeated without March 2020.
+
+**Why Math is the top pick.** Today's only near-result (p = 0.042) mostly disappears when quarter-ends are masked; a locked null settles whether any storm-time asymmetry remains without throwing data away.
+
+---
+
 ## Citations used (verified)
 
 - Donges, J. F., Schleussner, C.-F., Siegmund, J. F. & Donner, R. V. (2016). Event coincidence analysis for quantifying statistical interrelationships between event time series. *European Physical Journal Special Topics*, 225(3):471–487.
@@ -748,3 +800,7 @@ Plans only. Nothing here is being built. Edition 3’s plans are grounded in the
 - Henzi, A., Kleger, G.-R. & Ziegel, J. F. (2023). Distributional (single) index models. *Journal of the American Statistical Association*, 118(541):489–503.
 - Balabdaoui, F., Henzi, A. & Looser, L. Estimation and convergence rates in the distributional single index model. arXiv:2310.13973.
 - Walz, E.-M., Henzi, A., Ziegel, J. & Gneiting, T. (2024). Easy Uncertainty Quantification (EasyUQ): Generating Predictive Distributions from Single-Valued Model Output. *SIAM Review*, 66(1):91–122.
+- Ernst, J., Nau, G. J. & Bar-Joseph, Z. (2005). Clustering short time series gene expression data. *Bioinformatics*, 21(Suppl. 1):i159–i168.
+- Ernst, J. & Bar-Joseph, Z. (2006). STEM: a tool for the analysis of short time series gene expression data. *BMC Bioinformatics*, 7:191.
+- Lloyd, C. E. M., Freer, J. E., Johnes, P. J. & Collins, A. L. (2016). Technical Note: Testing an improved index for analysing storm discharge–concentration hysteresis. *Hydrology and Earth System Sciences*, 20:625–632.
+- Vaughan, M. C. H. et al. (2017). High-frequency dissolved organic carbon and nitrate measurements reveal differences in storm hysteresis and loading in relation to land cover and seasonality. *Water Resources Research*, 53. doi:10.1002/2017WR020491.

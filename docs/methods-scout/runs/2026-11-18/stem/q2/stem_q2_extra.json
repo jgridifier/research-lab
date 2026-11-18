@@ -1,0 +1,72 @@
+{
+ "Corning_mock": {
+  "kmeans_actual": {
+   "k": 2,
+   "silhouette": 0.244
+  },
+  "kmeans_shuffled": {
+   "k": 10,
+   "silhouette": 0.184
+  },
+  "agree_actual": {
+   "profiles_identical": true,
+   "n_in_sig": 329,
+   "share_same_profile_as_true": 0.31,
+   "all_programs_agree": 0.174
+  },
+  "agree_actrep": {
+   "profiles_identical": true,
+   "n_in_sig": 477,
+   "share_same_profile_as_true": 0.472,
+   "all_programs_agree": 0.305
+  },
+  "agree_budget": {
+   "profiles_identical": true,
+   "n_in_sig": 426,
+   "share_same_profile_as_true": 0.455,
+   "all_programs_agree": 0.262
+  }
+ },
+ "MorganStanley_mock": {
+  "kmeans_actual": {
+   "k": 2,
+   "silhouette": 0.377
+  },
+  "kmeans_shuffled": {
+   "k": 5,
+   "silhouette": 0.242
+  },
+  "agree_actual": {
+   "profiles_identical": true,
+   "n_in_sig": 584,
+   "share_same_profile_as_true": 0.75,
+   "all_programs_agree": 0.338
+  },
+  "agree_actrep": {
+   "profiles_identical": true,
+   "n_in_sig": 830,
+   "share_same_profile_as_true": 0.817,
+   "all_programs_agree": 0.54
+  },
+  "agree_budget": {
+   "profiles_identical": true,
+   "n_in_sig": 789,
+   "share_same_profile_as_true": 0.791,
+   "all_programs_agree": 0.492
+  }
+ },
+ "power_corning_ai_shape": {
+  "sigma0.05_n10": 0.0,
+  "sigma0.05_n20": 0.0,
+  "sigma0.05_n40": 0.5,
+  "sigma0.05_n80": 1.0,
+  "sigma0.1_n10": 0.0,
+  "sigma0.1_n20": 0.0,
+  "sigma0.1_n40": 0.05,
+  "sigma0.1_n80": 0.9,
+  "sigma0.15_n10": 0.0,
+  "sigma0.15_n20": 0.0,
+  "sigma0.15_n40": 0.0,
+  "sigma0.15_n80": 0.4
+ }
+}

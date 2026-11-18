@@ -1,0 +1,48 @@
+{
+  "issue": 74,
+  "name": "STEM short time-series clustering",
+  "title": "Which few-year spending shapes are real, and which are noise?",
+  "field": "genomics (short time-course gene expression)",
+  "what": "Fixes 50 possible shapes in advance, assigns each program's short path to its closest shape, and tests which shapes are over-full.",
+  "verdict": "Interesting",
+  "grade": "well established",
+  "pick_eff": "S",
+  "pick_line": "Text enrichment per real shape: which description terms are over-represented, as STEM does with gene annotations.",
+  "data": "SYNTHETIC mock ZBB budgets (Corning-like and Morgan Stanley-like); answer key used only for scoring",
+  "one": "Says which few-year shapes are real (5–7 of 50) where k-means always finds clusters, even in noise.",
+  "picture": {
+    "type": "images",
+    "la": "Usual tool: k-means returns 10 and 5 clusters on pure noise",
+    "a": "../fig/2026-11-18/stem_std_kmeans_noise.png",
+    "lb": "STEM: 0–1 real shapes on noise, 5–7 on the mocks",
+    "b": "../fig/2026-11-18/stem_noise_null.png"
+  },
+  "findings": [
+    {
+      "h": "It tells real shapes from noise; k-means cannot.",
+      "t": "With each program's years shuffled (pure noise), STEM finds 1 significant shape of 50 on the Corning-like mock (29 programs) and 0 on the MS-like mock. On the real mocks: 7 shapes (329 of 778 programs) and 5 (584 of 1,404). K-means on the same noise still returns 10 and 5 clusters, with silhouettes 0.184 and 0.242 against 0.244 and 0.377 on the real mocks.",
+      "note": "Pre-registered pass bar (0–1 shapes on noise) met on both mocks. In the paper's own simulation (20 seeds) STEM recovered the 3 planted shapes every time with no false positives, and 2 of 20 pure-noise runs gave one false shape.",
+      "chart": {"type": "images", "la": "Usual tool vs STEM, real and shuffled", "a": "../fig/2026-11-18/stem_vs_kmeans_noise.png", "lb": "STEM shape grid, Corning-like mock", "b": "../fig/2026-11-18/stem_grid_corning.png"}
+    },
+    {
+      "h": "Reading budget as a second measurement puts more programs on their true shape.",
+      "t": "Exploratory (not pre-registered): giving STEM the budget as a same-year replicate of the actual raises the programs in real shapes from 329 to 477 (Corning-like) and 584 to 830 (MS-like). The share of those sitting on their noise-free shape rises from 0.31 to 0.47 and from 0.75 to 0.82.",
+      "note": "Noise-free true levels put 756 of 778 and 1,193 of 1,404 programs in real shapes: observation noise hides most of the structure.",
+      "chart": {"type": "images", "la": "Share on the true shape", "a": "../fig/2026-11-18/stem_replicate.png", "lb": "STEM shape grid, MS-like mock", "b": "../fig/2026-11-18/stem_grid_ms.png"}
+    },
+    {
+      "h": "It finds planted groups only partly, and k-means with the same k does as well.",
+      "miss": true,
+      "t": "Best F1 against the planted co-moving groups: STEM beats silhouette-chosen k-means (k = 2) by ≥ 0.05 on 3 of 4 Corning-like groups and 1 of 3 MS-like groups (pre-registered pass), e.g. display tradeoff 0.49 vs 0.18, equity activity 0.48 vs 0.24. Given the same number of clusters as STEM, k-means matches or beats it on 5 of 7. Segment × function cells beat both on 5 of 7 (the generator places groups by archetype).",
+      "note": "The late-rising AI-demand group is not one of STEM's real shapes (F1 0.18). Power: a shape needs about 80 programs (10% of the book) at noise σ = 0.10 to be detected 90% of the time; 40 programs, 5%.",
+      "chart": {"type": "images", "la": "Power by group size and noise", "a": "../fig/2026-11-18/stem_power.png", "lb": "Corning-like grid (coloured = real)", "b": "../fig/2026-11-18/stem_grid_corning.png"}
+    },
+    {
+      "h": "It does not flag 'says growth, actually declining' better than a slope.",
+      "miss": true,
+      "t": "Among programs stated as grow or transform, membership of a real falling shape catches 3 of 6 planted mismatches with 68 flags (Corning-like) and 3 of 25 with 7 flags (MS-like). The most negative OLS slopes, same number of flags, catch 4 and 5.",
+      "note": "Pre-registered bar (precision ≥ OLS at matched count) failed on both mocks.",
+      "chart": {"type": "hbars", "title": "Planted mismatches caught at matched flag count (MS-like, 7 flags)", "max": 7, "rows": [["OLS slope (usual)", 5, "muted", "5"], ["STEM falling shape", 3, "amber", "3"]]}
+    }
+  ]
+}

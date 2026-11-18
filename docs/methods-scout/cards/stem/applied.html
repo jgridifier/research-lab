@@ -1,0 +1,54 @@
+<h4>Who plays what</h4>
+<div class="table-wrap"><table>
+<tr><th>Home field (genomics)</th><th>Our data (Q2, SYNTHETIC)</th></tr>
+<tr><td>Gene</td><td>Program (budget line)</td></tr>
+<tr><td>Expression at 3–8 time points after a treatment</td><td>Log actual spend in 5–6 fiscal years</td></tr>
+<tr><td>Technical replicate array</td><td>Budget for the same year (a second, noisier reading of the same true level)</td></tr>
+<tr><td>Gene Ontology category</td><td>Stated category, function, intent, or a term in the description</td></tr>
+<tr><td>Co-expressed gene set</td><td>A group of programs that rise and fall together (the planted latent clusters)</td></tr>
+</table></div>
+
+<h4>Inputs and preprocessing</h4>
+<ul>
+<li>SYNTHETIC mocks built 2026-11-13 (seed 20261113): Corning-like 1,079 programs FY2020–25; MS-like 1,840 programs FY2021–25. Clearly not either firm's budget.</li>
+<li>Programs with every year present: 778 and 1,404. Log of <code>actual_usd</code>; STEM "Normalize data" (subtract the first year). No expression filter (all programs kept).</li>
+<li>Comparison inputs built the same way: the budget; the noise-free true level (from the answer key, scoring only); and a "pure noise" copy where each program's own six values are put in a random order (seed 20261118).</li>
+<li>The answer key (planted clusters, mismatches) was used only to score, never as an input.</li>
+</ul>
+
+<h4>What we ran</h4>
+<ol>
+<li>Home field: the paper's simulation (5,000 genes × 5 points, three planted shapes of 50 genes; 20 seeds) and the paper's G27 <i>H. pylori</i> data shipped with STEM, with stem.jar 1.3.15 in batch mode.</li>
+<li>Port check: our NumPy port of assignment and the permutation test against the jar on three datasets (counts and expected identical at printed precision; same significant shapes).</li>
+<li>STEM on actual, budget, true, shuffled, and actual + budget as replicate; 50 shapes; \(c=1\) and 2; all orderings; Bonferroni 5%. Runtime: 18 settings in 3.4 s.</li>
+<li>Scoring against the planted groups (best F1 per group, split by sign of loading) vs k-means on z-scored series (k by silhouette 2–10, and k = number of STEM shapes) and vs segment × function cells.</li>
+<li>Text vs numbers: real falling shapes among stated grow/transform programs vs the most negative OLS slopes at the same number of flags.</li>
+<li>Power: plant the AI-demand factor path in \(n\) programs of the shuffled Corning-like book with noise σ, 20 reps per cell.</li>
+</ol>
+
+<div class="callouts"><h5>How to read the main chart (the shape grid)</h5>
+<ol>
+<li>Each of the 50 boxes is one shape fixed in advance (thick line). Thin grey lines are the programs assigned to it (up to 60 drawn).</li>
+<li>"69 vs 14" in a corner: 69 programs landed on this shape, 14 would be expected if each program's years were shuffled.</li>
+<li>Coloured boxes are over-full beyond chance (Bonferroni 5% over 50 shapes); boxes of the same colour are merged into one cluster of similar shapes.</li>
+<li>The pattern to see: a handful of coloured shapes hold hundreds of programs; the other 43–45 shapes hold about what chance gives. White boxes with many lines are not "groups", just noise with that shape.</li>
+</ol></div>
+
+<div class="plain"><h5>What it means for a decision-maker</h5>
+<p>With five or six years per budget line, most "patterns" you can see are coincidence. This tool lists the few spending shapes that occur more often than coincidence allows and says how many lines follow each, so a reviewer can start from the 5–7 real shapes instead of 1,000 lines. It will not find small groups (fewer than about 80 lines), and it does not judge whether a line's description matches its numbers. On these synthetic books, treating the budget as a second reading of the spend made the picture noticeably sharper.</p></div>
+
+<h4>Where it breaks (seen in our runs)</h4>
+<ul>
+<li><b>Small groups vanish.</b> At σ = 0.10 a planted shape shared by 40 of 778 programs was detected in 1 of 20 runs; 80 programs, 18 of 20.</li>
+<li><b>Shape, not size.</b> Correlation ignores how big a move is, so flat noisy programs are forced onto some shape (the white boxes).</li>
+<li><b>Shared trends.</b> Raking the mocks to public totals adds common year effects; those make some shapes "real" for reasons unrelated to program behaviour.</li>
+<li><b>Home-field reproduction partial.</b> On G27 the filter keeps 2,137 genes, not the printed 2,243 (outside our ±1% bar), although the significant-shape count (10) and, at \(c=1\), the 1,255 genes in significant shapes match.</li>
+<li><b>Tooling.</b> stem.jar needs an X display even in batch mode; it ran on the box's display.</li>
+</ul>
+
+<h4>What we'd do next</h4>
+<ul>
+<li>Text enrichment per real shape (top pick).</li>
+<li>A replicate-aware assignment that uses budget and actual jointly (Math avenue).</li>
+<li>Rerun on real program data when it exists; until then on a new-seed mock.</li>
+</ul>
