@@ -1,0 +1,18 @@
+152 2013-05 2025-12
+        A      B  tau       kind    rate  null95       p  p_holm
+0   fails     pb    0  precursor  0.3226  0.6129  1.0000     1.0
+1   fails     pb    0    trigger  0.3548  0.7097  1.0000     1.0
+2   fails     pb    3  precursor  0.3871  0.6129  0.9570     1.0
+3   fails     pb    3    trigger  0.4516  0.6774  0.8926     1.0
+4   fails     pb    6  precursor  0.5484  0.6129  0.2424     1.0
+5   fails     pb    6    trigger  0.6129  0.6774  0.2474     1.0
+6   fails    tot    0  precursor  0.4194  0.6452  0.9238     1.0
+7   fails    tot    0    trigger  0.4839  0.6774  0.8426     1.0
+8   fails    tot    3  precursor  0.4839  0.6129  0.6490     1.0
+9   fails    tot    3    trigger  0.5484  0.6774  0.5584     1.0
+10  fails    tot    6  precursor  0.4516  0.6129  0.8028     1.0
+11  fails    tot    6    trigger  0.5161  0.6774  0.7268     1.0
+12     pb  fails    0  precursor  0.5161  0.7097  0.7586     1.0
+13     pb  fails    0    trigger  0.4839  0.6452  0.6970     1.0
+14    tot  fails    0  precursor  0.5161  0.7097  0.7586     1.0
+15    tot  fails    0    trigger  0.5484  0.6452  0.3378     1.0

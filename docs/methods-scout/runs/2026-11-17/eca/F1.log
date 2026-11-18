@@ -1,0 +1,17 @@
+         A          B  tau       kind    n  NA  NB    rate  null_med  null95       p  p_pois  p_holm
+9    fails  levunwind    0  precursor  399  39  40  0.3846    0.1795  0.2821  0.0002  0.0024  0.0096
+33   fails  levunwind    0    trigger  399  39  40  0.4000    0.1750  0.3000  0.0002  0.0008  0.0096
+42     dvp      fails    0    trigger  437  44  44  0.4091    0.1818  0.2955  0.0002  0.0004  0.0096
+18     dvp      fails    0  precursor  437  44  44  0.4318    0.1818  0.2955  0.0030  0.0001  0.1350
+16  spread  levunwind    2  precursor  399  43  40  0.3256    0.1860  0.2791  0.0060  0.0178  0.2640
+32   fails   levbuild    4    trigger  399  39  40  0.3500    0.1750  0.3000  0.0262  0.0077  1.0000
+21   fails        dvp    0  precursor  437  44  44  0.3182    0.1818  0.2955  0.0276  0.0216  1.0000
+5   spread      fails    4  precursor  437  44  44  0.3182    0.1818  0.2955  0.0354  0.0231  1.0000
+45   fails        dvp    0    trigger  437  44  44  0.3182    0.1818  0.2955  0.0390  0.0216  1.0000
+8    fails   levbuild    4  precursor  399  39  40  0.3077    0.1795  0.2821  0.0484  0.0427  1.0000
+40  spread  levunwind    2    trigger  399  43  40  0.3250    0.2000  0.3250  0.0734  0.0363  1.0000
+4   spread      fails    2  precursor  437  44  44  0.2955    0.1818  0.2955  0.0738  0.0483  1.0000
+29  spread      fails    4    trigger  437  44  44  0.2955    0.2045  0.2955  0.0844  0.0497  1.0000
+44     dvp      fails    4    trigger  437  44  44  0.2727    0.1818  0.2727  0.0850  0.0975  1.0000
+Poisson p<0.05: 15  circ p<0.05: 10  Holm<0.05: 3
+time 9.0
