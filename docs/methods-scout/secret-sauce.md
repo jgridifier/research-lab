@@ -1,6 +1,6 @@
 # Secret sauce plans
 
-*Edition 1 · 2026-11-12 · America/New_York (EST), four already-scouted methods. Edition 2 · same day, ad hoc exotic scout: codyn and Lovell proportionality, grounded in [2026-11-12-adhoc](2026-11-12-adhoc.html). Edition 3 · scheduled 2026-11-12 scout (catch-up published 2026-11-13): ecotraj and lphom, grounded in [2026-11-12](2026-11-12.html). Edition 4 · scheduled 2026-11-13 scout: ebnm and DenseLines, aimed at Q2, grounded in [2026-11-13](2026-11-13.html) (SYNTHETIC mock data). Edition 5 · scheduled 2026-11-14 scout (interrupted, completed 2026-11-15): CRQA and IDR, aimed at Q1 and Q3, grounded in [2026-11-14](2026-11-14.html) (public data). Plans only.*
+*Edition 1 · 2026-11-12 · America/New_York (EST), four already-scouted methods. Edition 2 · same day, ad hoc exotic scout: codyn and Lovell proportionality, grounded in [2026-11-12-adhoc](2026-11-12-adhoc.html). Edition 3 · scheduled 2026-11-12 scout (catch-up published 2026-11-13): ecotraj and lphom, grounded in [2026-11-12](2026-11-12.html). Edition 4 · scheduled 2026-11-13 scout: ebnm and DenseLines, aimed at Q2, grounded in [2026-11-13](2026-11-13.html) (SYNTHETIC mock data). Edition 5 · scheduled 2026-11-14 scout (interrupted, completed 2026-11-15): CRQA and IDR, aimed at Q1 and Q3, grounded in [2026-11-14](2026-11-14.html) (public data). Later editions append the 11-15, 11-16 and 11-17 scouts; edition 8 · 2026-11-17: event coincidence analysis (Q1) and STATIS (Q3), grounded in [2026-11-17](2026-11-17.html) (public data). Plans only.*
 
 This is a running file. Each daily methods scout should append plans for that day's methods in the same form. Edition 1 covers the four methods already scouted: changeforest and partykit ([2026-11-10](2026-11-10.html); [RESULTS](https://github.com/jgridifier/analysis-skills/blob/main/methods/changeforest/RESULTS.md) and [RESULTS](https://github.com/jgridifier/analysis-skills/blob/main/methods/partykit/RESULTS.md)) and MARSS and InspectChangepoint ([2026-11-11](2026-11-11.html), aimed at [Q1](QUESTIONS.md)). No new fits were run. Every number below is from those pages, their run JSON, or the RESULTS files. Nothing is being built, nothing is promoted, and no `APPROVAL.md` is written.
 
@@ -628,7 +628,63 @@ Text versus numbers as a probabilistic index (Q2.2). Within each subsegment of t
 
 ---
 
+## Event coincidence analysis (ECA)
+
+Donges, J. F., Schleussner, C.-F., Siegmund, J. F. & Donner, R. V. (2016), *EPJ Special Topics* 225(3):471–487, doi:10.1140/epjst/e2015-50233-y; CoinCalc 2.0 (GitHub, Siegmund et al., arXiv:1603.05038). Scouted on the [2026-11-17 scheduled edition](2026-11-17.html#eca), aimed at [Q1](QUESTIONS.md#q1) (Q1.1, Q1.2, Q1.5), public aggregates. Novelty: exotic-transfer (climate-impact science). Home-field verdict: promising but thin. Status: proposed (recommend) — not promoted. Issue [#70](https://github.com/jgridifier/research-lab/issues/70). Research card: [m/eca.html](m/eca.html). Plans only.
+
+**Found via.** Web search 2026-11-17 14:20 ET ("event coincidence analysis Donges 2016 precursor trigger coincidence rate CoinCalc R package") → [arXiv:1603.05038](https://arxiv.org/abs/1603.05038), [github.com/JonatanSiegmund/CoinCalc](https://github.com/JonatanSiegmund/CoinCalc). Field: climate-impact science.
+
+**What our run showed.** 26% of financing-fails spike weeks come exactly one week after a big leveraged-fund unwind (vs ~10% chance, circular-shift p = 0.008); same/previous week 38% vs 18% (Holm p = 0.0096 over 48); builds show nothing; reverse direction not significant. Poisson test FPR 9.2–9.4% at nominal 5% on clustered series. Monthly Form PF: no link. Paper examples reproduced exactly; NumPy port at 5e-14 parity with CoinCalc.
+
+### 1 · Engineering (effort S)
+
+A vectorised ECA engine with clustering-aware nulls. With prefix sums \(c_B(t)=\sum_{s\le t}B_s\), a coincidence for \(A\) event \(t\) is \(c_B(t-\tau)-c_B(t-\tau-\Delta T-1)>0\); a circular shift is an index offset, so \(R\) surrogates are one gather. CoinCalc 2.0 is the oracle (its `shuffle`/`surrogate` options errored in ts mode on our data). Closest prior work: CoinCalc; pyunicorn event-series module. **Test:** parity ≤ 1e-12 on both paper examples and our 48 tests; waiting-time surrogate p within Monte-Carlo error of CoinCalc's; a 12-series grid (132 pairs × 6 lags × 2 rates × 4,999 surrogates) in under 10 s.
+
+### 2 · Math (effort M)
+
+An analytic null for clustered events. For a stationary two-state Markov event chain with rate \(\pi\) and no-event stay probability \(p_{00}\), \(P(\text{no event in a window of } w)=(1-\pi)p_{00}^{w-1}\), replacing \((1-w/T)^{N}\); use the effective number of independent \(A\) clusters \(N_A(1-p^A_{11})\) or a Markov-modulated Poisson–binomial tail. Closest prior work: Donges et al. (2016) tests with a prescribed inter-event-time distribution; Odenweller & Donner (2020), *PRE* 101:052213 (normalisation and boundary corrections). No closed-form Markov null found. **Test:** false-positive rate 4–6% at nominal 5% on 2,000 shifted pairs per Q1 pair (Poisson: 9.2%); power ≥ the 4,999-shift test on planted couplings.
+
+### 3 · New use on our data (top pick, effort S)
+
+Conditional ECA (Q1.2, Q1.5): does "fails spike one week after an unwind" survive when weeks with a VIX spike or a DVP-spread spike are held out? \(r_p(A\mid B,\neg C)\) over \(A\) events with no \(C\) event in the window; null shifts \(B\) with \(A, C\) fixed (CoinCalc's `CC.ceca.ts` exists; no paper read for it). **Test (pre-registered):** lag 1, \(\Delta T=0\), conditioning separately on VIX and DVP-spread top-10% weeks; conditional precursor rate above its circular-shift 95th percentile in both, Holm over two.
+
+**Why New use is the top pick.** It is one afternoon of work and it answers the obvious objection to today's headline (a common volatility shock) directly on the open Q1 sub-questions.
+
+---
+
+## STATIS multi-table analysis
+
+Lavit, C., Escoufier, Y., Sabatier, R. & Traissac, P. (1994), "The ACT (STATIS method)", *CSDA* 18(1):97–119; Abdi, H., Williams, L. J., Valentin, D. & Bennani-Dosse, M. (2012), *WIREs Comp Stat* 4:124–167, doi:10.1002/wics.198. ade4 1.7.24 (CRAN). Scouted on the [2026-11-17 scheduled edition](2026-11-17.html#statis), aimed at [Q3](QUESTIONS.md#q3) (Q3.3, Q3.5), public data. Novelty: niche / exotic-transfer (sensory science, ecology). Home-field verdict: well established. Status: proposed (interesting). Issue [#71](https://github.com/jgridifier/research-lab/issues/71). Research card: [m/statis.html](m/statis.html). Plans only.
+
+**Found via.** Web search 2026-11-17 14:20 ET ("DISTATIS STATIS Abdi multiple distance matrices compromise RV coefficient DistatisR") → [doi:10.1002/wics.198](https://doi.org/10.1002/wics.198); ade4 [pta reference](https://adeverse.github.io/ade4/reference/pta.html) at 14:23 ET.
+
+**What our run showed.** 13 exercises × 7 variables: era split (2013–19 vs 2020–25) exact p = 0.023 (modified RV 0.016), best contiguous cut 2021 (exploratory), leave-one-year-out 9 of 13 below 0.05. No single pair familywise significant (largest drawdown ~ loan losses, max-T p = 0.11). Year-departure bootstrap invalid (observed RV above its band in 6 of 13 years). NumPy core at 3e-13 parity with ade4.
+
+### 1 · Engineering (effort M)
+
+An unbalanced-panel multi-table engine (STATIS, COVSTATIS, PTA, DISTATIS) with masks for entering and leaving objects: \(\mathrm{RV}_M(S_a,S_b)\) on the shared objects \(M_a\wedge M_b\); exact era permutations and block bootstraps built in. ade4 is the oracle. Closest prior work: ade4 `statis`/`pta`, DistatisR (balanced only). **Test:** parity ≤ 1e-12 with ade4 on balanced data; the mask path identical on balanced data; the Q2 MS mock (1,840 programs × 5 years) in under 1 s.
+
+### 2 · Math (top pick, effort M)
+
+A reliability-corrected RV. Split-half reliability per year, \(\hat\rho_k=\overline{\mathrm{RV}(S^h_k,S^{h'}_k)}\), stepped up \(\rho_k=2\hat\rho_k/(1+\hat\rho_k)\); corrected \(\mathrm{RV}^c_{ab}=\mathrm{RV}_{ab}/\sqrt{\rho_a\rho_b}\) (capped at 1) on the modified RV. Closest prior work: Smilde et al. (2009), *Bioinformatics* 25(3):401–405; Josse, Pagès & Husson (2008), *CSDA* 53(1):82–91. No split-half disattenuated RV found. **Test:** simulation at our design (13 tables, 18–35 objects, 7 variables, planted break): bias within ±0.01, 95% coverage 93–97%, planted break year found in ≥ 80% of runs at a 5% false-flag rate.
+
+### 3 · New use on our data (effort S)
+
+Partial triadic paths on the Q2 mock budgets (Q2.2, Q2.4): fiscal years as tables of programs × features; path length \(L_i=\sum_k\|F_{k+1,i}-F_{k,i}\|\) flags quiet category changes; trajectory clusters flag hidden co-movers. Closest prior work: ade4 partial triadic analysis; no budget application found. **Test:** SYNTHETIC mocks only: AUC vs the planted category-switch key ≥ 0.75 and above a raw feature-change baseline; new-seed confirmation.
+
+**Why Math is the top pick.** Today's one failed check (which single year departs) failed because of RV's small-sample bias; fixing it turns an era-level result into year-level answers for Q3.3.
+
+---
+
 ## Citations used (verified)
+
+- Donges, J. F., Schleussner, C.-F., Siegmund, J. F. & Donner, R. V. (2016). Event coincidence analysis for quantifying statistical interrelationships between event time series. *European Physical Journal Special Topics*, 225(3):471–487.
+- Siegmund, J. F., Siegmund, N. & Donges, J. F. (2016, arXiv preprint). CoinCalc — A new R package for quantifying simultaneities of event series. arXiv:1603.05038.
+- Odenweller, A. & Donner, R. V. (2020). Disentangling synchrony from serial dependency in paired-event time series. *Physical Review E*, 101:052213.
+- Lavit, C., Escoufier, Y., Sabatier, R. & Traissac, P. (1994). The ACT (STATIS method). *Computational Statistics & Data Analysis*, 18(1):97–119.
+- Abdi, H., Williams, L. J., Valentin, D. & Bennani-Dosse, M. (2012). STATIS and DISTATIS: optimum multitable principal component analysis and three way metric multidimensional scaling. *WIREs Computational Statistics*, 4:124–167.
+- Smilde, A. K., Kiers, H. A. L., Bijlsma, S., Rubingh, C. M. & van Erk, M. J. (2009). Matrix correlations for high-dimensional data: the modified RV-coefficient. *Bioinformatics*, 25(3):401–405.
+- Josse, J., Pagès, J. & Husson, F. (2008). Testing the significance of the RV coefficient. *Computational Statistics & Data Analysis*, 53(1):82–91.
 
 Only papers we located with venue, year, and pages, plus the four method papers already cited on the scout pages. "Found via" links are only those recorded on the 11-10 and 11-11 pages or in the watchlist.
 

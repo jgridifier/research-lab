@@ -1,0 +1,40 @@
+<h4>Notation</h4>
+<div class="table-wrap"><table>
+<tr><th>Symbol</th><th>Meaning</th><th>Here</th></tr>
+<tr><td>\(A\), \(B\)</td><td>two binary event series on the same time grid</td><td>\(A\): weeks with a financing-fails spike; \(B\): weeks with a big leveraged-fund unwind (or build, spread spike, DVP surge)</td></tr>
+<tr><td>\(t^A_i,\ t^B_j\)</td><td>event times, \(i=1..N_A\), \(j=1..N_B\)</td><td>Wednesday week labels; 39–44 events per series at the 10% threshold</td></tr>
+<tr><td>\(T\)</td><td>number of observed time steps</td><td>399 weeks (pairs with positioning, 2018-05-16..2025-12-31) or 437 weeks (others, to 2026-09-23)</td></tr>
+<tr><td>\(\tau\)</td><td>lag</td><td>0, 2, 4 weeks (main family); 0, 1, 2 (exact-lag follow-up)</td></tr>
+<tr><td>\(\Delta T\)</td><td>tolerance window</td><td>1 week in the main family (\(B\) in the same or previous week); 0 in the exact-lag follow-up</td></tr>
+<tr><td>\(r_p,\ r_t\)</td><td>precursor and trigger coincidence rates</td><td>share of fails spikes preceded by an unwind; share of unwinds followed by a fails spike</td></tr>
+</table></div>
+
+<h4>Assumptions</h4>
+<ul>
+<li>Events are well defined: here "top (or bottom) 10% of weekly changes", fixed before the run.</li>
+<li>For the analytic (Poisson) p-value: both series are independent, sparse, homogeneous Poisson processes. For the circular-shift p-value we use instead: each series keeps its own timing and clustering; only the alignment between them is random.</li>
+<li>Stationary enough that a shift of the whole series is a fair "no-link" world (no strong trend in event frequency).</li>
+</ul>
+
+<h4>The statistic</h4>
+$$r_p(\Delta T,\tau)=\frac1{N_A}\sum_{i=1}^{N_A}\Theta\Big[\sum_{j=1}^{N_B}\mathbf 1_{[0,\Delta T]}\big((t^A_i-\tau)-t^B_j\big)\Big],\qquad
+r_t(\Delta T,\tau)=\frac1{N_B}\sum_{j=1}^{N_B}\Theta\Big[\sum_{i=1}^{N_A}\mathbf 1_{[0,\Delta T]}\big((t^A_i-\tau)-t^B_j\big)\Big]$$
+<p>\(\Theta\) is 1 if its argument is positive, so several \(B\) events in one window count once. \(r_p\) asks "what share of \(A\) events had a \(B\) event shortly before?"; \(r_t\) asks "what share of \(B\) events were followed by an \(A\) event?". Directionality comes from comparing \(r_p(A\mid B)\) with the same rate with the roles swapped.</p>
+
+<h4>Why it works, step by step</h4>
+<div class="step"><b class="n">Step 1 · chance coincidence under independence</b>The window before one \(A\) event covers \(\Delta T+1\) of the \(T-\tau\) usable steps. If the \(N_B\) events land independently and uniformly, the chance that none falls in it is \(q=\big(1-\tfrac{\Delta T+1}{T-\tau}\big)^{N_B}\), so each \(A\) event coincides with probability \(1-q\).</div>
+<div class="step"><b class="n">Step 2 · the analytic p-value</b>Treating the \(N_A\) windows as independent trials, the number of coincidences \(K_p=N_A r_p\) is Binomial\((N_A,1-q)\), so \(p=\sum_{K\ge K_p}\binom{N_A}{K}(1-q)^K q^{N_A-K}\). With our numbers (\(T=399\), \(N_B=40\), \(\Delta T=1\), \(\tau=0\)): \(1-q = 1-(1-2/399)^{40}\approx 0.18\) (computed), the "random placement" level on the chart.</div>
+<div class="step"><b class="n">Step 3 · where step 2 breaks</b>Fails spikes cluster (a spike week is followed by another 9% of the time; DVP surges 14%; positioning moves 18%), so windows are not independent trials and the binomial variance is too small. That is why we judge significance with circular shifts of \(B\) (4,999 per test, shift ≥ 8 weeks), which keep each series' clustering, and why the Poisson test over-rejects on our data (finding 3).</div>
+
+<h4>The null and multiple testing</h4>
+<ul>
+<li>Main family F1: 8 ordered pairs × 3 lags × 2 rates = 48 tests, circular-shift p-values, Holm over all 48 (pre-registered).</li>
+<li>Exact-lag follow-up (\(\Delta T=0\), \(\tau=0,1,2\)) and the reverse direction: added after F1, reported as follow-up, not familywise-controlled.</li>
+<li>Calibration check: false-positive rate of the Poisson test on 2,000 shifted pairs (pre-registered flag at 10%).</li>
+</ul>
+
+<div class="toy"><h5>Toy example (computed by <code>cards/_toys/toys.py</code>)</h5>
+<p>Ten weeks. \(A\) events in weeks 3 and 7; \(B\) events in weeks 2, 6 and 9; \(\Delta T=1\), \(\tau=0\). Week 3 has a \(B\) in weeks 2–3 (yes, week 2); week 7 has one in 6–7 (yes). So \(K_p=2\), \(r_p=1.0\). Of the \(B\) events, weeks 2 and 6 are followed by an \(A\) within a week, week 9 is not: \(K_t=2\), \(r_t=0.667\). Chance that a two-week window misses all three \(B\) events: \(q=(1-2/10)^3=0.512\). Poisson p for \(r_p\): \((1-0.512)^2=0.238\); for \(r_t\): 0.295. With so few events nothing is significant.</p></div>
+
+<div class="diff"><b>How it differs from the standard tool.</b> Cross-correlation and Granger causality use every week and every size of move, assume a linear and symmetric link (a big build and a big unwind count equally, with opposite signs), and are dominated by ordinary weeks. ECA throws away the middle of the distribution on purpose and asks only about the tails, separately for each tail and each direction. On our data the cross-correlation at lag 1 is r = −0.16: it is "significant" but says nothing about which tail carries it. ECA shows that unwinds carry it and builds do not.</div>
+<p class="cite">Followed: Donges, Schleussner, Siegmund &amp; Donner (2016), EPJ Special Topics 225:471–487 (arXiv:1508.03534; definitions, eqs. 3–4 of the arXiv version, read); Siegmund, Siegmund &amp; Donges (2016, arXiv), CoinCalc, arXiv:1603.05038 (eqs. 1–2 and the Poisson test, read; both worked examples reproduced to the printed digits). Odenweller &amp; Donner (2020), PRE 101:052213 (abstract and conclusions read). Toy: <code>cards/_toys/toys.py</code>.</p>

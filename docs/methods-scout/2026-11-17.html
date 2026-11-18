@@ -1,0 +1,79 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Methods scout · 2026-11-17 · research-lab</title>
+<meta name="description" content="Methods scout 2026-11-17, aimed at Q1 and Q3: event coincidence analysis (climate-impact science) on public funding-market aggregates; STATIS multi-table analysis (sensory science and ecology) on public stress-test results and Y-9C payouts.">
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,400..800&family=Newsreader:ital,opsz,wght@0,6..72,400..600;1,6..72,400..500&family=JetBrains+Mono:wght@400;500;700&display=swap">
+<link rel="stylesheet" href="../assets/brief.css">
+<link rel="stylesheet" href="feedback.css">
+<!-- Methods Scout home-screen / PWA tags. Paste into <head> of every methods-scout page.
+     Paths are root-absolute so they resolve under https://jgridifier.github.io/research-lab/. -->
+<link rel="apple-touch-icon" sizes="180x180" href="/research-lab/methods-scout/icons/apple-touch-icon.png">
+<link rel="icon" type="image/png" sizes="32x32" href="/research-lab/methods-scout/icons/favicon-32.png">
+<link rel="icon" type="image/png" sizes="192x192" href="/research-lab/methods-scout/icons/icon-192.png">
+<link rel="manifest" href="/research-lab/methods-scout/manifest.webmanifest">
+<meta name="apple-mobile-web-app-title" content="Methods Scout">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="theme-color" content="#0F2A23">
+</head>
+<body><main>
+<header class="mast">
+  <div class="date">Tuesday · November 17, 2026 · scheduled edition · aimed at Q1 and Q3 · exotic · public data only</div>
+  <h1>Methods scout</h1>
+  <p class="dek">Two borrowed tools, each with a full research card. From climate-impact science: <em>event coincidence analysis</em>, which asks only whether extreme weeks in one series land just after extreme weeks in another. From sensory science and ecology: <em>STATIS</em>, which compares whole yearly correlation patterns at once instead of one coefficient at a time.</p>
+  <nav><a href="index.html">Queue</a><a href="archive.html">Archive</a><a href="board.html">Feedback board</a><a href="secret-sauce.html">Secret sauce</a><a href="https://github.com/jgridifier/research-lab/blob/main/docs/methods-scout/QUESTIONS.md">Research questions</a><a href="https://github.com/jgridifier/research-lab/tree/main/docs/methods-scout/runs/2026-11-17">Run folder</a></nav>
+</header>
+
+<div class="ticker">
+  <span><b>●</b> Q1: 26% of NY Fed financing-fails spike weeks come one week after a big leveraged-fund unwind in Treasury futures, vs about 10% by chance (circular-shift p = 0.008). Big builds: 10%, p = 0.54. A plain cross-correlation shows only r = −0.16.</span>
+  <span><b>●</b> Q3: the joint stress-test–payout correlation pattern splits into 2013–19 and 2020–25 eras (exact permutation p = 0.023), best cut at 2021 (exploratory). No single correlation change survives familywise control.</span>
+</div>
+
+<section class="tldr">
+<h2>The short version</h2>
+<ul>
+<li><b>Event coincidence analysis (ECA)</b> · climate-impact science · Q1 · <span class="verdict adopt">recommend</span> · home field: promising but thin. Same/previous-week unwind → fails link survives Holm over 48 pre-registered tests (38% vs 18%, Holm p = 0.0096) and passes all five stability checks. Monthly Form PF borrowing spikes show nothing (honest miss). The Poisson test over-rejects on our clustered series (9.2% at nominal 5%). Top pick: conditional ECA (New use, effort S).</li>
+<li><b>STATIS multi-table analysis</b> · sensory science / ecology · Q3 · <span class="verdict interesting">interesting</span> · home field: well established. Era split p = 0.023 (modified RV 0.016), moderate under leave-one-year-out (9 of 13 below 0.05). The pre-registered "which year departs" bootstrap failed because RV is biased in small samples. Top pick: reliability-corrected RV (Math, effort M).</li>
+</ul>
+</section>
+
+<section id="eca">
+<div class="card teal"><div class="card-top"><span class="tag teal">Method 1 · Q1</span><span class="verdict adopt">recommend</span></div>
+<h3><a href="m/eca.html">Event coincidence analysis: research card →</a></h3>
+<p>Math, our data (four findings with charts, one honest miss), home-field evidence, three secret-sauce avenues and the Q1 progress note are on the card.</p>
+<p class="found-via"><strong>Found via</strong> · web search 2026-11-17 14:20 ET → <a href="https://arxiv.org/abs/1603.05038">CoinCalc paper (arXiv:1603.05038)</a> and <a href="https://github.com/JonatanSiegmund/CoinCalc">github.com/JonatanSiegmund/CoinCalc</a>; critique (Odenweller &amp; Donner 2020) at 14:21 ET. Novelty: exotic-transfer.</p>
+<p><b>Data.</b> Lab copies of public NY Fed primary-dealer fails, OFR repo (DVP volume, DVP − tri-party rate), CFTC TFF leveraged-fund positioning (to 2025-12-30), SEC Form PF tab 8.27.</p>
+<aside class="scout-respond" data-issue="70" data-slug="eca">
+  <span class="scout-chip status-proposed">Proposed</span>
+  <a class="scout-respond-btn" href="https://github.com/jgridifier/research-lab/issues/70">Respond on GitHub</a>
+  <p class="scout-respond-hint">👍 go ahead · 👎 drop · or just comment what you think</p>
+</aside>
+</div>
+</section>
+
+<section id="statis">
+<div class="card"><div class="card-top"><span class="tag">Method 2 · Q3</span><span class="verdict interesting">interesting</span></div>
+<h3><a href="m/statis.html">STATIS multi-table analysis: research card →</a></h3>
+<p>Interstructure year map, compromise variable map, era test, pair changes, firm paths and the failed year-departure check are on the card.</p>
+<p class="found-via"><strong>Found via</strong> · web search 2026-11-17 14:20 ET → <a href="https://doi.org/10.1002/wics.198">Abdi et al. 2012, WIREs Comp Stat</a>; <a href="https://adeverse.github.io/ade4/reference/pta.html">ade4 pta</a> at 14:23 ET. Novelty: exotic-transfer.</p>
+<p><b>Data.</b> The lab's verified public copies of the Fed stress-test results (severely adverse, 2013–2025) and FR Y-9C HI-A payouts; 360 firm-years. Descriptive only; no Y-9C forecasts.</p>
+<aside class="scout-respond" data-issue="71" data-slug="statis">
+  <span class="scout-chip status-proposed">Proposed</span>
+  <a class="scout-respond-btn" href="https://github.com/jgridifier/research-lab/issues/71">Respond on GitHub</a>
+  <p class="scout-respond-hint">👍 go ahead · 👎 drop · or just comment what you think</p>
+</aside>
+</div>
+</section>
+
+<section>
+<div class="card"><div class="card-top"><span class="tag">Notes</span></div>
+<ul>
+<li><b>Pre-registration.</b> Written before the Q1/Q3 runs: <a href="https://github.com/jgridifier/research-lab/blob/main/docs/methods-scout/runs/2026-11-17/scout/PREREG.md">runs/2026-11-17/scout/PREREG.md</a>. Follow-ups not in it (exact-lag ECA, contiguous cuts, pair max-T, leave-one-year-out) are labelled as follow-ups on the cards.</li>
+<li><b>Watchlist</b> (not run): PySpike SPIKE-synchronization, STATICO/COSTATIS, the extremogram, the modified RV coefficient. See <a href="https://github.com/jgridifier/research-lab/blob/main/docs/methods-scout/watchlist.md">watchlist.md</a>.</li>
+<li><b>Q2.</b> Not targeted today (targeted 11-16). STATIS's New-use avenue is aimed at Q2.</li>
+<li><b>Data Jared would need to supply.</b> Nothing new for Q1/Q3 (public). Refresh CFTC TFF after 2025-12-30 (public). Still missing: firm-level baseline projections (not published), the October 2020 SCB PDF, and for Q2 real program-level budgets.</li>
+</ul>
+</div>
+</section>
+</main></body></html>

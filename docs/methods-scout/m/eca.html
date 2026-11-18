@@ -1,0 +1,168 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Event coincidence analysis (ECA) · research card · methods scout</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,400..800&family=Newsreader:ital,opsz,wght@0,6..72,400..600;1,6..72,400..500&family=JetBrains+Mono:wght@400;500;700&display=swap">
+<link rel="stylesheet" href="../../assets/brief.css">
+<link rel="stylesheet" href="../scout-cards.css">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.css"><script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.js"></script><script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/contrib/auto-render.min.js" onload="renderMathInElement(document.body,{delimiters:[{left:'$$',right:'$$',display:true},{left:'\\(',right:'\\)',display:false}]})"></script>
+<!-- Methods Scout home-screen / PWA tags. Paste into <head> of every methods-scout page.
+     Paths are root-absolute so they resolve under https://jgridifier.github.io/research-lab/. -->
+<link rel="apple-touch-icon" sizes="180x180" href="/research-lab/methods-scout/icons/apple-touch-icon.png">
+<link rel="icon" type="image/png" sizes="32x32" href="/research-lab/methods-scout/icons/favicon-32.png">
+<link rel="icon" type="image/png" sizes="192x192" href="/research-lab/methods-scout/icons/icon-192.png">
+<link rel="manifest" href="/research-lab/methods-scout/manifest.webmanifest">
+<meta name="apple-mobile-web-app-title" content="Methods Scout">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="theme-color" content="#0F2A23">
+
+</head><body>
+<header class="topbar"><a class="brand" href="../index.html">Methods scout</a>
+<span><a href="../index.html">Queue</a> · <a href="../archive.html">Archive</a></span></header>
+<div class="pz">
+<p class="crumb"><a href="../index.html">← Queue</a></p>
+<div class="chips"><span class="chip q">Q1</span><span class="chip st-proposed" data-issue="70">○ New</span><span class="chip v-rec">Recommend</span><span class="date">Scouted 2026-11-17</span></div>
+<section class="hero" style="padding-top:.5rem"><p class="kicker">Event coincidence analysis (ECA) · from climate-impact science</p>
+<h1>Do leveraged-fund unwinds come right before settlement-fail spikes?</h1></section>
+<div class="sum">
+<div class="row"><span class="k">What it is</span><span class="v">Counts how often extreme weeks in one series fall just after extreme weeks in another, with direction, lag and a null.</span></div>
+<div class="row"><span class="k">Verdict</span><span class="v"><b>Recommend.</b> Home field: promising but thin.</span></div>
+<div class="row"><span class="k">Top pick</span><span class="v"><b>New use</b> (effort S): Conditional ECA: does unwind → fails survive once equity-vol and repo-spread spike weeks are conditioned out?</span></div>
+<div class="row"><span class="k">Data</span><span class="v">Public aggregates (NY Fed fails, OFR repo, CFTC TFF, SEC Form PF); descriptive only</span></div>
+</div>
+<p class="kicker" style="margin-top:1rem">The one picture</p>
+<div class="pair"><div><span class="lab">Usual tool: cross-correlation (weak r = −0.16 at lag 1)</span><img src="../fig/2026-11-17/eca_std_xcorr.png" alt="Usual tool: cross-correlation (weak r = −0.16 at lag 1)"></div><div class="new"><span class="lab">ECA: unwinds precede fails spikes; builds don&#x27;t</span><img src="../fig/2026-11-17/eca_rates.png" alt="ECA: unwinds precede fails spikes; builds don&#x27;t"></div></div>
+<div style="margin:1rem 0 .4rem"><a class="btn big" href="https://github.com/jgridifier/research-lab/issues/70">Respond on #70</a><p class="howto">👍 go ahead · 👎 drop · or just comment what you think</p></div>
+<div class="tabs"><input type="radio" name="tab" id="t1" checked><input type="radio" name="tab" id="t2"><input type="radio" name="tab" id="t3"><input type="radio" name="tab" id="t4"><input type="radio" name="tab" id="t5"><div class="tabbar"><label for="t1">The math</label><label for="t2">On our data</label><label for="t3">Robust at home</label><label for="t4">Secret sauce</label><label for="t5">Questions</label></div><div class="panels"><div class="panel p1" id="math"><h4>Notation</h4>
+<div class="table-wrap"><table>
+<tr><th>Symbol</th><th>Meaning</th><th>Here</th></tr>
+<tr><td>\(A\), \(B\)</td><td>two binary event series on the same time grid</td><td>\(A\): weeks with a financing-fails spike; \(B\): weeks with a big leveraged-fund unwind (or build, spread spike, DVP surge)</td></tr>
+<tr><td>\(t^A_i,\ t^B_j\)</td><td>event times, \(i=1..N_A\), \(j=1..N_B\)</td><td>Wednesday week labels; 39–44 events per series at the 10% threshold</td></tr>
+<tr><td>\(T\)</td><td>number of observed time steps</td><td>399 weeks (pairs with positioning, 2018-05-16..2025-12-31) or 437 weeks (others, to 2026-09-23)</td></tr>
+<tr><td>\(\tau\)</td><td>lag</td><td>0, 2, 4 weeks (main family); 0, 1, 2 (exact-lag follow-up)</td></tr>
+<tr><td>\(\Delta T\)</td><td>tolerance window</td><td>1 week in the main family (\(B\) in the same or previous week); 0 in the exact-lag follow-up</td></tr>
+<tr><td>\(r_p,\ r_t\)</td><td>precursor and trigger coincidence rates</td><td>share of fails spikes preceded by an unwind; share of unwinds followed by a fails spike</td></tr>
+</table></div>
+
+<h4>Assumptions</h4>
+<ul>
+<li>Events are well defined: here "top (or bottom) 10% of weekly changes", fixed before the run.</li>
+<li>For the analytic (Poisson) p-value: both series are independent, sparse, homogeneous Poisson processes. For the circular-shift p-value we use instead: each series keeps its own timing and clustering; only the alignment between them is random.</li>
+<li>Stationary enough that a shift of the whole series is a fair "no-link" world (no strong trend in event frequency).</li>
+</ul>
+
+<h4>The statistic</h4>
+$$r_p(\Delta T,\tau)=\frac1{N_A}\sum_{i=1}^{N_A}\Theta\Big[\sum_{j=1}^{N_B}\mathbf 1_{[0,\Delta T]}\big((t^A_i-\tau)-t^B_j\big)\Big],\qquad
+r_t(\Delta T,\tau)=\frac1{N_B}\sum_{j=1}^{N_B}\Theta\Big[\sum_{i=1}^{N_A}\mathbf 1_{[0,\Delta T]}\big((t^A_i-\tau)-t^B_j\big)\Big]$$
+<p>\(\Theta\) is 1 if its argument is positive, so several \(B\) events in one window count once. \(r_p\) asks "what share of \(A\) events had a \(B\) event shortly before?"; \(r_t\) asks "what share of \(B\) events were followed by an \(A\) event?". Directionality comes from comparing \(r_p(A\mid B)\) with the same rate with the roles swapped.</p>
+
+<h4>Why it works, step by step</h4>
+<div class="step"><b class="n">Step 1 · chance coincidence under independence</b>The window before one \(A\) event covers \(\Delta T+1\) of the \(T-\tau\) usable steps. If the \(N_B\) events land independently and uniformly, the chance that none falls in it is \(q=\big(1-\tfrac{\Delta T+1}{T-\tau}\big)^{N_B}\), so each \(A\) event coincides with probability \(1-q\).</div>
+<div class="step"><b class="n">Step 2 · the analytic p-value</b>Treating the \(N_A\) windows as independent trials, the number of coincidences \(K_p=N_A r_p\) is Binomial\((N_A,1-q)\), so \(p=\sum_{K\ge K_p}\binom{N_A}{K}(1-q)^K q^{N_A-K}\). With our numbers (\(T=399\), \(N_B=40\), \(\Delta T=1\), \(\tau=0\)): \(1-q = 1-(1-2/399)^{40}\approx 0.18\) (computed), the "random placement" level on the chart.</div>
+<div class="step"><b class="n">Step 3 · where step 2 breaks</b>Fails spikes cluster (a spike week is followed by another 9% of the time; DVP surges 14%; positioning moves 18%), so windows are not independent trials and the binomial variance is too small. That is why we judge significance with circular shifts of \(B\) (4,999 per test, shift ≥ 8 weeks), which keep each series' clustering, and why the Poisson test over-rejects on our data (finding 3).</div>
+
+<h4>The null and multiple testing</h4>
+<ul>
+<li>Main family F1: 8 ordered pairs × 3 lags × 2 rates = 48 tests, circular-shift p-values, Holm over all 48 (pre-registered).</li>
+<li>Exact-lag follow-up (\(\Delta T=0\), \(\tau=0,1,2\)) and the reverse direction: added after F1, reported as follow-up, not familywise-controlled.</li>
+<li>Calibration check: false-positive rate of the Poisson test on 2,000 shifted pairs (pre-registered flag at 10%).</li>
+</ul>
+
+<div class="toy"><h5>Toy example (computed by <code>cards/_toys/toys.py</code>)</h5>
+<p>Ten weeks. \(A\) events in weeks 3 and 7; \(B\) events in weeks 2, 6 and 9; \(\Delta T=1\), \(\tau=0\). Week 3 has a \(B\) in weeks 2–3 (yes, week 2); week 7 has one in 6–7 (yes). So \(K_p=2\), \(r_p=1.0\). Of the \(B\) events, weeks 2 and 6 are followed by an \(A\) within a week, week 9 is not: \(K_t=2\), \(r_t=0.667\). Chance that a two-week window misses all three \(B\) events: \(q=(1-2/10)^3=0.512\). Poisson p for \(r_p\): \((1-0.512)^2=0.238\); for \(r_t\): 0.295. With so few events nothing is significant.</p></div>
+
+<div class="diff"><b>How it differs from the standard tool.</b> Cross-correlation and Granger causality use every week and every size of move, assume a linear and symmetric link (a big build and a big unwind count equally, with opposite signs), and are dominated by ordinary weeks. ECA throws away the middle of the distribution on purpose and asks only about the tails, separately for each tail and each direction. On our data the cross-correlation at lag 1 is r = −0.16: it is "significant" but says nothing about which tail carries it. ECA shows that unwinds carry it and builds do not.</div>
+<p class="cite">Followed: Donges, Schleussner, Siegmund &amp; Donner (2016), EPJ Special Topics 225:471–487 (arXiv:1508.03534; definitions, eqs. 3–4 of the arXiv version, read); Siegmund, Siegmund &amp; Donges (2016, arXiv), CoinCalc, arXiv:1603.05038 (eqs. 1–2 and the Poisson test, read; both worked examples reproduced to the printed digits). Odenweller &amp; Donner (2020), PRE 101:052213 (abstract and conclusions read). Toy: <code>cards/_toys/toys.py</code>.</p>
+</div><div class="panel p2" id="applied"><h4>What we found</h4><article class="fcard"><div class="viz"><div class="pair"><div><span class="lab">Usual tool</span><img src="../fig/2026-11-17/eca_std_xcorr.png" alt="Usual tool"></div><div class="new"><span class="lab">ECA by exact lag</span><img src="../fig/2026-11-17/eca_rates.png" alt="ECA by exact lag"></div></div></div><div class="body"><span class="chip">Finding 1</span><h3>Fails spikes follow big leveraged-fund unwinds by one week.</h3><p class="take">Of 39 financing-fails spike weeks (top 10% of weekly log change, 2018-05 to 2025-12), 26% come exactly one week after a big unwind week (bottom 10% change in leveraged-fund net short, UST 2Y+5Y+10Y futures). Random placement gives about 10% (circular-shift p = 0.008). Same or previous week: 38% vs 18%, Holm p = 0.0096 over 48 pre-registered tests.</p><p class="small">Big build weeks: 10% one week before (p = 0.54), no different from chance. Reverse direction (unwind one week after a fails spike): 15%, p = 0.16.</p></div></article><article class="fcard"><div class="viz"><div class="pair"><div><span class="lab">Event raster (coincidences coloured)</span><img src="../fig/2026-11-17/eca_raster.png" alt="Event raster (coincidences coloured)"></div><div class="new"><span class="lab">Rolling 104-week rate vs chance</span><img src="../fig/2026-11-17/eca_rolling.png" alt="Rolling 104-week rate vs chance"></div></div></div><div class="body"><span class="chip">Finding 2</span><h3>It holds in both halves and at other thresholds.</h3><p class="take">The same/previous-week precursor rate beats its null 95th percentile in 2018-05..2022-06 (42% vs 37%) and 2022-07..2025-12 (35% vs 30%), and at 80% (55% vs 44%) and 95% (25% vs 20%) event thresholds: all five pre-registered checks pass.</p><p class="small">The trigger-rate version fails in the second half (39% vs 39%). The coincident weeks include 2020-03-04, -11 and -18 and 2025-02-19, 2025-03-05 and 2025-09-24.</p></div></article><article class="fcard"><div class="viz"><svg viewBox="0 0 360 168" role="img" xmlns="http://www.w3.org/2000/svg"><text x="6" y="16" font-family="JetBrains Mono, monospace" font-size="11" fill="#6f5f46" letter-spacing="1">FALSE-POSITIVE RATE AT NOMINAL 5%</text><line x1="124.3" x2="124.3" y1="40" y2="152" stroke="#df5236" stroke-width="2" stroke-dasharray="4 3" opacity=".75"/><text x="128.3" y="164" font-family="JetBrains Mono, monospace" font-size="10.5" fill="#df5236">5% = nominal</text><text x="6" y="38" font-family="JetBrains Mono, monospace" font-size="12" fill="#1c150d">Fails ← spread</text><rect x="6" y="43" width="216.5" height="16" fill="#e8902e" stroke="#1c150d" stroke-width="1.5"/><text x="228.5" y="56" font-family="Bricolage Grotesque, sans-serif" font-weight="800" font-size="15" fill="#1c150d">9.2%</text><text x="6" y="78" font-family="JetBrains Mono, monospace" font-size="12" fill="#1c150d">DVP ← fails</text><rect x="6" y="83" width="222.5" height="16" fill="#e8902e" stroke="#1c150d" stroke-width="1.5"/><text x="234.5" y="96" font-family="Bricolage Grotesque, sans-serif" font-weight="800" font-size="15" fill="#1c150d">9.4%</text><text x="6" y="118" font-family="JetBrains Mono, monospace" font-size="12" fill="#1c150d">Fails ← lev unwind</text><rect x="6" y="123" width="95.9" height="16" fill="#1f9e8e" stroke="#1c150d" stroke-width="1.5"/><text x="107.9" y="136" font-family="Bricolage Grotesque, sans-serif" font-weight="800" font-size="15" fill="#1c150d">4.1%</text></svg></div><div class="body"><span class="chip">Finding 3</span><h3>The textbook Poisson test is too generous on these clustered series.</h3><p class="take">On 2,000 circularly shifted (independent by construction) pairs, CoinCalc's Poisson test rejects at 5% in 9.2% (fails ← spread) and 9.4% (DVP ← fails) of cases. Overall, 15 of 48 tests have Poisson p < 0.05; only 10 pass the circular-shift null and 3 survive Holm.</p><p class="small">Below our pre-set 'miscalibrated' flag of 10%, but nearly double the nominal 5%. That motivates the Math avenue.</p></div></article><article class="fcard red"><div class="viz"><svg viewBox="0 0 360 128" role="img" xmlns="http://www.w3.org/2000/svg"><text x="6" y="16" font-family="JetBrains Mono, monospace" font-size="11" fill="#6f5f46" letter-spacing="1">FAILS MONTHS PRECEDED BY A PF SPIKE (LAG 6)</text><line x1="223.6" x2="223.6" y1="40" y2="112" stroke="#df5236" stroke-width="2" stroke-dasharray="4 3" opacity=".75"/><text x="200.0" y="124" font-family="JetBrains Mono, monospace" font-size="10.5" fill="#df5236">null 95th pct</text><text x="6" y="38" font-family="JetBrains Mono, monospace" font-size="12" fill="#1c150d">Prime-broker borrowing</text><rect x="6" y="43" width="194.5" height="16" fill="#6f5f46" stroke="#1c150d" stroke-width="1.5"/><text x="206.5" y="56" font-family="Bricolage Grotesque, sans-serif" font-weight="800" font-size="15" fill="#1c150d">0.55</text><text x="6" y="78" font-family="JetBrains Mono, monospace" font-size="12" fill="#1c150d">Total borrowing</text><rect x="6" y="83" width="160.5" height="16" fill="#6f5f46" stroke="#1c150d" stroke-width="1.5"/><text x="172.5" y="96" font-family="Bricolage Grotesque, sans-serif" font-weight="800" font-size="15" fill="#1c150d">0.45</text></svg></div><div class="body"><span class="chip">Finding 4</span><h3>Monthly Form PF borrowing spikes do not line up with fails.</h3><p class="take">Form PF tab 8.27 prime-broker and total borrowing growth (top 20% months, 2013-05..2025-12, 152 months) shows no coincidence with fails-spike months at lags 0, 3 or 6 months, in either direction (smallest p = 0.24; all Holm p = 1).</p><p class="small">Consistent with the 11-14 CRQA (prime-broker growth: no link). Low power: with 3-month windows and 31 events, the null 95th percentile is already about 0.6.</p></div></article><h4>Who plays what</h4>
+<div class="table-wrap"><table>
+<tr><th>Home field (climate impacts)</th><th>Our data (Q1)</th></tr>
+<tr><td>Flood or heatwave (the possible trigger, series \(B\))</td><td>A week with a big leveraged-fund unwind or build in Treasury futures (CFTC TFF), a repo-spread spike, or a fails spike</td></tr>
+<tr><td>Epidemic outbreak or early flowering (the response, series \(A\))</td><td>A week with a financing-fails spike (NY Fed), a DVP-spread spike or a DVP volume surge (OFR)</td></tr>
+<tr><td>Country or station</td><td>The single U.S. market; one pair of series at a time</td></tr>
+<tr><td>Year or month</td><td>Wednesday week (monthly for the Form PF leg)</td></tr>
+</table></div>
+
+<h4>Inputs and preprocessing</h4>
+<ul>
+<li>Lab copies of public files (built on 11-14 and 11-15 from the official releases): NY Fed primary-dealer financing fails in U.S. Treasuries (weekly); OFR DVP outstanding and the DVP overnight minus tri-party Treasury rate (daily → Thursday–Wednesday weeks); CFTC Traders in Financial Futures leveraged-fund net short, UST 2Y + 5Y + 10Y futures, futures only (Tuesday report mapped to the next Wednesday). SEC Form PF tab 8.27 (monthly).</li>
+<li>Window: 2018-05-16..2026-09-23 (437 weeks); pairs with positioning stop at 2025-12-31 (399 weeks), because the lab's TFF copy has a gap after 2025-12-30. Two single-week gaps interpolated (holiday weeks).</li>
+<li>Events: top 10% of weekly changes (fails and DVP: log change; spread: bp change; positioning: change in net short, thousand contracts). "Unwind" is the bottom 10% of the positioning change (net short falls fast); "build" the top 10%.</li>
+</ul>
+
+<h4>What we ran</h4>
+<ol>
+<li>Home-field check: both CoinCalc paper examples (lilac flowering vs April heat; low soil carbon vs sorghum) reproduce to the printed digits (rates 0.5/0.5 and 0.2727/0.1875; p 0.01777557, 0.03824319, 0.04147892).</li>
+<li>Port check: our NumPy ECA matches CoinCalc 2.0 on all 48 rates and Poisson p-values of the main family (max difference 5e-14).</li>
+<li>Main family F1 (pre-registered): 8 pairs × lags 0/2/4 × precursor/trigger, \(\Delta T=1\), 4,999 circular shifts each, Holm over 48. Runtime 9 s on the box.</li>
+<li>Follow-ups: exact lags (\(\Delta T=0\)); reverse direction; stability (two halves; 80% and 95% thresholds); a rolling 104-week rate; the Poisson calibration check; Pearson cross-correlations with the same null as the standard comparison.</li>
+<li>Monthly family F2: Form PF prime-broker and total borrowing growth vs fails, lags 0/3/6 months, \(\Delta T=2\), Holm over 16.</li>
+</ol>
+
+<div class="callouts"><h5>How to read the main chart (ECA by exact lag)</h5>
+<ol>
+<li>Each bar is the share of the 39 fails-spike weeks that had a leveraged-fund event in the stated week: the same week, one week before, two weeks before.</li>
+<li>Teal bars are big unwinds, amber bars big builds. The red dashed line (about 0.10) is the share you would get if the positioning events were placed at random.</li>
+<li>The p-value above each bar comes from 4,999 circular shifts of the positioning series.</li>
+<li>The pattern to see: only the teal bar at "1 week before" stands clear (0.26, p = 0.008). Builds sit on the chance line at every lag.</li>
+</ol></div>
+
+<div class="plain"><h5>What it means for a decision-maker</h5>
+<p>When hedge funds and other leveraged traders cut their Treasury-futures short positions sharply in a week, a jump in settlement fails at the primary dealers tends to follow the next week, about 2.5 times as often as chance would give. When they add to those shorts, nothing like that happens. A normal correlation sees only a weak link and cannot tell the two cases apart. This is a pattern in public aggregates, not proof that the unwinds cause the fails (both may answer the same market shock), and not a trading signal.</p></div>
+
+<h4>Where it breaks (seen in our runs)</h4>
+<ul>
+<li><b>Common shocks.</b> March 2020 contributes three of the 15 coincident weeks; a shared market shock could drive both legs. The conditional ECA (top pick) tests this.</li>
+<li><b>Few events.</b> 39–44 events per series; the trigger version fails in the second half.</li>
+<li><b>Timing of the positioning data.</b> TFF positions are as of Tuesday; fails are weekly to Wednesday. A "same week" coincidence can mix one day of overlap with the prior six.</li>
+<li><b>Reference implementation.</b> In CoinCalc 2.0, <code>CC.eca.ts</code> with <code>sigtest = "shuffle"</code> or <code>"surrogate"</code> stopped with "object 'Pprec' not found" on our data; the waiting-time surrogate ran (1,000 reps in 30.0 s; our circular-shift version 0.08 s, a different null).</li>
+<li><b>Monthly Form PF</b> has too few months for this method at a 3-month window (finding 4).</li>
+</ul>
+
+<h4>What we'd do next</h4>
+<ul>
+<li>Conditional ECA on VIX and DVP-spread spike weeks (top pick).</li>
+<li>Refresh TFF from CFTC to extend the positioning pairs through 2026-09.</li>
+<li>Split the unwinds by tenor (2Y vs 10Y) to see which part of the basis trade lines up with fails.</li>
+</ul>
+</div><div class="panel p3" id="robust"><p><span class="grade">Promising but thin</span></p>
+<h4>What the home field has established</h4>
+<ul>
+<li><b>Origin.</b> Donges et al. (2016, EPJ Special Topics 225:471–487; arXiv:1508.03534, definitions read) define precursor and trigger coincidence rates with lag and tolerance, and tests based on Poisson processes or on point processes with a given inter-event-time distribution. Their application: floods as triggers of epidemic outbreaks, country-level, since the 1950s (abstract read).</li>
+<li><b>Package.</b> CoinCalc (Siegmund, Siegmund &amp; Donges, arXiv:1603.05038, 2016, read): R implementation with Poisson, shuffle and surrogate tests and two worked geoscience examples. We reproduced both to the printed digits. GitHub repository: 19 stars, last push 2017-01-25 (GitHub API, read 2026-11-17). The PIK <code>pyunicorn</code> library (231 stars, last push 2026-11-12) also carries ECA in its event-series module (tutorial read).</li>
+<li><b>Follow-ups.</b> Odenweller &amp; Donner (2020, PRE 101:052213; abstract and conclusions read) compare ECA with event synchronization in coupled autoregressive simulations. Event synchronization is biased by clustered, serially dependent events; ECA is "significantly less susceptible" and recommended for time-resolved work. Schleussner et al. (2016, PNAS 113:9216; abstract read) use ECA for climate disasters and armed-conflict outbreaks.</li>
+<li><b>Known failure modes.</b> The Poisson test assumes independent sparse events (we measured a 9.2–9.4% false-positive rate at nominal 5% on clustered series); results depend on the event threshold and window, which must be fixed in advance; shared drivers are not separated without the conditional variant.</li>
+</ul>
+<p><b>Verdict: promising but thin.</b> The statistic is simple and widely applied in climate-impact work, and one simulation study backs it. But most validation is by the originating PIK group, the reference R package has not been updated since 2017, and two of its significance options errored on our data.</p>
+<p class="small"><b>Found via.</b> Web search, 2026-11-17 14:20 ET ("event coincidence analysis Donges 2016 precursor trigger coincidence rate CoinCalc R package") → <a href="https://arxiv.org/abs/1603.05038">arXiv:1603.05038</a>, <a href="https://github.com/JonatanSiegmund/CoinCalc">github.com/JonatanSiegmund/CoinCalc</a>. Critique (Odenweller &amp; Donner 2020) by web search at 14:21 ET. X search (built-in tool) tried at 14:22 ET: 0 posts. Novelty: exotic-transfer (climate-impact science → funding markets).</p>
+</div><div class="panel p4" id="sauce"><div class="sauce"><span class="t">1 · Engineering · Effort S</span><h5>A fast ECA engine with clustering-aware nulls</h5>
+<p>A vectorised NumPy core (Rust later if the grid grows) that runs every ordered pair × lag × window across all Q1 series, with circular-shift, block-shuffle and waiting-time surrogates. CoinCalc 2.0 is the oracle; we already have a NumPy port at parity.</p>
+<p><b>Math sketch.</b> Store each series as a sorted event list and a prefix sum \(c_B(t)=\sum_{s\le t}B_s\); a window \([t-\tau-\Delta T,\,t-\tau]\) has a coincidence iff \(c_B(t-\tau)-c_B(t-\tau-\Delta T-1)&gt;0\). A circular shift by \(s\) is an index offset, so all \(R\) surrogates are one \((R\times N_A)\) gather instead of \(R\) loops.</p>
+<p><b>Why it matters here.</b> Q1 has about a dozen candidate weekly series (venues, tenors, fail types, positioning by contract); a full pre-registered grid is several thousand tests, each needing thousands of surrogates.</p>
+<p class="cite">Closest prior work: CoinCalc (Siegmund et al., arXiv 2016, arXiv:1603.05038) and pyunicorn's event-series module (pik-copan/pyunicorn); neither offers circular-shift nulls in CoinCalc's ts mode.</p>
+<p class="small"><b>Test (pass bar set now).</b> Parity ≤ 1e-12 with CoinCalc on both paper examples and our 48 tests (rates and Poisson p); waiting-time surrogate p within Monte-Carlo error of CoinCalc's; the full 12-series grid (132 pairs × 6 lags × 2 rates, 4,999 surrogates) in under 10 s on the box.</p></div>
+<div class="sauce"><span class="t">2 · Math · Effort M</span><h5>An analytic null for clustered events</h5>
+<p>Replace the Poisson null (independent, sparse events) with one where each series is a two-state Markov chain fitted to its own event clustering, so the p-value is cheap and calibrated without surrogates.</p>
+<p><b>Math sketch.</b> For \(B\) a stationary 0/1 Markov chain with event rate \(\pi\) and stay probability \(p_{00}\) in the no-event state, \(P(\text{no }B\text{ in a window of length }w)=(1-\pi)\,p_{00}^{\,w-1}\), replacing \((1-w/T)^{N_B}\). Then \(K_p\) is a sum of dependent indicators; with \(A\) also Markov, use the effective number of independent \(A\) clusters \(N_A^{\mathrm{eff}}=N_A(1-p^{A}_{11})\) in a binomial, or a Markov-modulated Poisson–binomial for an exact tail.</p>
+<p><b>Why it matters here.</b> Our Poisson false-positive rate is 9.2–9.4% at nominal 5%, and every weekly funding series we have clusters.</p>
+<p class="cite">Closest prior work: Donges et al. (2016) mention tests for point processes with a prescribed inter-event-time distribution (abstract read); Odenweller &amp; Donner (2020, PRE 101:052213) correct normalisation and boundary effects. No closed-form Markov null found.</p>
+<p class="small"><b>Test (pass bar set now).</b> On 2,000 circularly shifted pairs per Q1 pair, false-positive rate within 4–6% at nominal 5% (Poisson: 9.2%); on planted couplings in simulated Markov event series, power at least that of the 4,999-shift test.</p></div>
+<div class="sauce top"><span class="t">3 · New use on our data · Effort S · ★ Top pick</span><h5>Conditional ECA: unwinds or a common shock? (Q1.2, Q1.5)</h5>
+<p>CoinCalc already ships a conditional variant (<code>CC.ceca.ts</code>). Ask whether "fails spike one week after an unwind" survives when weeks with a VIX spike (FRED VIXCLS, on the box) or a DVP-spread spike are held out, and whether the unwind–fails link is in the 2Y or the 10Y contract.</p>
+<p><b>Math sketch.</b> \(r_p(A\mid B,\neg C)=\tfrac{1}{N_A^{\neg C}}\sum_{i:\,C\text{ absent near }t_i}\Theta[\cdot]\): the precursor rate computed only on \(A\) events with no \(C\) event in \([t_i-\tau-\Delta T,\,t_i]\). The null shifts \(B\) circularly with \(C\) and \(A\) fixed.</p>
+<p><b>Why it matters here.</b> It is the cheapest way to tell "leveraged funds unwinding creates fails" from "a volatility shock causes both", the core of Q1.2 and Q1.5.</p>
+<p class="cite">Closest prior work: conditional coincidence in CoinCalc 2.0 (<code>CC.ceca.ts</code>, function signature read on the box; no paper read for it).</p>
+<p class="small"><b>Test (pass bar set now).</b> Pre-registered: lag 1, \(\Delta T=0\), conditioning on VIX top-10% weekly changes and on DVP-spread top-10% changes separately; the conditional precursor rate must exceed its circular-shift null 95th percentile in both, with Holm over the two.</p></div>
+<p class="small">👍 on the issue means go with the ★ top pick. To choose another, just say so in a comment.</p>
+</div><div class="panel p5" id="questions"><div class="sauce"><span class="t">Q1.1 · Lead/lag</span><p>At the extremes, positioning leads funding stress: a fails spike follows a big leveraged-fund unwind one week later 26% of the time vs about 10% by chance (p = 0.008); the reverse is not significant. Monthly Form PF borrowing spikes show no coincidence with fails at 0–6 months.</p></div>
+<div class="sauce"><span class="t">Q1.2 · Co-movement vs coincidence in stress</span><p>Three of the 15 coincident weeks are in March 2020, and three are in 2025 (Feb 19, Mar 5, Sep 24). The rolling 104-week rate is above the chance level in 73 of 74 windows (the exception ends 2022-03-09), so the link is not only a 2020 artefact; the rolling rate is descriptive, not tested window by window. Whether a shared shock drives both is the top pick.</p></div>
+<div class="sauce"><span class="t">Q1.5 · Positioning vs funding</span><p>The 11-15 CCM found no positioning ↔ fails link while linear Granger rejected both ways. ECA localises it: the link lives in the unwind tail and one direction only. Builds show nothing.</p></div>
+<p class="small"><b>Still missing:</b> CFTC TFF after 2025-12-30 in the lab copy (public, refresh from CFTC); Form PF publication dates (leads are by reference month). · <a href="https://github.com/jgridifier/research-lab/blob/main/docs/methods-scout/QUESTIONS.md">All questions</a></p>
+</div></div></div>
+<p class="cite">Full tables, code and data notes: <a href="../2026-11-17.html#eca">the 2026-11-17 edition</a> · scripts in <code>runs/2026-11-17/</code> · card sources in <code>cards/eca/</code>.</p>
+<div style="margin:1.4rem 0"><a class="btn" href="https://github.com/jgridifier/research-lab/issues/70">Respond on #70</a><p class="howto">👍 go ahead · 👎 drop · or just comment what you think</p></div>
+<script>(function(){var m={"math":1,"applied":2,"robust":3,"sauce":4,"questions":5};var h=location.hash.slice(1);var i=m[h]||(/^t[1-5]$/.test(h)?+h[1]:0);if(i)document.getElementById("t"+i).checked=true;})();</script>
+</div>
+<footer class="pf">Generated by <code>tools/build_cards.py</code> from <code>feedback-state.json</code> and <code>cards/</code>; page contract in <a href="https://github.com/jgridifier/research-lab/blob/main/docs/methods-scout/LAYOUT.md">LAYOUT.md</a>.
+Status chips are baked in at build time and refreshed from the GitHub issue labels on load. Q2 work so far uses SYNTHETIC mock budgets; no private rows are published.</footer>
+<script src="../status.js"></script>
+</body></html>

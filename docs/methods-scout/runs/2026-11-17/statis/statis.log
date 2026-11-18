@@ -1,0 +1,34 @@
+n firms {np.int64(2013): 18, np.int64(2014): 30, np.int64(2015): 31, np.int64(2016): 32, np.int64(2017): 32, np.int64(2018): 34, np.int64(2019): 18, np.int64(2020): 33, np.int64(2021): 23, np.int64(2022): 33, np.int64(2023): 23, np.int64(2024): 31, np.int64(2025): 22}
+alpha {np.int64(2013): np.float64(0.077), np.int64(2014): np.float64(0.078), np.int64(2015): np.float64(0.078), np.int64(2016): np.float64(0.078), np.int64(2017): np.float64(0.077), np.int64(2018): np.float64(0.076), np.int64(2019): np.float64(0.075), np.int64(2020): np.float64(0.078), np.int64(2021): np.float64(0.076), np.int64(2022): np.float64(0.076), np.int64(2023): np.float64(0.076), np.int64(2024): np.float64(0.077), np.int64(2025): np.float64(0.077)}
+RV to compromise {np.int64(2013): np.float64(0.966), np.int64(2014): np.float64(0.983), np.int64(2015): np.float64(0.982), np.int64(2016): np.float64(0.982), np.int64(2017): np.float64(0.974), np.int64(2018): np.float64(0.961), np.int64(2019): np.float64(0.944), np.int64(2020): np.float64(0.983), np.int64(2021): np.float64(0.964), np.int64(2022): np.float64(0.953), np.int64(2023): np.float64(0.961), np.int64(2024): np.float64(0.976), np.int64(2025): np.float64(0.965)}
+compromise tau [0.468 0.21  0.172 0.085 0.052 0.011]
+B1 D 0.0108 p 0.022727272727272728 rank 39 of 1716
+B1 modRV 0.0209 0.016317016317016316
+B1 nocenter 0.0114 0.019230769230769232
+contiguous split D by first post year [(2015, np.float64(-0.005)), (2016, np.float64(-0.006)), (2017, np.float64(-0.005)), (2018, np.float64(-0.001)), (2019, np.float64(0.007)), (2020, np.float64(0.011)), (2021, np.float64(0.015)), (2022, np.float64(0.01)), (2023, np.float64(0.002)), (2024, np.float64(-0.001))]
+B2 95% band RV->comp [(np.int64(2013), np.float64(0.76), np.float64(0.964), True), (np.int64(2014), np.float64(0.842), np.float64(0.977), False), (np.int64(2015), np.float64(0.854), np.float64(0.978), False), (np.int64(2016), np.float64(0.851), np.float64(0.978), False), (np.int64(2017), np.float64(0.827), np.float64(0.978), False), (np.int64(2018), np.float64(0.829), np.float64(0.977), False), (np.int64(2019), np.float64(0.779), np.float64(0.961), True), (np.int64(2020), np.float64(0.896), np.float64(0.979), False), (np.int64(2021), np.float64(0.768), np.float64(0.976), False), (np.int64(2022), np.float64(0.785), np.float64(0.963), True), (np.int64(2023), np.float64(0.86), np.float64(0.971), False), (np.int64(2024), np.float64(0.845), np.float64(0.981), False), (np.int64(2025), np.float64(0.793), np.float64(0.963), True)]
+var move {'CET1 drawdown': 1.1966, 'SA pre-tax income': 0.9277, 'SA loan losses': 1.2362, 'Start CET1': 1.1712, 'Payout/RWA': 0.8417, 'Dividends/RWA': 0.9346, 'Net buybacks/RWA': 1.1794}
+largest era changes in compromise-space cosine
+  ('SA pre-tax income ~ Start CET1', -0.449, -0.099)
+  ('CET1 drawdown ~ SA loan losses', 0.087, 0.426)
+  ('SA loan losses ~ Net buybacks/RWA', -0.497, -0.16)
+  ('Start CET1 ~ Dividends/RWA', -0.636, -0.305)
+  ('SA pre-tax income ~ SA loan losses', -0.157, -0.48)
+  ('Dividends/RWA ~ Net buybacks/RWA', 0.15, -0.089)
+  ('CET1 drawdown ~ Start CET1', 0.839, 0.602)
+  ('SA loan losses ~ Dividends/RWA', -0.334, -0.563)
+    year    rho     lo     hi
+0   2013 -0.238 -0.782  0.324
+1   2014 -0.156 -0.533  0.280
+2   2015 -0.185 -0.527  0.176
+3   2016 -0.325 -0.644  0.061
+4   2017 -0.143 -0.560  0.247
+5   2018 -0.275 -0.590  0.082
+6   2019 -0.364 -0.729  0.134
+7   2020 -0.486 -0.735 -0.159
+8   2021 -0.056 -0.507  0.363
+9   2022 -0.402 -0.700 -0.001
+10  2023 -0.519 -0.766 -0.133
+11  2024 -0.325 -0.656  0.056
+12  2025 -0.433 -0.751  0.011
+pooled era rho -0.21244942483795615 -0.38825382275364545

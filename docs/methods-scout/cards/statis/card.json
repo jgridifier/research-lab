@@ -1,0 +1,52 @@
+{
+  "issue": 71,
+  "name": "STATIS multi-table analysis",
+  "title": "Did the whole stress-test–payout pattern change after 2020?",
+  "field": "sensory science and ecology (multi-table PCA)",
+  "what": "Treats each test year as a table, scores how alike the years' correlation patterns are, and maps years and variables together.",
+  "verdict": "Interesting",
+  "grade": "well established",
+  "pick_eff": "M",
+  "pick_line": "Reliability-corrected RV so single odd years can be tested; must be unbiased within ±0.01 in simulation.",
+  "data": "Public filings (Fed DFAST results, FR Y-9C); descriptive only",
+  "one": "The joint stress–payout pattern splits into 2013–19 and 2020–25 eras; no single correlation shows it.",
+  "picture": {
+    "type": "images",
+    "la": "Usual tool: one correlation per year (noisy)",
+    "a": "../fig/2026-11-17/statis_std.png",
+    "lb": "STATIS: whole-pattern similarity peaks at a 2021 cut",
+    "b": "../fig/2026-11-17/statis_split.png"
+  },
+  "findings": [
+    {
+      "h": "The whole correlation pattern splits into a pre-2020 and a 2020+ era.",
+      "t": "Across 13 exercises (2013–2025) and 7 variables, years in the same era are more alike than years in different eras: within − between RV = 0.0108, exact permutation p = 0.023 (rank 39 of all 1,716 ways to pick six 'after' years). Modified RV: p = 0.016; without double-centring: p = 0.019.",
+      "note": "Exploratory: among contiguous cuts the gap is largest when the 'after' era starts in 2021 (0.015), the first year with a stress capital buffer in force. That cut was not pre-registered. Years' sample sizes do not drive it (Spearman 0.19 between RV-to-compromise and firm count, p = 0.53).",
+      "chart": {"type": "images", "la": "Year map (interstructure)", "a": "../fig/2026-11-17/statis_years.png", "lb": "Variable map with yearly positions", "b": "../fig/2026-11-17/statis_vars.png"}
+    },
+    {
+      "h": "No single correlation change explains it.",
+      "t": "Of 21 variable pairs, the largest era change is CET1 drawdown ~ SA loan losses (Spearman −0.05 → +0.19; pair p = 0.009, familywise max-T p = 0.11). Payout/RWA ~ drawdown, the usual check, goes −0.24 → −0.37 (p = 0.10, max-T 0.92). Payout ~ net buybacks loosens 0.87 → 0.71 (p = 0.030, max-T 0.75).",
+      "note": "Read as: many small moves in the same direction add up to a significant whole-pattern shift that no one-pair test sees. Era means are of yearly Spearman correlations; exact permutation over 1,716 era splits.",
+      "chart": {"type": "dots", "title": "Era change in Spearman ρ (after − before)", "lo": -0.25, "hi": 0.3, "ref": 0, "ref_label": "0 = no change", "rows": [["Drawdown ~ loan losses", 0.241, "teal", "+0.24"], ["Pre-tax income ~ loan losses", -0.164, "amber", "−0.16"], ["Payout ~ net buybacks", -0.156, "amber", "−0.16"], ["Payout ~ drawdown (usual)", -0.129, "muted", "−0.13"]]}
+    },
+    {
+      "h": "The split is moderate, not robust.",
+      "t": "Dropping one exercise at a time, the era test stays below 0.05 in 9 of 13 cases; dropping 2015, 2016, 2021 or 2022 pushes p to 0.057–0.089.",
+      "chart": {"type": "hbars", "title": "Era-split p, leave one year out", "max": 0.1, "ref": [0.05, "0.05"], "rows": [["All 13 years", 0.023, "teal", "0.023"], ["Best drop (2019)", 0.013, "teal", "0.013"], ["Median of 13 drops", 0.0325, "teal", "0.033"], ["Worst drop (2015)", 0.0887, "amber", "0.089"]]}
+    },
+    {
+      "h": "Our 'which single year departs' check failed: RV's small-sample bias.",
+      "miss": true,
+      "t": "The pre-registered firm-bootstrap rule flagged 2013, 2019, 2022 and 2025. But in 6 of 13 years the observed RV to the compromise lies above its own bootstrap 97.5% bound: resampling 18–35 firms adds noise that lowers RV, so the bands are shifted down and the rule is not valid.",
+      "note": "This is the known RV bias (Smilde et al. 2009). The Math avenue (top pick) is a bias-corrected RV.",
+      "chart": {"type": "hbars", "title": "Years with observed RV above its own band", "max": 13, "rows": [["Years", 6, "red", "6 of 13"]]}
+    },
+    {
+      "h": "Firm paths: who moves in the joint stress–payout space.",
+      "t": "Partial triadic analysis on the 21 firms in every test 2022–25: the longest paths are Barclays US, Charles Schwab, UBS Americas and State Street. Path length tracks payout-rank changes only weakly (Spearman 0.11; 0.45 for the 28 firms in every test 2015–18).",
+      "note": "So in recent years firms move mostly on the stress side (drawdown, losses, capital), not on payouts. Descriptive; firm paths use public data only.",
+      "chart": {"type": "images", "la": "Firm paths 2022→2025", "a": "../fig/2026-11-17/statis_firms.png", "lb": "Variable map (for orientation)", "b": "../fig/2026-11-17/statis_vars.png"}
+    }
+  ]
+}

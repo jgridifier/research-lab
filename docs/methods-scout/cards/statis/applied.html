@@ -1,0 +1,51 @@
+<h4>Who plays what</h4>
+<div class="table-wrap"><table>
+<tr><th>Home field</th><th>Our data (Q3)</th></tr>
+<tr><td>Sensory panel: one assessor's table (wines × attributes); ecology: one sampling date (sites × species)</td><td>One stress-test exercise: firms × 7 variables</td></tr>
+<tr><td>Attributes or species</td><td>SA CET1 drawdown, SA pre-tax income, SA loan losses, starting CET1, payout/RWA, dividends/RWA, net buybacks/RWA</td></tr>
+<tr><td>Wines or sites</td><td>Bank holding companies (18–35 a year; different sets each year)</td></tr>
+<tr><td>"Do assessors agree?" / "Is the community stable over dates?"</td><td>Is the cross-firm pattern linking stress results and payouts the same each year?</td></tr>
+</table></div>
+
+<h4>Inputs and preprocessing</h4>
+<ul>
+<li>The lab's verified public copies (11-14 and 11-16 runs): Fed <code>public_results_DFAST_2026.csv</code> severely adverse rows, 2013–2025 exercises (2020 = June 2020 DFAST); FR Y-9C HI-A Q4 payouts (BHCK4460, 4598, 4783, 4782) over RWA, calendar year \(Y\) for test year \(Y\). 360 firm-years with all 7 variables.</li>
+<li>Per year: Spearman correlation matrix of the 7 variables (ranks, so heavy-tailed payout ratios do not dominate).</li>
+<li>Balanced firm windows for the partial triadic view: 28 firms in every test 2015–18; 21 firms in every test 2022–25 (ranks within year, standardised).</li>
+<li>No SCB variable in the main run: it exists only from 2021, so it cannot be compared across eras.</li>
+</ul>
+
+<h4>What we ran</h4>
+<ol>
+<li>Parity: our NumPy STATIS vs <code>ade4::statis</code> 1.7.24 on both balanced windows (max differences 3.8e-14 in RV, 4.7e-14 in weights, 3.0e-13 in compromise eigenvalues).</li>
+<li>COVSTATIS on the 13 yearly matrices: interstructure, weights, compromise (47%, 21%, 17% of compromise inertia on axes 1–3), partial points.</li>
+<li>Era test (pre-registered), with modified RV and no-centring variants; contiguous cuts (exploratory); leave-one-year-out.</li>
+<li>Pair changes with max-T; the standard year-by-year payout–drawdown correlation with 999 firm bootstraps.</li>
+<li>Firm-bootstrap year departures (pre-registered; failed, finding 4). Partial triadic firm paths on the balanced windows. Everything runs in under 5 s.</li>
+</ol>
+
+<div class="callouts"><h5>How to read the main charts</h5>
+<ol>
+<li><b>Contiguous-cut curve:</b> the x-axis is the first year of the "after" era; the y-axis is how much more alike years are within eras than across them. Above 0 means the cut separates real regimes; the peak is at 2021.</li>
+<li><b>Variable map:</b> big black dots are where each variable sits in the typical year. Variables close together move together across firms (payout, dividends, buybacks and pre-tax income on the right; drawdown and loan losses on the left).</li>
+<li>Small dots are the same variable in each year (amber before 2020, teal after). A tight cloud means a stable role; a cloud split by colour means the variable's role changed with the era.</li>
+<li><b>Year map:</b> one dot per year; axis 1 is closeness to the typical year (all between 0.94 and 0.99, the common structure dominates: 94% of the interstructure), axis 2 shows how the odd years differ.</li>
+</ol></div>
+
+<div class="plain"><h5>What it means for a decision-maker</h5>
+<p>Looked at one number at a time, the link between stress-test results and payouts seems to drift around without a clear break. Looked at all together, the pattern did change around 2020–21, when the stress capital buffer started: years after it resemble each other more than they resemble the years before. The change is spread over many small shifts (for example, the capital drawdown now tracks projected loan losses more closely, and total payouts track buybacks a bit less), rather than one big one. The evidence is moderate: removing some single years weakens it. Descriptive only.</p></div>
+
+<h4>Where it breaks (seen in our runs)</h4>
+<ul>
+<li><b>Small samples.</b> 18 firms in 2013 and 2019; RV is biased with few firms, which invalidated our year-departure check.</li>
+<li><b>Map angles are not correlations.</b> In the 3-axis compromise map, the cosine between two variables can differ a lot from their correlation (start CET1 ~ payout: −0.74 in the map vs about 0 in the data). Read pair changes from the matrices, as in finding 2.</li>
+<li><b>Changing firm sets.</b> Odd-year tests drop many Category IV firms, so part of a year's difference is who is in it. The balanced-firm view addresses this only for short windows.</li>
+<li><b>Timing.</b> Calendar-year payouts partly precede that year's results.</li>
+</ul>
+
+<h4>What we'd do next</h4>
+<ul>
+<li>Bias-corrected RV (top pick), then retest single-year departures.</li>
+<li>Repeat with the SCB-era variables (SCB, gap to the floor) as a separate 2021–25 STATIS.</li>
+<li>Separate firm-composition from structure: rerun on the 11 firms present in all 13 exercises.</li>
+</ul>

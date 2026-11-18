@@ -1,0 +1,51 @@
+<h4>Who plays what</h4>
+<div class="table-wrap"><table>
+<tr><th>Home field (climate impacts)</th><th>Our data (Q1)</th></tr>
+<tr><td>Flood or heatwave (the possible trigger, series \(B\))</td><td>A week with a big leveraged-fund unwind or build in Treasury futures (CFTC TFF), a repo-spread spike, or a fails spike</td></tr>
+<tr><td>Epidemic outbreak or early flowering (the response, series \(A\))</td><td>A week with a financing-fails spike (NY Fed), a DVP-spread spike or a DVP volume surge (OFR)</td></tr>
+<tr><td>Country or station</td><td>The single U.S. market; one pair of series at a time</td></tr>
+<tr><td>Year or month</td><td>Wednesday week (monthly for the Form PF leg)</td></tr>
+</table></div>
+
+<h4>Inputs and preprocessing</h4>
+<ul>
+<li>Lab copies of public files (built on 11-14 and 11-15 from the official releases): NY Fed primary-dealer financing fails in U.S. Treasuries (weekly); OFR DVP outstanding and the DVP overnight minus tri-party Treasury rate (daily → Thursday–Wednesday weeks); CFTC Traders in Financial Futures leveraged-fund net short, UST 2Y + 5Y + 10Y futures, futures only (Tuesday report mapped to the next Wednesday). SEC Form PF tab 8.27 (monthly).</li>
+<li>Window: 2018-05-16..2026-09-23 (437 weeks); pairs with positioning stop at 2025-12-31 (399 weeks), because the lab's TFF copy has a gap after 2025-12-30. Two single-week gaps interpolated (holiday weeks).</li>
+<li>Events: top 10% of weekly changes (fails and DVP: log change; spread: bp change; positioning: change in net short, thousand contracts). "Unwind" is the bottom 10% of the positioning change (net short falls fast); "build" the top 10%.</li>
+</ul>
+
+<h4>What we ran</h4>
+<ol>
+<li>Home-field check: both CoinCalc paper examples (lilac flowering vs April heat; low soil carbon vs sorghum) reproduce to the printed digits (rates 0.5/0.5 and 0.2727/0.1875; p 0.01777557, 0.03824319, 0.04147892).</li>
+<li>Port check: our NumPy ECA matches CoinCalc 2.0 on all 48 rates and Poisson p-values of the main family (max difference 5e-14).</li>
+<li>Main family F1 (pre-registered): 8 pairs × lags 0/2/4 × precursor/trigger, \(\Delta T=1\), 4,999 circular shifts each, Holm over 48. Runtime 9 s on the box.</li>
+<li>Follow-ups: exact lags (\(\Delta T=0\)); reverse direction; stability (two halves; 80% and 95% thresholds); a rolling 104-week rate; the Poisson calibration check; Pearson cross-correlations with the same null as the standard comparison.</li>
+<li>Monthly family F2: Form PF prime-broker and total borrowing growth vs fails, lags 0/3/6 months, \(\Delta T=2\), Holm over 16.</li>
+</ol>
+
+<div class="callouts"><h5>How to read the main chart (ECA by exact lag)</h5>
+<ol>
+<li>Each bar is the share of the 39 fails-spike weeks that had a leveraged-fund event in the stated week: the same week, one week before, two weeks before.</li>
+<li>Teal bars are big unwinds, amber bars big builds. The red dashed line (about 0.10) is the share you would get if the positioning events were placed at random.</li>
+<li>The p-value above each bar comes from 4,999 circular shifts of the positioning series.</li>
+<li>The pattern to see: only the teal bar at "1 week before" stands clear (0.26, p = 0.008). Builds sit on the chance line at every lag.</li>
+</ol></div>
+
+<div class="plain"><h5>What it means for a decision-maker</h5>
+<p>When hedge funds and other leveraged traders cut their Treasury-futures short positions sharply in a week, a jump in settlement fails at the primary dealers tends to follow the next week, about 2.5 times as often as chance would give. When they add to those shorts, nothing like that happens. A normal correlation sees only a weak link and cannot tell the two cases apart. This is a pattern in public aggregates, not proof that the unwinds cause the fails (both may answer the same market shock), and not a trading signal.</p></div>
+
+<h4>Where it breaks (seen in our runs)</h4>
+<ul>
+<li><b>Common shocks.</b> March 2020 contributes three of the 15 coincident weeks; a shared market shock could drive both legs. The conditional ECA (top pick) tests this.</li>
+<li><b>Few events.</b> 39–44 events per series; the trigger version fails in the second half.</li>
+<li><b>Timing of the positioning data.</b> TFF positions are as of Tuesday; fails are weekly to Wednesday. A "same week" coincidence can mix one day of overlap with the prior six.</li>
+<li><b>Reference implementation.</b> In CoinCalc 2.0, <code>CC.eca.ts</code> with <code>sigtest = "shuffle"</code> or <code>"surrogate"</code> stopped with "object 'Pprec' not found" on our data; the waiting-time surrogate ran (1,000 reps in 30.0 s; our circular-shift version 0.08 s, a different null).</li>
+<li><b>Monthly Form PF</b> has too few months for this method at a 3-month window (finding 4).</li>
+</ul>
+
+<h4>What we'd do next</h4>
+<ul>
+<li>Conditional ECA on VIX and DVP-spread spike weeks (top pick).</li>
+<li>Refresh TFF from CFTC to extend the positioning pairs through 2026-09.</li>
+<li>Split the unwinds by tenor (2Y vs 10Y) to see which part of the basis trade lines up with fails.</li>
+</ul>
