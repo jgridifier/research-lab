@@ -151,6 +151,18 @@ pt = sum(math.comb(len(Bev), k) * (1 - q_t) ** k * q_t ** (len(Bev) - k) for k i
 print("K_p", kp, "r_p", kp / len(Aev), "K_t", kt, "r_t", round(kt / len(Bev), 3),
       "P(no B in a window) =", round(q_p, 3), "Poisson p_prec", round(pp, 3), "p_trig", round(pt, 3))
 
+print("== ECA deep dive (2026-11-19): partial ECA and the Hawkes bridge, same toy")
+Cev = [3]  # a confounder event C in week 3
+keep = [t for t in Aev if not any(t - dT <= c <= t for c in Cev)]
+kpc = sum(any(t - dT <= s <= t for s in Bev) for t in keep)
+print("partial ECA: A events with no C in [t-dT, t]:", keep, "K", kpc, "r_p(A|B, not C)", kpc / len(keep))
+mu, w, rt_obs = 0.10, dT + 1, 0.40  # background A rate per week, window length, observed trigger rate
+r0 = 1 - math.exp(-mu * w)
+Phi = -math.log(1 - rt_obs) - mu * w
+print("Hawkes bridge: null trigger rate 1-exp(-mu*w) =", round(r0, 3), " implied kernel mass Phi =", round(Phi, 3),
+      " window intensity multiple (mu*w+Phi)/(mu*w) =", round((mu * w + Phi) / (mu * w), 2),
+      " check E[r_t] =", round(1 - math.exp(-mu * w - Phi), 3))
+
 print("== STATIS: three 3x3 correlation matrices (years); R3 is the odd one")
 R = [np.array([[1, .8, .2], [.8, 1, .1], [.2, .1, 1]]), np.array([[1, .7, .3], [.7, 1, .2], [.3, .2, 1]]),
      np.array([[1, .1, .6], [.1, 1, .5], [.6, .5, 1]])]

@@ -232,6 +232,8 @@ def load_cards(state):
                 if not (d / f"{k}.html").exists():
                     raise SystemExit(f"{d.name}: missing {k}.html (LAYOUT.md requires all five tabs)")
             c["tabs"] = {k: (d / f"{k}.html").read_text() for k, _ in TABS}
+            if (d / "deep.html").exists():  # optional deep dive (LAYOUT.md), rendered to m/<slug>-deep.html
+                c["deep"] = (d / "deep.html").read_text()
         cards[d.name] = c
     return cards
 
@@ -262,7 +264,7 @@ def card_page(c):
 <div class="row"><span class="k">Top pick</span><span class="v"><b>{e(PICK[c['pick_key']])}</b> (effort {e(c['pick_eff'])}): {e(c['pick_line'])}</span></div>
 <div class="row"><span class="k">Data</span><span class="v">{e(c['data'])}</span></div>
 </div>
-<p class="kicker" style="margin-top:1rem">The one picture</p>
+{deep_link(c)}<p class="kicker" style="margin-top:1rem">The one picture</p>
 {picture(c['picture'])}
 <div style="margin:1rem 0 .4rem">{respond(c['issue'], big=True)}</div>
 <div class="tabs">{radios}<div class="tabbar">{labels}</div><div class="panels">{''.join(panels)}</div></div>
@@ -271,6 +273,23 @@ def card_page(c):
 <script>(function(){{var m={{"math":1,"applied":2,"robust":3,"sauce":4,"questions":5}};var h=location.hash.slice(1);var i=m[h]||(/^t[1-5]$/.test(h)?+h[1]:0);if(i)document.getElementById("t"+i).checked=true;}})();</script>"""
     return page(f"{c['name']} · research card · methods scout", body, depth=1, math=True)
 
+
+
+def deep_link(c):
+    if not c.get("deep"):
+        return ""
+    return (f'<p class="small" style="margin:.8rem 0 0"><b>Deep dive:</b> <a href="{e(c["slug"])}-deep.html">scope, causality line, '
+            f'comparison, extensions and the next pre-registered step →</a></p>')
+
+
+def deep_page(c):
+    body = f"""<p class="crumb"><a href="../index.html">← Queue</a> · <a href="{e(c['slug'])}.html">← Research card</a></p>
+<div class="chips">{chip_q(c['q'])}{chip_status(c['status'], c['issue'])}{chip_v(c['verdict'])}<span class="date">Scouted {c['date']}</span></div>
+<section class="hero" style="padding-top:.5rem"><p class="kicker">{e(c['name'])} · deep dive</p>
+<h1>{e(c.get('deep_title') or 'Deep dive')}</h1></section>
+{c['deep']}
+<div style="margin:1.4rem 0">{respond(c['issue'])}</div>"""
+    return page(f"{c['name']} · deep dive · methods scout", body, depth=1, math=True)
 
 
 EDITION_PAGE = re.compile(r"^\d{4}-\d{2}-\d{2}(?:-[\w]+)?\.html$")
@@ -495,6 +514,8 @@ def main():
     for c in cards.values():
         if not c.get("stub"):
             (SCOUT / "m" / f"{c['slug']}.html").write_text(card_page(c))
+            if c.get("deep"):
+                (SCOUT / "m" / f"{c['slug']}-deep.html").write_text(deep_page(c))
     (SCOUT / "index.html").write_text(queue_page(cards))
     print("cards:", sorted(k for k, c in cards.items() if not c.get("stub")))
     print("stubs:", sorted(k for k, c in cards.items() if c.get("stub")))
