@@ -1,6 +1,7 @@
 {
   "issue": 70,
   "name": "Event coincidence analysis (ECA)",
+  "deep_title": "Where ECA fits: the problems, the causality line, the extensions",
   "title": "Do leveraged-fund unwinds come right before settlement-fail spikes?",
   "field": "climate-impact science",
   "what": "Counts how often extreme weeks in one series fall just after extreme weeks in another, with direction, lag and a null.",

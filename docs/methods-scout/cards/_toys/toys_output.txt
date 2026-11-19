@@ -44,6 +44,9 @@ p = share of the 4 sign vectors with dir >= observed = 0.5
 firm-year meat (pim sandwich) 0.32  firm meat 0.64  ratio 2.0
 == ECA: T=10 weeks, A events {3,7}, B events {2,6,9}, delT=1, tau=0
 K_p 2 r_p 1.0 K_t 2 r_t 0.667 P(no B in a window) = 0.512 Poisson p_prec 0.238 p_trig 0.295
+== ECA deep dive (2026-11-19): partial ECA and the Hawkes bridge, same toy
+partial ECA: A events with no C in [t-dT, t]: [7] K 1 r_p(A|B, not C) 1.0
+Hawkes bridge: null trigger rate 1-exp(-mu*w) = 0.181  implied kernel mass Phi = 0.311  window intensity multiple (mu*w+Phi)/(mu*w) = 2.55  check E[r_t] = 0.4
 == STATIS: three 3x3 correlation matrices (years); R3 is the odd one
 RV matrix [[1.0, 0.991, 0.489], [0.991, 1.0, 0.603], [0.489, 0.603, 1.0]] weights [0.354, 0.367, 0.279] RV to compromise [0.944, 0.98, 0.749]
 == STEM: 4 programs x 3 years (log levels), two model profiles (0,1,2) up and (0,-1,0) dip

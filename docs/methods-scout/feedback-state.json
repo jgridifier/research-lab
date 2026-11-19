@@ -1,7 +1,7 @@
 {
   "version": 1,
   "repo": "jgridifier/research-lab",
-  "updated_at": "2026-11-18T19:40:07Z",
+  "updated_at": "2026-11-19T12:17:45Z",
   "issues": {
     "46": {
       "issue": 46,
@@ -11,16 +11,33 @@
       "page": "2026-11-10.html",
       "page_anchor": "#partykit",
       "question": null,
-      "status": "proposed",
+      "status": "dropped",
       "top_pick": "math",
       "labels": [
         "scout",
-        "status:proposed",
+        "status:dropped",
         "pick:math"
       ],
-      "last_processed_at": "2026-11-16T18:59:34Z",
-      "notes": "Promotion into analysis-skills is pending Jared. Do not write an APPROVAL.md until Jared's own dated approval exists.",
-      "history": []
+      "last_processed_at": "2026-11-19T12:17:45Z",
+      "notes": "11-18: dropped per Jared's 👎 + 'Not exotic enough'. Issue closed as not planned. Nothing promoted.",
+      "history": [
+        {
+          "at": "2026-11-18T14:19:00Z",
+          "signal": "thumbs_down",
+          "source": "reaction",
+          "actor": "jgridifier",
+          "action": "status:dropped",
+          "ref": null
+        },
+        {
+          "at": "2026-11-18T14:19:23Z",
+          "signal": "free_text",
+          "source": "comment",
+          "actor": "jgridifier",
+          "action": "confirms drop: 'Not exotic enough'",
+          "ref": 6981246817
+        }
+      ]
     },
     "47": {
       "issue": 47,
@@ -49,17 +66,34 @@
       "page": "2026-11-11.html",
       "page_anchor": "#marss",
       "question": "Q1-retired",
-      "status": "proposed",
+      "status": "dropped",
       "top_pick": "math",
       "labels": [
         "scout",
         "scout:Q1-retired",
-        "status:proposed",
+        "status:dropped",
         "pick:math"
       ],
-      "last_processed_at": "2026-11-16T18:59:38Z",
-      "notes": "Aimed at the retired prime-broker Q1, on a public Y-9C proxy. Recommended for the promote workflow; not promoted.",
-      "history": []
+      "last_processed_at": "2026-11-19T12:17:45Z",
+      "notes": "11-18: dropped per Jared's 👎 + 'Have already looked at and worked into our stuff' (already covered in our work). Issue closed as not planned. Nothing promoted.",
+      "history": [
+        {
+          "at": "2026-11-18T14:19:36Z",
+          "signal": "thumbs_down",
+          "source": "reaction",
+          "actor": "jgridifier",
+          "action": "status:dropped",
+          "ref": null
+        },
+        {
+          "at": "2026-11-18T14:20:28Z",
+          "signal": "free_text",
+          "source": "comment",
+          "actor": "jgridifier",
+          "action": "confirms drop: already covered in our work",
+          "ref": 6981275039
+        }
+      ]
     },
     "49": {
       "issue": 49,
@@ -472,9 +506,34 @@
         "status:proposed",
         "pick:new-use"
       ],
-      "last_processed_at": "2026-11-17T19:34:22Z",
-      "notes": "",
-      "history": []
+      "last_processed_at": "2026-11-19T12:17:45Z",
+      "notes": "11-18: Jared asked for depth (causality line, edge, extensions, problem definition). 11-19: deep dive m/eca-deep.html added; next step (power check, then pre-registered partial ECA with kill rule) proposed, not run. Top pick unchanged (new-use, conditional ECA).",
+      "history": [
+        {
+          "at": "2026-11-18T21:06:00Z",
+          "signal": "free_text",
+          "source": "comment",
+          "actor": "jgridifier",
+          "action": "refine: deepen the card with enhancements and what they unlock",
+          "ref": 6991629217
+        },
+        {
+          "at": "2026-11-18T21:10:30Z",
+          "signal": "free_text",
+          "source": "comment",
+          "actor": "jgridifier",
+          "action": "refine: causality line, edge over causal methods, extensions for depth, clearer problem definition",
+          "ref": 6991733962
+        },
+        {
+          "at": "2026-11-19T12:17:45Z",
+          "signal": "result",
+          "source": "bot",
+          "actor": "quant-scout-bot",
+          "action": "deep dive m/eca-deep.html published (problem, causality ladder, 10-method comparison, edge, 6 extensions, pre-registered next step not run); status stays proposed",
+          "ref": null
+        }
+      ]
     },
     "71": {
       "issue": 71,

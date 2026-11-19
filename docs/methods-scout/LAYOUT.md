@@ -11,6 +11,7 @@ How the methods scout is laid out on the site, and what every research card must
 | `production-links.json` | Build repo, docs site, and published-package URLs, keyed by slug | by hand, when a repo or package exists |
 | `cards/<slug>/card.json` | Summary box, one picture, findings | the daily scout |
 | `cards/<slug>/{math,applied,robust,sauce,questions}.html` | The five tab bodies (HTML fragments, KaTeX allowed) | the daily scout |
+| `cards/<slug>/deep.html` | Optional deep dive (HTML fragment, KaTeX allowed), rendered to `m/<slug>-deep.html` and linked under the card's summary box | the daily scout or scanner, when Jared asks for more depth |
 | `cards/_toys/toys.py` | Every toy-example number on every card, reproducible | the daily scout |
 | `YYYY-MM-DD.html` | Dated edition (full tables, code notes) | the daily scout |
 | `archive.html` | List of dated editions | the daily scout (add each new edition) |
