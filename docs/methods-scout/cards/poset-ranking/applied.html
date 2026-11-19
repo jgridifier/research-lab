@@ -1,0 +1,60 @@
+<h4>Who plays what</h4>
+<div class="table-wrap"><table>
+<tr><th>Home field</th><th>Our data (Q3, public)</th></tr>
+<tr><td>Chemicals ranked on several hazard indicators (Hasse diagram technique); network nodes ranked by neighbourhood inclusion (netrankr)</td><td>Firms in one severely adverse stress test, ranked on three projected stress indicators</td></tr>
+<tr><td>"Chemical a is at least as hazardous as b on every indicator"</td><td>"Firm A is at least as stressed as B on drawdown, pre-tax income and loan losses"</td></tr>
+<tr><td>Incomparable chemicals; rank intervals</td><td>Trade-off firm pairs; how far a firm's stress rank can move under different weights</td></tr>
+<tr><td>Average rank over linear extensions (Brüggemann); expected rank (Schoch)</td><td>A weight-free stress rank per firm and year</td></tr>
+<tr><td>Centrality index (degree, betweenness, …) as one linear extension</td><td>Any composite stress score with positive weights</td></tr>
+</table></div>
+
+<h4>Inputs and preprocessing</h4>
+<ul>
+<li>The lab's verified public panel (<code>runs/2026-11-17/statis/q3_pim_panel.csv</code>, built 11-14/11-16 from <code>public_results_DFAST_2026.csv</code>, the FFIEC BHCF zips and the Large Bank Capital Requirements PDFs): 13 severely adverse exercises 2013–2025, 364 firm-years (360 with payouts), 18–35 firms per year.</li>
+<li>Indicators: CET1 drawdown (start minus minimum, pp; tier 1 common before CET1 existed), SA projected pre-tax net income (% of average assets, sign flipped), SA loan-loss rate (%). No scaling, no weights, no imputation. No exact ties occurred on all three.</li>
+<li>Outcome: Y-9C Schedule HI-A payout/RWA (%) = (common + preferred dividends + treasury purchases − sales) / RWA, calendar year of the test; next year as sensitivity. SCB (2021–2025 effective years) from the LBCR PDFs.</li>
+<li>Two exercises in 2020 (June DFAST and December) — the panel uses the June severely adverse results for 2020.</li>
+</ul>
+
+<h4>What we ran</h4>
+<ol>
+<li>Home field: netrankr's documented 5-element example and the dbces11 graph from the vignettes (739,200 rankings; expected ranks A 1.714 … K 8.143; rank intervals G [2, 11], K [3, 11]) — all match the printed values.</li>
+<li>Port check: our own lattice-of-ideals code in Python (<code>runs/2026-11-19/poset/lattice.py</code>) against netrankr on the 5-element example, 20 random posets (also against brute-force enumeration) and all 13 real posets: largest difference in expected rank 1.4×10<sup>−13</sup>, counts identical.</li>
+<li>Per year: dominance matrix, exact rank probabilities, rank intervals; equal-weight z composite, PC1 and pooled OLS composite for comparison.</li>
+<li>A1: dominance concordance with payouts, pooled over years, within-year shuffle null (4,999). A1b: trade-off pairs scored by each indicator and composite (1,999 shuffles, two-sided, Holm).</li>
+<li>A2: walk-forward benchmark 2015–2025 — poset expected rank vs pooled OLS, pooled ARDL(1,0) and per-firm SARIMAX(1,0,0) with the three stress variables as exogenous inputs.</li>
+<li>A3 (Q3.2): 2021–2025 pairs where path dominance and SCB order disagree; 999 shuffles.</li>
+<li>A4 (Q3.3): dominance relations kept, dissolved or reversed between consecutive tests for firms in both.</li>
+</ol>
+<p class="small">Pre-registered before any run: <a href="https://github.com/jgridifier/research-lab/blob/main/docs/methods-scout/runs/2026-11-19/PREREG.md">runs/2026-11-19/PREREG.md</a>. Added after seeing results and labelled here: the per-indicator trade-off scoring with a two-sided null (A1b was planned only as "incomparable share").</p>
+
+<h4>How to read the main chart</h4>
+<div class="callouts">
+<div><b>1</b> Right panel: each circle is a firm in the 2024 test, coloured by its realized 2024 payout/RWA (dark = pays out more).</div>
+<div><b>2</b> A line going up means the upper firm is worse on all three indicators (only direct steps are drawn; longer chains follow by transitivity). Height is the length of the longest such chain beneath the firm.</div>
+<div><b>3</b> Firms side by side with no path between them are trade-offs: no weight-free answer exists for which is more stressed. In 2024 that is 53% of pairs.</div>
+<div><b>4</b> Left panel: the usual composite forces all 31 firms into one line. Where the diagram has no path, that order is the analyst's weights, not the data.</div>
+<div><b>5</b> The pattern to look for: dark circles low, pale circles high. It holds along the lines (finding 1); across the trade-offs it depends on which indicator differs (finding 2).</div>
+</div>
+
+<h4>What it means for a decision-maker</h4>
+<div class="plain">
+<p>When one bank looks worse than another on every headline stress number, it almost always pays out less, about seven times in ten. But more than half of all bank pairs are mixed: one has bigger losses, the other weaker projected earnings. In those mixed cases payouts line up with projected earnings, and banks with higher projected loan losses actually pay out more, possibly because high-loss lenders are also high-earning card and consumer lenders. A single "stress score" blends these two and hides that they point in opposite directions. Since 2021 the capital buffer number, with many banks sitting at its 2.5% floor, says less about payouts than the full stress path does.</p>
+</div>
+
+<h4>Where it breaks</h4>
+<ul>
+<li>Exact dominance is brittle: a 0.1 pp difference creates an order, and 26% of orders dissolve the next year. Projection noise is not modelled.</li>
+<li>Loan-loss rate is per loans, pre-tax income per assets: business-model mix (card lenders, custody banks) drives the trade-off pattern. We did not control for business model.</li>
+<li>Calendar-year payouts partly precede the June results; association only. After 2020, SCB and payouts are linked by construction.</li>
+<li>Pooled p-values treat years as independent strata; recurring firm pairs are not clustered.</li>
+<li>Exact computation scales with the number of ideals; with more indicators or hundreds of units (Q2-sized books) it would need netrankr's MCMC or approximations.</li>
+<li>As a forecaster it is weak (finding 5) — payout persistence dominates.</li>
+</ul>
+
+<h4>What we'd do next</h4>
+<ul>
+<li>Noise-aware dominance (top pick): require a margin on each indicator, set from year-to-year projection variation, and recompute.</li>
+<li>Repeat the trade-off scoring for dividends and buybacks separately and before/after 2020 (Q3.5).</li>
+<li>Add a business-model split (card/consumer, custody, universal) to test the loan-loss sign reversal.</li>
+</ul>

@@ -1,0 +1,43 @@
+{
+ "n_firm_years": 360,
+ "years": {},
+ "parity_expected_rank_max_abs_vs_netrankr": 1.3855583347321954e-13,
+ "pooled_ols_coef": {
+  "const": 1.3976752426467647,
+  "drawdown": -0.025886843803313745,
+  "neg_pti": -0.2341233282561176,
+  "loss_total_loan_rate": -0.02059631428337678
+ },
+ "A1_same_year": {
+  "C": 0.7151611438946891,
+  "pairs": 2203,
+  "null_mean": 0.49972500174115625,
+  "null_q95": 0.5467771221062186,
+  "p": 0.0002
+ },
+ "A1_next_year": {
+  "C": 0.6553588987217306,
+  "pairs": 2034,
+  "null_mean": 0.49939501174571194,
+  "null_q95": 0.5474434611602753,
+  "p": 0.0002
+ },
+ "A1_ew_agree_dominance": 0.7151611438946891,
+ "A1_ew_agree_incomparable": 0.5520611229566453,
+ "incomparable_frac_mean": 0.55343584265614,
+ "incomparable_frac_range": [
+  0.3952569169960475,
+  0.6506238859180036
+ ],
+ "mean_spearman": {
+  "ew": -0.36768115644504196,
+  "pc1": -0.4356117888211376,
+  "ols": -0.46016005377651403,
+  "expected_rank": -0.36129776199501085
+ },
+ "rank_ambiguity": {
+  "mean_interval_width_over_n": 0.57051458568743,
+  "mean_rank_sd": 3.115351351149056,
+  "mean_rank_sd_over_n": 0.11318512129427243
+ }
+}

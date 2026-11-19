@@ -1,0 +1,70 @@
+{
+ "Corning_mock": {
+  "k": 311,
+  "auto_ice_aftertreatment": {
+   "n": 27,
+   "recall_lipa": 0.4444444444444444,
+   "recall_cell_mean": 0.0,
+   "recall_own_slope": 0.0,
+   "recall_abs_cell_mean": 0.5555555555555556,
+   "recall_abs_own": 0.14814814814814814
+  },
+  "ai_datacenter_demand": {
+   "n": 122,
+   "recall_lipa": 0.8524590163934426,
+   "recall_cell_mean": 1.0,
+   "recall_own_slope": 0.9344262295081968,
+   "recall_abs_cell_mean": 0.8442622950819673,
+   "recall_abs_own": 0.639344262295082
+  },
+  "display_specialty_tradeoff": {
+   "n": 84,
+   "recall_lipa": 0.4166666666666667,
+   "recall_cell_mean": 0.0,
+   "recall_own_slope": 0.13095238095238096,
+   "recall_abs_cell_mean": 0.5714285714285714,
+   "recall_abs_own": 0.20238095238095238
+  },
+  "co_move_precision": {
+   "lipa": 0.4855305466237942,
+   "cell_mean": 0.39228295819935693,
+   "own_slope": 0.40192926045016075,
+   "abs_cell_mean": 0.5337620578778135,
+   "abs_own": 0.3183279742765273
+  }
+ },
+ "MorganStanley_mock": {
+  "k": 777,
+  "equity_market_activity": {
+   "n": 163,
+   "recall_lipa": 0.7055214723926381,
+   "recall_cell_mean": 0.7607361963190185,
+   "recall_own_slope": 0.852760736196319,
+   "recall_abs_cell_mean": 0.6993865030674846,
+   "recall_abs_own": 0.6687116564417178
+  },
+  "wealth_fee_based_growth": {
+   "n": 251,
+   "recall_lipa": 0.7888446215139442,
+   "recall_cell_mean": 0.08764940239043825,
+   "recall_own_slope": 0.1752988047808765,
+   "recall_abs_cell_mean": 0.9043824701195219,
+   "recall_abs_own": 0.5657370517928287
+  },
+  "branch_vs_digital": {
+   "n": 45,
+   "recall_lipa": 0.15555555555555556,
+   "recall_cell_mean": 0.15555555555555556,
+   "recall_own_slope": 0.5777777777777777,
+   "recall_abs_cell_mean": 0.13333333333333333,
+   "recall_abs_own": 0.17777777777777778
+  },
+  "co_move_precision": {
+   "lipa": 0.4118404118404118,
+   "cell_mean": 0.1969111969111969,
+   "own_slope": 0.26898326898326896,
+   "abs_cell_mean": 0.4465894465894466,
+   "abs_own": 0.3333333333333333
+  }
+ }
+}

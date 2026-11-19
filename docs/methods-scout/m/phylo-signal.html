@@ -1,0 +1,189 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Phylogenetic signal and LIPA on the program tree · research card · methods scout</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,400..800&family=Newsreader:ital,opsz,wght@0,6..72,400..600;1,6..72,400..500&family=JetBrains+Mono:wght@400;500;700&display=swap">
+<link rel="stylesheet" href="../../assets/brief.css">
+<link rel="stylesheet" href="../scout-cards.css">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.css"><script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.js"></script><script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/contrib/auto-render.min.js" onload="renderMathInElement(document.body,{delimiters:[{left:'$$',right:'$$',display:true},{left:'\\(',right:'\\)',display:false}]})"></script>
+<!-- Methods Scout home-screen / PWA tags. Paste into <head> of every methods-scout page.
+     Paths are root-absolute so they resolve under https://jgridifier.github.io/research-lab/. -->
+<link rel="apple-touch-icon" sizes="180x180" href="/research-lab/methods-scout/icons/apple-touch-icon.png">
+<link rel="icon" type="image/png" sizes="32x32" href="/research-lab/methods-scout/icons/favicon-32.png">
+<link rel="icon" type="image/png" sizes="192x192" href="/research-lab/methods-scout/icons/icon-192.png">
+<link rel="manifest" href="/research-lab/methods-scout/manifest.webmanifest">
+<meta name="apple-mobile-web-app-title" content="Methods Scout">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="theme-color" content="#0F2A23">
+
+</head><body>
+<header class="topbar"><a class="brand" href="../index.html">Methods scout</a>
+<span><a href="../index.html">Queue</a> · <a href="../archive.html">Archive</a></span></header>
+<div class="pz">
+<p class="crumb"><a href="../index.html">← Queue</a></p>
+<div class="chips"><span class="chip q">Q2</span><span class="chip st-proposed" data-issue="80">○ New</span><span class="chip v-int">Interesting</span><span class="date">Scouted 2026-11-19</span></div>
+<section class="hero" style="padding-top:.5rem"><p class="kicker">Phylogenetic signal and LIPA on the program tree · from comparative biology and community ecology (phylogenetic signal)</p>
+<h1>How much program growth runs in the family tree?</h1></section>
+<div class="sum">
+<div class="row"><span class="k">What it is</span><span class="v">Treats the program hierarchy as a family tree and measures, globally and per program, how much growth relatives share.</span></div>
+<div class="row"><span class="k">Verdict</span><span class="v"><b>Interesting.</b> Home field: well established (K, λ); LIPA promising but thin.</span></div>
+<div class="row"><span class="k">Top pick</span><span class="v"><b>Math</b> (effort M): Measurement-error-corrected λ using each program&#x27;s slope standard error, to split shared growth from noise.</span></div>
+<div class="row"><span class="k">Data</span><span class="v">SYNTHETIC mock ZBB budgets (Corning-like and Morgan Stanley-like); answer key used only for scoring</span></div>
+</div>
+<p class="kicker" style="margin-top:1rem">The one picture</p>
+<div class="pair"><div><span class="lab">Usual tool: growth by function, 51 boxes (MS-like)</span><img src="../fig/2026-11-19/phylo_std_box_ms.png" alt="Usual tool: growth by function, 51 boxes (MS-like)"></div><div class="new"><span class="lab">Tree view: growth bars coloured by LIPA (MS-like)</span><img src="../fig/2026-11-19/phylo_tree_only_ms.png" alt="Tree view: growth bars coloured by LIPA (MS-like)"></div></div>
+<div style="margin:1rem 0 .4rem"><a class="btn big" href="https://github.com/jgridifier/research-lab/issues/80">Respond on #80</a><p class="howto">👍 go ahead · 👎 drop · or just comment what you think</p></div>
+<div class="tabs"><input type="radio" name="tab" id="t1" checked><input type="radio" name="tab" id="t2"><input type="radio" name="tab" id="t3"><input type="radio" name="tab" id="t4"><input type="radio" name="tab" id="t5"><div class="tabbar"><label for="t1">The math</label><label for="t2">On our data</label><label for="t3">Robust at home</label><label for="t4">Secret sauce</label><label for="t5">Questions</label></div><div class="panels"><div class="panel p1" id="math"><h4>Notation</h4>
+<div class="table-wrap"><table>
+<tr><th>Symbol</th><th>Meaning</th><th>Here</th></tr>
+<tr><td>\(\mathcal T\)</td><td>rooted tree with branch lengths; tips are species</td><td>label tree: segment → subsegment → function → stated intent → program, unit branches (ultrametric); or a text tree from descriptions</td></tr>
+<tr><td>\(y_i\)</td><td>trait value at tip \(i\)</td><td>program \(i\)'s OLS slope of log actual spend per year (FY2020–25 or FY2021–25)</td></tr>
+<tr><td>\(C\)</td><td>shared-path matrix: \(C_{ij}\) = branch length from root to the most recent common ancestor of \(i,j\)</td><td>\(C_{ij}\) = number of shared levels (0–4) plus 1 on the diagonal</td></tr>
+<tr><td>\(W=(w_{ij})\)</td><td>phylogenetic proximity, \(w_{ii}=0\)</td><td>patristic proximity (inverse tree distance), rows sum to 1</td></tr>
+<tr><td>\(\lambda\)</td><td>Pagel's multiplier on off-diagonal \(C\)</td><td>how much of growth covariance follows the hierarchy</td></tr>
+<tr><td>\(K\)</td><td>Blomberg's ratio of observed to Brownian-expected tree-structured variance</td><td>\(K\approx1\) Brownian; \(K\to0\) no signal; \(K&gt;1\) relatives more alike than Brownian</td></tr>
+<tr><td>\(I_i\)</td><td>local Moran's I (LIPA) at tip \(i\)</td><td>positive: program grows like its relatives; negative: unlike them</td></tr>
+</table></div>
+
+<h4>Assumptions</h4>
+<ul>
+<li>The tree is given, not estimated from the trait. Here it is the stated hierarchy (or a text clustering), which is exactly what Q2 wants to test against the numbers.</li>
+<li>Model-based indices (K, λ) assume Gaussian traits with covariance proportional to shared path length (Brownian motion on the tree). Unit branch lengths make that "each shared level adds the same covariance".</li>
+<li>The trait is measured without error. Here it is not: a 5–6-point slope has sampling error, which is the source of the attenuation in finding 1 (the Math avenue relaxes this).</li>
+<li>Permutation tests assume tips are exchangeable under "no signal".</li>
+</ul>
+
+<h4>The estimators</h4>
+$$y\sim N\big(\mu\mathbf 1,\ \sigma^2 C_\lambda\big),\quad C_\lambda=\lambda C+(1-\lambda)\,\mathrm{diag}(C),\qquad \hat\lambda=\arg\max_\lambda \ell(\lambda).$$
+$$K=\frac{\mathrm{MSE}_0/\mathrm{MSE}}{\mathbb E_{\mathrm{BM}}[\mathrm{MSE}_0/\mathrm{MSE}]},\quad \mathrm{MSE}_0=\frac{(y-\hat\mu\mathbf1)^\top(y-\hat\mu\mathbf1)}{n-1},\ \ \mathrm{MSE}=\frac{(y-\hat\mu\mathbf1)^\top C^{-1}(y-\hat\mu\mathbf1)}{n-1},\ \ \mathbb E_{\mathrm{BM}}[\cdot]=\frac{\mathrm{tr}(C)-n/(\mathbf1^\top C^{-1}\mathbf1)}{n-1}.$$
+$$I_i=\frac{z_i}{m_2}\sum_{j\ne i}w_{ij}z_j,\qquad z_i=y_i-\bar y,\ \ m_2=\tfrac1n\textstyle\sum_k z_k^2;\qquad I=\frac{n}{S_0}\frac{z^\top W z}{z^\top z}.$$
+<p>Abouheif's \(C_{\mathrm{mean}}\) is Moran's \(I\) with Abouheif's proximity (based on node counts); \(\hat\mu=\mathbf1^\top C^{-1}y/\mathbf1^\top C^{-1}\mathbf 1\) is the GLS root mean.</p>
+
+<h4>Why it works, step by step</h4>
+<div class="step"><b class="n">Step 1 · what λ does to the covariance</b>\(\lambda=1\) keeps the full tree covariance: two programs with the same function and stated intent share 4 of the 5 root-to-tip levels, so \(\mathrm{Cov}=4\sigma^2\) against variance \(5\sigma^2\) (correlation 0.8). \(\lambda=0\) zeroes all off-diagonal terms (a star tree: no shared growth). For two siblings the implied correlation is \(4\lambda/5\), so \(\hat\lambda=0.52\) means the hierarchy predicts a sibling correlation of about 0.42 (computed), against 0.98 at \(\hat\lambda=1.22\) on noise-free growth.</div>
+<div class="step"><b class="n">Step 2 · why measurement noise pulls λ down</b>Write observed slope \(y_i=\theta_i+e_i\), with true \(\theta\sim N(\mu\mathbf1,\sigma^2 C_{\lambda_0})\) and independent \(e_i\sim N(0,s^2)\). On an ultrametric tree every diagonal entry of \(C\) is the root-to-tip length \(d\) (here 5), so
+$$\mathrm{Var}(y)=\sigma^2\lambda_0 C+\big(\sigma^2(1-\lambda_0)d+s^2\big)I .$$
+Matching this to \(\sigma_y^2 C_\lambda=\sigma_y^2\big(\lambda C+(1-\lambda)dI\big)\): the diagonal gives \(\sigma_y^2 d=\sigma^2 d+s^2\), the off-diagonal gives \(\sigma_y^2\lambda=\sigma^2\lambda_0\), so
+$$\lambda=\lambda_0\,\frac{\sigma^2 d}{\sigma^2 d+s^2}=\lambda_0\times\text{reliability of one program's slope}.$$
+The drop from 1.22 to 0.52 implies a reliability of about 0.43 on the Corning-like book, and 0.78/1.12 ≈ 0.70 on the MS-like book (computed, under this model).</div>
+<div class="step"><b class="n">Step 3 · K as a variance ratio</b>Under Brownian motion, \(\mathrm{MSE}_0\) (ignores the tree) is inflated by shared ancestry relative to \(\mathrm{MSE}\) (uses \(C^{-1}\)), by exactly the factor \(\mathbb E_{\mathrm{BM}}\). Dividing by it gives \(\mathbb E[K]\approx1\) under Brownian motion — the property we reproduced (mean 1.03 over 200 trees).</div>
+
+<h4>The null and multiple testing</h4>
+<ul>
+<li>K, I, \(C_{\mathrm{mean}}\): 999 permutations of trait values across tips (phylosignal); λ: the p-value returned by <code>phyloSignal</code> with the same 999 repetitions.</li>
+<li>LIPA: 999 conditional permutations per tip, two-sided; no multiplicity correction (as in the package) — 338 and 847 tips at p &lt; 0.05 against about 39 and 70 expected by chance (computed, 5% of tips).</li>
+<li>Scoring against the answer key uses AUC; no p-values claimed for those.</li>
+</ul>
+
+<div class="toy"><h5>Toy example (computed by <code>cards/_toys/toys.py</code>)</h5>
+<p>Tree ((p1, p2), (p3, p4)), sister-only weights; slopes 0.10, 0.08, −0.02, 0.06 (mean 0.055). Standardized values z = 0.988, 0.549, −1.646, 0.110; each sister's z: 0.549, 0.988, 0.110, −1.646. Local I = z × sister z = 0.542, 0.542, −0.181, −0.181; global Moran's I = 0.181. Program minus sister: 0.02, −0.02, −0.08, 0.08. So p3 and p4 differ from each other by 0.08, four times more than p1 and p2, yet their local I is only −0.181 because p4 sits near the overall mean — the reason LIPA missed mismatches that a "program minus relatives" gap finds.</p></div>
+
+<div class="diff"><b>How it differs from the standard tool.</b> The usual view is a box per category and an ANOVA R², which treats categories as flat, unrelated groups and says nothing about single programs. Phylogenetic signal uses the whole nesting: programs that share more levels are expected to be more alike, with one parameter (λ) for how much, a Brownian benchmark (K = 1) and a per-program local index. ANOVA asks "do category means differ"; λ asks "does covariance fall off with distance in the hierarchy", and it can be corrected for measurement error (top pick), which R² cannot without a model.</div>
+<p class="cite">Followed: Keck, Rimet, Bouchez &amp; Franc (2016), <i>Ecology and Evolution</i> 6(9):2774–2780 (abstract, Table 1 and the LIPA section read via the publisher page; equation numbers not checked — the LIPA formula above is Anselin's local Moran's I as cited there); phylosignal 1.3.1 manual for <code>phyloSignal</code> and <code>lipaMoran</code> (read). K: Blomberg, Garland &amp; Ives (2003); λ: Pagel (1999) — both cited via Münkemüller et al. (2012), not read; the K formula is as implemented in phylosignal/phytools (our K agrees with phytools to 3×10<sup>−12</sup>). Toy: <code>cards/_toys/toys.py</code>.</p>
+</div><div class="panel p2" id="applied"><h4>What we found</h4><article class="fcard"><div class="viz"><div class="pair"><div><span class="lab">Pagel&#x27;s λ: true vs observed vs text tree</span><img src="../fig/2026-11-19/phylo_lambda.png" alt="Pagel&#x27;s λ: true vs observed vs text tree"></div><div class="new"><span class="lab">Program tree, Corning-like</span><img src="../fig/2026-11-19/phylo_tree_corning.png" alt="Program tree, Corning-like"></div></div></div><div class="body"><span class="chip">Finding 1</span><h3>Noise hides most of the growth the tree explains.</h3><p class="take">On the label tree (segment > subsegment > function > stated intent), Pagel's λ of per-program growth is 0.52 on observed actuals vs 1.22 on noise-free growth (Corning-like), and 0.78 vs 1.12 (MS-like). Blomberg's K falls 91% (4.54 → 0.40) and 64% (1.50 → 0.54). All four indices p = 0.001 (999 permutations).</p><p class="small">Standard comparison: ANOVA R² of slope on function is 0.45 vs 0.96 noise-free (Corning-like) and 0.59 vs 0.85 (MS-like). λ and K say the same thing in a form that also handles nested levels and gives per-node and per-program versions. λ > 1 is allowed by the estimator.</p></div></article><article class="fcard"><div class="viz"><svg viewBox="0 0 360 194" role="img" xmlns="http://www.w3.org/2000/svg"><text x="6" y="16" font-family="JetBrains Mono, monospace" font-size="11" fill="#6f5f46" letter-spacing="1">PAGEL&#x27;S Λ OF OBSERVED GROWTH</text><text x="6" y="38" font-family="JetBrains Mono, monospace" font-size="12" fill="#1c150d">Corning-like: label tree</text><rect x="6" y="43" width="148.8" height="16" fill="#1f9e8e" stroke="#1c150d" stroke-width="1.5"/><text x="160.8" y="56" font-family="Bricolage Grotesque, sans-serif" font-weight="800" font-size="15" fill="#1c150d">0.52</text><text x="6" y="78" font-family="JetBrains Mono, monospace" font-size="12" fill="#1c150d">Corning-like: text tree</text><rect x="6" y="83" width="99.4" height="16" fill="#6f5f46" stroke="#1c150d" stroke-width="1.5"/><text x="111.4" y="96" font-family="Bricolage Grotesque, sans-serif" font-weight="800" font-size="15" fill="#1c150d">0.35</text><text x="6" y="118" font-family="JetBrains Mono, monospace" font-size="12" fill="#1c150d">MS-like: label tree</text><rect x="6" y="123" width="222.7" height="16" fill="#1f9e8e" stroke="#1c150d" stroke-width="1.5"/><text x="234.7" y="136" font-family="Bricolage Grotesque, sans-serif" font-weight="800" font-size="15" fill="#1c150d">0.78</text><text x="6" y="158" font-family="JetBrains Mono, monospace" font-size="12" fill="#1c150d">MS-like: text tree</text><rect x="6" y="163" width="160.5" height="16" fill="#6f5f46" stroke="#1c150d" stroke-width="1.5"/><text x="172.5" y="176" font-family="Bricolage Grotesque, sans-serif" font-weight="800" font-size="15" fill="#1c150d">0.57</text></svg></div><div class="body"><span class="chip">Finding 2</span><h3>Descriptions carry less growth signal than the labels.</h3><p class="take">A tree from the descriptions (TF-IDF, average linkage; every sentence with numbers, dollars, actuals or budget words removed, about 40% of words) gives λ 0.35 (Corning-like) and 0.57 (MS-like) vs 0.52 and 0.78 on the label tree; K is not significant on the text tree (p = 0.46 and 0.15).</p><p class="small">The descriptions leak numeric history ("actuals have risen from $4.76 million…"); without the scrub the text tree would be measuring the numbers. On these mocks, the words add nothing beyond the categories they were generated from.</p></div></article><article class="fcard"><div class="viz"><div class="pair"><div><span class="lab">RMSE by method, both mocks</span><img src="../fig/2026-11-19/phylo_walkforward.png" alt="RMSE by method, both mocks"></div><div class="new"><span class="lab">Program tree, MS-like</span><img src="../fig/2026-11-19/phylo_tree_ms.png" alt="Program tree, MS-like"></div></div></div><div class="body"><span class="chip">Finding 3</span><h3>Borrowing from relatives beats a per-program trend, but not a pooled ARDL.</h3><p class="take">One-step walk-forward of last-year log growth: a relatives-weighted mean of last observed growth (patristic weights on the label tree) has RMSE 0.242 vs OLS trend 0.261 (−7.2%, Corning-like) and 0.225 vs 0.263 (−14.3%, MS-like); pre-registered bar −5% passed. Pooled ARDL(1): 0.244 and 0.217. "No change": 0.231 and 0.236. Per-program SARIMAX(1,0,0): 0.297, and diverged on some MS-like programs.</p><p class="small">Against noise-free growth the relatives' mean is best on the MS-like book (0.110 vs ARDL 0.137, OLS 0.139) but "no change" wins on the Corning-like book (0.103 vs 0.125). Not a forecasting method; the benchmark checks that borrowing is real.</p></div></article><article class="fcard red"><div class="viz"><svg viewBox="0 0 360 154" role="img" xmlns="http://www.w3.org/2000/svg"><text x="6" y="16" font-family="JetBrains Mono, monospace" font-size="11" fill="#6f5f46" letter-spacing="1">AUC, &#x27;SAYS GROWTH, ACTUALLY DECLINING&#x27; (MS-LIKE, 25 PLANTED)</text><text x="6" y="38" font-family="JetBrains Mono, monospace" font-size="12" fill="#1c150d">OLS slope (usual)</text><rect x="6" y="43" width="184.9" height="16" fill="#6f5f46" stroke="#1c150d" stroke-width="1.5"/><text x="196.9" y="56" font-family="Bricolage Grotesque, sans-serif" font-weight="800" font-size="15" fill="#1c150d">0.65</text><text x="6" y="78" font-family="JetBrains Mono, monospace" font-size="12" fill="#1c150d">Program minus relatives</text><rect x="6" y="83" width="187.2" height="16" fill="#6f5f46" stroke="#1c150d" stroke-width="1.5"/><text x="199.2" y="96" font-family="Bricolage Grotesque, sans-serif" font-weight="800" font-size="15" fill="#1c150d">0.66</text><text x="6" y="118" font-family="JetBrains Mono, monospace" font-size="12" fill="#1c150d">−LIPA</text><rect x="6" y="123" width="151.1" height="16" fill="#e8902e" stroke="#1c150d" stroke-width="1.5"/><text x="163.1" y="136" font-family="Bricolage Grotesque, sans-serif" font-weight="800" font-size="15" fill="#1c150d">0.53</text></svg></div><div class="body"><span class="chip">Finding 4</span><h3>LIPA does not flag text-vs-numbers mismatches or category drift.</h3><p class="take">"Says growth, actually declining": negative LIPA AUC 0.59 (Corning-like, 6 planted) and 0.53 (MS-like, 25) vs a plain OLS slope 0.74 and 0.65. Category drift (LIPA early minus late window): AUC 0.55 and 0.47 for any drift. One cell passed the pre-registered bar (MS-like "says transform, actually run": 0.71 vs best comparator 0.58), but the same type on the Corning-like book is 0.48; read as chance among 10 cells.</p><p class="small">LIPA multiplies a program's deviation by its relatives' deviation, so a program near the overall mean scores near zero even when it differs from its siblings (see the toy).</p></div></article><article class="fcard red"><div class="viz"><div class="pair"><div><span class="lab">Share of flags in a planted group</span><img src="../fig/2026-11-19/phylo_cluster_precision.png" alt="Share of flags in a planted group"></div><div class="new"><span class="lab">Program tree, Corning-like</span><img src="../fig/2026-11-19/phylo_tree_corning.png" alt="Program tree, Corning-like"></div></div></div><div class="body"><span class="chip">Finding 5</span><h3>LIPA finds planted co-moving groups, but a category-cell flag does as well.</h3><p class="take">Programs with significant positive LIPA (like their relatives): 311 of 778 and 777 of 1,404. Share of them in a planted co-moving group: 0.49 and 0.41, vs 0.40 and 0.27 for the same number of largest own slopes; but flagging the most extreme function × intent cell means (either direction) gives 0.53 and 0.45.</p><p class="small">Added after seeing results (not pre-registered). The mocks place planted groups by archetype, so category cells are a strong baseline (the 11-18 STEM run found the same).</p></div></article><h4>Who plays what</h4>
+<div class="table-wrap"><table>
+<tr><th>Home field (comparative biology)</th><th>Our data (Q2, SYNTHETIC)</th></tr>
+<tr><td>Species</td><td>Program (budget line)</td></tr>
+<tr><td>Phylogeny</td><td>Stated hierarchy: segment → subsegment → function → stated intent (label tree); or a clustering of the descriptions (text tree)</td></tr>
+<tr><td>Trait (body size, pollution sensitivity)</td><td>Per-program growth: OLS slope of log actual spend</td></tr>
+<tr><td>Phylogenetic signal</td><td>How much growth is shared with programs in the same branch of the hierarchy</td></tr>
+<tr><td>LIPA hotspot / outlier species</td><td>Program that grows like (or unlike) its close relatives</td></tr>
+<tr><td>Within-species measurement error</td><td>Sampling error of a 5–6-point slope</td></tr>
+</table></div>
+
+<h4>Inputs and preprocessing</h4>
+<ul>
+<li>SYNTHETIC mocks built 2026-11-13 (seed 20261113), <code>/workspace/q2-mock-zbb/output</code> (also in the Drive folder "Q2 mock ZBB datasets (synthetic, 2026-11-13)"): Corning-like 778 of 1,079 programs with all of FY2020–25; MS-like 1,404 of 1,840 with all of FY2021–25. Not either firm's budgets.</li>
+<li>Trait: OLS slope of log <code>actual_usd</code> on year; early and late windows (first 3, last 3 years) for drift; noise-free slope from the answer key for comparison only.</li>
+<li>Label tree from <code>programs.csv</code> stated fields (45 and 51 functions with balanced programs). Text tree: TF-IDF (1–2-grams, min df 2) of <code>description</code> after removing every sentence that contains a digit, "$", "actual", "budget", "miss", "million", "percent" or a growth verb (about 40% of words), cosine distance, average linkage.</li>
+<li>Answer key (<code>ground_truth.json</code>: planted mismatches, drift, latent groups, true levels) used only for scoring.</li>
+</ul>
+
+<h4>What we ran</h4>
+<ol>
+<li>Home field: Brownian motion and white noise on 200 random 100-tip coalescent trees (<code>runs/2026-11-19/phylo/home_repro.R</code>); K checked against phytools.</li>
+<li>P1: <code>phyloSignal</code> (Cmean, I, K, λ; 999 reps) on observed, noise-free, early and late slopes, label tree and text tree; ANOVA R² as the standard.</li>
+<li>P2: <code>lipaMoran</code> (patristic proximity, two-sided, 999 reps) on the label tree; AUC against planted mismatch types vs OLS slope, within-cell peer z and "program minus relatives".</li>
+<li>P3: LIPA on early vs late windows; AUC against planted category drift.</li>
+<li>P4: one-step walk-forward of last-year growth: OLS trend, pooled ARDL(1), per-program SARIMAX(1,0,0), no change, relatives-weighted mean, 50/50 blend.</li>
+<li>Post hoc (labelled): share of LIPA-positive programs in planted groups vs matched-count baselines.</li>
+</ol>
+<p class="small">Pre-registered before any run: <a href="https://github.com/jgridifier/research-lab/blob/main/docs/methods-scout/runs/2026-11-19/PREREG.md">runs/2026-11-19/PREREG.md</a>.</p>
+
+<h4>How to read the main chart</h4>
+<div class="callouts">
+<div><b>1</b> The circle is the hierarchy laid flat: programs sit around it in tree order, so neighbours on the circle are relatives; the inner coloured ring marks segments.</div>
+<div><b>2</b> Each bar is one program's growth: outward = growing, inward = shrinking (bar starts at the grey baseline ring).</div>
+<div><b>3</b> Teal bars grow like their relatives (significant positive LIPA); red bars are unlike them; grey are not significant.</div>
+<div><b>4</b> Teal wedges are branches that move together; a red bar inside a teal wedge is a program out of step with its family.</div>
+<div><b>5</b> Outer dots mark the planted co-moving groups (answer key) so you can judge the picture; they are not inputs.</div>
+</div>
+
+<h4>What it means for a decision-maker</h4>
+<div class="plain">
+<p>The org chart explains a good share of which programs grow, but a single program's few years of numbers are noisy enough that you see less than half of the real family resemblance. Borrowing a program's family's recent growth gives a better first guess for next year than its own trend line. The descriptions, once the numbers in them are removed, say less about growth than the categories do. The per-program flag (LIPA) is not a good way to catch programs whose story does not match their spending; comparing each program with its relatives directly, or a plain trend, works better.</p>
+</div>
+
+<h4>Where it breaks</h4>
+<ul>
+<li>LIPA's product form misses programs near the overall mean (toy); it underperforms simple gaps on mismatch and drift.</li>
+<li>Unit branch lengths are an assumption; real budgets would need levels weighted (e.g. by how much variance each level explains).</li>
+<li>The text tree on 1,404 tips took 175 s for the four indices with 999 permutations (63 s on the label tree; dense \(n\times n\) matrices).</li>
+<li>Per-program SARIMAX on 4–5 points is unstable (diverged on some MS-like programs); reported as a failure, not tuned.</li>
+<li>Everything is on SYNTHETIC mocks whose planted groups follow archetypes, which favours category baselines.</li>
+</ul>
+
+<h4>What we'd do next</h4>
+<ul>
+<li>Measurement-error-corrected λ (top pick): use each slope's standard error; target the noise-free λ.</li>
+<li>Per-node signal (<code>phyloSignalINT</code>) to say which branches carry shared growth.</li>
+<li>Compare tree borrowing with ebnm (11-13) on Q2.1.</li>
+</ul>
+</div><div class="panel p3" id="robust"><p><span class="grade">Well established</span> for K and λ; LIPA promising but thin</p>
+<h4>What the home field has established</h4>
+<ul>
+<li><b>Indices.</b> Blomberg's K (2003) and Pagel's λ (1999) are standard in comparative biology; Moran's I on trees (Gittleman &amp; Kot 1990) and Abouheif's Cmean likewise (as described in Münkemüller et al. 2012; originals not read).</li>
+<li><b>Simulation benchmark.</b> Münkemüller et al. (2012), <i>Methods in Ecology and Evolution</i> (abstract and Table 1 read): under Brownian motion Cmean and λ performed well and better than Moran's I and K; λ gave a reliable effect size but is costlier; K was best at capturing changing evolutionary rates; sample size affected expected values as well as uncertainty; polytomies and missing branch lengths mattered little. That last point supports our unit-length, polytomy-heavy label tree.</li>
+<li><b>Package.</b> Keck, Rimet, Bouchez &amp; Franc (2016), <i>Ecology and Evolution</i> 6:2774–2780 (abstract, Table 1 and LIPA section read): phylosignal in R and C++, GPL-3, CRAN and GitHub (fkeck/phylosignal); the search index lists 304 citations. We used 1.3.1 from conda-forge.</li>
+<li><b>LIPA.</b> Introduced in that paper as the tree analogue of Anselin's (1995) local Moran's I; we found no independent validation study. Thin.</li>
+<li><b>Known failure modes.</b> Measurement error biases signal downward (Ives, Midford &amp; Garland 2007, <i>Systematic Biology</i> 56:252–270 — abstract via search, not read); λ is costly on large trees (Münkemüller 2012); sample size affects expected values.</li>
+</ul>
+<h4>Our reproduction</h4>
+<ul>
+<li>Brownian motion on 200 random 100-tip trees: mean K 1.03 (median 0.77; K is right-skewed), median λ 1.00. White noise: mean K 0.005, median λ 0.00007. Matches the Brownian expectation \(\mathbb E[K]\approx1\) and λ's 0–1 anchors.</li>
+<li>phylosignal's K vs phytools <code>phylosig</code> on a 60-tip tree: difference 3×10<sup>−12</sup>.</li>
+<li>Not reproduced: the paper's 17-diatom example (its data were not fetched today).</li>
+</ul>
+<p class="found-via"><strong>Found via</strong> · web search (query "phylosignal R package local indicator of phylogenetic association LIPA Keck 2016 Ecology and Evolution") 2026-11-19 14:20 ET → <a href="https://onlinelibrary.wiley.com/doi/10.1002/ece3.2051">Keck et al. 2016</a>, <a href="https://github.com/fkeck/phylosignal/">github.com/fkeck/phylosignal</a>. Novelty: exotic-transfer (comparative biology → program hierarchies).</p>
+</div><div class="panel p4" id="sauce"><div class="sauce"><span class="t">1 · Engineering · Effort M</span><h5>Linear-time signal on 50,000-program trees</h5>
+<p>phylosignal builds dense \(n\times n\) matrices; the 1,404-tip text tree took minutes. Tree recursions compute the same quantities in \(O(n)\), so whole-firm books (tens of thousands of lines) and many re-cuts become cheap. Port to Rust/NumPy with phylosignal as oracle.</p>
+<p><b>Math sketch.</b> For Brownian-type covariances, \(\log|C_\lambda|\), \(\mathbf1^\top C_\lambda^{-1}\mathbf1\), \(\mathbf1^\top C_\lambda^{-1}y\) and \(y^\top C_\lambda^{-1}y\) all follow from one post-order pass (each node combines its children's sufficient statistics), giving λ's likelihood and K's two MSEs in \(O(n)\) per evaluation. Moran's I and LIPA with nested-level weights reduce to group sums at each level: \(\sum_j w_{ij}z_j=\sum_\ell a_\ell\,(S_{\ell(i)}-S_{\ell+1(i)})\), with \(S\) the sum of \(z\) in \(i\)'s level-\(\ell\) group.</p>
+<p><b>Why it matters here.</b> Q2 books are hundreds to thousands of programs per firm and need re-running per cycle and per cut; permutation nulls multiply cost by 999.</p>
+<p class="cite">Closest prior work: Ho &amp; Ané (2014), <i>Systematic Biology</i> 63(3):397–408, linear-time algorithm implemented in phylolm (abstract via search, not read).</p>
+<p class="small"><b>Test (pass bar set now).</b> K, λ, I and LIPA within 10<sup>−8</sup> of phylosignal on both mocks and both trees; a 50,000-tip label tree with 999 permutations in under 10 s on the box.</p></div>
+<div class="sauce top"><span class="t">2 · Math · Effort M · ★ Top pick</span><h5>Measurement-error-corrected λ</h5>
+<p>Give each program its own known noise variance (the slope's standard error) and estimate λ for true growth, separating shared growth from sampling noise.</p>
+<p><b>Math sketch.</b> \(y=\theta+e\), \(\theta\sim N(\mu\mathbf1,\sigma^2C_\lambda)\), \(e\sim N(0,\mathrm{diag}(s_i^2))\) with \(s_i^2\) from each program's OLS residuals (pooled within cell when 3–4 residual degrees of freedom make it unstable). Maximise \(\ell(\mu,\sigma^2,\lambda)\) under \(\mathrm{Var}(y)=\sigma^2C_\lambda+\mathrm{diag}(s_i^2)\). Step 2 of the math tab shows uncorrected λ is \(\lambda_0\) times the reliability; the correction undoes that factor program by program. The same model gives per-program shrunken growth \(\mathbb E[\theta_i\mid y]\), a tree-structured empirical Bayes.</p>
+<p><b>Why it matters here.</b> Observed λ is 0.52 vs 1.22 noise-free (Corning-like) and 0.78 vs 1.12 (MS-like): most of the "real change vs noise" question (Q2.3) is in this gap.</p>
+<p class="cite">Closest prior work: Ives, Midford &amp; Garland (2007), <i>Systematic Biology</i> 56(2):252–270 (measurement error in signal and regression; abstract via search, not read). No application to budget hierarchies found.</p>
+<p class="small"><b>Test (pass bar set now).</b> Corrected λ within 0.15 of the noise-free λ on both mocks (gaps now 0.70 and 0.34); on the years-shuffled mocks corrected λ ≤ 0.10. Also 2025 log-level RMSE of the shrunken estimates below ebnm's (0.108, 0.109 from 11-13).</p></div>
+<div class="sauce"><span class="t">3 · New use on our data · Effort S</span><h5>Tree-borrowed growth for Q2.1</h5>
+<p>Use the hierarchy, not one flat cell, to borrow strength: each program's growth estimate leans on siblings first, then cousins.</p>
+<p><b>Math sketch.</b> BLUP under \(C_{\hat\lambda}\): \(\hat\theta=\hat\mu\mathbf1+\hat\sigma^2C_{\hat\lambda}(\hat\sigma^2C_{\hat\lambda}+\mathrm{diag}(s_i^2))^{-1}(y-\hat\mu\mathbf1)\); the relatives' mean in finding 3 is a crude version (fixed weights, no noise model).</p>
+<p><b>Why it matters here.</b> The crude version already beats a per-program trend by 7–14%; ebnm (11-13) borrows within segment × function only and was worse for programs alone in their group (0.110 → 0.120).</p>
+<p class="cite">Closest prior work: ebnm on these mocks (11-13 edition); phylogenetic prediction of missing traits in comparative biology (literature not checked today).</p>
+<p class="small"><b>Test (pass bar set now).</b> 2025 log-level RMSE ≥ 5% below ebnm on both mocks, and no worse than ebnm for programs alone in their segment × function cell. Null: the same estimator on a tree with tips shuffled.</p></div>
+</div><div class="panel p5" id="questions"><div class="sauce"><span class="t">Q2.3 · Real change or noise</span><p>The hierarchy explains much more of noise-free growth than of observed growth (λ 1.22 vs 0.52 Corning-like; 1.12 vs 0.78 MS-like), which implies a single program's 5–6-year slope has a reliability of roughly 0.4–0.7 (computed, Brownian model). The top pick turns this into a correction.</p></div>
+<div class="sauce"><span class="t">Q2.1 · Borrowing strength</span><p>Relatives' recent growth beats a per-program trend for next-year growth by 7% and 14% (pre-registered bar 5%), though pooled ARDL(1) matches it and "no change" wins on the Corning-like book.</p></div>
+<div class="sauce"><span class="t">Q2.2 · Text vs numbers</span><p>Two answers. The scrubbed descriptions carry less growth signal than the stated labels (λ 0.35 vs 0.52; 0.57 vs 0.78). LIPA does not find "says growth, actually declining" or category drift (AUCs near 0.5); a plain slope or a program-minus-relatives gap is better.</p></div>
+<div class="sauce"><span class="t">Q2.4 / Q2.5 · Structure and seeing it</span><p>The tree view shows 1,000+ programs at once with family structure visible, but as a group finder it does no better than flagging extreme category cells (precision 0.49 vs 0.53; 0.41 vs 0.45).</p></div>
+<p class="small"><b>Still missing:</b> real program-level budgets, actuals, headcount and decision packages for any firm; everything here is on the SYNTHETIC mocks. · <a href="https://github.com/jgridifier/research-lab/blob/main/docs/methods-scout/QUESTIONS.md#q2">All questions</a></p>
+</div></div></div>
+<p class="cite">Full tables, code and data notes: <a href="../2026-11-19.html#phylo-signal">the 2026-11-19 edition</a> · scripts in <code>runs/2026-11-19/</code> · card sources in <code>cards/phylo-signal/</code>.</p>
+<div style="margin:1.4rem 0"><a class="btn" href="https://github.com/jgridifier/research-lab/issues/80">Respond on #80</a><p class="howto">👍 go ahead · 👎 drop · or just comment what you think</p></div>
+<script>(function(){var m={"math":1,"applied":2,"robust":3,"sauce":4,"questions":5};var h=location.hash.slice(1);var i=m[h]||(/^t[1-5]$/.test(h)?+h[1]:0);if(i)document.getElementById("t"+i).checked=true;})();</script>
+</div>
+<footer class="pf">Generated by <code>tools/build_cards.py</code> from <code>feedback-state.json</code> and <code>cards/</code>; page contract in <a href="https://github.com/jgridifier/research-lab/blob/main/docs/methods-scout/LAYOUT.md">LAYOUT.md</a>.
+Status chips are baked in at build time and refreshed from the GitHub issue labels on load. Q2 work so far uses SYNTHETIC mock budgets; no private rows are published.</footer>
+<script src="../status.js"></script>
+</body></html>

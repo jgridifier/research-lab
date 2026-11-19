@@ -1,0 +1,53 @@
+{
+ "issue": 79,
+ "name": "Partial-order ranking (Hasse diagrams, exact rank probabilities)",
+ "title": "Which stress-test differences do payouts actually follow?",
+ "field": "network science and environmental chemistry (multi-indicator ranking without weights)",
+ "what": "Orders firms only when one is worse on every stress indicator, then counts every full ranking consistent with that partial order.",
+ "verdict": "Recommend",
+ "grade": "well established (exact combinatorics; small applied literature)",
+ "pick_eff": "M",
+ "pick_line": "Noise-aware dominance: order firms only when worse beyond projection noise on every indicator, then recompute rank probabilities.",
+ "data": "Public filings (Fed DFAST/CCAR results 2013–2025, FR Y-9C payouts, SCB); descriptive only",
+ "one": "55% of firm pairs have no weight-free stress order; payouts follow pre-tax income there, not loan losses.",
+ "picture": {
+  "type": "images",
+  "la": "Usual tool: one composite stress score forces a full order",
+  "a": "../fig/2026-11-19/poset_tradeoff_pairs.png",
+  "lb": "Hasse diagram, 2024: 53% of pairs have no order",
+  "b": "../fig/2026-11-19/poset_hasse_2024.png"
+ },
+ "findings": [
+  {
+   "h": "Where one firm is worse on all three, it pays out less 72% of the time.",
+   "t": "Across 13 severely adverse exercises (2013–2025, 360 firm-years), 2,203 within-year pairs are ordered by dominance (worse CET1 drawdown, worse pre-tax income and higher loan-loss rate together). In 71.5% of them the more-stressed firm had the lower Y-9C payout/RWA that calendar year (within-year shuffle null mean 50.0%, 95th percentile 54.7%, p = 0.0002, 4,999 shuffles); next-year payouts 65.5% (p = 0.0002).",
+   "note": "Every positive-weight composite agrees on these pairs, so this number is the part of the stress–payout link that does not depend on weights. Payouts in calendar year Y partly precede that year's results; association only.",
+   "chart": {"type": "hbars", "title": "Share where the more-stressed firm paid less (dominance pairs)", "max": 1, "rows": [["Shuffle null (mean)", 0.50, "muted", "0.50"], ["Same-year payout", 0.715, "teal", "0.72"], ["Next-year payout", 0.655, "teal", "0.66"]]}
+  },
+  {
+   "h": "In trade-off pairs, payouts follow pre-tax income and go against loan losses.",
+   "t": "55% of pairs per year on average (40–65%) are trade-offs: each firm is worse on something. There, the firm with worse SA pre-tax income paid less in 63.9% of 2,814 pairs (two-sided p = 0.0005); the firm with the higher loan-loss rate paid less in only 40.9% (p = 0.001, i.e. it paid more); drawdown 53.1% (p = 0.19). The equal-weight composite averages these to 55.2%.",
+   "note": "Computed with a within-year payout shuffle (1,999). Holm over the five orderings keeps pre-tax income, loan losses, equal-weight and OLS significant. The in-sample OLS composite (61.5%) uses payouts to choose its weights, so it is optimistic. No composite can show the sign reversal: it is hidden inside the weights.",
+   "chart": {"type": "images", "la": "Agreement by ordering (dominance vs trade-off pairs)", "a": "../fig/2026-11-19/poset_tradeoff_pairs.png", "lb": "2024 rank probabilities (orange) vs the composite (teal dots)", "b": "../fig/2026-11-19/poset_rankprob_2024.png"}
+  },
+  {
+   "h": "When the stress path and the SCB disagree, payouts follow the path.",
+   "t": "2021–2025: in 175 pairs where one firm is worse on the whole stress path but its SCB is not higher (123 of them with both firms at the 2.5% floor), the path-worse firm paid less in 78.9% (shuffle p = 0.001). Ordering by SCB alone gets 56.8% of 1,481 pairs (p = 0.024); path dominance 71.9% of 834 (p = 0.001).",
+   "note": "Consistent with the 11-14 IDR finding (SCB had no skill). The SCB floor hides differences that payouts still track. SCB and later payouts are linked by construction after 2020 (standardized capital actions); read descriptively.",
+   "chart": {"type": "images", "la": "SCB order vs path dominance, 2021–2025", "a": "../fig/2026-11-19/poset_scb_vs_path.png", "lb": "Year-to-year: dominance kept, dissolved, reversed", "b": "../fig/2026-11-19/poset_stability.png"}
+  },
+  {
+   "h": "Dominance relations are stable: 74% persist, 2% reverse.",
+   "t": "For firms in consecutive tests, 1,115 of 1,553 dominance relations persist (mean share 0.74), 409 dissolve into trade-offs and 29 (1.9%) reverse. Payout-rank Kendall τ averages 0.63 and falls after 2020 (0.40–0.69 in 2020–2025 pairs vs 0.53–0.84 before).",
+   "note": "Descriptive; no null. The stable core of the stress ordering is the part payouts track (finding 1).",
+   "chart": {"type": "hbars", "title": "1,553 dominance relations, next test", "max": 1, "rows": [["Kept", 0.718, "teal", "1,115"], ["Became a trade-off", 0.263, "muted", "409"], ["Reversed", 0.019, "amber", "29"]]}
+  },
+  {
+   "h": "As a predictor it loses to OLS, ARDL and SARIMAX.",
+   "miss": true,
+   "t": "Walk-forward 2015–2025 (fits use earlier years only), Spearman of predicted vs realized payout/RWA: poset expected rank 0.36, pooled OLS on the 3 stress variables 0.46, pooled ARDL(1,0) with last year's payout 0.67, per-firm SARIMAX(1,0,0)+exog 0.65 (last payout where < 8 years).",
+   "note": "Pre-stated bar (within 0.05 of OLS with no fitted weights) failed. Payout persistence dominates any stress ranking. The method is for description, not forecasting.",
+   "chart": {"type": "images", "la": "Walk-forward Spearman by year", "a": "../fig/2026-11-19/poset_walkforward.png", "lb": "Hasse diagram, 2024", "b": "../fig/2026-11-19/poset_hasse_2024.png"}
+  }
+ ]
+}

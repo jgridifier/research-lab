@@ -1,7 +1,7 @@
 {
   "version": 1,
   "repo": "jgridifier/research-lab",
-  "updated_at": "2026-11-19T12:17:45Z",
+  "updated_at": "2026-11-19T19:43:32Z",
   "issues": {
     "46": {
       "issue": 46,
@@ -592,6 +592,46 @@
         "pick:math"
       ],
       "last_processed_at": "2026-11-18T19:40:06Z",
+      "notes": "",
+      "history": []
+    },
+    "79": {
+      "issue": 79,
+      "slug": "poset-ranking",
+      "method": "Partial-order ranking (Hasse diagrams, exact rank probabilities)",
+      "scout_date": "2026-11-19",
+      "page": "2026-11-19.html",
+      "page_anchor": "#poset-ranking",
+      "question": "Q3",
+      "status": "proposed",
+      "top_pick": "math",
+      "labels": [
+        "scout",
+        "scout:Q3",
+        "status:proposed",
+        "pick:math"
+      ],
+      "last_processed_at": "2026-11-19T19:43:32Z",
+      "notes": "",
+      "history": []
+    },
+    "80": {
+      "issue": 80,
+      "slug": "phylo-signal",
+      "method": "Phylogenetic signal and LIPA on the program tree",
+      "scout_date": "2026-11-19",
+      "page": "2026-11-19.html",
+      "page_anchor": "#phylo-signal",
+      "question": "Q2",
+      "status": "proposed",
+      "top_pick": "math",
+      "labels": [
+        "scout",
+        "scout:Q2",
+        "status:proposed",
+        "pick:math"
+      ],
+      "last_processed_at": "2026-11-19T19:43:32Z",
       "notes": "",
       "history": []
     }
