@@ -1,0 +1,46 @@
+<h4>Notation</h4>
+<div class="table-wrap"><table>
+<tr><th>Symbol</th><th>Meaning</th><th>Here</th></tr>
+<tr><td>\(V\), \(n=|V|\)</td><td>objects to rank (nodes, chemicals)</td><td>firms in one severely adverse exercise; \(n=18\)–\(35\)</td></tr>
+<tr><td>\(x_u\in\mathbb R^d\)</td><td>indicator profile of object \(u\), oriented so higher = worse</td><td>\(d=3\): CET1 drawdown (pp), minus SA pre-tax net income (% of assets), SA loan-loss rate (%)</td></tr>
+<tr><td>\(u\preceq v\)</td><td>dominance: \(x_u\le x_v\) on every indicator, strictly on one</td><td>\(v\) is at least as stressed as \(u\) on all three</td></tr>
+<tr><td>\(u\parallel v\)</td><td>incomparable: neither dominates (a trade-off)</td><td>40–65% of pairs per year</td></tr>
+<tr><td>\(\mathcal L(\preceq)\)</td><td>linear extensions: total orders that respect \(\preceq\)</td><td>every ranking some positive-weight score could produce; \(6.5\times10^{8}\) (2019) to \(1.8\times10^{25}\) (2018), computed</td></tr>
+<tr><td>\(\mathcal I\)</td><td>order ideals (down-sets): \(D\subseteq V\) with \(v\in D,\,u\preceq v\Rightarrow u\in D\)</td><td>482 (2023) to 85,238 (2018), computed</td></tr>
+<tr><td>\(P(\mathrm{rk}(u)=k)\), \(\rho(u)\)</td><td>rank probability and expected rank over \(\mathcal L\)</td><td>a firm's stress rank if every consistent ranking is equally likely</td></tr>
+<tr><td>\(y_u\)</td><td>outcome compared with the order</td><td>Y-9C payout/RWA (%), calendar year of the test (next year as sensitivity)</td></tr>
+</table></div>
+
+<h4>Assumptions</h4>
+<ul>
+<li>Each indicator has an agreed direction (more drawdown, lower pre-tax income, more losses = worse). Nothing is assumed about their relative importance or scale.</li>
+<li>Dominance is read exactly: a 0.1 pp difference counts as much as 5 pp. Measurement noise in the projections is ignored (the Math avenue fixes this).</li>
+<li>For rank probabilities, all linear extensions are treated as equally likely (the "uniform over consistent rankings" convention of Brüggemann and of Schoch 2018). It is a reference measure, not a model of how the Fed or a bank weighs indicators.</li>
+<li>For the tests: under the null, payouts are exchangeable across firms within a test year.</li>
+</ul>
+
+<h4>The estimator and the statistic</h4>
+<p>Rank probabilities and expected rank over all rankings that respect dominance:</p>
+$$P(\mathrm{rk}(u)=k)=\frac{\big|\{\ell\in\mathcal L(\preceq):\ell(u)=k\}\big|}{|\mathcal L(\preceq)|},\qquad \rho(u)=\sum_{k=1}^{n}k\,P(\mathrm{rk}(u)=k).$$
+<p>They are computed exactly on the lattice of ideals. With \(e(D)\) the number of linear extensions of the sub-poset \(D\) (ways to build \(D\) from the bottom) and \(\bar e(D)\) the number of ways to finish from \(D\) to \(V\):</p>
+$$|\{\ell:\ell(u)=k\}|=\sum_{\substack{D\in\mathcal I,\ |D|=k-1\\ u\notin D,\ D\cup\{u\}\in\mathcal I}} e(D)\;\bar e(D\cup\{u\}).$$
+<p>The payout test uses only ordered pairs; the trade-off analysis uses only unordered ones:</p>
+$$C_{\mathrm{dom}}=\frac{1}{|\{u\prec v\}|}\sum_{u\prec v}\Big(\mathbf 1[y_v<y_u]+\tfrac12\mathbf 1[y_v=y_u]\Big),\qquad A_j=\frac{1}{|\{u\parallel v\}|}\sum_{u\parallel v}\Big(\mathbf 1[\,y_{\text{worse on }j}<y_{\text{other}}\,]\Big)\ \ (\text{ties }\tfrac12).$$
+
+<h4>Why it works, step by step</h4>
+<div class="step"><b class="n">Step 1 · every positive-weight score is a linear extension</b>Take any score \(s(u)=\sum_j w_j x_{uj}\) with all \(w_j>0\). If \(u\prec v\) then \(x_v-x_u\ge 0\) with one strict entry, so \(s(v)-s(u)=\sum_j w_j(x_{vj}-x_{uj})>0\). Hence the order by \(s\) respects \(\prec\): it is an element of \(\mathcal L(\preceq)\). So on dominance pairs, every composite (equal-weight, PC1 with positive loadings, any regression with the right signs) gives the same answer, and \(C_{\mathrm{dom}}\) is the weight-free part of the stress–payout link.</div>
+<div class="step"><b class="n">Step 2 · on a trade-off pair the weights decide</b>If \(u\parallel v\) there are indicators \(j,j'\) with \(x_{uj}>x_{vj}\) and \(x_{uj'}<x_{vj'}\). Putting enough weight on \(j\) ranks \(u\) above \(v\); enough on \(j'\) reverses it. So both orders occur in \(\mathcal L\), and a composite's verdict on that pair is a choice, not a fact. That is why we score each indicator separately on these pairs (\(A_j\)) instead of one composite.</div>
+<div class="step"><b class="n">Step 3 · counting without listing</b>A linear extension is a path from \(\varnothing\) to \(V\) in the lattice of ideals, adding one element at a time (the set placed so far is always a down-set). So \(e(D)=\sum_{w\in\max(D)}e(D\setminus\{w\})\) with \(e(\varnothing)=1\), and \(\bar e\) is the same recursion from the top. Element \(u\) gets rank \(k\) exactly when the path passes from some ideal \(D\) of size \(k-1\) to \(D\cup\{u\}\), which gives the sum above. Cost is linear in \(|\mathcal I|\times n\): 85,238 ideals in 2018, so exact answers in under a second although \(|\mathcal L|\approx1.8\times10^{25}\).</div>
+
+<h4>The null and multiple testing</h4>
+<ul>
+<li>Null: within each test year, payouts are exchangeable across firms (the dominance structure is kept fixed). 4,999 shuffles for \(C_{\mathrm{dom}}\) pooled over years (one-sided); 1,999 for the trade-off agreements (two-sided about 0.5); 999 for the SCB-vs-path comparison.</li>
+<li>Holm over the five orderings in the trade-off analysis (equal-weight, in-sample OLS, and the three single indicators).</li>
+<li>Same firm pairs recur across years; the within-year shuffle is valid for "no association in any year" but the pooled p-values are not firm-clustered. Year-to-year stability is reported descriptively.</li>
+</ul>
+
+<div class="toy"><h5>Toy example (computed by <code>cards/_toys/toys.py</code>)</h5>
+<p>Four firms, two indicators (higher = worse): A = (1, 1), B = (2, 3), C = (3, 2), D = (4, 4). Dominance pairs: A≺B, A≺C, A≺D, B≺D, C≺D; B and C are a trade-off (B worse on indicator 2, C on indicator 1). The ideals are ∅, {A}, {A,B}, {A,C}, {A,B,C}, {A,B,C,D} (6), and there are 2 linear extensions, ABCD and ACBD. Expected ranks: A 1, B 2.5, C 2.5, D 4; P(rank of B = 2) = 0.5. With payouts A 3.0, B 1.0, C 2.0, D 0.5, dominance concordance is 1.0 (5 of 5). On the trade-off pair, indicator 2 agrees (B is worse and pays less) and indicator 1 does not (C is worse but pays more): exactly the pattern that sets pre-tax income against loan losses on our data.</p></div>
+
+<div class="diff"><b>How it differs from the standard tool.</b> The usual approach builds one composite (equal weights, PC1, or a regression) and correlates its ranks with payouts. That assumes the indicators are substitutable at fixed rates and turns every trade-off into an order the analyst chose. The partial order assumes only the direction of each indicator. It keeps "not comparable" as an answer, prices the ambiguity (rank intervals and rank probabilities), and splits the evidence into a weight-free part (dominance pairs) and a part where we can ask which indicator payouts follow. A composite can report a weaker average correlation; it cannot show that two of its inputs pull in opposite directions.</div>
+<p class="cite">Followed: Schoch (2018), "Centrality without indices: partial rankings and rank probabilities in networks", <i>Social Networks</i> 54:50–60, Sections 3–4 (abstract and introduction read via the publisher page; Section numbers from that page, equations not checked); netrankr 2.0.0 documentation for <code>exact_rank_prob</code>, <code>rank_intervals</code> and the "Probabilistic Centrality" and "Benchmark Results" vignettes (read); De Loof, De Meyer &amp; De Baets (2006), <i>Fundamenta Informaticae</i> 71:309–321, lattice-of-ideals algorithm (cited by netrankr; not read). Toy: <code>cards/_toys/toys.py</code>.</p>

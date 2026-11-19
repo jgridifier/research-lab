@@ -1,0 +1,16 @@
+<p><span class="grade">Well established</span> for K and λ; LIPA promising but thin</p>
+<h4>What the home field has established</h4>
+<ul>
+<li><b>Indices.</b> Blomberg's K (2003) and Pagel's λ (1999) are standard in comparative biology; Moran's I on trees (Gittleman &amp; Kot 1990) and Abouheif's Cmean likewise (as described in Münkemüller et al. 2012; originals not read).</li>
+<li><b>Simulation benchmark.</b> Münkemüller et al. (2012), <i>Methods in Ecology and Evolution</i> (abstract and Table 1 read): under Brownian motion Cmean and λ performed well and better than Moran's I and K; λ gave a reliable effect size but is costlier; K was best at capturing changing evolutionary rates; sample size affected expected values as well as uncertainty; polytomies and missing branch lengths mattered little. That last point supports our unit-length, polytomy-heavy label tree.</li>
+<li><b>Package.</b> Keck, Rimet, Bouchez &amp; Franc (2016), <i>Ecology and Evolution</i> 6:2774–2780 (abstract, Table 1 and LIPA section read): phylosignal in R and C++, GPL-3, CRAN and GitHub (fkeck/phylosignal); the search index lists 304 citations. We used 1.3.1 from conda-forge.</li>
+<li><b>LIPA.</b> Introduced in that paper as the tree analogue of Anselin's (1995) local Moran's I; we found no independent validation study. Thin.</li>
+<li><b>Known failure modes.</b> Measurement error biases signal downward (Ives, Midford &amp; Garland 2007, <i>Systematic Biology</i> 56:252–270 — abstract via search, not read); λ is costly on large trees (Münkemüller 2012); sample size affects expected values.</li>
+</ul>
+<h4>Our reproduction</h4>
+<ul>
+<li>Brownian motion on 200 random 100-tip trees: mean K 1.03 (median 0.77; K is right-skewed), median λ 1.00. White noise: mean K 0.005, median λ 0.00007. Matches the Brownian expectation \(\mathbb E[K]\approx1\) and λ's 0–1 anchors.</li>
+<li>phylosignal's K vs phytools <code>phylosig</code> on a 60-tip tree: difference 3×10<sup>−12</sup>.</li>
+<li>Not reproduced: the paper's 17-diatom example (its data were not fetched today).</li>
+</ul>
+<p class="found-via"><strong>Found via</strong> · web search (query "phylosignal R package local indicator of phylogenetic association LIPA Keck 2016 Ecology and Evolution") 2026-11-19 14:20 ET → <a href="https://onlinelibrary.wiley.com/doi/10.1002/ece3.2051">Keck et al. 2016</a>, <a href="https://github.com/fkeck/phylosignal/">github.com/fkeck/phylosignal</a>. Novelty: exotic-transfer (comparative biology → program hierarchies).</p>

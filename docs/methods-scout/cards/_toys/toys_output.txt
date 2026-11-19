@@ -57,3 +57,13 @@ Q level 0.25 C rising 0.0 C falling 1.0 HI_j -1.0
 Q level 0.5 C rising 0.0 C falling 0.833 HI_j -0.833
 Q level 0.75 C rising 0.25 C falling 0.667 HI_j -0.417
 HI (mean of 3 levels) -0.75  FI = C_norm(peak) - C_norm(start) = 0.5
+== Poset ranking (2026-11-19): 4 firms, 2 stress indicators (higher = more stressed); A=(1,1), B=(2,3), C=(3,2), D=(4,4)
+dominance pairs (less stressed, more stressed): [('A', 'B'), ('A', 'C'), ('A', 'D'), ('B', 'D'), ('C', 'D')] incomparable: [('B', 'C')]
+linear extensions (low to high stress): ['ABCD', 'ACBD']
+expected stress ranks {'A': 1.0, 'B': 2.5, 'C': 2.5, 'D': 4.0}  P(rank of B = 2) = 0.5
+payouts {'A': 3.0, 'B': 1.0, 'C': 2.0, 'D': 0.5}  dominance concordance (more stressed pays less): 1.0
+trade-off pair B vs C: indicator 1 says C more stressed -> C pays 2.0 vs B 1.0 (disagrees); indicator 2 says B more stressed -> B pays less (agrees)
+ideals (downsets): ['{}', 'A', 'AB', 'AC', 'ABC', 'ABCD'] count 6
+== Phylogenetic signal / LIPA (2026-11-19): tree ((p1,p2),(p3,p4)), sister-only weights; slopes x = (0.10, 0.08, -0.02, 0.06)
+mean 0.055 z [0.988, 0.549, -1.646, 0.11] neighbour z [0.549, 0.988, 0.11, -1.646] local I_i = z_i * lag_i [0.542, 0.542, -0.181, -0.181] global Moran I 0.181
+program minus its sister: [0.02, -0.02, -0.08, 0.08]

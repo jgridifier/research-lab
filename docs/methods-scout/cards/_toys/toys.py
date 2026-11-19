@@ -203,3 +203,29 @@ for lev in [0.25, 0.5, 0.75]:
     r = limb(qn[:k + 1], cn[:k + 1], lev); f = limb(qn[k:], cn[k:], lev); vals.append(r - f)
     print("Q level", lev, "C rising", round(r, 3), "C falling", round(f, 3), "HI_j", round(r - f, 3))
 print("HI (mean of 3 levels)", round(float(np.mean(vals)), 3), " FI = C_norm(peak) - C_norm(start) =", round(float(cn[k] - cn[0]), 3))
+
+print("== Poset ranking (2026-11-19): 4 firms, 2 stress indicators (higher = more stressed); A=(1,1), B=(2,3), C=(3,2), D=(4,4)")
+import itertools
+F = {"A": (1, 1), "B": (2, 3), "C": (3, 2), "D": (4, 4)}
+names = list(F)
+below = {(u, v) for u in names for v in names if u != v and all(a <= b for a, b in zip(F[u], F[v])) and F[u] != F[v]}
+print("dominance pairs (less stressed, more stressed):", sorted(below), "incomparable:", [(u, v) for u, v in itertools.combinations(names, 2) if (u, v) not in below and (v, u) not in below])
+ext = [p for p in itertools.permutations(names) if all(p.index(u) < p.index(v) for u, v in below)]
+print("linear extensions (low to high stress):", ["".join(p) for p in ext])
+er = {u: sum(p.index(u) + 1 for p in ext) / len(ext) for u in names}
+print("expected stress ranks", er, " P(rank of B = 2) =", sum(p.index("B") == 1 for p in ext) / len(ext))
+pay = {"A": 3.0, "B": 1.0, "C": 2.0, "D": 0.5}
+conc = sum(pay[v] < pay[u] for u, v in below) / len(below)
+print("payouts", pay, " dominance concordance (more stressed pays less):", conc)
+print("trade-off pair B vs C: indicator 1 says C more stressed -> C pays", pay["C"], "vs B", pay["B"], "(disagrees); indicator 2 says B more stressed -> B pays less (agrees)")
+ideals = [frozenset(s) for k in range(5) for s in itertools.combinations(names, k) if all((u in s) for (u, v) in below if v in s)]
+print("ideals (downsets):", ["".join(sorted(s)) or "{}" for s in ideals], "count", len(ideals))
+
+print("== Phylogenetic signal / LIPA (2026-11-19): tree ((p1,p2),(p3,p4)), sister-only weights; slopes x = (0.10, 0.08, -0.02, 0.06)")
+x = np.array([0.10, 0.08, -0.02, 0.06]); W = np.array([[0, 1, 0, 0], [1, 0, 0, 0], [0, 0, 0, 1], [0, 0, 1, 0]], float)
+z = (x - x.mean()) / x.std()
+lag = W @ z
+I_loc = z * lag
+I_glob = (len(x) / W.sum()) * (z @ W @ z) / (z @ z)
+print("mean", round(x.mean(), 4), "z", z.round(3).tolist(), "neighbour z", lag.round(3).tolist(), "local I_i = z_i * lag_i", I_loc.round(3).tolist(), "global Moran I", round(I_glob, 3))
+print("program minus its sister:", (x - W @ x).round(3).tolist())

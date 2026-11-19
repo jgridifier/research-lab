@@ -1,0 +1,59 @@
+<h4>Who plays what</h4>
+<div class="table-wrap"><table>
+<tr><th>Home field (comparative biology)</th><th>Our data (Q2, SYNTHETIC)</th></tr>
+<tr><td>Species</td><td>Program (budget line)</td></tr>
+<tr><td>Phylogeny</td><td>Stated hierarchy: segment → subsegment → function → stated intent (label tree); or a clustering of the descriptions (text tree)</td></tr>
+<tr><td>Trait (body size, pollution sensitivity)</td><td>Per-program growth: OLS slope of log actual spend</td></tr>
+<tr><td>Phylogenetic signal</td><td>How much growth is shared with programs in the same branch of the hierarchy</td></tr>
+<tr><td>LIPA hotspot / outlier species</td><td>Program that grows like (or unlike) its close relatives</td></tr>
+<tr><td>Within-species measurement error</td><td>Sampling error of a 5–6-point slope</td></tr>
+</table></div>
+
+<h4>Inputs and preprocessing</h4>
+<ul>
+<li>SYNTHETIC mocks built 2026-11-13 (seed 20261113), <code>/workspace/q2-mock-zbb/output</code> (also in the Drive folder "Q2 mock ZBB datasets (synthetic, 2026-11-13)"): Corning-like 778 of 1,079 programs with all of FY2020–25; MS-like 1,404 of 1,840 with all of FY2021–25. Not either firm's budgets.</li>
+<li>Trait: OLS slope of log <code>actual_usd</code> on year; early and late windows (first 3, last 3 years) for drift; noise-free slope from the answer key for comparison only.</li>
+<li>Label tree from <code>programs.csv</code> stated fields (45 and 51 functions with balanced programs). Text tree: TF-IDF (1–2-grams, min df 2) of <code>description</code> after removing every sentence that contains a digit, "$", "actual", "budget", "miss", "million", "percent" or a growth verb (about 40% of words), cosine distance, average linkage.</li>
+<li>Answer key (<code>ground_truth.json</code>: planted mismatches, drift, latent groups, true levels) used only for scoring.</li>
+</ul>
+
+<h4>What we ran</h4>
+<ol>
+<li>Home field: Brownian motion and white noise on 200 random 100-tip coalescent trees (<code>runs/2026-11-19/phylo/home_repro.R</code>); K checked against phytools.</li>
+<li>P1: <code>phyloSignal</code> (Cmean, I, K, λ; 999 reps) on observed, noise-free, early and late slopes, label tree and text tree; ANOVA R² as the standard.</li>
+<li>P2: <code>lipaMoran</code> (patristic proximity, two-sided, 999 reps) on the label tree; AUC against planted mismatch types vs OLS slope, within-cell peer z and "program minus relatives".</li>
+<li>P3: LIPA on early vs late windows; AUC against planted category drift.</li>
+<li>P4: one-step walk-forward of last-year growth: OLS trend, pooled ARDL(1), per-program SARIMAX(1,0,0), no change, relatives-weighted mean, 50/50 blend.</li>
+<li>Post hoc (labelled): share of LIPA-positive programs in planted groups vs matched-count baselines.</li>
+</ol>
+<p class="small">Pre-registered before any run: <a href="https://github.com/jgridifier/research-lab/blob/main/docs/methods-scout/runs/2026-11-19/PREREG.md">runs/2026-11-19/PREREG.md</a>.</p>
+
+<h4>How to read the main chart</h4>
+<div class="callouts">
+<div><b>1</b> The circle is the hierarchy laid flat: programs sit around it in tree order, so neighbours on the circle are relatives; the inner coloured ring marks segments.</div>
+<div><b>2</b> Each bar is one program's growth: outward = growing, inward = shrinking (bar starts at the grey baseline ring).</div>
+<div><b>3</b> Teal bars grow like their relatives (significant positive LIPA); red bars are unlike them; grey are not significant.</div>
+<div><b>4</b> Teal wedges are branches that move together; a red bar inside a teal wedge is a program out of step with its family.</div>
+<div><b>5</b> Outer dots mark the planted co-moving groups (answer key) so you can judge the picture; they are not inputs.</div>
+</div>
+
+<h4>What it means for a decision-maker</h4>
+<div class="plain">
+<p>The org chart explains a good share of which programs grow, but a single program's few years of numbers are noisy enough that you see less than half of the real family resemblance. Borrowing a program's family's recent growth gives a better first guess for next year than its own trend line. The descriptions, once the numbers in them are removed, say less about growth than the categories do. The per-program flag (LIPA) is not a good way to catch programs whose story does not match their spending; comparing each program with its relatives directly, or a plain trend, works better.</p>
+</div>
+
+<h4>Where it breaks</h4>
+<ul>
+<li>LIPA's product form misses programs near the overall mean (toy); it underperforms simple gaps on mismatch and drift.</li>
+<li>Unit branch lengths are an assumption; real budgets would need levels weighted (e.g. by how much variance each level explains).</li>
+<li>The text tree on 1,404 tips took 175 s for the four indices with 999 permutations (63 s on the label tree; dense \(n\times n\) matrices).</li>
+<li>Per-program SARIMAX on 4–5 points is unstable (diverged on some MS-like programs); reported as a failure, not tuned.</li>
+<li>Everything is on SYNTHETIC mocks whose planted groups follow archetypes, which favours category baselines.</li>
+</ul>
+
+<h4>What we'd do next</h4>
+<ul>
+<li>Measurement-error-corrected λ (top pick): use each slope's standard error; target the noise-free λ.</li>
+<li>Per-node signal (<code>phyloSignalINT</code>) to say which branches carry shared growth.</li>
+<li>Compare tree borrowing with ebnm (11-13) on Q2.1.</li>
+</ul>

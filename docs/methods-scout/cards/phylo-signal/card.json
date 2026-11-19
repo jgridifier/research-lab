@@ -1,0 +1,126 @@
+{
+ "issue": 80,
+ "name": "Phylogenetic signal and LIPA on the program tree",
+ "title": "How much program growth runs in the family tree?",
+ "field": "comparative biology and community ecology (phylogenetic signal)",
+ "what": "Treats the program hierarchy as a family tree and measures, globally and per program, how much growth relatives share.",
+ "verdict": "Interesting",
+ "grade": "well established (K, λ); LIPA promising but thin",
+ "pick_eff": "M",
+ "pick_line": "Measurement-error-corrected λ using each program's slope standard error, to split shared growth from noise.",
+ "data": "SYNTHETIC mock ZBB budgets (Corning-like and Morgan Stanley-like); answer key used only for scoring",
+ "one": "Noise hides most tree signal (λ 0.52 vs 1.22); relatives beat OLS growth by 7–14%; LIPA flags miss.",
+ "picture": {
+  "type": "images",
+  "la": "Usual tool: growth by function, 51 boxes (MS-like)",
+  "a": "../fig/2026-11-19/phylo_std_box_ms.png",
+  "lb": "Tree view: growth bars coloured by LIPA (MS-like)",
+  "b": "../fig/2026-11-19/phylo_tree_only_ms.png"
+ },
+ "findings": [
+  {
+   "h": "Noise hides most of the growth the tree explains.",
+   "t": "On the label tree (segment > subsegment > function > stated intent), Pagel's λ of per-program growth is 0.52 on observed actuals vs 1.22 on noise-free growth (Corning-like), and 0.78 vs 1.12 (MS-like). Blomberg's K falls 91% (4.54 → 0.40) and 64% (1.50 → 0.54). All four indices p = 0.001 (999 permutations).",
+   "note": "Standard comparison: ANOVA R² of slope on function is 0.45 vs 0.96 noise-free (Corning-like) and 0.59 vs 0.85 (MS-like). λ and K say the same thing in a form that also handles nested levels and gives per-node and per-program versions. λ > 1 is allowed by the estimator.",
+   "chart": {
+    "type": "images",
+    "la": "Pagel's λ: true vs observed vs text tree",
+    "a": "../fig/2026-11-19/phylo_lambda.png",
+    "lb": "Program tree, Corning-like",
+    "b": "../fig/2026-11-19/phylo_tree_corning.png"
+   }
+  },
+  {
+   "h": "Descriptions carry less growth signal than the labels.",
+   "t": "A tree from the descriptions (TF-IDF, average linkage; every sentence with numbers, dollars, actuals or budget words removed, about 40% of words) gives λ 0.35 (Corning-like) and 0.57 (MS-like) vs 0.52 and 0.78 on the label tree; K is not significant on the text tree (p = 0.46 and 0.15).",
+   "note": "The descriptions leak numeric history (\"actuals have risen from $4.76 million…\"); without the scrub the text tree would be measuring the numbers. On these mocks, the words add nothing beyond the categories they were generated from.",
+   "chart": {
+    "type": "hbars",
+    "title": "Pagel's λ of observed growth",
+    "max": 1,
+    "rows": [
+     [
+      "Corning-like: label tree",
+      0.524,
+      "teal",
+      "0.52"
+     ],
+     [
+      "Corning-like: text tree",
+      0.35,
+      "muted",
+      "0.35"
+     ],
+     [
+      "MS-like: label tree",
+      0.784,
+      "teal",
+      "0.78"
+     ],
+     [
+      "MS-like: text tree",
+      0.565,
+      "muted",
+      "0.57"
+     ]
+    ]
+   }
+  },
+  {
+   "h": "Borrowing from relatives beats a per-program trend, but not a pooled ARDL.",
+   "t": "One-step walk-forward of last-year log growth: a relatives-weighted mean of last observed growth (patristic weights on the label tree) has RMSE 0.242 vs OLS trend 0.261 (−7.2%, Corning-like) and 0.225 vs 0.263 (−14.3%, MS-like); pre-registered bar −5% passed. Pooled ARDL(1): 0.244 and 0.217. \"No change\": 0.231 and 0.236. Per-program SARIMAX(1,0,0): 0.297, and diverged on some MS-like programs.",
+   "note": "Against noise-free growth the relatives' mean is best on the MS-like book (0.110 vs ARDL 0.137, OLS 0.139) but \"no change\" wins on the Corning-like book (0.103 vs 0.125). Not a forecasting method; the benchmark checks that borrowing is real.",
+   "chart": {
+    "type": "images",
+    "la": "RMSE by method, both mocks",
+    "a": "../fig/2026-11-19/phylo_walkforward.png",
+    "lb": "Program tree, MS-like",
+    "b": "../fig/2026-11-19/phylo_tree_ms.png"
+   }
+  },
+  {
+   "h": "LIPA does not flag text-vs-numbers mismatches or category drift.",
+   "miss": true,
+   "t": "\"Says growth, actually declining\": negative LIPA AUC 0.59 (Corning-like, 6 planted) and 0.53 (MS-like, 25) vs a plain OLS slope 0.74 and 0.65. Category drift (LIPA early minus late window): AUC 0.55 and 0.47 for any drift. One cell passed the pre-registered bar (MS-like \"says transform, actually run\": 0.71 vs best comparator 0.58), but the same type on the Corning-like book is 0.48; read as chance among 10 cells.",
+   "note": "LIPA multiplies a program's deviation by its relatives' deviation, so a program near the overall mean scores near zero even when it differs from its siblings (see the toy).",
+   "chart": {
+    "type": "hbars",
+    "title": "AUC, 'says growth, actually declining' (MS-like, 25 planted)",
+    "max": 1,
+    "rows": [
+     [
+      "OLS slope (usual)",
+      0.651,
+      "muted",
+      "0.65"
+     ],
+     [
+      "Program minus relatives",
+      0.659,
+      "muted",
+      "0.66"
+     ],
+     [
+      "−LIPA",
+      0.532,
+      "amber",
+      "0.53"
+     ]
+    ]
+   }
+  },
+  {
+   "h": "LIPA finds planted co-moving groups, but a category-cell flag does as well.",
+   "miss": true,
+   "t": "Programs with significant positive LIPA (like their relatives): 311 of 778 and 777 of 1,404. Share of them in a planted co-moving group: 0.49 and 0.41, vs 0.40 and 0.27 for the same number of largest own slopes; but flagging the most extreme function × intent cell means (either direction) gives 0.53 and 0.45.",
+   "note": "Added after seeing results (not pre-registered). The mocks place planted groups by archetype, so category cells are a strong baseline (the 11-18 STEM run found the same).",
+   "chart": {
+    "type": "images",
+    "la": "Share of flags in a planted group",
+    "a": "../fig/2026-11-19/phylo_cluster_precision.png",
+    "lb": "Program tree, Corning-like",
+    "b": "../fig/2026-11-19/phylo_tree_corning.png"
+   }
+  }
+ ]
+}

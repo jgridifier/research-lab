@@ -1,6 +1,6 @@
 # Secret sauce plans
 
-*Edition 1 · 2026-11-12 · America/New_York (EST), four already-scouted methods. Edition 2 · same day, ad hoc exotic scout: codyn and Lovell proportionality, grounded in [2026-11-12-adhoc](2026-11-12-adhoc.html). Edition 3 · scheduled 2026-11-12 scout (catch-up published 2026-11-13): ecotraj and lphom, grounded in [2026-11-12](2026-11-12.html). Edition 4 · scheduled 2026-11-13 scout: ebnm and DenseLines, aimed at Q2, grounded in [2026-11-13](2026-11-13.html) (SYNTHETIC mock data). Edition 5 · scheduled 2026-11-14 scout (interrupted, completed 2026-11-15): CRQA and IDR, aimed at Q1 and Q3, grounded in [2026-11-14](2026-11-14.html) (public data). Later editions append the 11-15, 11-16 and 11-17 scouts; edition 8 · 2026-11-17: event coincidence analysis (Q1) and STATIS (Q3), grounded in [2026-11-17](2026-11-17.html) (public data); edition 9 · 2026-11-18: STEM (Q2, SYNTHETIC mocks) and the storm hysteresis index (Q1, public data), grounded in [2026-11-18](2026-11-18.html). Plans only.*
+*Edition 1 · 2026-11-12 · America/New_York (EST), four already-scouted methods. Edition 2 · same day, ad hoc exotic scout: codyn and Lovell proportionality, grounded in [2026-11-12-adhoc](2026-11-12-adhoc.html). Edition 3 · scheduled 2026-11-12 scout (catch-up published 2026-11-13): ecotraj and lphom, grounded in [2026-11-12](2026-11-12.html). Edition 4 · scheduled 2026-11-13 scout: ebnm and DenseLines, aimed at Q2, grounded in [2026-11-13](2026-11-13.html) (SYNTHETIC mock data). Edition 5 · scheduled 2026-11-14 scout (interrupted, completed 2026-11-15): CRQA and IDR, aimed at Q1 and Q3, grounded in [2026-11-14](2026-11-14.html) (public data). Later editions append the 11-15, 11-16 and 11-17 scouts; edition 8 · 2026-11-17: event coincidence analysis (Q1) and STATIS (Q3), grounded in [2026-11-17](2026-11-17.html) (public data); edition 9 · 2026-11-18: STEM (Q2, SYNTHETIC mocks) and the storm hysteresis index (Q1, public data), grounded in [2026-11-18](2026-11-18.html); edition 10 · 2026-11-19: partial-order ranking (Q3, public data) and phylogenetic signal (Q2, SYNTHETIC mocks), grounded in [2026-11-19](2026-11-19.html). Plans only.*
 
 This is a running file. Each daily methods scout should append plans for that day's methods in the same form. Edition 1 covers the four methods already scouted: changeforest and partykit ([2026-11-10](2026-11-10.html); [RESULTS](https://github.com/jgridifier/analysis-skills/blob/main/methods/changeforest/RESULTS.md) and [RESULTS](https://github.com/jgridifier/analysis-skills/blob/main/methods/partykit/RESULTS.md)) and MARSS and InspectChangepoint ([2026-11-11](2026-11-11.html), aimed at [Q1](QUESTIONS.md)). No new fits were run. Every number below is from those pages, their run JSON, or the RESULTS files. Nothing is being built, nothing is promoted, and no `APPROVAL.md` is written.
 
@@ -40,6 +40,8 @@ For each avenue: what it is in plain math, why it matters on our data (tied to a
 | STATIS multi-table analysis | **Math** | A reliability-corrected RV so single odd years can be tested, unbiased within ±0.01 in simulation at our design. |
 | STEM short time-series clustering | **New use** | Text enrichment per real shape (STEM's GO-enrichment analogue) on the Q2 mocks: which description terms sit in which real shape. |
 | Storm hysteresis index | **Math** | A calendar-locked null (shift by whole quarters) to test whether the anticlockwise spread loop survives quarter-end timing. |
+| Partial-order ranking (netrankr) | **Math** | Noise-aware dominance: order firms only when worse beyond projection noise on every indicator, then recompute rank probabilities and the payout tests. |
+| Phylogenetic signal (phylosignal) | **Math** | Measurement-error-corrected λ using each program's slope standard error, to split shared growth from noise (observed λ 0.52 vs 1.22 noise-free). |
 
 ---
 
@@ -728,6 +730,54 @@ Loops around leveraged-fund unwinds (Q1.5): storms on cumulative unwind size aro
 
 ---
 
+## Partial-order ranking (Hasse diagrams, exact rank probabilities)
+
+Schoch, D. (2018), "Centrality without indices: partial rankings and rank probabilities in networks", *Social Networks* 54:50–60, doi:10.1016/j.socnet.2017.12.003; netrankr 2.0.0 (CRAN, C++); exact algorithm De Loof, De Meyer & De Baets (2006), *Fundamenta Informaticae* 71:309–321 (cited, not read); Hasse diagram technique from environmental chemistry (Brüggemann and co-authors). Scouted on the [2026-11-19 scheduled edition](2026-11-19.html#poset-ranking), aimed at [Q3](QUESTIONS.md#q3) (Q3.1, Q3.2, Q3.3), public data. Novelty: exotic-transfer (network science, environmental chemistry). Home-field verdict: well established (exact; small applied literature). Status: proposed (recommend). Issue [#79](https://github.com/jgridifier/research-lab/issues/79). Research card: [m/poset-ranking.html](m/poset-ranking.html). Plans only.
+
+**Found via.** Web search 2026-11-19 14:20 ET ("netrankr R package partial rankings rank probabilities lattice of ideals Schoch") → [netrankr exact_rank_prob](https://schochastics.github.io/netrankr/reference/exact_rank_prob.html), [CRAN manual](https://cran.r-project.org/web/packages/netrankr/netrankr.pdf). Field: network science / environmental chemistry.
+
+**What our run showed.** 13 severely adverse exercises, 360 firm-years: dominance concordance with payout/RWA 0.715 of 2,203 pairs (p = 0.0002); 55% of pairs per year are trade-offs, where payouts follow SA pre-tax income (0.639) and run against the loan-loss rate (0.409), which an equal-weight composite averages to 0.552; 2021–25 path-vs-SCB disagreement pairs follow the path (0.789, p = 0.001); 74% of dominance relations persist year to year, 1.9% reverse. Walk-forward miss: 0.36 vs OLS 0.46, ARDL 0.67, SARIMAX 0.65. netrankr vignette reproduced; our Python lattice port matches netrankr to 1.4×10⁻¹³.
+
+### 1 · Engineering (effort M)
+
+A Rust lattice-of-ideals engine with exact big-integer counts, tolerance dominance and width-aware ordering, netrankr as oracle. Cost \(O(|\mathcal I|\,n)\) with \(|\mathcal I|\le\prod_c(|c|+1)\le(n/w+1)^w\) over a chain cover of width \(w\) (Dilworth); level-by-level memory; Bubley–Dyer MCMC beyond width ~15. Closest prior work: netrankr's C++ `exact_rank_prob`/`mcmc_rank_prob`. **Test:** within 10⁻¹² of netrankr on 13 years + 20 random posets; width-12, n = 60 exact in under 1 s; MCMC within 0.01 expected rank.
+
+### 2 · Math (top pick, effort M)
+
+Noise-aware dominance: \(u\preceq_\varepsilon v\iff x_{vj}-x_{uj}\ge\varepsilon_j\ \forall j\) (still a partial order), \(\varepsilon_j\) from year-to-year firm-level variation; probabilistic version averages exact rank probabilities over posets drawn from \(x_u\sim N(\hat x_u,\Sigma)\); payout tests on pairs with \(P(u\prec v)\ge0.9\). Closest prior work: noise and uncertainty in partial-order ranking (*J. Chemometrics*, doi:10.1002/cem.2764) and a fuzzy posetic toolbox (*Annals of OR* 2024, doi:10.1007/s10479-024-06352-3) — search snippets only, not read; none applied to stress tests. **Test:** kept share of dominance relations ≥ 0.85 (0.74 now) with ≥ 50% of ordered pairs retained; concordance on robust pairs ≥ 0.70 at p < 0.01; null: same procedure on within-year-shuffled indicators.
+
+### 3 · New use on our data (effort S)
+
+Trade-off resolution for the payout mix (Q3.5): \(A_j^{(m,r)}\) for dividends vs net buybacks, 2013–19 vs 2020–25; contrast \(\Delta_j\); within-year shuffle that moves both payout channels together. Closest prior work: none found; the 11-16 PIM run (drawdown link moved to buybacks after 2020). **Test:** some \(|\Delta_j|\ge0.08\) with Holm p < 0.05 over 3 indicators × 2 regimes.
+
+**Why Math is the top pick.** The headline numbers rest on exact dominance, and a quarter of relations dissolve the next year. Showing the 72% concordance and the trade-off split survive a noise margin is what makes them usable.
+
+---
+
+## Phylogenetic signal and LIPA (phylosignal)
+
+Keck, F., Rimet, F., Bouchez, A. & Franc, A. (2016), "phylosignal: an R package to measure, test, and explore the phylogenetic signal", *Ecology and Evolution* 6(9):2774–2780, doi:10.1002/ece3.2051; phylosignal 1.3.1 (CRAN, C++). Benchmark: Münkemüller et al. (2012), *Methods in Ecology and Evolution*, doi:10.1111/j.2041-210x.2012.00196.x. Scouted on the [2026-11-19 scheduled edition](2026-11-19.html#phylo-signal), aimed at [Q2](QUESTIONS.md#q2) (Q2.1, Q2.2, Q2.3), SYNTHETIC mock data. Novelty: exotic-transfer (comparative biology). Home-field verdict: well established (K, λ); LIPA promising but thin. Status: proposed (interesting). Issue [#80](https://github.com/jgridifier/research-lab/issues/80). Research card: [m/phylo-signal.html](m/phylo-signal.html). Plans only.
+
+**Found via.** Web search 2026-11-19 14:20 ET ("phylosignal R package local indicator of phylogenetic association LIPA Keck 2016 Ecology and Evolution") → [Keck et al. 2016](https://onlinelibrary.wiley.com/doi/10.1002/ece3.2051), [fkeck/phylosignal](https://github.com/fkeck/phylosignal/). Field: comparative biology / community ecology.
+
+**What our run showed.** Label tree λ 0.52 vs 1.22 noise-free (Corning-like) and 0.78 vs 1.12 (MS-like); K −91% and −64%. Scrubbed-text tree λ 0.35 and 0.57. Relatives' mean beats per-program OLS growth by 7.2% and 14.3% RMSE (ARDL(1) similar; "no change" best on Corning-like). Misses: LIPA on mismatch (AUC 0.59, 0.53 vs OLS 0.74, 0.65) and drift (0.55, 0.47); category-cell flag finds planted groups as well. Brownian check reproduced (mean K 1.03; median λ 1.00).
+
+### 1 · Engineering (effort M)
+
+Linear-time K, λ, I and LIPA on large trees: one post-order pass gives \(\log|C_\lambda|\), \(\mathbf1^\top C_\lambda^{-1}\mathbf1\), \(\mathbf1^\top C_\lambda^{-1}y\), \(y^\top C_\lambda^{-1}y\); nested-level weights reduce LIPA to group sums. Closest prior work: Ho & Ané (2014), *Systematic Biology* 63(3):397–408 (phylolm; abstract via search). **Test:** within 10⁻⁸ of phylosignal on both mocks and trees; 50,000 tips with 999 permutations under 10 s.
+
+### 2 · Math (top pick, effort M)
+
+Measurement-error-corrected λ: \(\mathrm{Var}(y)=\sigma^2C_\lambda+\mathrm{diag}(s_i^2)\) with \(s_i\) each program's slope standard error (pooled within cell when unstable); uncorrected λ equals the true λ times the reliability \(\sigma^2d/(\sigma^2d+s^2)\) (card math, Step 2). Gives tree-structured shrunken growth as a by-product. Closest prior work: Ives, Midford & Garland (2007), *Systematic Biology* 56(2):252–270 (abstract via search); no budget application found. **Test:** corrected λ within 0.15 of noise-free λ on both mocks (gaps 0.70, 0.34 now); ≤ 0.10 on years-shuffled mocks; shrunken 2025 levels beat ebnm's RMSE (0.108, 0.109).
+
+### 3 · New use on our data (effort S)
+
+Tree-borrowed growth for Q2.1: BLUP under \(C_{\hat\lambda}\) vs ebnm's flat segment × function prior. Closest prior work: ebnm (11-13 edition). **Test:** 2025 log-level RMSE ≥ 5% below ebnm on both mocks, and no worse for programs alone in their cell; null with shuffled tips.
+
+**Why Math is the top pick.** The largest finding is that noise hides half or more of the hierarchy's signal; a measurement-error model turns that into a per-program "real change vs noise" answer (Q2.3) and feeds the borrowing avenue.
+
+---
+
 ## Citations used (verified)
 
 - Donges, J. F., Schleussner, C.-F., Siegmund, J. F. & Donner, R. V. (2016). Event coincidence analysis for quantifying statistical interrelationships between event time series. *European Physical Journal Special Topics*, 225(3):471–487.
@@ -768,6 +818,11 @@ Only papers we located with venue, year, and pages, plus the four method papers 
 - Wang, S. & Loreau, M. (2014). Ecosystem stability in space: α, β and γ variability. *Ecology Letters*, 17(8):891–901.
 - Thas, O., De Neve, J., Clement, L. & Ottoy, J.-P. (2012). Probabilistic index models. *Journal of the Royal Statistical Society Series B*, 74(4):623–671.
 - Amorim, G., Thas, O., Vermeulen, K., Vansteelandt, S. & De Neve, J. (2018). Small sample inference for probabilistic index models. *Computational Statistics & Data Analysis*, 121:137–148.
+- Schoch, D. (2018). Centrality without indices: Partial rankings and rank probabilities in networks. *Social Networks*, 54:50–60.
+- Keck, F., Rimet, F., Bouchez, A. & Franc, A. (2016). phylosignal: an R package to measure, test, and explore the phylogenetic signal. *Ecology and Evolution*, 6(9):2774–2780.
+- Münkemüller, T., Lavergne, S., Bzeznik, B., Dray, S., Jombart, T., Schiffers, K. & Thuiller, W. (2012). How to measure and test phylogenetic signal. *Methods in Ecology and Evolution*.
+- Ho, L. S. T. & Ané, C. (2014). A linear-time algorithm for Gaussian and non-Gaussian trait evolution models. *Systematic Biology*, 63(3):397–408.
+- Ives, A. R., Midford, P. E. & Garland, T. Jr. (2007). Within-species variation and measurement error in phylogenetic comparative methods. *Systematic Biology*, 56(2):252–270.
 
 ## What this is not
 

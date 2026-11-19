@@ -1,0 +1,33 @@
+{
+ "Corning_mock": {
+  "years": [
+   2020,
+   2021,
+   2022,
+   2023,
+   2024,
+   2025
+  ],
+  "n_balanced": 778,
+  "n_mismatch": 47,
+  "n_drift": 29,
+  "kept_words_mean": 118.52313624678663,
+  "orig_words_mean": 205.54113110539845,
+  "tfidf_terms": 2081
+ },
+ "MorganStanley_mock": {
+  "years": [
+   2021,
+   2022,
+   2023,
+   2024,
+   2025
+  ],
+  "n_balanced": 1404,
+  "n_mismatch": 92,
+  "n_drift": 56,
+  "kept_words_mean": 121.37037037037037,
+  "orig_words_mean": 194.49786324786325,
+  "tfidf_terms": 2180
+ }
+}

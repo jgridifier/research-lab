@@ -1,0 +1,116 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Methods scout · 2026-11-19 · research-lab</title>
+<meta name="description" content="Methods scout 2026-11-19, aimed at Q3 and Q2: partial-order ranking with exact rank probabilities (network science, environmental chemistry) on public stress-test results and payouts; phylogenetic signal and LIPA (comparative biology) on the SYNTHETIC mock budgets.">
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,400..800&family=Newsreader:ital,opsz,wght@0,6..72,400..600;1,6..72,400..500&family=JetBrains+Mono:wght@400;500;700&display=swap">
+<link rel="stylesheet" href="../assets/brief.css">
+<link rel="stylesheet" href="feedback.css">
+<!-- Methods Scout home-screen / PWA tags. Paste into <head> of every methods-scout page.
+     Paths are root-absolute so they resolve under https://jgridifier.github.io/research-lab/. -->
+<link rel="apple-touch-icon" sizes="180x180" href="/research-lab/methods-scout/icons/apple-touch-icon.png">
+<link rel="icon" type="image/png" sizes="32x32" href="/research-lab/methods-scout/icons/favicon-32.png">
+<link rel="icon" type="image/png" sizes="192x192" href="/research-lab/methods-scout/icons/icon-192.png">
+<link rel="manifest" href="/research-lab/methods-scout/manifest.webmanifest">
+<meta name="apple-mobile-web-app-title" content="Methods Scout">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="theme-color" content="#0F2A23">
+</head>
+<body><main>
+<header class="mast">
+  <div class="date">Thursday · November 19, 2026 · scheduled edition · aimed at Q3 and Q2 · exotic · public data (Q3) and SYNTHETIC mocks (Q2)</div>
+  <h1>Methods scout</h1>
+  <p class="dek">Two borrowed tools, each with a full research card. From network science and environmental chemistry: <em>partial-order ranking</em>, which orders banks only where one is worse on every stress number and counts every ranking consistent with that. From comparative biology: <em>phylogenetic signal</em>, which treats the program hierarchy as a family tree and asks how much growth relatives share.</p>
+  <nav><a href="index.html">Queue</a><a href="archive.html">Archive</a><a href="board.html">Feedback board</a><a href="secret-sauce.html">Secret sauce</a><a href="https://github.com/jgridifier/research-lab/blob/main/docs/methods-scout/QUESTIONS.md">Research questions</a><a href="https://github.com/jgridifier/research-lab/tree/main/docs/methods-scout/runs/2026-11-19">Run folder</a></nav>
+</header>
+
+<div class="ticker">
+  <span><b>●</b> Q3: where one bank is worse on drawdown, pre-tax income and loan losses together, it paid out less in 72% of 2,203 pairs (p = 0.0002); in the 55% of pairs that are trade-offs, payouts follow pre-tax income (0.64) and run against loan losses (0.41).</span>
+  <span><b>●</b> Q2 (SYNTHETIC): the program tree explains far less observed growth than noise-free growth (λ 0.52 vs 1.22); relatives beat a per-program trend by 7–14%; LIPA's per-program flags miss.</span>
+</div>
+
+<section class="tldr">
+<h2>The short version</h2>
+<ul>
+<li><b>Partial-order ranking (netrankr)</b> · network science / environmental chemistry · Q3 · <span class="verdict adopt">recommend</span> · home field: well established (exact; netrankr vignette reproduced; our port matches to 10<sup>−13</sup>). Weight-free dominance concordance 0.72 (p = 0.0002); trade-off pairs split pre-tax income (0.64) from loan losses (0.41), which a composite averages to 0.55; where path and SCB disagree, payouts follow the path (0.79, p = 0.001). Miss: as a predictor it loses to OLS, ARDL and SARIMAX.</li>
+<li><b>Phylogenetic signal and LIPA (phylosignal)</b> · comparative biology · Q2 · <span class="verdict interesting">interesting</span> · home field: well established for K and λ (Brownian check reproduced: mean K 1.03), LIPA thin. Noise attenuates the hierarchy's signal to about 0.4–0.7 of its true size; tree borrowing passes its walk-forward bar; scrubbed text carries less signal than labels. Misses: LIPA on mismatch and drift; a category-cell flag finds planted groups as well.</li>
+</ul>
+</section>
+
+<section id="poset-ranking">
+<div class="card teal"><div class="card-top"><span class="tag teal">Method 1 · Q3</span><span class="verdict adopt">recommend</span></div>
+<h3><a href="m/poset-ranking.html">Partial-order ranking (Hasse diagrams, exact rank probabilities): research card →</a></h3>
+<p>The 2024 Hasse diagram against the usual composite, rank probabilities, the dominance and trade-off tests, SCB vs path, year-to-year stability, the walk-forward miss, home-field reproduction and three secret-sauce avenues are on the card.</p>
+<figure><img src="fig/2026-11-19/poset_hasse_2024.png" alt="Hasse diagram of 31 firms in the 2024 severely adverse stress test, coloured by payout/RWA, next to an equal-weight composite bar ranking" style="max-width:100%"></figure>
+<p class="found-via"><strong>Found via</strong> · web search 2026-11-19 14:20 ET → <a href="https://schochastics.github.io/netrankr/reference/exact_rank_prob.html">netrankr exact_rank_prob</a> (CRAN 2.0.0; Schoch 2018, <i>Social Networks</i> 54:50–60). Novelty: exotic-transfer.</p>
+<p><b>Data.</b> The lab's verified public panel: Fed severely adverse results 2013–2025 (June DFAST for 2020), FR Y-9C HI-A payouts, SCB 2021–2025 from the LBCR PDFs; 360 firm-years with payouts, 18–35 firms a year. Descriptive only.</p>
+<div class="table-wrap"><table>
+<tr><th>Test (within-year payout shuffle)</th><th>Pairs</th><th>Share where more-stressed paid less</th><th>p</th></tr>
+<tr><td>Dominance pairs, same-year payout/RWA</td><td>2,203</td><td>0.715</td><td>0.0002</td></tr>
+<tr><td>Dominance pairs, next-year payout/RWA</td><td>2,034</td><td>0.655</td><td>0.0002</td></tr>
+<tr><td>Trade-off pairs ordered by SA pre-tax income</td><td>2,814</td><td>0.639</td><td>0.0005 (two-sided)</td></tr>
+<tr><td>Trade-off pairs ordered by loan-loss rate</td><td>2,814</td><td>0.409</td><td>0.001 (two-sided)</td></tr>
+<tr><td>Trade-off pairs ordered by CET1 drawdown</td><td>2,814</td><td>0.531</td><td>0.19</td></tr>
+<tr><td>Trade-off pairs ordered by equal-weight composite</td><td>2,814</td><td>0.552</td><td>0.002</td></tr>
+<tr><td>2021–25: path-worse but SCB not higher</td><td>175</td><td>0.789</td><td>0.001</td></tr>
+<tr><td>2021–25: SCB order alone</td><td>1,481</td><td>0.568</td><td>0.024</td></tr>
+</table></div>
+<div class="table-wrap"><table>
+<tr><th>Walk-forward 2015–2025, Spearman predicted vs realized payout/RWA (mean of 11 years)</th><th></th></tr>
+<tr><td>Poset expected rank (no fitted weights)</td><td>0.36</td></tr>
+<tr><td>Pooled OLS on the three stress variables</td><td>0.46</td></tr>
+<tr><td>Pooled ARDL(1,0) with last payout</td><td>0.67</td></tr>
+<tr><td>Per-firm SARIMAX(1,0,0) + exog</td><td>0.65</td></tr>
+</table></div>
+<p class="small">Code: <a href="https://github.com/jgridifier/research-lab/tree/main/docs/methods-scout/runs/2026-11-19/poset">runs/2026-11-19/poset</a> (netrankr 2.0.0 and an independent Python lattice-of-ideals port at parity).</p>
+<aside class="scout-respond" data-issue="79" data-slug="poset-ranking">
+  <span class="scout-chip status-proposed">Proposed</span>
+  <a class="scout-respond-btn" href="https://github.com/jgridifier/research-lab/issues/79">Respond on GitHub</a>
+  <p class="scout-respond-hint">👍 go ahead · 👎 drop · or just comment what you think</p>
+</aside>
+</div>
+</section>
+
+<section id="phylo-signal">
+<div class="card"><div class="card-top"><span class="tag">Method 2 · Q2</span><span class="verdict interesting">interesting</span></div>
+<h3><a href="m/phylo-signal.html">Phylogenetic signal and LIPA on the program tree: research card →</a></h3>
+<p>The tree views of both mock books against the usual box-by-function chart, signal indices on labels vs text, the noise attenuation, the walk-forward benchmark, the LIPA misses, home-field reproduction and three secret-sauce avenues are on the card.</p>
+<figure><img src="fig/2026-11-19/phylo_tree_ms.png" alt="Box plots of growth by function next to a circular program tree with growth bars coloured by LIPA, SYNTHETIC MS-like mock" style="max-width:100%"></figure>
+<p class="found-via"><strong>Found via</strong> · web search 2026-11-19 14:20 ET → <a href="https://onlinelibrary.wiley.com/doi/10.1002/ece3.2051">Keck et al. 2016, <i>Ecology and Evolution</i></a>, <a href="https://github.com/fkeck/phylosignal/">fkeck/phylosignal</a>. Novelty: exotic-transfer.</p>
+<p><b>Data.</b> SYNTHETIC mock ZBB books (Corning-like 778 of 1,079 programs FY2020–25; MS-like 1,404 of 1,840 FY2021–25). Not either firm's budgets; answer key used only for scoring.</p>
+<div class="table-wrap"><table>
+<tr><th>Signal of per-program growth (999 reps)</th><th>Corning-like: λ / K</th><th>MS-like: λ / K</th></tr>
+<tr><td>Label tree, observed</td><td>0.52 / 0.40</td><td>0.78 / 0.54</td></tr>
+<tr><td>Label tree, noise-free (answer key)</td><td>1.22 / 4.54</td><td>1.12 / 1.50</td></tr>
+<tr><td>Text tree (numbers scrubbed), observed</td><td>0.35 / 0.003 (K p = 0.46)</td><td>0.57 / 0.001 (K p = 0.15)</td></tr>
+<tr><td>Usual: ANOVA R² on function, observed / noise-free</td><td>0.45 / 0.96</td><td>0.59 / 0.85</td></tr>
+</table></div>
+<div class="table-wrap"><table>
+<tr><th>Walk-forward RMSE, last-year log growth</th><th>Corning-like</th><th>MS-like</th></tr>
+<tr><td>OLS trend per program</td><td>0.261</td><td>0.263</td></tr>
+<tr><td>Relatives' mean (tree)</td><td>0.242 (−7.2%)</td><td>0.225 (−14.3%)</td></tr>
+<tr><td>Pooled ARDL(1)</td><td>0.244</td><td>0.217</td></tr>
+<tr><td>Per-program SARIMAX(1,0,0)</td><td>0.297</td><td>diverged on some programs</td></tr>
+<tr><td>No change</td><td>0.231</td><td>0.236</td></tr>
+</table></div>
+<p class="small">Code: <a href="https://github.com/jgridifier/research-lab/tree/main/docs/methods-scout/runs/2026-11-19/phylo">runs/2026-11-19/phylo</a> (phylosignal 1.3.1, ape, phytools).</p>
+<aside class="scout-respond" data-issue="80" data-slug="phylo-signal">
+  <span class="scout-chip status-proposed">Proposed</span>
+  <a class="scout-respond-btn" href="https://github.com/jgridifier/research-lab/issues/80">Respond on GitHub</a>
+  <p class="scout-respond-hint">👍 go ahead · 👎 drop · or just comment what you think</p>
+</aside>
+</div>
+</section>
+
+<section>
+<div class="card"><div class="card-top"><span class="tag">Notes</span></div>
+<ul>
+<li><b>Question rotation.</b> Q3 was least recently targeted (last 11-17). Q1 and Q2 both ran on 11-18; Q2's previous run (11-16) is older than Q1's (11-17), so today is Q3 + Q2. No Q1 analysis today.</li>
+<li><b>Pre-registration.</b> Written before any run on our data: <a href="https://github.com/jgridifier/research-lab/blob/main/docs/methods-scout/runs/2026-11-19/PREREG.md">runs/2026-11-19/PREREG.md</a>. Not in it, and labelled on the cards: per-indicator scoring of trade-off pairs with a two-sided null; the planted-group precision comparison for LIPA.</li>
+<li><b>Watchlist</b> (not run): l1ou, PhylogeneticEM, parsec, plus the Hasse-diagram ranking literature. See <a href="https://github.com/jgridifier/research-lab/blob/main/docs/methods-scout/watchlist.md">watchlist.md</a>.</li>
+<li><b>Data Jared would need to supply.</b> Q2: real program-level budgets, actuals, headcount and decision packages (everything today is SYNTHETIC). Q3: nothing private; firm-level baseline projections are not published, and the October 2020 SCB PDF is still missing.</li>
+</ul>
+</div>
+</section>
+</main></body></html>

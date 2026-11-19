@@ -1,0 +1,67 @@
+{
+ "A1b_incomparable": {
+  "n_pairs": 2814,
+  "obs": {
+   "ew": 0.5520611229566453,
+   "ols": 0.6146055437100213,
+   "drawdown": 0.5309168443496801,
+   "neg_pti": 0.6389481165600569,
+   "loss_total_loan_rate": 0.4088486140724947
+  },
+  "null_q95": {
+   "ew": 0.5275764036958066,
+   "ols": 0.5330845771144278,
+   "drawdown": 0.5382018479033405,
+   "neg_pti": 0.5369580668088131,
+   "loss_total_loan_rate": 0.5415778251599147
+  },
+  "p": {
+   "ew": 0.002,
+   "ols": 0.0005,
+   "drawdown": 0.091,
+   "neg_pti": 0.0005,
+   "loss_total_loan_rate": 1.0
+  }
+ },
+ "A2_walkforward_mean_spearman": {
+  "poset": 0.3584649538885322,
+  "ols": 0.46493578280800735,
+  "ardl": 0.6726665291392805,
+  "sarimax": 0.652406315137276
+ },
+ "A2_years": [
+  2015,
+  2016,
+  2017,
+  2018,
+  2019,
+  2020,
+  2021,
+  2022,
+  2023,
+  2024,
+  2025
+ ],
+ "A3_scb_vs_path_2021_2025": {
+  "disagree_pairs": 175,
+  "path_conc_in_disagree": 0.7885714285714286,
+  "floor_tied": 123.0,
+  "scb_pairs": 1481,
+  "scb_conc": 0.5675219446320054,
+  "path_pairs": 834,
+  "path_conc": 0.7194244604316546,
+  "p_path_in_disagree": 0.001,
+  "p_scb": 0.024,
+  "p_path": 0.001
+ },
+ "A4_mean": {
+  "keep_share": 0.7358591984520614,
+  "tau_ew": 0.6760731909551713,
+  "tau_payout": 0.6288627151929259,
+  "tau_exprank": 0.6608319857377565
+ },
+ "A4_flipped_total": 29,
+ "A4_dom_total": 1553,
+ "A4_kept_total": 1115,
+ "A4_lost_total": 409
+}
