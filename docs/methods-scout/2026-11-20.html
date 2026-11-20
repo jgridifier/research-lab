@@ -1,0 +1,100 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Methods scout · 2026-11-20 · research-lab</title>
+<meta name="description" content="Methods scout 2026-11-20, aimed at Q1 and Q3: Liang–Kleeman information flow (climate dynamics) on public repo, fails and positioning series; Necessary Condition Analysis ceilings (organization science, agronomy boundary lines) on public stress-test results and payouts.">
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,400..800&family=Newsreader:ital,opsz,wght@0,6..72,400..600;1,6..72,400..500&family=JetBrains+Mono:wght@400;500;700&display=swap">
+<link rel="stylesheet" href="../assets/brief.css">
+<link rel="stylesheet" href="feedback.css">
+<!-- Methods Scout home-screen / PWA tags. Paste into <head> of every methods-scout page.
+     Paths are root-absolute so they resolve under https://jgridifier.github.io/research-lab/. -->
+<link rel="apple-touch-icon" sizes="180x180" href="/research-lab/methods-scout/icons/apple-touch-icon.png">
+<link rel="icon" type="image/png" sizes="32x32" href="/research-lab/methods-scout/icons/favicon-32.png">
+<link rel="icon" type="image/png" sizes="192x192" href="/research-lab/methods-scout/icons/icon-192.png">
+<link rel="manifest" href="/research-lab/methods-scout/manifest.webmanifest">
+<meta name="apple-mobile-web-app-title" content="Methods Scout">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="theme-color" content="#0F2A23">
+</head>
+<body><main>
+<header class="mast">
+  <div class="date">Friday · November 20, 2026 · scheduled edition · aimed at Q1 and Q3 · exotic · public data</div>
+  <h1>Methods scout</h1>
+  <p class="dek">Two borrowed tools, each with a full research card. From climate dynamics: <em>information flow</em>, which measures how much one series changes the uncertainty of another, with a sign. From organization science and agronomy: <em>necessary-condition ceilings</em>, which ask what a stress result rules out rather than what it predicts on average.</p>
+  <nav><a href="index.html">Queue</a><a href="archive.html">Archive</a><a href="board.html">Feedback board</a><a href="secret-sauce.html">Secret sauce</a><a href="https://github.com/jgridifier/research-lab/blob/main/docs/methods-scout/QUESTIONS.md">Research questions</a><a href="https://github.com/jgridifier/research-lab/tree/main/docs/methods-scout/runs/2026-11-20">Run folder</a></nav>
+</header>
+
+<div class="ticker">
+  <span><b>●</b> Q1: spread moves raise fails' uncertainty (τ +1.7%, p = 0.033) and damp DVP volume's (τ −3.6%, p = 0.013); none survives Holm, and the usual tests overstate weekly links (14–67% false alarms at 5%).</span>
+  <span><b>●</b> Q3: the stressed CET1 trough caps payouts beyond what correlation explains (d 0.25 vs 0.21, p = 0.012); the drawdown's "necessity" is correlation-made; the SCB binds for 1.5% of firm-years.</span>
+</div>
+
+<section class="tldr">
+<h2>The short version</h2>
+<ul>
+<li><b>Liang–Kleeman information flow (LK_Info_flow)</b> · climate dynamics · Q1 · <span class="verdict interesting">interesting</span> · home field: contested (Liang 2021 network reproduced within 0.4 pp; supported for small linear systems, disputed for nonlinear). Adds size and sign to Granger links; its shipped test is the Granger t-test and is oversized on our data. Miss: no forecasting gain.</li>
+<li><b>Necessary Condition Analysis (R NCA)</b> · organization science / agronomy · Q3 · <span class="verdict interesting">interesting</span> · home field: contested (example reproduced exactly; our size check confirms the critique of its default test). With a correlation-matched null, separates a real gate (CET1 trough) from a correlation-made one (drawdown). Misses: fragile to the best-capitalized 2% for total payout; loose as an envelope.</li>
+</ul>
+</section>
+
+<section id="lkif">
+<div class="card teal"><div class="card-top"><span class="tag teal">Method 1 · Q1</span><span class="verdict interesting">interesting</span></div>
+<h3><a href="m/lkif.html">Liang–Kleeman information flow: research card →</a></h3>
+<p>The signed flow graph against the Granger graph, the size study on our weekly data, stability and the 2024–26 sign flip, monthly Form PF, the forecasting miss, the home-field reproduction and three secret-sauce avenues are on the card.</p>
+<figure><img src="fig/2026-11-20/lkif_flow_graph.png" alt="Six weekly funding series as a network; arrows show signed normalized information flow with calibrated bootstrap p values" style="max-width:100%"></figure>
+<p class="found-via"><strong>Found via</strong> · web search 2026-11-20 14:21 ET → <a href="https://pypi.org/project/LK-Info-Flow/">LK_Info_flow on PyPI</a>, <a href="https://github.com/YinengRong/LKIF">YinengRong/LKIF</a> (Liang 2021, <i>Entropy</i> 23:679). Novelty: exotic-transfer.</p>
+<p><b>Data.</b> Public aggregates (lab copies): NY Fed financing fails, OFR DVP and tri-party volumes and rates, CFTC TFF leveraged-fund net short (to 2025-12-30), FRED VIX; 399 weeks 2018-05-16..2025-12-31; SEC Form PF tab 8.27 monthly 2018-06..2025-12. Descriptive.</p>
+<div class="table-wrap"><table>
+<tr><th>Weekly link (conditional on the other 4 series)</th><th>τ (share of target's entropy budget)</th><th>LKIF bootstrap p</th><th>Granger VAR p</th></tr>
+<tr><td>spread → DVP volume</td><td>−3.6% (damps)</td><td>0.013</td><td>&lt; 0.0001</td></tr>
+<tr><td>spread → fails</td><td>+1.7% (raises)</td><td>0.033</td><td>&lt; 0.0001</td></tr>
+<tr><td>VIX → fails</td><td>+0.5%</td><td>0.076</td><td>0.034</td></tr>
+<tr><td>leveraged-fund net short → fails</td><td>−0.10%</td><td>0.26</td><td>0.012</td></tr>
+<tr><td>fails → spread</td><td>−0.01%</td><td>0.94</td><td>0.97</td></tr>
+</table></div>
+<p class="small">Holm over 30 edges: no LKIF edge below 0.05 (smallest 0.39). Size on our data at 5%: package test 14.5–20.3% on fails/spread edges, shift surrogate 39–67%, HC3 4.5–9.5%. Code: <a href="https://github.com/jgridifier/research-lab/tree/main/docs/methods-scout/runs/2026-11-20/lkif">runs/2026-11-20/lkif</a> (LK_Info_flow 3.1.2.1 patched for NumPy 2, and an independent NumPy port at parity).</p>
+<aside class="scout-respond" data-issue="82" data-slug="lkif">
+  <span class="scout-chip status-proposed">Proposed</span>
+  <a class="scout-respond-btn" href="https://github.com/jgridifier/research-lab/issues/82">Respond on GitHub</a>
+  <p class="scout-respond-hint">👍 go ahead · 👎 drop · or just comment what you think</p>
+</aside>
+</div>
+</section>
+
+<section id="nca-ceiling">
+<div class="card"><div class="card-top"><span class="tag">Method 2 · Q3</span><span class="verdict interesting">interesting</span></div>
+<h3><a href="m/nca-ceiling.html">Necessary Condition Analysis (ceilings): research card →</a></h3>
+<p>The ceiling against the regression line, the correlation-matched null for four stress results, the size check of the default test, limiting factors including the SCB, the era split, trims, the walk-forward miss, home-field reproduction and three secret-sauce avenues are on the card.</p>
+<figure><img src="fig/2026-11-20/nca_ceiling.png" alt="Payout/RWA against the SA minimum CET1 ratio for 360 firm-years with a step ceiling and the shaded empty zone" style="max-width:100%"></figure>
+<p class="found-via"><strong>Found via</strong> · web search 2026-11-20 14:21 ET → <a href="https://journals.sagepub.com/doi/10.1177/1094428118795272">Dul, van der Laan &amp; Kuik (2020)</a>; critique <a href="https://www.frontiersin.org/journals/psychology/articles/10.3389/fpsyg.2026.1832547/full">Frontiers 2026 comment</a>. Novelty: exotic-transfer.</p>
+<p><b>Data.</b> The lab's verified public panel: Fed severely adverse results 2013–2025, FR Y-9C HI-A payouts, SCB 2021–2025; 360 firm-years with payouts. Descriptive only.</p>
+<div class="table-wrap"><table>
+<tr><th>Ceiling on payout/RWA</th><th>d</th><th>within-year p</th><th>correlation-only 95th pct</th><th>spuriousness p</th><th>OLS R²</th></tr>
+<tr><td>SA minimum CET1</td><td>0.245</td><td>0.0002</td><td>0.211</td><td>0.012</td><td>0.10</td></tr>
+<tr><td>minus CET1 drawdown</td><td>0.501</td><td>0.013</td><td>0.567</td><td>0.48</td><td>0.07</td></tr>
+<tr><td>SA pre-tax income</td><td>0.236</td><td>0.76</td><td>0.427</td><td>1.0</td><td>0.16</td></tr>
+<tr><td>minus loan-loss rate</td><td>0.329</td><td>0.64</td><td>0.474</td><td>0.82</td><td>0.01</td></tr>
+<tr><td>minus SCB (2021–2025, n = 132)</td><td>0.539</td><td>0.47</td><td>0.688</td><td>0.79</td><td>—</td></tr>
+</table></div>
+<p class="small">Code: <a href="https://github.com/jgridifier/research-lab/tree/main/docs/methods-scout/runs/2026-11-20/nca">runs/2026-11-20/nca</a> (R NCA 5.1.0 and an independent NumPy CE-FDH port at parity).</p>
+<aside class="scout-respond" data-issue="83" data-slug="nca-ceiling">
+  <span class="scout-chip status-proposed">Proposed</span>
+  <a class="scout-respond-btn" href="https://github.com/jgridifier/research-lab/issues/83">Respond on GitHub</a>
+  <p class="scout-respond-hint">👍 go ahead · 👎 drop · or just comment what you think</p>
+</aside>
+</div>
+</section>
+
+<section>
+<div class="card"><div class="card-top"><span class="tag">Notes</span></div>
+<ul>
+<li><b>Question rotation.</b> Q1 was last targeted on 11-18 and is due. Q2 and Q3 both ran on 11-19; Q3's previous run (11-17) is older than Q2's (11-18), so today is Q1 + Q3. No Q2 analysis today.</li>
+<li><b>Steering.</b> Issue #70 asked where coincidence ends and causality begins; today's Q1 pick is a causal-flow measure run next to Granger, with a size study that shows what the usual causal tests over-claim on these data.</li>
+<li><b>Pre-registration.</b> Written before any run on our data: <a href="https://github.com/jgridifier/research-lab/blob/main/docs/methods-scout/runs/2026-11-20/PREREG.md">runs/2026-11-20/PREREG.md</a>. Changed or added after results, and labelled on the cards: LKIF edges judged by the edge-zeroed block bootstrap instead of the shift surrogate (found invalid); the NCA size check, trims and component checks.</li>
+<li><b>Watchlist</b> (not run): v-TimeLKFlow (time-varying LKIF), PCMCI/Tigramite, BLA boundary-line analysis, the bivariate causality-index benchmark code. See <a href="https://github.com/jgridifier/research-lab/blob/main/docs/methods-scout/watchlist.md">watchlist.md</a>.</li>
+<li><b>Data Jared would need to supply.</b> Nothing private for today's runs. Public refreshes still owed: CFTC TFF after 2025-12-30 in the lab copy; Form PF publication dates; the October 2020 SCB PDF. Firm-level baseline projections are not published.</li>
+</ul>
+</div>
+</section>
+</main></body></html>

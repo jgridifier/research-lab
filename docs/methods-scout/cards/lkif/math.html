@@ -1,0 +1,47 @@
+<h4>Notation</h4>
+<div class="table-wrap"><table>
+<tr><th>Symbol</th><th>Meaning</th><th>Here</th></tr>
+<tr><td>\(X_t\in\mathbb R^d\)</td><td>state of a stochastic dynamical system, sampled at step \(\Delta t\)</td><td>\(d=6\) weekly series, standardized: change in log financing fails, change in the DVP − tri-party overnight spread, change in log DVP and tri-party volume, change in leveraged-fund UST net short, change in VIX; \(n=399\) weeks</td></tr>
+<tr><td>\(A=(a_{ij})\)</td><td>drift matrix of the linear model \(dX=(f+AX)\,dt+B\,dW\)</td><td>estimated by least squares of the Euler difference \((X_{t+1}-X_t)/\Delta t\) on \(X_t\) (equivalently a VAR(1): \(a_{ij}\) = VAR coefficient, \(a_{ii}\) = VAR coefficient − 1)</td></tr>
+<tr><td>\(C=(C_{ij})\)</td><td>sample covariance of \(X_t\)</td><td>same-week covariance of the six series</td></tr>
+<tr><td>\(T_{j\to i}\)</td><td>information flow: rate at which \(X_j\) changes the marginal (Shannon) entropy of \(X_i\), nats per step</td><td>"how much the spread moves the uncertainty of next week's fails"</td></tr>
+<tr><td>\(Z_i,\ \tau_{j\to i}\)</td><td>normalizer and normalized flow \(\tau=T/Z_i\in[-1,1]\)</td><td>share of fails' entropy budget that comes from the spread</td></tr>
+<tr><td>sign of \(T\)</td><td>\(T>0\): \(X_j\) makes \(X_i\) less predictable; \(T<0\): it damps \(X_i\)</td><td>red vs blue arrows on the chart</td></tr>
+</table></div>
+
+<h4>Assumptions</h4>
+<ul>
+<li>The series come from a (locally) stationary linear stochastic system with additive noise; the closed form below is the maximum-likelihood estimator only under that model (Liang 2014, Theorem 5 as restated in Liang 2021).</li>
+<li>All relevant drivers are in \(X\) (the multivariate version conditions on the other \(d-2\) series, so a common driver inside \(X\), such as VIX, is handled; one outside \(X\) is not).</li>
+<li>One-step (here one-week) time scale; Euler forward differencing with step 1 (the package default, recommended unless the system is chaotic and deterministic).</li>
+<li>For the package's significance test: Gaussian, homoskedastic residuals and zero-mean regressors (see the null section; our data break the first two).</li>
+</ul>
+
+<h4>The estimator</h4>
+<p>For a linear system, the information flow has an exact population form (Liang 2021, eq. 4) and a plug-in estimator:</p>
+$$T_{j\to i}=a_{ij}\,\frac{\sigma_{ij}}{\sigma_{ii}},\qquad \widehat T_{j\to i}=\hat a_{ij}\,\frac{C_{ij}}{C_{ii}} .$$
+<p>Normalization (Liang 2021, eqs. 18–20): the entropy change of \(X_i\) is split into a self part, the flows from every other series, and noise,</p>
+$$Z_i=\Big|\tfrac{dH_i^{*}}{dt}\Big|+\sum_{j\neq i}\big|T_{j\to i}\big|+\Big|\tfrac{dH_i^{\text{noise}}}{dt}\Big|,\qquad \tfrac{dH_i^{\text{noise}}}{dt}=\frac{g_{ii}}{2C_{ii}},\qquad \tau_{j\to i}=\frac{T_{j\to i}}{Z_i}.$$
+<p>In the bivariate case the same quantity is the covariance formula of Liang (2014):</p>
+$$\widehat T_{2\to1}=\frac{C_{11}C_{12}C_{2,d1}-C_{12}^{2}C_{1,d1}}{C_{11}^{2}C_{22}-C_{11}C_{12}^{2}},$$
+<p>with \(C_{i,dj}\) the covariance between \(X_i\) and the Euler difference of \(X_j\).</p>
+
+<h4>Why it works, step by step</h4>
+<div class="step"><b class="n">Step 1 · entropy of a Gaussian marginal</b>For \(X_i\sim N(\mu_i,\sigma_{ii})\), \(H_i=\tfrac12\log(2\pi e\,\sigma_{ii})\), so \(dH_i/dt=\dot\sigma_{ii}/(2\sigma_{ii})\). Under \(dX=(f+AX)dt+BdW\) the covariance evolves as \(\dot\Sigma=A\Sigma+\Sigma A^{\top}+BB^{\top}\), whose \((i,i)\) entry is \(\dot\sigma_{ii}=2\sum_k a_{ik}\sigma_{ik}+g_{ii}\). Therefore
+$$\frac{dH_i}{dt}=\underbrace{a_{ii}}_{\text{self}}+\sum_{j\neq i}\underbrace{a_{ij}\frac{\sigma_{ij}}{\sigma_{ii}}}_{T_{j\to i}}+\underbrace{\frac{g_{ii}}{2\sigma_{ii}}}_{\text{noise}}.$$
+Each term is a separate contribution to the entropy budget of \(X_i\); \(T_{j\to i}\) is the part that exists only because \(X_j\) enters the drift of \(X_i\). This is the decomposition that the normalizer \(Z_i\) sums in absolute value.</div>
+<div class="step"><b class="n">Step 2 · nil causality and the gap to Granger</b>If \(X_j\) is absent from the drift of \(X_i\), \(a_{ij}=0\) and \(T_{j\to i}=0\) exactly, whatever the correlation. Granger causality asks only whether \(a_{ij}\neq0\). LKIF asks for \(a_{ij}\,\sigma_{ij}\neq 0\): a lagged effect that leaves the same-time covariance at zero transfers no information about the marginal of \(X_i\) (toy, rotation case). Conversely, the sign of \(T\) is the sign of \(a_{ij}\sigma_{ij}\), so a positive Granger coefficient can damp uncertainty when the series co-move negatively.</div>
+<div class="step"><b class="n">Step 3 · what the package's test actually is</b>LK_Info_flow estimates \(\widehat{\mathrm{SE}}(\widehat T_{j\to i})=\widehat{\mathrm{SE}}(\hat a_{ij})\,|C_{ij}/C_{ii}|\), treating \(C\) as known. The ratio \(C_{ij}/C_{ii}\) cancels in \(z=\widehat T/\widehat{\mathrm{SE}}\), so \(z=\hat a_{ij}/\widehat{\mathrm{SE}}(\hat a_{ij})\): the lag-1 VAR \(t\)-statistic, i.e. the Granger test. On our standardized data the two agree to 1.5×10<sup>−5</sup> (computed; the gap is a degrees-of-freedom convention). Significance in LKIF therefore inherits every assumption of the Granger \(t\)-test; what LKIF adds is the size and the sign.</div>
+
+<h4>The null and inference</h4>
+<ul>
+<li><b>Package test:</b> \(z\) as above, two-sided normal p. It uses the uncentered moment matrix of \(X\) for \(\widehat{\mathrm{SE}}(\hat a)\) although the regression has a constant; on the Liang (2021) network with its nonzero means this gives 6.6% false alarms at 5% (7.0% with means ×10; 4.9% with zero means; correct OLS \(t\): 4.8%) — computed, 300 runs each. We standardize, so this bias does not touch our numbers.</li>
+<li><b>Circular-shift surrogate</b> (shift the source series): invalid here, because shifting kills \(C_{ij}\) and therefore \(T\) even when \(a_{ij}=0\). On our data it raises false alarms to 39–67% (finding 1).</li>
+<li><b>What we use:</b> an edge-zeroed model bootstrap. Fit the VAR(1), set \(a_{ij}=0\), regenerate the series from block-resampled residual rows (stationary bootstrap, mean block 8, which keeps fat tails, volatility clusters and same-week residual correlation), recompute \(|\widehat T_{j\to i}|\); 999 replicates per edge; Holm over the 30 directed edges.</li>
+</ul>
+
+<div class="toy"><h5>Toy example (computed by <code>cards/_toys/toys.py</code>)</h5>
+<p>Two series, \(X_{t+1}=AX_t+e_t\) with \(A=\begin{pmatrix}0.5&0.3\\0&0.5\end{pmatrix}\) and independent unit noise: \(x_2\) drives \(x_1\). Stationary covariance \(\sigma_{11}=1.6\), \(\sigma_{12}=0.2667\), \(\sigma_{22}=1.3333\). Then \(T_{2\to1}=0.3\times0.2667/1.6=0.05\) nats per step and \(T_{1\to2}=0\) (nil causality). The self term is \(a_{11}-1=-0.5\) and the noise term \(1/(2\times1.6)=0.3125\), so \(Z_1=0.8625\) and \(\tau_{2\to1}=0.058\): \(x_2\) accounts for 5.8% of \(x_1\)'s entropy budget. Change \(A\) to the rotation \(\begin{pmatrix}0.5&0.3\\-0.3&0.5\end{pmatrix}\): now \(\sigma_{12}=0\), so \(T_{2\to1}=0\) although the Granger coefficient is 0.3.</p></div>
+
+<div class="diff"><b>How it differs from the standard tool.</b> Granger causality (and transfer entropy, its information-theoretic twin for Gaussian data) asks whether the past of \(X_j\) improves the prediction of \(X_i\): a yes/no on \(a_{ij}\). LKIF is derived from the time evolution of the entropy of \(X_i\) under the system's own dynamics. It returns a magnitude on a common scale (share of the target's entropy budget), a sign (destabilizing or stabilizing), and zero when the lagged effect does not alter the target's uncertainty. Its significance test, in the reference implementation, is the Granger \(t\)-test; on our data both need a calibrated bootstrap.</div>
+<p class="cite">Followed: Liang (2021), "Normalized multivariate time series causality analysis and causal graph reconstruction", <i>Entropy</i> 23:679 (open text read on PMC: Theorems 4–5, eqs. 4–5 and 14–20, Section 5.1); Liang (2014), <i>Phys. Rev. E</i> 90:052150 and (2015) 92:022126 (cited by that paper and by the package; not read). Package: LK_Info_flow 3.1.2.1 (Rong &amp; Liang; <code>multi_causality_est.py</code> read line by line). Step 1 is our own short derivation of eq. 4 from the Gaussian covariance equation; it matches the paper's statement. Toy: <code>cards/_toys/toys.py</code>.</p>

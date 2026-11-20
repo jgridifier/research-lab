@@ -1,7 +1,7 @@
 {
   "version": 1,
   "repo": "jgridifier/research-lab",
-  "updated_at": "2026-11-19T19:43:32Z",
+  "updated_at": "2026-11-20T19:49:33Z",
   "issues": {
     "46": {
       "issue": 46,
@@ -632,6 +632,46 @@
         "pick:math"
       ],
       "last_processed_at": "2026-11-19T19:43:32Z",
+      "notes": "",
+      "history": []
+    },
+    "82": {
+      "issue": 82,
+      "slug": "lkif",
+      "method": "Liang–Kleeman information flow",
+      "scout_date": "2026-11-20",
+      "page": "2026-11-20.html",
+      "page_anchor": "#lkif",
+      "question": "Q1",
+      "status": "proposed",
+      "top_pick": "math",
+      "labels": [
+        "scout",
+        "scout:Q1",
+        "status:proposed",
+        "pick:math"
+      ],
+      "last_processed_at": "2026-11-20T19:49:33Z",
+      "notes": "",
+      "history": []
+    },
+    "83": {
+      "issue": 83,
+      "slug": "nca-ceiling",
+      "method": "Necessary Condition Analysis (ceilings)",
+      "scout_date": "2026-11-20",
+      "page": "2026-11-20.html",
+      "page_anchor": "#nca-ceiling",
+      "question": "Q3",
+      "status": "proposed",
+      "top_pick": "math",
+      "labels": [
+        "scout",
+        "scout:Q3",
+        "status:proposed",
+        "pick:math"
+      ],
+      "last_processed_at": "2026-11-20T19:49:33Z",
       "notes": "",
       "history": []
     }

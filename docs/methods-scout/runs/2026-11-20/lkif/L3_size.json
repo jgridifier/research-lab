@@ -1,0 +1,42 @@
+{
+ "d_spread->dl_fails": {
+  "asym": 0.145,
+  "shift_surrogate": 0.605,
+  "var1_t": 0.1425,
+  "n_sims": [
+   400,
+   200,
+   400
+  ]
+ },
+ "d_lev->dl_fails": {
+  "asym": 0.035,
+  "shift_surrogate": 0.03,
+  "var1_t": 0.035,
+  "n_sims": [
+   400,
+   200,
+   400
+  ]
+ },
+ "dl_fails->d_spread": {
+  "asym": 0.2025,
+  "shift_surrogate": 0.39,
+  "var1_t": 0.2025,
+  "n_sims": [
+   400,
+   200,
+   400
+  ]
+ },
+ "dl_dvp->dl_fails": {
+  "asym": 0.0425,
+  "shift_surrogate": 0.665,
+  "var1_t": 0.0425,
+  "n_sims": [
+   400,
+   200,
+   400
+  ]
+ }
+}

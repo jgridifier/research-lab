@@ -1,0 +1,84 @@
+$Individualism
+$Individualism$global
+                              
+Number of observations    28.0
+Scope                  15563.6
+Xmin                      18.0
+Xmax                      91.0
+Ymin                       1.2
+Ymax                     214.4
+
+$Individualism$params
+                 ce_fdh      cr_fdh     
+Ceiling zone     6466.8      4772.541   
+Effect size      0.415508    0.3066477  
+# above          0           2          
+Slope            NA          2.23023    
+Intercept        NA          28.35271   
+p-value          0.07309269  0.160284   
+p-accuracy       0.005101563 0.007190504
+                 NA          NA         
+Complexity       5           1          
+Fit              100         73.80067   
+Ceiling accuracy 100         92.85714   
+Accuracy nof     NULL        26         
+Noise            0           3.6        
+Noise nof        0           1          
+Exceptions       0           3.6        
+Exceptions nof   0           1          
+Support          17.9        14.3       
+Support nof      5           4          
+Spread           0.82        0.67       
+Sharpness        1           0.8        
+                 NA          NA         
+Abs. ineff.      3000.3      6018.517   
+Rel. ineff.      19.27767    38.67047   
+Condition ineff. 0           10.38263   
+Outcome ineff.   19.27767    31.56513   
+
+$Individualism$names
+[1] "Individualism"          "Innovation performance"
+
+
+$`Risk taking`
+$`Risk taking`$global
+                              
+Number of observations    28.0
+Scope                  18974.8
+Xmin                      23.0
+Xmax                     112.0
+Ymin                       1.2
+Ymax                     214.4
+
+$`Risk taking`$params
+                 ce_fdh      cr_fdh     
+Ceiling zone     5871.1      5348.968   
+Effect size      0.3094156   0.2818985  
+# above          0           1          
+Slope            NA          2.641869   
+Intercept        NA          -14.4777   
+p-value          0.1065893   0.08989101 
+p-accuracy       0.006048261 0.005605998
+                 NA          NA         
+Complexity       5           1          
+Fit              100         91.10675   
+Ceiling accuracy 100         96.42857   
+Accuracy nof     NULL        27         
+Noise            0           0          
+Noise nof        0           0          
+Exceptions       0           3.6        
+Exceptions nof   0           1          
+Support          25          25         
+Support nof      7           7          
+Spread           0.59        0.82       
+Sharpness        1           1          
+                 NA          NA         
+Abs. ineff.      5616.4      8276.863   
+Rel. ineff.      29.59926    43.62029   
+Condition ineff. 25.8427     28.50028   
+Outcome ineff.   5.065666    21.14695   
+
+$`Risk taking`$names
+[1] "Risk taking"            "Innovation performance"
+
+

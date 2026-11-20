@@ -1,0 +1,42 @@
+<h4>Notation</h4>
+<div class="table-wrap"><table>
+<tr><th>Symbol</th><th>Meaning</th><th>Here</th></tr>
+<tr><td>\(x_k,\ y_k\)</td><td>condition and outcome of case \(k\)</td><td>firm-year in a severely adverse test: \(x\) = a stress result oriented so higher = better (minimum stressed CET1 ratio, minus drawdown, pre-tax income, minus loan-loss rate, minus SCB); \(y\) = Y-9C payout/RWA (%)</td></tr>
+<tr><td>\(c(x)\)</td><td>ceiling: the highest outcome observed at or below condition level \(x\)</td><td>the most any firm with a stressed CET1 trough of at most \(x\) paid out</td></tr>
+<tr><td>scope \(S\)</td><td>\((x_{\max}-x_{\min})(y_{\max}-y_{\min})\)</td><td>the box spanned by the data</td></tr>
+<tr><td>\(d\)</td><td>necessity effect size = empty area above the ceiling / scope</td><td>0 = no empty corner; 0.1–0.3 "medium", 0.3–0.5 "large" by Dul's rule of thumb</td></tr>
+<tr><td>bottleneck \(x^{*}(y)\)</td><td>smallest \(x\) with \(c(x)\ge y\)</td><td>"to pay at least \(y\)% of RWA, no firm had a trough below \(x^{*}\)%"</td></tr>
+<tr><td>\(\rho_s\)</td><td>Spearman correlation of \(x\) and \(y\)</td><td>used to build the "correlation alone" null</td></tr>
+</table></div>
+
+<h4>Assumptions</h4>
+<ul>
+<li>A necessity claim is "no high \(y\) without high \(x\)"; it is about the upper-left corner of the scatter, not the mean.</li>
+<li>CE-FDH (ceiling envelopment, free disposal hull) assumes the ceiling is non-decreasing and treats every observed point as feasible, so the ceiling is set by the best performers and is sensitive to outliers and measurement error in the top cases.</li>
+<li>Effect size depends on the scope, so extreme \(x\) values at the right edge (firms with very high CET1) enlarge or shrink \(d\).</li>
+<li>For the permutation tests: under the null, outcomes are exchangeable across firms (within a test year, for ours).</li>
+</ul>
+
+<h4>The estimator</h4>
+<p>With cases sorted by \(x\) (Dul 2016):</p>
+$$c(x)=\max\{y_k:\ x_k\le x\},\qquad d=\frac{1}{S}\int_{x_{\min}}^{x_{\max}}\big(y_{\max}-c(x)\big)\,dx,\qquad x^{*}(y)=\min\{x:\ c(x)\ge y\}.$$
+<p>Because \(c\) is a step function, the integral is a finite sum over the distinct \(x\) values \(u_1<\dots<u_m\): \(\int=\sum_{l}(y_{\max}-c(u_l))(u_{l+1}-u_l)\) with \(u_{m+1}=x_{\max}\).</p>
+
+<h4>Why it works, step by step</h4>
+<div class="step"><b class="n">Step 1 · necessity leaves an empty corner</b>If \(y\le h(x)\) for some non-decreasing \(h\) (a "law of the minimum": the outcome cannot exceed what the condition allows), then no case lies above \(h\), and the area between \(h\) and \(y_{\max}\) is empty. The tightest non-decreasing envelope of the data is exactly \(c(x)=\max\{y_k:x_k\le x\}\): it is non-decreasing by construction (a running maximum), it lies on or above every point, and any lower non-decreasing curve would cut off a point. So \(c\) estimates \(h\) from below and \(d\) measures the empty corner.</div>
+<div class="step"><b class="n">Step 2 · but correlation also empties the corner</b>For a bivariate normal pair with correlation \(r>0\), the density in the upper-left (\(x\) low, \(y\) high) falls as \(\exp\{-(x^2-2rxy+y^2)/(2(1-r^2))\}\); at \(x=-a,\ y=a\) the exponent is \(-a^2(1+r)/(1-r)\), which shrinks as \(r\) grows. With finite \(n\), the expected largest \(y\) among cases with low \(x\) is lower than \(y_{\max}\), so \(d>0\) even with no ceiling mechanism. Sorjonen &amp; Melin's "range of spuriousness" makes this the null: simulate data with the observed marginals and observed \(\rho_s\) and no ceiling, and ask whether the observed \(d\) is larger than that.</div>
+<div class="step"><b class="n">Step 3 · Liebig's limiting factor</b>With several conditions, each has a ceiling \(c_j\). Under the law of the minimum, \(y\le\min_j c_j(x_j)\), and the condition attaining the minimum for a case is its limiting factor (as in boundary-line yield-gap analysis in agronomy). The share of cases each condition limits says which constraint binds, which no single regression coefficient expresses.</div>
+
+<h4>The null and inference</h4>
+<ul>
+<li><b>Standard NCA test</b> (Dul, van der Laan &amp; Kuik 2020): permute \(y\) against \(x\) and compare \(d\) (approximate permutation test; 10,000 in the R package). It tests "\(x\) and \(y\) unrelated", so any correlation can reject it.</li>
+<li><b>Within-year permutation</b> (ours, 4,999): shuffle payouts across firms within each test year, which respects year-level payout regimes.</li>
+<li><b>Range of spuriousness</b> (Sorjonen &amp; Melin, as described in the 2026 <i>Frontiers</i> comment): Gaussian copula at \(r=2\sin(\pi\rho_s/6)\) with the observed marginals (ranks mapped to sorted observed values), 1,999 simulations; the observed \(d\) must exceed the 95th percentile. Pre-registered finding: \(d\ge0.10\), within-year p &lt; 0.05 and above the spuriousness 95th percentile.</li>
+<li>Four conditions × four outcomes are reported; the main claim uses payout/RWA and is backed by its two components separately.</li>
+</ul>
+
+<div class="toy"><h5>Toy example (computed by <code>cards/_toys/toys.py</code>)</h5>
+<p>Six firm-years, \(x\) = minimum stressed CET1 (%) = 5, 6, 7, 8, 9, 10 and \(y\) = payout/RWA (%) = 0.4, 0.2, 1.0, 0.6, 1.5, 0.9. Ceiling (running max): 0.4, 0.4, 1.0, 1.0, 1.5, 1.5. Empty zone = (1.5−0.4)·1 + (1.5−0.4)·1 + (1.5−1.0)·1 + (1.5−1.0)·1 + 0 = 3.2; scope = (10−5)(1.5−0.2) = 6.5; \(d=3.2/6.5=0.492\). Bottlenecks: paying at least 0.5% or 1.0% needed \(x\ge7\); paying 1.5% needed \(x\ge9\). Pearson \(r=0.686\) summarizes the same six points as "fairly correlated" and says nothing about the empty corner.</p></div>
+
+<div class="diff"><b>How it differs from the standard tool.</b> OLS and quantile regression model \(E[y\mid x]\) or a quantile as a line through the cloud; they average over firms that are and are not constrained. NCA models only the frontier: the maximum attainable \(y\) at each \(x\), with no functional form, no error distribution and no averaging. A weak correlation can coexist with a hard ceiling (many unconstrained firms pay little for their own reasons), and a strong correlation can exist with no ceiling (the mean moves, the cap does not). Its weakness is the flip side: a frontier set by a handful of extreme cases, and a default test that cannot tell a ceiling from a correlation.</div>
+<p class="cite">Followed: Dul (2016), "Necessary Condition Analysis (NCA): logic and methodology of 'necessary but not sufficient' causality", <i>Organizational Research Methods</i> 19(1):10–52 (cited by the package and the quick-start guide; not read; CE-FDH and effect-size definitions taken from the NCA 5.1.0 package code and the quick-start guide, and checked by our port); Dul, van der Laan &amp; Kuik (2020), <i>ORM</i> 23(2):385–395 (abstract and test description read on the publisher page). Range of spuriousness: Sorjonen &amp; Melin (2025), as described in the 2026 <i>Frontiers in Psychology</i> comment (read); original not read, so our Gaussian-copula version is our implementation of that description. Section and equation numbers not checked. Toy: <code>cards/_toys/toys.py</code>.</p>

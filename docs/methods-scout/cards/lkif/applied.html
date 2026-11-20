@@ -1,0 +1,59 @@
+<h4>Who plays what</h4>
+<div class="table-wrap"><table>
+<tr><th>Home field (climate dynamics)</th><th>Our data (Q1, public aggregates)</th></tr>
+<tr><td>Climate indices (ENSO, Arctic Oscillation, sea ice, CO<sub>2</sub>, temperature)</td><td>Weekly funding-market series: financing fails, DVP − tri-party spread, DVP and tri-party volume, leveraged-fund net short, VIX</td></tr>
+<tr><td>"Does CO<sub>2</sub> drive temperature, or the reverse?" (Stips et al., as summarized by Liang 2021)</td><td>"Do spread moves drive fails, or do fails drive the spread?" (Q1.1)</td></tr>
+<tr><td>Confounder in the system (e.g. a common oscillator)</td><td>VIX as a common market driver, included so flows are conditional on it</td></tr>
+<tr><td>Normalized flow \(\tau\): relative importance of each driver</td><td>Share of a series' week-to-week uncertainty that comes from another series</td></tr>
+<tr><td>Monthly climate indices (Docquier et al. 2024)</td><td>Monthly SEC Form PF tab 8.27 borrowing next to monthly repo and fails (Q1.1)</td></tr>
+</table></div>
+
+<h4>Inputs and preprocessing</h4>
+<ul>
+<li>Weekly (Wednesday), the lab's copies of public data: NY Fed primary-dealer financing fails (UST), OFR DVP and tri-party volumes and overnight rates (DVP − tri-party spread, bp), CFTC TFF leveraged-fund net short in UST 2Y + 5Y + 10Y futures (lab copy ends 2025-12-30), FRED VIXCLS (Wednesday close). 2 missing weeks per OFR/fails series filled by one-step linear interpolation.</li>
+<li>Transforms: weekly change in log fails, log DVP volume, log tri-party volume; weekly change in spread, net short and VIX; each standardized. 399 complete weeks, 2018-05-16 to 2025-12-31. Without positioning: 437 weeks to 2026-09-23.</li>
+<li>Monthly: SEC Form PF tab 8.27 (prime broker, reverse repo, total borrowing; change in log), monthly mean fails (log change), spread change, DVP volume (log change); 91 months, 2018-06 to 2025-12. Form PF is dated by reference month, not publication date.</li>
+</ul>
+
+<h4>What we ran</h4>
+<ol>
+<li>Home field: Liang (2021) Section 5.1 six-variable network (printed \(A\) and \(\alpha\)), 20 runs each at \(b=1\) and \(b=100\) with 10,000 steps, and \(b=100\) with 500 steps; independent NumPy port vs LK_Info_flow.</li>
+<li>Derivation check: package \(z\) vs the VAR(1) \(t\)-statistic on our data.</li>
+<li>L1: six-variable LKIF; edge p-values from the package test, a circular-shift surrogate (4,999) and the edge-zeroed block bootstrap (999); VAR(BIC) Granger and pairwise Granger for comparison; Holm over 30 edges.</li>
+<li>L3 (size on our data): 400 simulations per edge from the fitted VAR(1) with that edge set to zero and block-resampled residuals; rejection rates of each test at 5% (shift surrogate 200 simulations × 99 shifts; HC3 for two edges).</li>
+<li>L2: halves split at 2022-03-02; rolling 104-week windows (step 4) on the five series without positioning; 2022-03..2024-06 vs 2024-07..2026-09.</li>
+<li>L4: monthly six-variable LKIF with Form PF; bootstrap p (999), Holm over 30.</li>
+<li>B: walk-forward one-week-ahead change in log fails, 183 weeks from 2022-07-06: ARDL (own two lags), ARDL + LKIF-selected parents, ARDL + Granger-selected parents (both reselected on each training window), SARIMAX(1,0,1), random walk.</li>
+<li>Timing: our port vs a statsmodels VAR Granger loop, \(d=6,30,100\).</li>
+</ol>
+<p class="small">Pre-registered before any run on our data: <a href="https://github.com/jgridifier/research-lab/blob/main/docs/methods-scout/runs/2026-11-20/PREREG.md">runs/2026-11-20/PREREG.md</a>. Changed after seeing L3 and labelled here: the pre-registered finding rule used the circular-shift surrogate; L3 showed that surrogate is invalid for LKIF (39–67% false alarms), so edges are judged with the edge-zeroed block bootstrap instead. Under the pre-registered rule three edges would have passed Holm.</p>
+
+<h4>How to read the main chart</h4>
+<div class="callouts">
+<div><b>1</b> Each circle is one weekly series. An arrow from A to B is a directed link from A's past to B's next move, conditional on the other four series.</div>
+<div><b>2</b> Left (usual tool): Granger links passing Holm at 5%. An arrow says only "A helps predict B".</div>
+<div><b>3</b> Right (LKIF): arrows with calibrated bootstrap p &lt; 0.10. Width = |τ|, the share of B's uncertainty budget that comes from A; the label gives τ and p. Solid = p &lt; 0.05, dashed = 0.05–0.10.</div>
+<div><b>4</b> Red: A's moves make B less predictable. Blue: A's moves damp B. The same arrow on the left has no colour because Granger has no such notion.</div>
+<div><b>5</b> What to look for: the two charts agree on where the arrows are, but on the right they are thin (1–4%), one is stabilizing, and none survives Holm once inference is calibrated.</div>
+</div>
+
+<h4>What it means for a decision-maker</h4>
+<div class="plain">
+<p>Weekly moves in the DVP − tri-party spread come before changes in settlement fails and in DVP repo volume, and in different ways: spread moves make the following week's fails more erratic, but make DVP volume steadier. The effects are small, a few percent of each series' week-to-week uncertainty, and with honest error bars none of them is firmly established on its own. Hedge-fund Treasury-futures positioning has a lagged statistical link to fails that a standard test flags, yet it carries essentially no information about how uncertain fails become, and on the monthly Form PF data prime-broker borrowing shows no information flow to or from repo or fails at all. The practical lesson is about tools: the usual significance tests, including the one that ships with this method, call too many links on these fat-tailed weekly series.</p>
+</div>
+
+<h4>Where it breaks</h4>
+<ul>
+<li>Linear, Gaussian, one-week lag: the ECA run (11-17) found that big leveraged-fund unwind weeks precede fails spikes; that is a tail coincidence, which a linear covariance measure cannot see (here the linear flow is about zero). The two are not in conflict.</li>
+<li>The package's asymptotic test, which equals the lag-1 Granger t-test, is oversized for links involving fails and the spread (14–20% at 5%); HC3 fixes one edge (4.5%) but not the other (9.5%).</li>
+<li>Results are not stable over time: the spread → fails flow is positive in both halves of 2018–2025 but negative in 2024-07..2026-09 (bootstrap p 0.094); weekly windows of about two years leave little power.</li>
+<li>Monthly Form PF analysis has only 91 points and reference-month timing.</li>
+<li>Package maintenance: LK_Info_flow 3.1.2.1 fails on NumPy 2 (<code>np.mat</code> removed; patched locally with <code>np.asmatrix</code>); its automatic lag selection (<code>max_lag=-1</code>) crashes with a type error; its standard error ignores the regression constant.</li>
+</ul>
+
+<h4>What we'd do next</h4>
+<ul>
+<li>Math (top pick): a sandwich (heteroskedasticity- and autocorrelation-robust) variance for \(\widehat T\) and \(\widehat\tau\) that also carries the uncertainty in \(C\), checked for size against the block bootstrap.</li>
+<li>Storm-conditioned flows for Q1.2: compare τ in the 13 pre-registered fails storms (11-18) with quiet weeks.</li>
+<li>Pair LKIF (linear, every week) with ECA (tails only) on the same edges so the "coincidence vs causation" line from issue #70 is drawn on one page.</li>
+</ul>

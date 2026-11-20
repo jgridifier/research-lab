@@ -1,0 +1,57 @@
+<h4>Who plays what</h4>
+<div class="table-wrap"><table>
+<tr><th>Home field</th><th>Our data (Q3, public)</th></tr>
+<tr><td>Management: country individualism as a necessary condition for innovation performance (NCA's example data)</td><td>A firm's stress-test result as a necessary condition for its payout</td></tr>
+<tr><td>Agronomy boundary lines: soil P limits the highest attainable wheat yield</td><td>The stressed CET1 trough limits the highest payout a firm makes</td></tr>
+<tr><td>Liebig limiting factor: the nutrient whose boundary is lowest</td><td>The stress result whose ceiling binds for that firm-year</td></tr>
+<tr><td>Ceiling zone (empty upper-left corner)</td><td>Combinations never seen: weak stress result and high payout</td></tr>
+<tr><td>Bottleneck table</td><td>"Minimum stressed CET1 seen among firms paying at least \(y\)% of RWA"</td></tr>
+</table></div>
+
+<h4>Inputs and preprocessing</h4>
+<ul>
+<li>The lab's verified public panel (<code>runs/2026-11-17/statis/q3_pim_panel.csv</code>, built 11-14/11-16 from <code>public_results_DFAST_2026.csv</code>, the FFIEC BHCF zips and the Large Bank Capital Requirements PDFs): 13 severely adverse exercises 2013–2025, 360 firm-years with payouts (18–35 firms per year).</li>
+<li>Conditions (higher = better): SA minimum CET1 ratio (%), minus CET1 drawdown (pp), SA pre-tax net income (% of assets), minus SA loan-loss rate (%), minus SCB (2021–2025, 132 firm-years).</li>
+<li>Outcomes: Y-9C payout/RWA (%) in the test's calendar year (main); next-year payout/RWA (333), dividends/RWA, net buybacks/RWA (can be negative when issuance exceeds buybacks). No scaling or imputation; NCA uses raw units.</li>
+</ul>
+
+<h4>What we ran</h4>
+<ol>
+<li>Home field: the NCA package's <code>nca.example</code> (28 countries), CE-FDH and CR-FDH effect sizes and 10,000-permutation p values vs the quick-start guide; our NumPy CE-FDH port vs the package on the example and on our four conditions.</li>
+<li>N1: d for 4 conditions × 4 outcomes with three nulls (package-style pooled permutation, within-year permutation, Gaussian-copula range of spuriousness); OLS and quantile regression (τ = 0.90, 0.95) on the same pairs; bottleneck tables.</li>
+<li>Size check (added after N1, labelled): 200 correlated-only data sets per setting (Gaussian copula with the observed marginals, ρ<sub>s</sub> = 0, 0.1, 0.2, 0.3, no ceiling); how often the standard permutation test (199 permutations) says p &lt; 0.05.</li>
+<li>N2: Liebig limiting factor from the four pooled ceilings; 2021–2025 with the SCB added.</li>
+<li>N3: d by era (2013–19, 2020–25) with within-era permutation and spuriousness nulls; leave-one-year-out; bottleneck at the median payout by era. Robustness (added, labelled): drop the top 2% of \(x\) or of \(y\).</li>
+<li>N4: walk-forward upper envelopes for test years 2015–2025, fitted on earlier years only: CE-FDH ceiling on minimum CET1, QR τ = 0.95, OLS + 1.645 s, pooled ARDL(1,0) 95% upper bound (payout on last year's payout and minimum CET1), per-firm SARIMAX(1,0,0) + exog 95% upper bound (firms with ≥ 8 prior years, else ARDL).</li>
+</ol>
+<p class="small">Pre-registered before any run on our data: <a href="https://github.com/jgridifier/research-lab/blob/main/docs/methods-scout/runs/2026-11-20/PREREG.md">runs/2026-11-20/PREREG.md</a>. Added after seeing results and labelled: the size check, the trim robustness and the component (dividend, buyback) checks of the minimum-CET1 ceiling.</p>
+
+<h4>How to read the main chart</h4>
+<div class="callouts">
+<div><b>1</b> Each dot is a firm in one stress test: across, its minimum projected CET1 ratio under the severely adverse scenario; up, what it paid out that year as % of RWA.</div>
+<div><b>2</b> Left: the usual regression line. It says payouts rise a little with the trough (R² 0.10) and leaves most of the scatter unexplained.</div>
+<div><b>3</b> Right: the green staircase is the ceiling, the most any firm with a trough at or below that level paid. The shaded corner above it is empty: no firm with a low trough paid a lot.</div>
+<div><b>4</b> The size of the shaded corner relative to the box is d = 0.25. It is larger than what a correlation of 0.20 alone produces in 95% of simulated data sets (finding 1).</div>
+<div><b>5</b> The top step near 8% is set by one firm-year; read the bottlenecks below 3% of RWA, which rest on many firms. Finding 4 shows what survives when the extremes are dropped.</div>
+</div>
+
+<h4>What it means for a decision-maker</h4>
+<div class="plain">
+<p>A bank's projected capital low point in the severe scenario works like a gate on payouts: no bank with a low point below 5.6% (2013–2019) or 6.4% (2020–2025) paid out as much as the median bank (about 0.7% of RWA), and only since 2020 is the gate clearly more than a side effect of correlation. It does not tell you how much a bank above the gate will pay; projected pre-tax earnings explain that better. The size of the drawdown, the headline number in most stress-test coverage, looks like a necessary condition by the standard test, but that pattern is what its ordinary correlation with payouts produces by itself. The stress capital buffer, with many banks on its 2.5% floor, almost never is the binding constraint.</p>
+</div>
+
+<h4>Where it breaks</h4>
+<ul>
+<li>The ceiling is set by extreme cases. For total payout, dropping the 2% of firm-years with the highest minimum CET1 (very well capitalized firms that widen the scope) weakens the result to p = 0.08 against the spuriousness null; dividends and buybacks separately still pass both trims.</li>
+<li>The standard NCA test is not a necessity test: on correlated-only data with our marginals it says "necessary" 56–74% of the time at ρ<sub>s</sub> = 0.3 and 9% even at ρ<sub>s</sub> = 0 for the minimum-CET1 shape (200 simulations each, computed).</li>
+<li>Minimum CET1 mixes starting capital and drawdown, and since 2020 the SCB and payout limits are linked to it by rule; read as description of a constraint, not as a discovered mechanism.</li>
+<li>As an upper envelope for next year it is too loose: 7.1% of out-of-sample firm-years break it, but its mean headroom is 2.0 pp of RWA vs 1.4 for the quantile line (finding 6, miss).</li>
+<li>Calendar-year payouts partly precede the June results; firm-years are pooled without firm clustering.</li>
+</ul>
+
+<h4>What we'd do next</h4>
+<ul>
+<li>Math (top pick): a noise-robust ceiling with a calibrated necessity test (copula families with tail dependence, firm blocks), so a single extreme firm cannot set the gate.</li>
+<li>New use for Q3.2/Q3.5: replace the trough with its distance to the firm's own requirement (4.5% + SCB) and repeat for dividends and buybacks separately.</li>
+<li>Join the gate with the 11-19 partial-order result: within the gate, do payouts follow pre-tax income?</li>
+</ul>
