@@ -1,0 +1,173 @@
+{
+ "issue": 82,
+ "name": "Liang–Kleeman information flow (LKIF)",
+ "title": "Which funding series move each other's uncertainty, and which way?",
+ "field": "climate and ocean dynamics (causal information flow between time series)",
+ "what": "Measures how much one series' past changes the uncertainty of another's next move, with size, sign, and exact zero without dynamical link.",
+ "verdict": "Interesting",
+ "grade": "contested (sound for linear systems; independent tests thin; disputed for nonlinear systems)",
+ "pick_eff": "M",
+ "pick_line": "Sandwich (HAC, delta-method) inference for information flow, carrying covariance uncertainty, so short rolling and storm windows get right-sized tests.",
+ "data": "Public aggregates: NY Fed fails, OFR repo, CFTC TFF, FRED VIX (weekly 2018–2025); SEC Form PF 8.27 monthly; descriptive",
+ "one": "Spread moves raise fails' uncertainty and damp DVP volume's; standard tests overstate weekly links 3–13×.",
+ "picture": {
+  "type": "images",
+  "la": "Usual tool: Granger links (Holm 5%), no size or sign",
+  "a": "../fig/2026-11-20/lkif_granger_graph.png",
+  "lb": "LKIF: signed share of uncertainty, calibrated bootstrap",
+  "b": "../fig/2026-11-20/lkif_flow_graph.png"
+ },
+ "findings": [
+  {
+   "h": "The usual tests overstate weekly links: 14–20% false alarms at 5%.",
+   "t": "Simulating our six weekly series from the fitted VAR(1) with one link set to zero and block-resampled residuals (fat tails and volatility clusters kept), the package's test rejects the true zero 14.5% of the time for spread → fails and 20.3% for fails → spread (400 simulations each); a circular-shift surrogate rejects 39–67% on all four edges tested; HC3 standard errors give 4.5% and 9.5%. Positioning → fails and DVP → fails are about right (3.5%, 4.3%).",
+   "note": "Computed. The package's z equals the lag-1 VAR t-statistic (largest gap 1.5×10⁻⁵ on our data), so this is also the Granger test's size here. The shift surrogate fails because shifting the source removes the same-week covariance that the flow is proportional to.",
+   "chart": {
+    "type": "images",
+    "la": "False-alarm rate when the true link is zero",
+    "a": "../fig/2026-11-20/lkif_size.png",
+    "lb": "Home-field check: Liang (2021) network, printed vs ours",
+    "b": "../fig/2026-11-20/lkif_home.png"
+   }
+  },
+  {
+   "h": "Spread moves raise fails' uncertainty but damp DVP volume's.",
+   "t": "Six-variable LKIF, 399 weeks (2018-05-16 to 2025-12-31), conditional on volumes, positioning and VIX: spread → fails τ = +1.7% of fails' entropy budget (calibrated bootstrap p = 0.033); spread → DVP volume τ = −3.6% (p = 0.013); VIX → fails +0.5% (p = 0.076). No edge survives Holm over 30 (smallest adjusted p 0.39). VAR(BIC = 1) Granger, Holm: both spread links significant (p < 0.0001 and 0.0014), with no size or sign.",
+   "note": "Sign = sign of (lag coefficient × same-week covariance): positive makes the target less predictable. Under the pre-registered shift-surrogate rule three edges would have passed Holm; that rule was dropped after the size check (labelled on the On-our-data tab).",
+   "chart": {
+    "type": "hbars",
+    "title": "Normalized flow τ (%) of the three strongest weekly links",
+    "max": 4,
+    "rows": [
+     [
+      "spread → DVP volume (damps)",
+      3.55,
+      "teal",
+      "−3.6%, p 0.013"
+     ],
+     [
+      "spread → fails (raises)",
+      1.67,
+      "amber",
+      "+1.7%, p 0.033"
+     ],
+     [
+      "VIX → fails (raises)",
+      0.48,
+      "muted",
+      "+0.5%, p 0.076"
+     ]
+    ]
+   }
+  },
+  {
+   "h": "Positioning → fails: Granger says yes, information flow says about zero.",
+   "t": "Leveraged-fund net short → fails: VAR Granger p = 0.012 (pairwise 0.0014), but the same-week correlation is 0.02, so the flow is τ = −0.10% (bootstrap p = 0.26). Fails → spread, the direction convergent cross mapping preferred on 11-15: τ = −0.01% (p = 0.94).",
+   "note": "Nil-causality in action: a lagged coefficient that does not change the target's uncertainty carries no flow. The 11-17 ECA result (unwind weeks before fails spikes) is about tails, which a linear flow cannot see; the two are not in conflict.",
+   "chart": {
+    "type": "hbars",
+    "title": "Positioning → fails: p values (lower = stronger)",
+    "max": 0.3,
+    "rows": [
+     [
+      "Pairwise Granger",
+      0.0014,
+      "amber",
+      "0.0014"
+     ],
+     [
+      "VAR Granger",
+      0.012,
+      "amber",
+      "0.012"
+     ],
+     [
+      "LKIF, calibrated bootstrap",
+      0.257,
+      "teal",
+      "0.26 (τ −0.10%)"
+     ]
+    ]
+   }
+  },
+  {
+   "h": "The spread → fails flow flips sign after mid-2024.",
+   "t": "τ(spread → fails) = +1.0% in 2018-05..2022-02 and +1.8% in 2022-03..2025-12 (bootstrap p 0.12 and 0.11), then −1.1% in 2024-07..2026-09 (five series without positioning; p = 0.094; +3.6% in 2022-03..2024-06). The rolling 104-week chart shows the turn.",
+   "note": "Not significant on its own; the timing matches the mid-2025 switch-off of the fails–spread coupling seen by CRQA on 11-14.",
+   "chart": {
+    "type": "images",
+    "la": "Rolling 104-week τ",
+    "a": "../fig/2026-11-20/lkif_rolling.png",
+    "lb": "Monthly Form PF vs repo and fails",
+    "b": "../fig/2026-11-20/lkif_monthly.png"
+   }
+  },
+  {
+   "h": "Monthly Form PF borrowing: no flow to or from repo or fails.",
+   "t": "91 months (2018-06 to 2025-12), six series: every Holm-adjusted bootstrap p = 1; the smallest Form PF ↔ market p is fails → prime-broker borrowing, 0.092. The only p < 0.05 are inside Form PF (total ↔ prime broker, 0.036 and 0.042).",
+   "note": "Consistent with the 11-14 and 11-17 nulls for prime-broker borrowing. The package's automatic lag choice crashed (type error), so only lag 1 was run.",
+   "chart": {
+    "type": "hbars",
+    "title": "Smallest bootstrap p, Form PF ↔ market",
+    "max": 1,
+    "rows": [
+     [
+      "fails → PF prime broker",
+      0.092,
+      "muted",
+      "0.092"
+     ],
+     [
+      "DVP → PF prime broker",
+      0.261,
+      "muted",
+      "0.26"
+     ],
+     [
+      "PF prime broker → DVP",
+      0.273,
+      "muted",
+      "0.27"
+     ]
+    ]
+   }
+  },
+  {
+   "h": "As a forecasting aid it does not beat ARDL or SARIMAX.",
+   "miss": true,
+   "t": "Walk-forward one-week change in log fails, 183 weeks from 2022-07-06: ARDL own lags RMSE 0.279, + LKIF-selected parents 0.272 (−2.4%, DM p = 0.57; identical parents to Granger selection), SARIMAX(1,0,1) 0.264, random walk 0.296.",
+   "note": "Pre-stated bar (≥ 1% gain with DM p < 0.10) failed. Expected: the selection test is the Granger test.",
+   "chart": {
+    "type": "hbars",
+    "title": "Walk-forward RMSE, change in log fails",
+    "max": 0.3,
+    "rows": [
+     [
+      "SARIMAX(1,0,1)",
+      0.264,
+      "muted",
+      "0.264"
+     ],
+     [
+      "ARDL + LKIF parents",
+      0.272,
+      "teal",
+      "0.272"
+     ],
+     [
+      "ARDL own lags",
+      0.279,
+      "muted",
+      "0.279"
+     ],
+     [
+      "Random walk",
+      0.296,
+      "muted",
+      "0.296"
+     ]
+    ]
+   }
+  }
+ ]
+}

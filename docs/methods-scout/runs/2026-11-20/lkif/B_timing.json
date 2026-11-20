@@ -1,0 +1,65 @@
+{
+ "hc3_size": {
+  "d_spread->dl_fails": 0.045,
+  "dl_fails->d_spread": 0.095
+ },
+ "B": {
+  "n_test": 183,
+  "start": "2022-07-06",
+  "end": "2025-12-31",
+  "rmse": {
+   "ardl_own": 0.2789118368143552,
+   "ardl_lkif": 0.2721453682124533,
+   "ardl_granger": 0.2721453682124533,
+   "sarimax": 0.2640234785048952,
+   "rw": 0.29570263067975244
+  },
+  "dm_lkif_vs_own": 0.5702620398411191,
+  "dm_granger_vs_own": 0.5702620398411191,
+  "gain_lkif_pct": 2.4260241799654136
+ },
+ "timing": [
+  {
+   "d": 6,
+   "n": 400,
+   "lkif_s": 0.0004035459996885038,
+   "granger_loop_s": 0.018028038000011293,
+   "extrapolated": false
+  },
+  {
+   "d": 6,
+   "n": 3000,
+   "lkif_s": 0.07364253300056589,
+   "granger_loop_s": 0.02088000900039333,
+   "extrapolated": false
+  },
+  {
+   "d": 30,
+   "n": 400,
+   "lkif_s": 0.0017369650004184223,
+   "granger_loop_s": 4.879773741999998,
+   "extrapolated": false
+  },
+  {
+   "d": 30,
+   "n": 3000,
+   "lkif_s": 0.14753811700029473,
+   "granger_loop_s": 4.356215602000702,
+   "extrapolated": false
+  },
+  {
+   "d": 100,
+   "n": 400,
+   "lkif_s": 0.07939782900029968,
+   "granger_loop_s": 3363.8408927333326,
+   "extrapolated": true
+  },
+  {
+   "d": 100,
+   "n": 3000,
+   "lkif_s": 0.02823054000054981,
+   "granger_loop_s": 3178.802539399991,
+   "extrapolated": true
+  }
+ ]
+}

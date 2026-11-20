@@ -1,0 +1,10 @@
+{
+ "drawdown-like|rho_s=0.0": 0.03,
+ "drawdown-like|rho_s=0.1": 0.15,
+ "drawdown-like|rho_s=0.2": 0.38,
+ "drawdown-like|rho_s=0.3": 0.735,
+ "cet1min-like|rho_s=0.0": 0.09,
+ "cet1min-like|rho_s=0.1": 0.145,
+ "cet1min-like|rho_s=0.2": 0.355,
+ "cet1min-like|rho_s=0.3": 0.56
+}

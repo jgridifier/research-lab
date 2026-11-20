@@ -67,3 +67,12 @@ ideals (downsets): ['{}', 'A', 'AB', 'AC', 'ABC', 'ABCD'] count 6
 == Phylogenetic signal / LIPA (2026-11-19): tree ((p1,p2),(p3,p4)), sister-only weights; slopes x = (0.10, 0.08, -0.02, 0.06)
 mean 0.055 z [0.988, 0.549, -1.646, 0.11] neighbour z [0.549, 0.988, 0.11, -1.646] local I_i = z_i * lag_i [0.542, 0.542, -0.181, -0.181] global Moran I 0.181
 program minus its sister: [0.02, -0.02, -0.08, 0.08]
+== Liang-Kleeman information flow (2026-11-20): X_{t+1} = A X_t + e_t, A = [[0.5, 0.3], [0, 0.5]], e ~ N(0, I); x2 drives x1, not the reverse
+stationary cov [[1.6, 0.2667], [0.2667, 1.3333]]
+T(2->1) = a12 * s12 / s11 = 0.3 * 0.2667 / 1.6 = 0.05  T(1->2) = 0.0
+self term dH1*/dt = a11 = -0.5  noise term = g11/(2 s11) = 0.3125  normalizer Z1 = 0.8625  tau(2->1) = T/Z1 = 0.058
+rotation case A = [[0.5,0.3],[-0.3,0.5]]: s12 = 0.0 so T(2->1) = 0.3 * s12 / s11 = 0.0 although the Granger coefficient a12 = 0.3 is not zero
+== NCA CE-FDH (2026-11-20): 6 firm-years, x = min stressed CET1 (%), y = payout/RWA (%)
+ceiling c(x) = max y among x_k <= x: {5.0: 0.4, 6.0: 0.4, 7.0: 1.0, 8.0: 1.0, 9.0: 1.5, 10.0: 1.5}
+empty zone = 3.2  scope = 6.5  effect size d = zone/scope = 0.492
+bottleneck: payout >= v needs x >= {0.5: 7.0, 1.0: 7.0, 1.5: 9.0}  Pearson r = 0.686

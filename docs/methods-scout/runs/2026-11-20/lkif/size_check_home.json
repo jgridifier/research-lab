@@ -1,0 +1,17 @@
+{
+ "alpha_as_paper": {
+  "size_package": 0.06565217391304348,
+  "size_ols_t": 0.04840579710144927,
+  "port_parity_p": 1.532107773982716e-13
+ },
+ "alpha_x10": {
+  "size_package": 0.06971014492753623,
+  "size_ols_t": 0.04840579710144927,
+  "port_parity_p": 1.91446858366362e-12
+ },
+ "alpha_zero": {
+  "size_package": 0.0491304347826087,
+  "size_ols_t": 0.04840579710144927,
+  "port_parity_p": 1.2723155862204294e-13
+ }
+}

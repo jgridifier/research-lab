@@ -1,0 +1,167 @@
+{
+ "issue": 83,
+ "name": "Necessary Condition Analysis (NCA ceilings)",
+ "title": "Does a weak stress result cap what a bank pays out?",
+ "field": "organization science, with roots in agronomy boundary lines (necessary-but-not-sufficient analysis)",
+ "what": "Fits a ceiling on the scatter (no high outcome without enough of the condition) and measures the empty corner above it.",
+ "verdict": "Interesting",
+ "grade": "contested (standard test cannot tell a ceiling from a correlation)",
+ "pick_eff": "M",
+ "pick_line": "Noise-robust isotonic-quantile ceiling tested against tail-dependent copula nulls with firm blocks, so no single firm sets the gate.",
+ "data": "Public filings (Fed DFAST/CCAR results 2013–2025, FR Y-9C payouts, SCB); descriptive only",
+ "one": "Stressed CET1 trough caps payouts beyond correlation; drawdown's apparent cap is correlation-made; SCB rarely binds.",
+ "picture": {
+  "type": "images",
+  "la": "Usual tool: mean regression on the CET1 trough (R² 0.10)",
+  "a": "../fig/2026-11-20/nca_ols.png",
+  "lb": "NCA ceiling: empty corner, d = 0.25 (beyond correlation)",
+  "b": "../fig/2026-11-20/nca_ceiling.png"
+ },
+ "findings": [
+  {
+   "h": "The stressed CET1 trough caps payouts beyond what correlation explains.",
+   "t": "360 firm-years: CE-FDH ceiling of payout/RWA on the SA minimum CET1 ratio, d = 0.245; within-year permutation p = 0.0002 (NCA package p = 0.0009); Gaussian-copula range of spuriousness at the observed ρ = 0.20: mean 0.16, 95th percentile 0.21, p = 0.012. Next-year payouts d = 0.38 (p = 0.0045). Dividends/RWA d = 0.43 (p = 0.016), net buybacks/RWA d = 0.24 (p = 0.011) although their rank correlation is 0.02. OLS on payouts: R² 0.10.",
+   "note": "Pre-registered finding (d ≥ 0.10, within-year p < 0.05, above the spuriousness 95th percentile) met for all four outcomes.",
+   "chart": {
+    "type": "images",
+    "la": "Observed d vs what correlation alone gives",
+    "a": "../fig/2026-11-20/nca_spurious.png",
+    "lb": "Ceiling on the trough",
+    "b": "../fig/2026-11-20/nca_ceiling.png"
+   }
+  },
+  {
+   "h": "The drawdown passes the standard NCA test, but only through correlation.",
+   "t": "Minus CET1 drawdown: d = 0.50, standard permutation p = 0.010 (package), within-year 0.013 — the usual reading is \"necessary\". But data with the same marginals and correlation (ρ = 0.30) and no ceiling give d of 0.49 on average (95th percentile 0.57; p = 0.48). On our data shape, the standard test calls such correlated-only data \"necessary\" in 73.5% of 200 simulations.",
+   "note": "Computed. This is the Sorjonen–Melin critique reproduced on bank data. The rejection rate is 3% at ρ = 0, 15% at 0.1, 38% at 0.2.",
+   "chart": {
+    "type": "hbars",
+    "title": "Standard NCA test: share calling correlated-only data necessary (drawdown shape)",
+    "max": 1,
+    "rows": [
+     [
+      "ρ = 0",
+      0.03,
+      "muted",
+      "3%"
+     ],
+     [
+      "ρ = 0.1",
+      0.15,
+      "muted",
+      "15%"
+     ],
+     [
+      "ρ = 0.2",
+      0.38,
+      "amber",
+      "38%"
+     ],
+     [
+      "ρ = 0.3 (ours)",
+      0.735,
+      "amber",
+      "74%"
+     ]
+    ]
+   }
+  },
+  {
+   "h": "Pre-tax income moves the average payout, not the cap.",
+   "t": "SA pre-tax income: OLS R² 0.16, quantile regression slopes at τ = 0.90 and 0.95 both p < 0.001, but ceiling d = 0.24 with within-year p = 0.76 and spuriousness p = 1.0. Loan-loss rate: no ceiling (p = 0.64) and no mean effect (R² 0.01).",
+   "note": "Together with finding 1: the trough decides who may pay a lot; earnings explain how much those above the gate pay.",
+   "chart": {
+    "type": "hbars",
+    "title": "Pre-tax income: ceiling d vs correlation-only 95th percentile",
+    "max": 0.5,
+    "rows": [
+     [
+      "Observed ceiling d",
+      0.236,
+      "teal",
+      "0.24"
+     ],
+     [
+      "Correlation-only mean",
+      0.369,
+      "muted",
+      "0.37"
+     ],
+     [
+      "Correlation-only 95th pct",
+      0.427,
+      "muted",
+      "0.43"
+     ]
+    ]
+   }
+  },
+  {
+   "h": "The trough is the binding limit for 69% of firm-years; the SCB for 1.5%.",
+   "t": "With the four pooled ceilings, the minimum CET1 is the limiting factor for 69% of firm-years, drawdown 16%, loan losses 5%, pre-tax income 4%, ties 7%. In 2021–2025 with the SCB added: trough 54%, SCB 1.5%; the SCB's own ceiling (d = 0.54) is not beyond chance (within-year p = 0.47, spuriousness p = 0.79).",
+   "note": "Liebig's law of the minimum, as in boundary-line yield-gap analysis. Ceilings are pooled over years.",
+   "chart": {
+    "type": "images",
+    "la": "Limiting factor by test year",
+    "a": "../fig/2026-11-20/nca_limiting.png",
+    "lb": "Ceiling by era",
+    "b": "../fig/2026-11-20/nca_eras.png"
+   }
+  },
+  {
+   "h": "The gate tightened after 2020 and holds for each payout channel.",
+   "t": "2013–2019: d = 0.31 (within-era p = 0.0005, spuriousness p = 0.079); 2020–2025: d = 0.36 (p = 0.0005, spuriousness p = 0.005). The trough seen among firms paying the era's median payout rose from 5.6% to 6.4%. Dropping the top 2% of the trough or of payouts: dividends and buybacks keep spuriousness p ≤ 0.015; total payout keeps it when payout outliers go (p = 0.014) but weakens to 0.082 when the best-capitalized 2% go. Leave-one-year-out: worst p 0.12.",
+   "note": "The era split and trims were added after N1 (labelled). Payout rules since 2020 link the SCB and payout limits to capital by design.",
+   "chart": {
+    "type": "hbars",
+    "title": "Spuriousness p, minimum-CET1 ceiling (lower = stronger)",
+    "max": 0.1,
+    "rows": [
+     [
+      "2020–2025",
+      0.005,
+      "teal",
+      "0.005"
+     ],
+     [
+      "Dividends, top-2% trough dropped",
+      0.0005,
+      "teal",
+      "0.0005"
+     ],
+     [
+      "Buybacks, top-2% trough dropped",
+      0.0145,
+      "teal",
+      "0.015"
+     ],
+     [
+      "Total, top-2% trough dropped",
+      0.082,
+      "amber",
+      "0.082"
+     ],
+     [
+      "2013–2019",
+      0.079,
+      "amber",
+      "0.079"
+     ]
+    ]
+   }
+  },
+  {
+   "h": "As a next-year upper envelope it is too loose.",
+   "miss": true,
+   "t": "Walk-forward 2015–2025 (312 firm-years): CE-FDH ceiling broken by 7.1% with mean headroom 2.04 pp of RWA; QR τ = 0.95: 6.4%, 1.42; OLS + 1.645 s: 9.0%, 1.23; ARDL(1,0) 95%: 11.6%, 0.71; SARIMAX(1,0,0)+exog 95%: 13.2%, 0.62.",
+   "note": "Pre-stated bar (violations ≤ 10% with headroom no larger than the quantile line) failed on headroom. NCA describes the frontier; it is not a forecaster.",
+   "chart": {
+    "type": "images",
+    "la": "Out-of-sample violations and headroom",
+    "a": "../fig/2026-11-20/nca_walkforward.png",
+    "lb": "OLS view of the same data",
+    "b": "../fig/2026-11-20/nca_ols.png"
+   }
+  }
+ ]
+}

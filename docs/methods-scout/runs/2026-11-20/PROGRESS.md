@@ -1,0 +1,11 @@
+# Scout 2026-11-20 progress (ET)
+- 14:20 start. Fresh clone /workspace/rl-scout-1120 at 3b16f35.
+- Rotation: Q1 last targeted 11-18 -> due. Q2 and Q3 both 11-19; previous Q3 11-17 older than Q2 11-18 -> Q3.
+- Steering: no new Jared comments since 11-19; #70 ECA wants the causality line understood; #46/#48 exotic, #63 ARDL/SARIMAX.
+- 14:21 candidates: Liang-Kleeman information flow (Q1), NCA ceiling analysis (Q3).
+- 14:28 PREREG.md written (before any run on our data).
+- 14:31 LKIF home repro + size check + L1 done; L3 bootstrap p running. NCA home repro + N1 done.
+- 14:39 L2/L4 done; B/timing + N2-N4 running; toys added.
+- 14:43 all runs done; figures rendered.
+- 14:49 issues created: https://github.com/jgridifier/research-lab/issues/82 https://github.com/jgridifier/research-lab/issues/83
+- 14:55 ET — QUESTIONS.md, watchlist (2 picks + 4 watch), secret-sauce.md/html, runs folder, figures re-rendered; cards and board rebuilt; analysis-skills newsroom cards staged (branch scout-cards-2026-11-20). Opening PRs.

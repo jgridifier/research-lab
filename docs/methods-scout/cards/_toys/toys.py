@@ -229,3 +229,28 @@ I_loc = z * lag
 I_glob = (len(x) / W.sum()) * (z @ W @ z) / (z @ z)
 print("mean", round(x.mean(), 4), "z", z.round(3).tolist(), "neighbour z", lag.round(3).tolist(), "local I_i = z_i * lag_i", I_loc.round(3).tolist(), "global Moran I", round(I_glob, 3))
 print("program minus its sister:", (x - W @ x).round(3).tolist())
+
+print("== Liang-Kleeman information flow (2026-11-20): X_{t+1} = A X_t + e_t, A = [[0.5, 0.3], [0, 0.5]], e ~ N(0, I); x2 drives x1, not the reverse")
+A = np.array([[0.5, 0.3], [0.0, 0.5]])
+S = np.eye(2)
+for _ in range(500): S = A @ S @ A.T + np.eye(2)   # stationary covariance (discrete Lyapunov)
+D = A - np.eye(2)                                     # Euler drift, dt = 1
+T21 = D[0, 1] * S[0, 1] / S[0, 0]; T12 = D[1, 0] * S[1, 0] / S[1, 1]
+print("stationary cov", S.round(4).tolist())
+print("T(2->1) = a12 * s12 / s11 =", round(D[0, 1], 3), "*", round(S[0, 1], 4), "/", round(S[0, 0], 4), "=", round(T21, 4), " T(1->2) =", round(T12, 4))
+dH1 = D[0, 0]; noise1 = 1.0 / (2 * S[0, 0])
+Z1 = abs(dH1) + abs(T21) + abs(noise1)
+print("self term dH1*/dt = a11 =", round(dH1, 3), " noise term = g11/(2 s11) =", round(noise1, 4), " normalizer Z1 =", round(Z1, 4), " tau(2->1) = T/Z1 =", round(T21 / Z1, 4))
+A2 = np.array([[0.5, 0.3], [-0.3, 0.5]]); S2 = np.eye(2)
+for _ in range(500): S2 = A2 @ S2 @ A2.T + np.eye(2)
+print("rotation case A = [[0.5,0.3],[-0.3,0.5]]: s12 =", round(S2[0, 1], 6), "so T(2->1) = 0.3 * s12 / s11 =", round(0.3 * S2[0, 1] / S2[0, 0], 6), "although the Granger coefficient a12 = 0.3 is not zero")
+
+print("== NCA CE-FDH (2026-11-20): 6 firm-years, x = min stressed CET1 (%), y = payout/RWA (%)")
+x = np.array([5.0, 6.0, 7.0, 8.0, 9.0, 10.0]); y = np.array([0.4, 0.2, 1.0, 0.6, 1.5, 0.9])
+o = np.argsort(x); c = np.maximum.accumulate(y[o])
+print("ceiling c(x) = max y among x_k <= x:", dict(zip(x[o].tolist(), c.tolist())))
+edges = np.append(x[o], x.max()); zone = float(np.sum((y.max() - c) * np.diff(edges)))
+scope = float((x.max() - x.min()) * (y.max() - y.min()))
+print("empty zone =", round(zone, 3), " scope =", round(scope, 3), " effect size d = zone/scope =", round(zone / scope, 3))
+need = {v: float(x[o][np.argmax(c >= v)]) for v in [0.5, 1.0, 1.5]}
+print("bottleneck: payout >= v needs x >=", need, " Pearson r =", round(float(np.corrcoef(x, y)[0, 1]), 3))

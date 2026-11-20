@@ -778,6 +778,54 @@ Tree-borrowed growth for Q2.1: BLUP under \(C_{\hat\lambda}\) vs ebnm's flat seg
 
 ---
 
+## Liang–Kleeman information flow (LKIF)
+
+Liang, X. S. (2014), "Unraveling the cause-effect relation between time series", *Physical Review E* 90:052150; Liang, X. S. (2021), "Normalized multivariate time series causality analysis and causal graph reconstruction", *Entropy* 23(6):679; LK_Info_flow 3.1.2.1 (PyPI; GitHub YinengRong/LKIF). Scouted on the [2026-11-20 scheduled edition](2026-11-20.html#lkif), aimed at [Q1](QUESTIONS.md#q1) (Q1.1, Q1.3, Q1.5), public aggregates. Novelty: exotic-transfer (climate dynamics). Home-field verdict: contested. Status: proposed (interesting). Issue [#82](https://github.com/jgridifier/research-lab/issues/82). Research card: [m/lkif.html](m/lkif.html). Plans only.
+
+**Found via.** Web search 2026-11-20 14:21 ET → [LK-Info-Flow on PyPI](https://pypi.org/project/LK-Info-Flow/), [YinengRong/LKIF](https://github.com/YinengRong/LKIF); robustness reading: Liang 2021 (PMC8228659), arXiv:1503.08389, Docquier et al. 2024 (NPG 31:115), a 2023 Measurement paper (abstract only), arXiv:2104.00718 (abstract). Field: climate / atmosphere–ocean dynamics.
+
+**What our run showed.** Liang (2021) network reproduced within 0.4 pp (all 7 edges every run; the 90% rule adds 3.2 spurious edges of 23). Weekly repo graph (399 weeks): spread → fails τ +1.7% (bootstrap p 0.033), spread → DVP volume τ −3.6% (p 0.013), none Holm-significant; fails → spread none. Leveraged positioning → fails is Granger-significant (p 0.012) with no flow (τ −0.10%, p 0.26). The package test equals the lag-1 Granger t and is oversized 14–20% on our data (shift surrogates 39–67%). Monthly Form PF: no flow. Miss: LKIF parents do not help a walk-forward ARDL (−2.4% RMSE, DM p 0.57).
+
+### 1 · Engineering (effort M)
+
+A calibrated LKIF engine (NumPy, then Rust) with LK_Info_flow as oracle: centered standard errors, NumPy 2, and the edge-zeroed block bootstrap batched across all \(d(d-1)\) edges from one QR factorization (\(O(B d^2 n)\) instead of \(O(B d^4 n)\)). Closest prior work: LK_Info_flow; Climdyn/Liang_Index_climdyn; v-TimeLKFlow. **Test:** point estimates within 10⁻¹²; corrected asymptotic size in [0.03, 0.07] on the Liang network with zero and nonzero means (300 runs); 999 bootstraps for \(d=30\), \(n=3{,}000\) under 60 s.
+
+### 2 · Math (top pick, effort M)
+
+Sandwich inference for \(\widehat T=\hat a_{ij}C_{ij}/C_{ii}\) and τ: stack VAR and covariance moments into one GMM system with Newey–West long-run covariance, and apply the delta method with \(\nabla g=(C_{ij}/C_{ii},\ \hat a_{ij}/C_{ii},\ -\hat a_{ij}C_{ij}/C_{ii}^2)\); bootstrap only near \(Z_i\) kinks. Closest prior work: Liang (2014/2021) Fisher-information errors; Docquier et al. (2024) i.i.d. bootstrap; Newey & West (1987). **Test:** size in [0.03, 0.07] on all four L3 edges (400 simulations each) and power within 0.05 of the bootstrap at the observed spread → fails effect.
+
+### 3 · New use on our data (effort S)
+
+Storm-window flows for Q1.2: τ on the 13 pre-registered fails storms (11-18) vs quiet weeks, with storm labels moved as circular-shift blocks (999). **Test:** \(|\Delta\tau|\ge0.02\) with Holm p < 0.05 over the two directions; otherwise "no stress-specific flow".
+
+**Why Math is the top pick.** The run's main lesson is that the published test is the Granger test and is oversized on our data; a right-sized analytic test is what makes rolling and storm-window flows usable.
+
+---
+
+## Necessary Condition Analysis (NCA ceilings)
+
+Dul, J. (2016), "Necessary Condition Analysis (NCA): Logic and methodology of 'necessary but not sufficient' causality", *Organizational Research Methods* 19(1):10–52; Dul, J., van der Laan, E. & Kuik, R. (2020), "A statistical significance test for Necessary Condition Analysis", *Organizational Research Methods* 23(2):385–395; NCA 5.1.0 (CRAN). Scouted on the [2026-11-20 scheduled edition](2026-11-20.html#nca-ceiling), aimed at [Q3](QUESTIONS.md#q3) (Q3.1, Q3.2, Q3.3, Q3.5), public data. Novelty: exotic-transfer (organization science; agronomy boundary lines). Home-field verdict: contested. Status: proposed (interesting). Issue [#83](https://github.com/jgridifier/research-lab/issues/83). Research card: [m/nca-ceiling.html](m/nca-ceiling.html). Plans only.
+
+**Found via.** Web search 2026-11-20 14:21 ET → [Dul et al. 2020](https://journals.sagepub.com/doi/10.1177/1094428118795272) and critique links; NCA quick start guide (14:30 ET). Field: organization science.
+
+**What our run showed.** `nca.example` reproduced (d exact; p within Monte Carlo error); port matches R NCA on d. On 360 firm-years: the stressed minimum CET1 ratio caps payout/RWA beyond its correlation (d 0.245 vs spuriousness 95th pct 0.211, p 0.012; within-year p 0.0002), also next-year payout, dividends and buybacks (buybacks: Spearman 0.02, OLS R² 0.04). The drawdown passes the standard test (p 0.010) but its ceiling is correlation-made (p 0.48); pre-tax income sets no ceiling. The trough binds for 69% of firm-years (2013–2025), the SCB for 1.5% (no ceiling beyond chance, within-year p 0.47). The gate tightened after 2020 (d 0.31 → 0.36). Default NCA test calls correlated-only data necessary 56–74% of the time at ρ 0.3. Misses: total payout fragile to the top-2% CET1 trim (p 0.082); envelope looser than a 95% quantile line (headroom 2.04 vs 1.42 pp).
+
+### 1 · Engineering (effort S)
+
+Batched CE-FDH (cumulative max over a \(B\times n\) permutation matrix) with within-group permutations and the Gaussian-copula spuriousness null in one call; R NCA as oracle. **Test:** d within 10⁻¹⁰ of R NCA on `nca.example` and our 4 conditions; 10,000 permutations × 4 conditions under 1 s.
+
+### 2 · Math (top pick, effort M)
+
+Noise-robust ceiling: isotonic upper-quantile (q = 0.95) ceiling by pool-adjacent-violators on the check loss, with \(d_q\) and a worst-case spuriousness null over a copula family (Gaussian, Student-t, Clayton/Gumbel) matched to \(\rho_s\) and tail dependence, with year strata and firm blocks. Closest prior work: Sorjonen & Melin range of spuriousness; Milne/Lark boundary-line censored bivariate normal (R BLA). **Test:** false "necessity" ≤ 0.05 on correlated-only simulations with our marginals (ρs 0–0.3); the minimum-CET1 gate keeps p < 0.05 with the top 2% of x and y removed.
+
+### 3 · New use on our data (effort S)
+
+Distance to the firm's own requirement (stressed trough − (4.5% + SCB), 2021–2025) as the condition, separately for dividends and buybacks (Q3.2/Q3.5). **Test:** d above the spuriousness 95th pct with Holm p < 0.05 for at least one channel and binding share ≥ the raw trough's; otherwise "the raw trough is the better gate".
+
+**Why Math is the top pick.** Both of the method's weaknesses showed up on our data (an oversized default test and a max-envelope set by a few firms); fixing them is what turns the trough-gate finding into something defensible.
+
+---
+
 ## Citations used (verified)
 
 - Donges, J. F., Schleussner, C.-F., Siegmund, J. F. & Donner, R. V. (2016). Event coincidence analysis for quantifying statistical interrelationships between event time series. *European Physical Journal Special Topics*, 225(3):471–487.
@@ -823,6 +871,13 @@ Only papers we located with venue, year, and pages, plus the four method papers 
 - Münkemüller, T., Lavergne, S., Bzeznik, B., Dray, S., Jombart, T., Schiffers, K. & Thuiller, W. (2012). How to measure and test phylogenetic signal. *Methods in Ecology and Evolution*.
 - Ho, L. S. T. & Ané, C. (2014). A linear-time algorithm for Gaussian and non-Gaussian trait evolution models. *Systematic Biology*, 63(3):397–408.
 - Ives, A. R., Midford, P. E. & Garland, T. Jr. (2007). Within-species variation and measurement error in phylogenetic comparative methods. *Systematic Biology*, 56(2):252–270.
+- Liang, X. S. (2014). Unraveling the cause-effect relation between time series. *Physical Review E*, 90:052150.
+- Liang, X. S. (2021). Normalized multivariate time series causality analysis and causal graph reconstruction. *Entropy*, 23(6):679.
+- Docquier, D., Di Capua, G., Donner, R. V., Pires, C. A. L., Simon, A. & Vannitsem, S. (2024). A comparison of two causal methods in the context of climate analyses. *Nonlinear Processes in Geophysics*, 31:115.
+- Edinburgh, T., Eglen, S. J. & Ercole, A. (2021). Causality indices for bivariate time series data: a comparative review of performance. *Chaos* (arXiv:2104.00718; abstract read).
+- Newey, W. K. & West, K. D. (1987). A simple, positive semi-definite, heteroskedasticity and autocorrelation consistent covariance matrix. *Econometrica*, 55(3):703–708.
+- Dul, J. (2016). Necessary Condition Analysis (NCA): Logic and methodology of "necessary but not sufficient" causality. *Organizational Research Methods*, 19(1):10–52.
+- Dul, J., van der Laan, E. & Kuik, R. (2020). A statistical significance test for Necessary Condition Analysis. *Organizational Research Methods*, 23(2):385–395.
 
 ## What this is not
 
