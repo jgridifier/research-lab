@@ -1,0 +1,95 @@
+{
+ "issue": 85,
+ "name": "Interpolated cross-correlation (ICCF) with RSS lag distributions",
+ "title": "How long after Form PF borrowing moves do repo markets follow?",
+ "field": "astrostatistics (reverberation mapping: light-echo delays in unevenly sampled quasar light curves)",
+ "what": "Cross-correlates two unevenly sampled series by interpolation, then resamples points to give a distribution for the lag, no regridding.",
+ "verdict": "Interesting",
+ "grade": "established (reverberation-mapping workhorse; reproducible; error bars known to be conservative; its lag-exists confidence ignores unrelated-series nulls)",
+ "pick_eff": "M",
+ "pick_line": "A calibrated lag confidence set: invert a persistence-matched peak test over τ instead of trusting the RSS centroid interval.",
+ "data": "Public aggregates: SEC Form PF 8.27 monthly; NY Fed fails, OFR DVP/tri-party weekly (2013–2025); descriptive",
+ "one": "DVP repo volume follows Form PF reverse repo by about six weeks; the home-field rule calls lags everywhere.",
+ "picture": {
+  "type": "images",
+  "la": "Usual tool: monthly CCF with Bartlett bands (every lag \"significant\")",
+  "a": "../fig/2026-11-22/iccf_standard.png",
+  "lb": "ICCF on native sampling, phase-null band, RSS lag distribution",
+  "b": "../fig/2026-11-22/iccf_method.png"
+ },
+ "findings": [
+  {
+   "h": "DVP repo volume lags Form PF reverse-repo borrowing by about six weeks.",
+   "t": "Monthly Form PF reverse-repo borrowing (log, detrended) against weekly OFR DVP repo volume, 2018-05..2025-12, no regridding: peak r* = 0.92, centroid +38.6 d, RSS 68% interval [+31, +54] d, 95% [+18, +65] d. Matched-persistence AR(1) null p = 0.001, phase-randomized (AAFT) null p = 0.001; the only one of five pre-registered pairs that passes Holm under both. ZDCF (home-field cross-check): +46 d, r 0.92. Twelve-month changes (2019-05..2025-12): r 0.84, peak +41 d, centroid +54 d, p 0.002 / 0.002.",
+   "note": "Computed. Form PF months are stamped at month end; if the reported values are monthly averages, every lag shifts by about −15 d (so roughly +24 d). The 11-14 CRQA run put the PF-repo delay near four months; ICCF is sharper here.",
+   "chart": {
+    "type": "hbars",
+    "title": "Estimated lag of DVP volume behind PF reverse repo (days)",
+    "max": 70,
+    "rows": [
+     ["ICCF centroid (RSS median +42)", 38.6, "teal", "+39 d [31, 54]"],
+     ["ZDCF peak", 46, "teal", "+46 d"],
+     ["ICCF centroid, 12-month changes", 54, "muted", "+54 d"],
+     ["Monthly CCF best lag", 61, "amber", "+2 months"]
+    ]
+   }
+  },
+  {
+   "h": "The home-field rule finds a lag in pure noise 54–60% of the time.",
+   "t": "300 pairs of independent AR(1) series with our sampling and persistence. False \"lag found\" rates: RSS 68% interval excludes 0, 60% (P1 persistence) and 54% (P5); Bartlett bands on monthly levels 75% and 99%; on monthly changes 75% and 77%; Granger either way 14% and 12%. ICCF with our AR(1) null: 4.7% and 14%; phase null 5.7% and 21%.",
+   "note": "Computed; 300 simulations, not the pre-registered 1,000, and P5 instead of P3. The refitted AR(1) null is too loose near a unit root (φ 0.965 monthly, 0.991 weekly). Post hoc: P5's r* 0.921 still beats the independent-pair 95th percentile (0.76–0.79) with persistence pushed to 0.995 / 0.999, p ≤ 0.001 (2,000 and 1,000 draws).",
+   "chart": {
+    "type": "images",
+    "la": "False-alarm rate on independent series with our persistence",
+    "a": "../fig/2026-11-22/iccf_size.png",
+    "lb": "All five pairs: r*, lag, and null p",
+    "b": "../fig/2026-11-22/iccf_pairs.png"
+   }
+  },
+  {
+   "h": "Prime-broker borrowing × fails: a −113-day lag the null cannot tell from chance.",
+   "t": "Form PF prime-broker borrowing vs NY Fed financing fails (UST), 2013-04..2025-12: r* = −0.26 at −113 d (fails lead), RSS 68% [−151, −26] d, AR(1) p = 0.119, phase p = 0.50. ZDCF agrees on the shape (−146 d, −0.27). Halves disagree: 2013–19 −0.43 at +272 d, 2020–25 −0.67 at −177 d (p 0.002 / 0.004).",
+   "note": "Consistent with the 11-14 to 11-20 nulls for prime-broker borrowing vs fails. The second-half link is significant alone, but its lag sits 450 days from the first half's.",
+   "chart": {
+    "type": "images",
+    "la": "Stability: halves and changes",
+    "a": "../fig/2026-11-22/iccf_stability.png",
+    "lb": "Home field: PyCCF sample, original vs our port",
+    "b": "../fig/2026-11-22/iccf_home.png"
+   }
+  },
+  {
+   "h": "The six-week lead holds in 2018–21 and is gone after 2022.",
+   "t": "P5 first half (2018-05..2021-12): r 0.86, peak +41 d, centroid +28 d (RSS median +30 d), p 0.004 (AR1) / 0.002 (phase). Second half (2022–2025): the best |r| is −0.67 at −358 d, the edge of the ±365-day window, p 0.014 / 0.022: opposite sign, no usable lag.",
+   "note": "Computed. Two halves only; the dating of the break is the New-use avenue (rolling windows).",
+   "chart": {
+    "type": "hbars",
+    "title": "P5 peak correlation by window",
+    "max": 1,
+    "rows": [
+     ["Full 2018–2025", 0.921, "teal", "+0.92 at +41 d"],
+     ["2018-05..2021-12", 0.86, "teal", "+0.86, centroid +28 d"],
+     ["2022–2025", 0.67, "amber", "−0.67 at −358 d (edge)"]
+    ]
+   }
+  },
+  {
+   "h": "As a forecasting aid it does not beat ARDL or SARIMAX.",
+   "miss": true,
+   "t": "Pre-registered: one-month change in log PF prime-broker borrowing, walk-forward 84 months (2019–2025), fails at the ICCF lag. RMSE: zero change 0.0571, OLS on lagged market 0.0566, ARDL own lags 0.0584, ARDL + ICCF-lag fails 0.0586 (−0.24%, DM p 0.47), SARIMAX(1,0,1) 0.0583, + X 0.0587. Exploratory (post hoc, DVP target, PF reverse repo driver, 60 months from 2021): ARDL + ICCF 0.0412 vs ARDL 0.0416 (+0.8%, DM p 0.88); OLS 0.0410, SARIMAX 0.0411.",
+   "note": "Pre-stated bar (≥ 1% RMSE gain with DM p < 0.10) failed. The exploratory start moved from 2019 to 2021 after the first try had only 7 training months; labelled post hoc.",
+   "chart": {
+    "type": "hbars",
+    "title": "Walk-forward RMSE, change in log PF prime broker (pre-registered)",
+    "max": 0.06,
+    "rows": [
+     ["OLS on lagged market", 0.05663, "muted", "0.0566"],
+     ["Zero change", 0.05713, "muted", "0.0571"],
+     ["SARIMAX(1,0,1)", 0.05834, "muted", "0.0583"],
+     ["ARDL own lags", 0.05843, "muted", "0.0584"],
+     ["ARDL + ICCF lag", 0.05857, "teal", "0.0586"]
+    ]
+   }
+  }
+ ]
+}

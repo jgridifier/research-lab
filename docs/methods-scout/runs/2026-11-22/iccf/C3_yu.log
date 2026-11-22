@@ -1,0 +1,1 @@
+{'nsim': 200, 'true_lag': 20, 'bias_median': -0.02, 'sigma_obs': 1.46, 'sigma_est': 1.77, 'eta': 1.21, 'drw_tau_days': 100, 'mode': 'FR+RSS, sample cadence'}

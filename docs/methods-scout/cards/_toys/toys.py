@@ -254,3 +254,28 @@ scope = float((x.max() - x.min()) * (y.max() - y.min()))
 print("empty zone =", round(zone, 3), " scope =", round(scope, 3), " effect size d = zone/scope =", round(zone / scope, 3))
 need = {v: float(x[o][np.argmax(c >= v)]) for v in [0.5, 1.0, 1.5]}
 print("bottleneck: payout >= v needs x >=", need, " Pearson r =", round(float(np.corrcoef(x, y)[0, 1]), 3))
+
+print("== ICCF (2026-11-22): driver x at t = 0..9 (step 1); response y sampled at t = 0.5, 2.5, ..., 8.5 equals x delayed by 2 (linear interpolation)")
+tx = np.arange(10.0); xv = np.array([0, 1, 3, 2, 4, 6, 5, 7, 6, 8], float)
+ty = np.arange(0.5, 9.0, 2.0); yv = np.interp(ty - 2.0, tx, xv)
+def r_side(tA, A, tB, B, tau):
+    # interpolate B at tA + tau, keep points inside B's span, Pearson r
+    s = tA + tau; ok = (s >= tB.min()) & (s <= tB.max())
+    return float(np.corrcoef(A[ok], np.interp(s[ok], tB, B))[0, 1]), int(ok.sum())
+for tau in [0.0, 1.0, 2.0, 3.0]:
+    r1, n1 = r_side(tx, xv, ty, yv, tau); r2, n2 = r_side(ty, yv, tx, xv, -tau)
+    print(f"tau={tau}: r(x(t), y(t+tau) interp) = {r1:.3f} (n={n1}); r(y(t), x(t-tau) interp) = {r2:.3f} (n={n2}); ICCF = mean = {(r1 + r2) / 2:.3f}")
+
+print("== L-moments, discordancy, heterogeneity (2026-11-22): one site x = (0.9, 1.0, 1.1, 1.4)")
+xs = np.sort(np.array([0.9, 1.0, 1.1, 1.4])); n = len(xs); i = np.arange(n)
+b0 = xs.mean(); b1 = np.sum(i / (n - 1) * xs) / n; b2 = np.sum(i * (i - 1) / ((n - 1) * (n - 2)) * xs) / n
+l1, l2, l3 = b0, 2 * b1 - b0, 6 * b2 - 6 * b1 + b0
+print("b0, b1, b2 =", round(b0, 4), round(b1, 4), round(b2, 4), " l1 =", round(l1, 4), " l2 =", round(l2, 4), " l3 =", round(l3, 4), " L-CV t = l2/l1 =", round(l2 / l1, 4), " L-skew t3 =", round(l3 / l2, 4))
+print("check: l2 = half the mean |xi - xj| over pairs =", round(np.mean([abs(a - b) for k, a in enumerate(xs) for b in xs[k + 1:]]) / 2, 4))
+u = np.array([[0.10, 0.0, 0.10], [0.05, 0.1, 0.12], [0.08, -0.1, 0.11], [0.06, 0.05, 0.10], [0.20, 0.3, 0.15]])  # (t, t3, t4) for 5 sites
+d = u - u.mean(0); A = d.T @ d
+Di = len(u) / 3 * np.einsum("ij,jk,ik->i", d, np.linalg.inv(A), d)
+print("five sites (t, t3, t4):", u.tolist(), " D_i =", Di.round(3).tolist(), " sum =", round(Di.sum(), 3), "(always = N) max possible D_i = (N-1)/3 =", round((len(u) - 1) / 3, 3))
+nrec = np.array([5, 5, 5, 5, 5]); tR = np.sum(nrec * u[:, 0]) / nrec.sum()
+V = np.sqrt(np.sum(nrec * (u[:, 0] - tR) ** 2) / nrec.sum())
+print("regional L-CV tR =", round(tR, 4), " observed dispersion V =", round(V, 4), " H1 = (V - mean V_sim) / sd V_sim, with V_sim from a kappa fitted to the regional L-moments (not run in the toy)")

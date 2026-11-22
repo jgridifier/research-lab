@@ -1,0 +1,36 @@
+{
+ "P1": {
+  "nsim": 300,
+  "phi": [
+   0.9170293275728371,
+   0.7112021930946605
+  ],
+  "rates": {
+   "bartlett_levels": 0.753,
+   "bartlett_diff": 0.753,
+   "granger": 0.137,
+   "home95": 0.0,
+   "home68": 0.603,
+   "null_ar1": 0.047,
+   "null_phase": 0.057
+  },
+  "median_abs_rstar": 0.191
+ },
+ "P5": {
+  "nsim": 300,
+  "phi": [
+   0.9648752545718388,
+   0.9912914661408065
+  ],
+  "rates": {
+   "bartlett_levels": 0.987,
+   "bartlett_diff": 0.77,
+   "granger": 0.12,
+   "home95": 0.197,
+   "home68": 0.537,
+   "null_ar1": 0.14,
+   "null_phase": 0.213
+  },
+  "median_abs_rstar": 0.494
+ }
+}

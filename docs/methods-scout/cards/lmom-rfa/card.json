@@ -1,0 +1,100 @@
+{
+ "issue": 86,
+ "name": "L-moment regional frequency analysis (Hosking–Wallis)",
+ "title": "Which programs can share a budget-miss band, and does pooling help?",
+ "field": "hydrology (regional flood and rainfall frequency: pooling short gauge records across similar sites)",
+ "what": "Pools short records across similar sites into regions, tests the pooling with L-moment heterogeneity and discordancy, then fits one regional curve.",
+ "verdict": "Interesting",
+ "grade": "established (the standard in regional flood frequency; exact reproduction; low power on short, correlated records)",
+ "pick_eff": "M",
+ "pick_line": "H-guided region search: merge or split stated categories until homogeneous, with a year-effect null so correlated programs don't fake homogeneity.",
+ "data": "SYNTHETIC mock ZBB (Corning-like FY2020–25, Morgan-Stanley-like FY2021–25); answer key for scoring only",
+ "one": "The heterogeneity test picks function as the valid pooling unit; category pooling then does as well.",
+ "picture": {
+  "type": "images",
+  "la": "Usual view: budget miss by function (grouped boxplot)",
+  "a": "../fig/2026-11-22/rfa_standard.png",
+  "lb": "Programs in L-moment space, and H1 per region for five schemes",
+  "b": "../fig/2026-11-22/rfa_method.png"
+ },
+ "findings": [
+  {
+   "h": "H1 says function is a valid pooling unit; discretionary × size is not.",
+   "t": "Median H1 per region (500 kappa simulations each): stated function −0.09 (Corning-like) and −0.05 (MS-like), with 15% / 7% of regions at H1 ≥ 2; text clusters 1.42 / 2.16; discretionary × size band 3.56 / 2.34; random regions of matched size 4.89 / 8.33; the generator's true noise classes (answer key) 0.92 / −1.72, none ≥ 2. Brown–Forsythe at 5% flags 4% / 0% of function regions, 50% / 20% of discretionary × size, 67% / 40% of random.",
+   "note": "Computed on SYNTHETIC data. In the generator, noise σ is set by function family, which is what H finds. Regional L-skewness is at most 0.24 (median 0.04–0.08), inside Viglione et al.'s range where H1 is the recommended test.",
+   "chart": {
+    "type": "hbars",
+    "title": "Median H1 by pooling scheme, Corning-like (H1 ≥ 2 = heterogeneous)",
+    "max": 5,
+    "rows": [
+     ["random regions", 4.89, "amber", "4.89"],
+     ["discretionary × size", 3.56, "amber", "3.56"],
+     ["text clusters", 1.42, "muted", "1.42"],
+     ["true σ class (answer key)", 0.92, "muted", "0.92"],
+     ["stated function", 0.0, "teal", "−0.09"]
+    ]
+   }
+  },
+  {
+   "h": "At matched false-alarm rate H1 has no power edge over Brown–Forsythe.",
+   "miss": true,
+   "t": "200 simulated regions per cell, our record lengths (4–6 years). Homogeneous regions: H1 ≥ 2 raises false alarms 9.5% / 9% / 5.5% at N = 20 / 50 / 150; Brown–Forsythe at 5% raises 2% / 1.5% / 0.5%. With Brown–Forsythe's threshold moved to the same false-alarm rate, it is as powerful or more: σ 0.085 vs 0.15 at N = 50, H1 0.73, BF matched 0.79 (BF at 5% 0.43). Post hoc, on the real category regions, H1 ranks truly mixed regions better: AUC 0.86 / 0.89 vs BF 0.81 / 0.85.",
+   "note": "Pre-registered pass (power ≥ BF + 0.05 at matched size, or size closer to nominal) failed. H1's practical edge is a looser cut-off plus a scale that ranks regions well; the AUC comparison was not pre-registered.",
+   "chart": {
+    "type": "images",
+    "la": "Power and false alarms, H1 vs Brown–Forsythe",
+    "a": "../fig/2026-11-22/rfa_power.png",
+    "lb": "Home field: Cascades rainfall, lmomRFA vs Hosking's Fortran",
+    "b": "../fig/2026-11-22/rfa_home.png"
+   }
+  },
+  {
+   "h": "Pooling by function cuts q90 error by a quarter; plain category pooling matches it.",
+   "t": "RMSE of log q90 of the budget-miss ratio vs the generator's true quantile, Corning-like / MS-like: at-site empirical 0.115 / 0.118; at-site lognormal 0.106 / 0.107; RFA on discretionary × size regions 0.095 / 0.095 (ratio 0.89 [0.85, 0.94]); RFA on function regions 0.082 / 0.079 (0.77 / 0.74); category-pooled lognormal by function 0.081 / 0.078; EB-shrunk sd 0.086–0.094; random regions 0.099; oracle regions 0.079 / 0.076.",
+   "note": "Pre-registered pass (discretionary × size RFA ≥ 20% better than at-site and ≤ category pooling) failed. RFA on the region H recommends gets the 20%, but no more than pooling the variance by function. Post hoc reading: the value is the diagnostic, not the quantile.",
+   "chart": {
+    "type": "images",
+    "la": "q90 error by estimator, both books",
+    "a": "../fig/2026-11-22/rfa_q90.png",
+    "lb": "Walk-forward FY2025: pinball loss and coverage",
+    "b": "../fig/2026-11-22/rfa_wf.png"
+   }
+  },
+  {
+   "h": "Discordancy finds planted mislabels only on one book, at 5% precision.",
+   "t": "Among stated-mandatory programs, AUC for the planted stated-mandatory / actually-discretionary programs (12 Corning-like, 21 MS-like): D_i in region B 0.536 / 0.635; D_i within function 0.597 / 0.664; L-CV z 0.568 / 0.459; z of log sd 0.558 / 0.470; χ² variance ratio 0.561 / 0.465. D_i ≥ 3 flags 20 / 17 programs; precision 5% / 6%, recall 8% / 5%.",
+   "note": "Pre-registered pass (D_i AUC ≥ best comparator + 0.03): MS-like passes (0.635 vs 0.470), Corning-like fails (0.536 vs 0.568). Sample L-moments from 4–6 points are too noisy to separate σ 0.085 from 0.16 reliably, and many stated-mandatory programs already sit in σ = 0.18 families, which dilutes the planted contrast.",
+   "chart": {
+    "type": "hbars",
+    "title": "AUC for planted mislabels, MS-like book",
+    "max": 0.7,
+    "rows": [
+     ["D_i within function", 0.664, "teal", "0.664"],
+     ["D_i, region B", 0.635, "teal", "0.635"],
+     ["z of at-site log sd", 0.47, "muted", "0.470"],
+     ["χ² variance ratio", 0.465, "muted", "0.465"],
+     ["L-CV z", 0.459, "muted", "0.459"]
+    ]
+   }
+  },
+  {
+   "h": "Walk-forward FY2025 bands: RFA beats at-site, pooled regressions beat RFA.",
+   "miss": true,
+   "t": "90% upper bound for each program's FY2025 ratio from earlier years only (805 / 1,404 programs). Pinball loss ratio vs at-site lognormal (coverage): RFA, discretionary × size 0.946 (0.894) / 0.931 (0.868); RFA by function 0.928 / 0.871; category pooling 0.923 / 0.860; OLS on stated features 0.877 (0.909) / 0.843 (0.899); pooled ARDL(1) 0.872 / 0.847; per-program SARIMAX(1,0,0) 1.216 (0.793) / 1.344 (0.719); at-site coverage 0.858 / 0.833.",
+   "note": "Pre-stated \"promising\" bar (pinball ≤ 0.95 × at-site, coverage in [0.86, 0.94]) passed on both books, but OLS and ARDL are better still. SARIMAX fell back to at-site lognormal for 20 / 39 programs.",
+   "chart": {
+    "type": "hbars",
+    "title": "Pinball ratio vs at-site lognormal, MS-like (lower is better)",
+    "max": 1.4,
+    "rows": [
+     ["OLS on stated features", 0.843, "muted", "0.843"],
+     ["pooled ARDL(1)", 0.847, "muted", "0.847"],
+     ["category-pooled", 0.86, "muted", "0.860"],
+     ["RFA by function", 0.871, "teal", "0.871"],
+     ["RFA, discretionary × size", 0.931, "teal", "0.931"],
+     ["SARIMAX(1,0,0)", 1.344, "amber", "1.344"]
+    ]
+   }
+  }
+ ]
+}

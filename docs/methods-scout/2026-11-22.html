@@ -1,0 +1,100 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Methods scout · 2026-11-22 · research-lab</title>
+<meta name="description" content="Methods scout 2026-11-22, aimed at Q1 and Q2: interpolated cross-correlation lags (astrostatistics, reverberation mapping) on monthly Form PF borrowing vs weekly repo and fails; L-moment regional frequency analysis (hydrology) on the SYNTHETIC mock ZBB books.">
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,400..800&family=Newsreader:ital,opsz,wght@0,6..72,400..600;1,6..72,400..500&family=JetBrains+Mono:wght@400;500;700&display=swap">
+<link rel="stylesheet" href="../assets/brief.css">
+<link rel="stylesheet" href="feedback.css">
+<!-- Methods Scout home-screen / PWA tags. Paste into <head> of every methods-scout page.
+     Paths are root-absolute so they resolve under https://jgridifier.github.io/research-lab/. -->
+<link rel="apple-touch-icon" sizes="180x180" href="/research-lab/methods-scout/icons/apple-touch-icon.png">
+<link rel="icon" type="image/png" sizes="32x32" href="/research-lab/methods-scout/icons/favicon-32.png">
+<link rel="icon" type="image/png" sizes="192x192" href="/research-lab/methods-scout/icons/icon-192.png">
+<link rel="manifest" href="/research-lab/methods-scout/manifest.webmanifest">
+<meta name="apple-mobile-web-app-title" content="Methods Scout">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="theme-color" content="#0F2A23">
+</head>
+<body><main>
+<header class="mast">
+  <div class="date">Sunday · November 22, 2026 · scheduled edition · aimed at Q1 and Q2 · exotic · public and SYNTHETIC data</div>
+  <h1>Methods scout</h1>
+  <p class="dek">Two borrowed tools, each with a full research card. From astrostatistics: <em>interpolated cross-correlation</em>, the method that times a quasar's light echo from two telescopes' uneven records, here timing Form PF borrowing against weekly repo. From hydrology: <em>L-moment regional frequency analysis</em>, the way hydrologists estimate a rare flood at a river with ten years of data by pooling similar rivers, here pooling short program budgets.</p>
+  <nav><a href="index.html">Queue</a><a href="archive.html">Archive</a><a href="board.html">Feedback board</a><a href="secret-sauce.html">Secret sauce</a><a href="https://github.com/jgridifier/research-lab/blob/main/docs/methods-scout/QUESTIONS.md">Research questions</a><a href="https://github.com/jgridifier/research-lab/tree/main/docs/methods-scout/runs/2026-11-22">Run folder</a></nav>
+</header>
+
+<div class="ticker">
+  <span><b>●</b> Q1: OFR DVP repo volume follows Form PF reverse-repo borrowing by about six weeks (centroid +39 d, r 0.92, p = 0.001 under two nulls); the home-field rule and monthly Bartlett bands find "lags" in independent series 54–99% of the time.</span>
+  <span><b>●</b> Q2 (SYNTHETIC): the heterogeneity test picks stated function as the valid pooling unit (median H1 ≈ 0 vs 2.3–8.3 for other groupings); pooling cuts the q90 error by a quarter, no more than category pooling.</span>
+</div>
+
+<section class="tldr">
+<h2>The short version</h2>
+<ul>
+<li><b>Interpolated cross-correlation with RSS lag distributions (PyCCF)</b> · astrostatistics · Q1 · <span class="verdict interesting">interesting</span> · home field: established with caveats (port matches PyCCF to 2×10⁻¹³ and runs 10× faster; error bars conservative at home, slightly tight on our cadence). Lags in days without regridding; with a persistence-matched null, one of five pairs survives. Miss: no forecasting gain over ARDL or SARIMAX.</li>
+<li><b>L-moment regional frequency analysis (lmomRFA)</b> · hydrology · Q2 · <span class="verdict interesting">interesting</span> · home field: established with known limits (Hosking's Cascades example reproduced exactly; low power on short, correlated records). H1 identifies the valid pooling unit and ranks mixed regions better than Brown–Forsythe. Misses: no power edge at matched size; ties with category pooling; weak mislabel detection.</li>
+</ul>
+</section>
+
+<section id="iccf-lag">
+<div class="card teal"><div class="card-top"><span class="tag teal">Method 1 · Q1</span><span class="verdict interesting">interesting</span></div>
+<h3><a href="m/iccf-lag.html">Interpolated cross-correlation (ICCF): research card →</a></h3>
+<p>The ICCF with its phase-null band and RSS lag distribution against the monthly CCF with Bartlett bands, all five pre-registered pairs, the false-alarm study on independent series, stability by half, ZDCF cross-check, the forecasting miss, the PyCCF reproduction and three secret-sauce avenues are on the card.</p>
+<figure><img src="fig/2026-11-22/iccf_method.png" alt="ICCF of Form PF reverse repo vs DVP volume and of prime broker vs fails, with phase-randomized 95% null bands and histograms of RSS centroid lags" style="max-width:100%"></figure>
+<p class="found-via"><strong>Found via</strong> · web search 2026-11-22 14:19 ET → <a href="https://www.ascl.net/1805.032">PyCCF (ASCL 1805.032)</a>, <a href="https://arxiv.org/abs/astro-ph/9802103">Peterson et al. (1998)</a>; ZDCF port <a href="https://github.com/LSST-sersag/pyzdcf">pyzdcf</a>. Novelty: exotic-transfer.</p>
+<p><b>Data.</b> Public aggregates (lab copies): SEC Form PF tab 8.27 monthly 2013-01..2025-12; NY Fed financing fails (UST) weekly from 2013-04; OFR tri-party volume from 2014-08; OFR DVP volume and DVP − tri-party spread from 2018-05. Descriptive.</p>
+<div class="table-wrap"><table>
+<tr><th>Pair (+ = weekly series follows Form PF)</th><th>r*</th><th>Centroid lag, RSS 68%</th><th>p AR(1) / phase</th></tr>
+<tr><td><b>PF reverse repo × DVP volume</b></td><td><b>+0.92</b></td><td><b>+42 d [+31, +54]</b></td><td><b>0.001 / 0.001</b></td></tr>
+<tr><td>PF prime broker × fails</td><td>−0.26</td><td>−109 d [−151, −26]</td><td>0.12 / 0.50</td></tr>
+<tr><td>PF prime broker × tri-party</td><td>−0.56</td><td>−211 d [−225, −195]</td><td>0.17 / 0.19</td></tr>
+<tr><td>PF prime broker × DVP</td><td>+0.32</td><td>+127 d [+81, +149]</td><td>0.83 / 0.82</td></tr>
+<tr><td>PF prime broker × spread</td><td>+0.48</td><td>edge (−358 d)</td><td>0.021 / 0.33</td></tr>
+</table></div>
+<p class="small">Computed. Holm over five pairs: only the first passes under both nulls. Every 68% RSS interval excludes 0. Code: <a href="https://github.com/jgridifier/research-lab/tree/main/docs/methods-scout/runs/2026-11-22/iccf">runs/2026-11-22/iccf</a> (PyCCF ported to Python 3, MIT, and an independent NumPy port at parity; pyZDCF 1.0.3).</p>
+<aside class="scout-respond" data-issue="85" data-slug="iccf-lag">
+  <span class="scout-chip status-proposed">Proposed</span>
+  <a class="scout-respond-btn" href="https://github.com/jgridifier/research-lab/issues/85">Respond on GitHub</a>
+  <p class="scout-respond-hint">👍 go ahead · 👎 drop · or just comment what you think</p>
+</aside>
+</div>
+</section>
+
+<section id="lmom-rfa">
+<div class="card"><div class="card-top"><span class="tag">Method 2 · Q2</span><span class="verdict interesting">interesting</span></div>
+<h3><a href="m/lmom-rfa.html">L-moment regional frequency analysis: research card →</a></h3>
+<p>Programs in L-moment space and H1 for five pooling schemes against the usual boxplot by function, the matched-size power study against Brown–Forsythe, q90 accuracy against the answer key, discordancy vs planted mislabels, the walk-forward FY2025 benchmark with OLS, ARDL and SARIMAX, the Cascades reproduction and three secret-sauce avenues are on the card.</p>
+<figure><img src="fig/2026-11-22/rfa_method.png" alt="Left: programs plotted by L-skewness and L-CV, coloured by true noise class; right: heterogeneity H1 per region for five pooling schemes on both synthetic books" style="max-width:100%"></figure>
+<p class="found-via"><strong>Found via</strong> · web search 2026-11-22 14:19 ET → <a href="https://search.r-project.org/CRAN/refmans/lmomRFA/html/regtst.html">lmomRFA regtst</a> (Hosking &amp; Wallis); robustness: <a href="https://rdrr.io/cran/homtest/man/HOMTESTS.html">homtest documentation (Viglione et al. 2007)</a>. Novelty: exotic-transfer.</p>
+<p><b>Data.</b> SYNTHETIC mock ZBB books: Corning-like FY2020–25 (901 programs with ≥ 4 years) and Morgan-Stanley-like FY2021–25 (1,549); yearly budget-miss ratio actual ÷ budget. The generator's answer key is used for scoring only.</p>
+<div class="table-wrap"><table>
+<tr><th>Estimator of each program's 90% miss bound</th><th>RMSE of log q90 (Corning-like / MS-like)</th></tr>
+<tr><td>At-site lognormal</td><td>0.106 / 0.107</td></tr>
+<tr><td>RFA, discretionary × size regions (pre-registered)</td><td>0.095 / 0.095</td></tr>
+<tr><td>RFA, stated-function regions (H1 ≈ 0)</td><td>0.082 / 0.079</td></tr>
+<tr><td>Category-pooled lognormal (function)</td><td>0.081 / 0.078</td></tr>
+<tr><td>RFA, answer-key regions (reference)</td><td>0.079 / 0.076</td></tr>
+</table></div>
+<p class="small">Computed on SYNTHETIC data; no per-program rows published. Code: <a href="https://github.com/jgridifier/research-lab/tree/main/docs/methods-scout/runs/2026-11-22/rfa">runs/2026-11-22/rfa</a> (R lmomRFA 3.8, lmom 3.3).</p>
+<aside class="scout-respond" data-issue="86" data-slug="lmom-rfa">
+  <span class="scout-chip status-proposed">Proposed</span>
+  <a class="scout-respond-btn" href="https://github.com/jgridifier/research-lab/issues/86">Respond on GitHub</a>
+  <p class="scout-respond-hint">👍 go ahead · 👎 drop · or just comment what you think</p>
+</aside>
+</div>
+</section>
+
+<section>
+<div class="card"><div class="card-top"><span class="tag">Notes</span></div>
+<ul>
+<li><b>Question rotation.</b> Q2 was required (last run 11-19). Q1 and Q3 both ran on 11-20; Q1's previous run (11-18) is older than Q3's (11-19), so today is Q1 + Q2. No Q3 analysis today. The 11-21 run failed and published nothing.</li>
+<li><b>Steering.</b> No new comments or reactions on the scout issues since 11-19. Standing steering applied: both picks are exotic transfers (#46), neither was looked at before (#48), time-indexed work is benchmarked against ARDL and SARIMAX(X) (#63), and the Q1 work is about timing and dependence with an explicit null, not forecasting (#70).</li>
+<li><b>Pre-registration.</b> Written at 14:29 ET before any run on our data: <a href="https://github.com/jgridifier/research-lab/blob/main/docs/methods-scout/runs/2026-11-22/PREREG.md">runs/2026-11-22/PREREG.md</a>. Failed bars, reported on the cards: RFA matched-size power; RFA on the pre-registered regions vs category pooling; discordancy on the Corning-like book; the ICCF forecasting benchmark; PyCCF lag-0 parity (9.7×10⁻⁴ vs ≤ 10⁻⁵). Changed or added after results, labelled: C3 size study at 300 simulations on P1 and P5 (pre-registered 1,000, P1 and P3); P5 persistence sensitivity; the DVP exploratory benchmark (start moved to 2021); the H1 vs Brown–Forsythe AUC on real regions; the NumPy RFA parity check not run.</li>
+<li><b>Watchlist</b> (not run): JAVELIN (damped-random-walk lags), PyROA (running optimal average), nsRFA (Anderson–Darling homogeneity, region formation), copula-bootstrap Hosking–Wallis H. See <a href="https://github.com/jgridifier/research-lab/blob/main/docs/methods-scout/watchlist.md">watchlist.md</a>.</li>
+<li><b>Data Jared would need to supply.</b> Nothing private for today's runs. Still owed: Form PF publication dates and whether tab 8.27 values are month-end or monthly-average (shifts lags by about −15 d if averages); real ZBB histories longer than 6 years for Q2 (synthetic only so far).</li>
+</ul>
+</div>
+</section>
+</main></body></html>

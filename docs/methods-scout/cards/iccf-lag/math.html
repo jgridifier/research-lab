@@ -1,0 +1,32 @@
+<h4>Notation</h4>
+<div class="table-wrap"><table>
+<tr><th>Symbol</th><th>Meaning</th><th>Here</th></tr>
+<tr><td>\((t_i,x_i)_{i=1}^{n_1}\)</td><td>driver light curve (the quasar continuum), unevenly sampled</td><td>Form PF tab 8.27 borrowing, log, linear trend removed, 1 point per month (stamped at month end)</td></tr>
+<tr><td>\((s_j,y_j)_{j=1}^{n_2}\)</td><td>response light curve (the emission line), sampled on its own times</td><td>weekly (Wednesday) log DVP volume, log tri-party volume, log fails, or the DVP − tri-party spread</td></tr>
+<tr><td>\(\tau\)</td><td>lag; \(\tau&gt;0\) means the response follows the driver</td><td>days, grid −365..+365 step 7</td></tr>
+<tr><td>\(r(\tau)\)</td><td>interpolated cross-correlation function (ICCF)</td><td>Pearson correlation after interpolating one series onto the other's times shifted by \(\tau\)</td></tr>
+<tr><td>\(\tau_{\rm peak},\ \tau_{\rm cent}\)</td><td>peak lag; centroid of \(r(\tau)\) over the points with \(r\ge 0.8\,r_{\max}\)</td><td>what the tables report</td></tr>
+<tr><td>CCCD / CCPD</td><td>distribution of \(\tau_{\rm cent}\) / \(\tau_{\rm peak}\) over FR/RSS resamples</td><td>RSS only (no measurement errors published), 2,000 draws</td></tr>
+</table></div>
+
+<h4>Assumptions</h4>
+<ul>
+<li>Both series are noisy views of one smooth process, with the response a delayed (and smeared) copy of the driver; linear interpolation between samples is a fair guess of the unseen values.</li>
+<li>The lag is constant over the window. The method measures where the peak is and how much it moves under resampling; the home field reads the share of resampled centroids above zero as the confidence that a lag exists (Peterson et al. 1998), which assumes a real echo is there to find.</li>
+<li>RSS resampling (draw \(n\) points with replacement, keep the distinct ones) is treated as a stand-in for "another realization of the sampling". It does not resample the underlying red-noise process, which is why it can call a lag on two independent random walks.</li>
+</ul>
+
+<h4>The estimator</h4>
+<div class="step"><b class="n">Step 1 · two one-sided correlations</b>Interpolate \(y\) at \(t_i+\tau\) and correlate with \(x_i\) (only points inside \(y\)'s span); separately interpolate \(x\) at \(s_j-\tau\) and correlate with \(y_j\). The ICCF is their average:
+$$r(\tau)=\tfrac12\Big[\operatorname{corr}_i\big(x_i,\hat y(t_i+\tau)\big)+\operatorname{corr}_j\big(\hat x(s_j-\tau),y_j\big)\Big].$$
+Means and variances are recomputed for the overlapping points at each \(\tau\) (Gaskell &amp; Peterson 1987, as implemented in PyCCF).</div>
+<div class="step"><b class="n">Step 2 · peak and centroid</b>\(\tau_{\rm peak}=\arg\max r(\tau)\); \(\tau_{\rm cent}=\sum_{r_k\ge 0.8r_{\max}}\tau_k r_k\big/\sum r_k\) over the contiguous run around the peak. A peak at the window edge gives no centroid (P4 and the P5 second half).</div>
+<div class="step"><b class="n">Step 3 · FR/RSS (Peterson et al. 1998)</b>Repeat \(B\) times: draw \(n_1\) and \(n_2\) indices with replacement, drop duplicates (RSS); optionally add Gaussian noise of each point's error (FR); recompute \(\tau_{\rm cent}\). The 15.9/50/84.1 percentiles of the \(B\) centroids give the reported lag and 68% interval.</div>
+<div class="step"><b class="n">Step 4 · what we add: a null for \(r^*\)</b>\(r^*=r(\tau_{\rm peak})\) with sign kept. Null 1: refit an AR(1) to each detrended series on its own sampling, simulate independent pairs with the fitted \(\phi\), detrend, record \(\max_\tau|r|\). Null 2: amplitude-adjusted phase randomization (AAFT) of each series. \(p=(1+\#\{|r^*_{\rm null}|\ge|r^*|\})/(1+N)\), \(N=1{,}000\); Holm over the five pairs. Size checked by simulation (C3).</div>
+
+<div class="toy"><h5>Toy example (computed by <code>cards/_toys/toys.py</code>)</h5>
+<p>Driver \(x\) at \(t=0..9\): (0, 1, 3, 2, 4, 6, 5, 7, 6, 8). Response \(y\) sampled at \(t=0.5,2.5,\dots,8.5\) equal to \(x\) two steps earlier (interpolated). ICCF: \(\tau=0\): 0.928; \(\tau=1\): 0.965; \(\tau=2\): <b>0.967</b>; \(\tau=3\): 0.895. The \(y\)-side correlation is exactly 1.000 at the true lag (4 points); the \(x\)-side is 0.935 because interpolating the sparse \(y\) blurs it. The peak is right but flat: one step off costs 0.002. That flatness is why a persistent series has a broad ICCF and why the centroid interval needs a null.</p></div>
+
+<div class="diff"><b>How it differs from the monthly CCF.</b> The standard approach averages the weekly series to months and reads the cross-correlogram against Bartlett bands \(\pm1.96/\sqrt n\). Averaging throws away the weekly timing (lags come in 30-day steps), and Bartlett bands assume white noise, so on persistent series nearly every lag is "significant" (12–25 of 25 lags on our pairs). ICCF keeps each series on its own clock, gives lags in days, and with a persistence-matched null asks the right question: is this peak higher than two unrelated persistent series would give?</div>
+
+<p class="cite">Followed: Peterson, Wanders, Horne et al. (1998), "On uncertainties in cross-correlation lags and the reality of wavelength-dependent continuum lags in active galactic nuclei", <i>PASP</i> 110:660 (arXiv:astro-ph/9802103; FR/RSS recipe as summarized in the PyCCF documentation and code); Gaskell &amp; Peterson (1987) ICCF (cited by PyCCF; not read). Code: PyCCF V2.2 (Sun, Grier &amp; Peterson, ASCL 1805.032, MIT) read line by line and ported; pyZDCF 1.0.3 (Jankov, MIT) for the ZDCF of Alexander (1997). Step 4 is ours. Toy: <code>cards/_toys/toys.py</code>.</p>

@@ -1,0 +1,10 @@
+- 14:17 ET start. Fresh clone /workspace/rl-scout-1122 at ddf5ecb.
+- 14:20 ET rotation: Q2 required (last 11-19). Q1 and Q3 both last 11-20; Q1 previous 11-18 older than Q3 previous 11-19 -> Q1. No new Jared comments or reactions since 11-19 (checked issues/comments API). Candidates: ICCF/ZDCF reverberation lags (Q1), L-moment RFA (Q2).
+- 14:25 ET installed lmomRFA 3.8 / lmom 3.3 (make via micromamba, then CRAN), nsRFA 0.7-17, pyzdcf 1.0.3 (--no-deps); PyCCF V2.2 from bitbucket.org/cgrier/python_ccf_code (commit 7ed815c, 2025-07-14). Home-field oracle: CASCADES.OUT from https://lib.stat.cmu.edu/general/lmoments (Hosking LMOMENTS Fortran), PyCCF sample_ccf_yap.dat.
+- 14:26 ET PREREG.md written (before any run on our data).
+- 14:31 ET RFA home repro (Cascades exact D, kappa, GNO; H1 0.52 vs 0.62), true-sigma rederivation (max diff 1.1e-8), Q1/Q2/Q3/B runs done; power sim rerunning with raw output.
+- 14:37 ET ICCF: home repro done (NumPy vs original 2e-13; 100/101 shipped lags to print precision, lag 0 differs 9.7e-4 from duplicate-time handling in the Cython build); C1, C2, C4 ZDCF, B done; Yu-direction eta 1.21; planted-lag eta 0.90; size sim running.
+- 14:45 ET C3 size done (job finished 14:41) (300 sims, not the pre-registered 1,000; P1 and P5, not P3). P1: AR1-null size 4.7%, phase 5.7% (PASS [0.03,0.07]); Bartlett levels 75%, home68 60%, home95 0%. P5 (phi .965/.991): AR1-null 14%, phase 21% (FAIL), Bartlett 99%, home68 54%, home95 20%, Granger 12%. Post hoc: P5 obs r* 0.921 vs independent-pair q95 0.756-0.793 at phi up to 0.995/0.999 -> p <= 0.001 in every case (C3_calib.json, C3_p5_sens.json). So refitted-AR1 null is anticonservative at near-unit-root persistence but P5 survives the sensitivity.
+- 14:47 ET figures final; toys added; runs copied (no per-program rows); writing issues + cards. Slugs iccf-lag, lmom-rfa.
+- 14:48 ET issues: https://github.com/jgridifier/research-lab/issues/85 https://github.com/jgridifier/research-lab/issues/86
+- 14:59 ET cards, edition, archive, QUESTIONS, watchlist, secret-sauce written; build_cards + build_board OK. Times above corrected to file mtimes.

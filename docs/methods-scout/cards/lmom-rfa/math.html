@@ -1,0 +1,33 @@
+<h4>Notation</h4>
+<div class="table-wrap"><table>
+<tr><th>Symbol</th><th>Meaning</th><th>Here</th></tr>
+<tr><td>site \(i\), record \(x_{i1..in_i}\)</td><td>a river gauge and its annual maximum floods</td><td>a program and its yearly budget-miss ratio \(x=\) actual ÷ budget, \(n_i=4\)–6 years (SYNTHETIC)</td></tr>
+<tr><td>\(\ell_1,\ell_2,\ell_3,\ell_4\)</td><td>sample L-moments (linear combinations of order statistics)</td><td>per program</td></tr>
+<tr><td>\(t=\ell_2/\ell_1,\ t_3,\ t_4\)</td><td>L-CV, L-skewness, L-kurtosis</td><td>a program's relative spread, asymmetry and tail weight of misses</td></tr>
+<tr><td>region</td><td>a group of sites assumed to share one growth curve up to a scale</td><td>stated function; discretionary × size band; text clusters; random (null); true σ class (answer key)</td></tr>
+<tr><td>\(D_i\)</td><td>discordancy: how far site \(i\)'s \((t,t_3,t_4)\) is from its region's</td><td>"this program's miss pattern does not match its stated peers"</td></tr>
+<tr><td>\(H_1\)</td><td>heterogeneity: between-site spread of \(t\) against a simulated homogeneous region</td><td>"can these programs share one band?"</td></tr>
+<tr><td>\(q(F)\), \(\mu_i\)</td><td>regional growth curve and the site's index (mean)</td><td>\(Q_i(0.9)=\mu_i\,q(0.9)\): a program's 90% miss bound</td></tr>
+</table></div>
+
+<h4>Assumptions</h4>
+<ul>
+<li>Within a homogeneous region, all sites share one distribution after dividing by the site mean (the index-flood assumption).</li>
+<li>Observations are independent within and between sites. The significance reading of \(H\) holds only then, and only for a kappa parent (homtest documentation, after Hosking &amp; Wallis 1997).</li>
+<li>Regions are formed from site characteristics, not from the at-site statistics being tested (otherwise \(H\) is biased toward homogeneity).</li>
+</ul>
+
+<h4>The estimator</h4>
+<div class="step"><b class="n">Step 1 · L-moments</b>With \(x_{(1)}\le\dots\le x_{(n)}\), probability-weighted moments \(b_r=n^{-1}\sum_j\frac{(j-1)\cdots(j-r)}{(n-1)\cdots(n-r)}x_{(j)}\); then \(\ell_1=b_0\), \(\ell_2=2b_1-b_0\), \(\ell_3=6b_2-6b_1+b_0\), \(\ell_4=20b_3-30b_2+12b_1-b_0\). \(\ell_2\) is half the mean absolute difference between two draws, so L-moments are linear in the data and far less outlier-driven than variance and skewness.</div>
+<div class="step"><b class="n">Step 2 · discordancy</b>\(u_i=(t^{(i)},t_3^{(i)},t_4^{(i)})^\top\), \(\bar u\) the unweighted regional mean, \(A=\sum_i(u_i-\bar u)(u_i-\bar u)^\top\):
+$$D_i=\tfrac{N}{3}(u_i-\bar u)^\top A^{-1}(u_i-\bar u),\qquad \textstyle\sum_iD_i=N,\quad D_i\le (N-1)/3 .$$
+Critical value 3 for \(N\ge 15\) (smaller for small regions, as in lmomRFA).</div>
+<div class="step"><b class="n">Step 3 · heterogeneity</b>\(t^R=\sum n_it^{(i)}/\sum n_i\), \(V=\{\sum n_i(t^{(i)}-t^R)^2/\sum n_i\}^{1/2}\). Fit a four-parameter kappa to the regional \((1,t^R,t_3^R,t_4^R)\), simulate \(N_{\rm sim}=500\) regions with the same \(N\) and \(n_i\), and set \(H_1=(V-\mu_V)/\sigma_V\). \(H_1&lt;1\) "acceptably homogeneous", \(1\le H_1&lt;2\) "possibly", \(\ge2\) "definitely heterogeneous". \(H_2,H_3\) use \((t,t_3)\) and \((t_3,t_4)\) distances.</div>
+<div class="step"><b class="n">Step 4 · distribution choice and growth curve</b>\(Z^{\rm DIST}=(\tau_4^{\rm DIST}-t_4^R+B_4)/\sigma_4\) for GLO, GEV, GNO, PE3, GPA (bias \(B_4\) and \(\sigma_4\) from the same kappa simulation); \(|Z|\le1.64\) acceptable. Fit the chosen distribution to the regional L-moments; \(\hat Q_i(F)=\bar x_i\,\hat q(F)\).</div>
+
+<div class="toy"><h5>Toy example (computed by <code>cards/_toys/toys.py</code>)</h5>
+<p>One program, ratios (0.9, 1.0, 1.1, 1.4): \(b_0=1.1\), \(b_1=0.6167\), \(b_2=0.4417\); \(\ell_1=1.1\), \(\ell_2=0.1333\) (= half the mean pairwise gap, checked), \(\ell_3=0.05\); L-CV \(t=0.121\), L-skew \(t_3=0.375\). Five programs with \((t,t_3,t_4)\) = (0.10, 0, 0.10), (0.05, 0.1, 0.12), (0.08, −0.1, 0.11), (0.06, 0.05, 0.10), (0.20, 0.3, 0.15): \(D_i\) = 0.73, 1.07, 1.23, 0.65, 1.31, summing to 5 = \(N\). The obvious outlier (L-CV 0.20) scores only 1.31 because \(D_i\le(N-1)/3=1.33\): in small regions discordancy cannot flag anything, which is why lmomRFA lowers the critical value for \(N&lt;15\). Regional L-CV \(t^R=0.098\), observed \(V=0.054\).</p></div>
+
+<div class="diff"><b>How it differs from the usual approach.</b> A budget analyst compares programs within a category by boxplot or tests equal variances (Levene / Brown–Forsythe). Those say whether spreads differ, not whether a pooled band is safe to use, and they use only the second moment. Regional frequency analysis (i) measures spread, skew and tails on the L-moment scale that is stable with 4–6 points, (ii) simulates what a homogeneous region with <i>these</i> record lengths would look like, and (iii) delivers the pooled quantile itself, with a distribution test.</div>
+
+<p class="cite">Followed: lmomRFA 3.8 help pages (regtst, regsamlmu, regfit; Hosking) and lmom 3.3; Hosking's LMOMENTS Fortran package and its Cascades example output (StatLib, CASCADES.OUT) for the reproduction; the homtest help page (Viglione) for the H formulas and the significance caveat. Hosking &amp; Wallis (1997), <i>Regional Frequency Analysis: An Approach Based on L-Moments</i> (Cambridge), cited by all of these, not read. The bound \(D_i\le(N-1)/3\) is from our own algebra (\(A\) is the sum of the \(N\) outer products) and checked numerically in the toy.</p>

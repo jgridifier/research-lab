@@ -1,0 +1,45 @@
+{
+ "B_prereg (PB target, fails driver)": {
+  "target": "pb",
+  "driver": "fails",
+  "n_test": 84,
+  "first": "2019-01",
+  "last": "2025-12",
+  "rmse": {
+   "zero change": 0.05713,
+   "OLS on lagged market": 0.05663,
+   "ARDL own lags": 0.05843,
+   "ARDL + ICCF-lag market": 0.05857,
+   "SARIMAX(1,0,1)": 0.05834,
+   "SARIMAX(1,0,1)+X ICCF lag": 0.05865
+  },
+  "gain_vs_ardl_pct": -0.24,
+  "dm_stat": 0.734,
+  "dm_p": 0.465,
+  "k_used": [
+   1,
+   9
+  ]
+ },
+ "B_exploratory (DVP target, PF reverse repo driver; post hoc; test from 2021-01 so training has >= 31 months)": {
+  "target": "dvp",
+  "driver": "rr",
+  "n_test": 60,
+  "first": "2021-01",
+  "last": "2025-12",
+  "rmse": {
+   "zero change": 0.04401,
+   "OLS on lagged market": 0.04102,
+   "ARDL own lags": 0.04155,
+   "ARDL + ICCF-lag market": 0.04123,
+   "SARIMAX(1,0,1)": 0.04105,
+   "SARIMAX(1,0,1)+X ICCF lag": 0.04261
+  },
+  "gain_vs_ardl_pct": 0.77,
+  "dm_stat": -0.151,
+  "dm_p": 0.88,
+  "k_used": [
+   1
+  ]
+ }
+}

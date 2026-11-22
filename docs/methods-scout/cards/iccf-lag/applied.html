@@ -1,0 +1,52 @@
+<h4>Who plays what</h4>
+<div class="table-wrap"><table>
+<tr><th>Home field (reverberation mapping)</th><th>Our data (Q1, public aggregates)</th></tr>
+<tr><td>Continuum light curve (the driver), sampled when the telescope gets time</td><td>SEC Form PF tab 8.27 hedge-fund borrowing (prime broker, reverse repo), one point per month</td></tr>
+<tr><td>Emission-line light curve (the echo), on a different cadence</td><td>Weekly NY Fed financing fails (UST), OFR DVP and tri-party repo volume, DVP − tri-party spread</td></tr>
+<tr><td>Lag = light-travel time to the broad-line region (days)</td><td>Days between a move in Form PF borrowing and the matching move in the repo market</td></tr>
+<tr><td>Seasonal gaps, unequal cadences</td><td>Monthly vs weekly sampling, series that start in different years (fails 2013, tri-party 2014, DVP 2018)</td></tr>
+<tr><td>CCCD 68% interval as the lag error bar</td><td>Same, plus a persistence-matched null the home field does not use</td></tr>
+</table></div>
+
+<h4>Inputs and preprocessing</h4>
+<ul>
+<li>Form PF tab 8.27 monthly 2013-01..2025-12 (156 months; prime broker "Secured_Prime Broker", reverse repo "Secured_Reverse Repo"), stamped at month end.</li>
+<li>Weekly: NY Fed primary-dealer financing fails, UST (PDFTD-USTET, 666 weeks from 2013-04-03); OFR tri-party volume (REPO-TRI_TV_TOT-F, daily averaged to Wednesday weeks, 593 weeks from 2014-08-27); OFR DVP volume and DVP − tri-party overnight spread (398 weeks from 2018-05-09).</li>
+<li>Logs of volumes and fails; linear trend removed per series and window (pre-registered). Each pair uses its common span; no regridding.</li>
+<li>Pre-registration written 14:29 ET before any run on these data (<a href="https://github.com/jgridifier/research-lab/blob/main/docs/methods-scout/runs/2026-11-22/PREREG.md">PREREG.md</a>): pairs P1–P5, two nulls, Holm over five, a size study (C3) and a walk-forward benchmark (B).</li>
+</ul>
+
+<h4>C1 · the five pairs (levels, ±365 d)</h4>
+<div class="table-wrap"><table>
+<tr><th>Pair</th><th>r*</th><th>Peak lag</th><th>Centroid, RSS 68%</th><th>p AR(1)</th><th>p phase</th></tr>
+<tr><td>P1 PF prime broker × fails</td><td>−0.26</td><td>−113 d</td><td>−109 [−151, −26]</td><td>0.119</td><td>0.50</td></tr>
+<tr><td>P2 PF prime broker × tri-party</td><td>−0.56</td><td>−225 d</td><td>−211 [−225, −195]</td><td>0.17</td><td>0.19</td></tr>
+<tr><td>P3 PF prime broker × DVP</td><td>+0.32</td><td>+118 d</td><td>+127 [+81, +149]</td><td>0.83</td><td>0.82</td></tr>
+<tr><td>P4 PF prime broker × spread</td><td>+0.48</td><td>−358 d (edge)</td><td>none (edge)</td><td>0.021</td><td>0.33</td></tr>
+<tr><td><b>P5 PF reverse repo × DVP</b></td><td><b>+0.92</b></td><td><b>+41 d</b></td><td><b>+42 [+31, +54]</b></td><td><b>0.001</b></td><td><b>0.001</b></td></tr>
+</table></div>
+<p class="small">Computed. Positive lag = the weekly market series follows Form PF. Every pair's 68% RSS interval excludes 0, so the home-field reading would report five lags. Only P5 passes Holm under both nulls. ZDCF (C4) agrees on P1 (−146 d), P2 (−231 d) and P5 (+46 d).</p>
+
+<h4>C2 · stability</h4>
+<ul>
+<li>P5: 2018-05..2021-12 r 0.86, centroid +28 d (p 0.004 / 0.002); 2022–2025 −0.67 at the window edge (p 0.014 / 0.022). Twelve-month changes over the full span: r 0.84, centroid +54 d (p 0.002 / 0.002).</li>
+<li>P1: 2013–19 −0.43 at +272 d (p 0.022 / 0.12); 2020–25 −0.67, centroid −177 d (p 0.002 / 0.004); changes: −0.28 at −85 d (p 0.064 / 0.64). No stable lag.</li>
+</ul>
+
+<h4>The standard toolkit on the same pairs</h4>
+<ul>
+<li>Monthly CCF with Bartlett bands: 12, 16, 22, 15 and 25 of 25 lags outside the bands for P1–P5. For P5 the best monthly lag is +2 months (r 0.922): the same direction, at 30-day resolution.</li>
+<li>Granger on monthly log differences (VAR, BIC lags), P5: DVP → PF reverse repo p 0.024, reverse repo → DVP p 0.57, the opposite direction to the level lag. Differencing removes the slow co-movement that carries the ICCF peak; the two describe different time scales.</li>
+</ul>
+
+<h4>B · walk-forward benchmark (pre-stated bar: ≥ 1% RMSE gain over ARDL with DM p &lt; 0.10)</h4>
+<p>Pre-registered target: one-month change in log PF prime-broker borrowing, 84 months (2019-01..2025-12), expanding window, fails entered at the ICCF lag. RMSE: OLS on lagged market 0.0566, zero change 0.0571, SARIMAX(1,0,1) 0.0583, ARDL own lags 0.0584, ARDL + ICCF lag 0.0586 (−0.24%, DM p 0.47), SARIMAX + X 0.0587. <b>Fail.</b> Exploratory (post hoc, start moved to 2021-01): DVP change with PF reverse repo at the ICCF lag, ARDL + ICCF 0.0412 vs ARDL 0.0416 (+0.8%, DM p 0.88); OLS 0.0410; SARIMAX 0.0411.</p>
+
+<h4>Deviations from the pre-registration</h4>
+<ul>
+<li>C3 ran 300 simulations (not 1,000) and on P1 and P5 (not P3); the P5 persistence sensitivity (C3_p5_sens) is post hoc.</li>
+<li>FR off throughout: none of these aggregates publishes measurement errors, so RSS only.</li>
+<li>Home reproduction: 100 of 101 lags match the shipped PyCCF output to print precision; lag 0 differs by 9.7×10⁻⁴ (bar was ≤ 10⁻⁵). Cause: a duplicated timestamp in the sample file, handled differently by the shipped Cython interpolation; our port matches the pure-Python original to 2×10⁻¹³.</li>
+<li>The exploratory benchmark moved its start from 2019 to 2021 after the first try had 7 training months.</li>
+</ul>
+<p class="small">Code and outputs: <a href="https://github.com/jgridifier/research-lab/tree/main/docs/methods-scout/runs/2026-11-22/iccf">runs/2026-11-22/iccf/</a> (public aggregates; inputs are the lab's existing copies). Descriptive only, not a trading signal.</p>

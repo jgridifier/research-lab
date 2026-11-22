@@ -1,0 +1,23 @@
+<p><span class="grade">Established, with known limits</span> (the standard regional method in flood and rainfall frequency; exact reproduction; heterogeneity tests have low power on short records and are optimistic under intersite correlation)</p>
+<h4>What the home field has established</h4>
+<ul>
+<li><b>Origin and use.</b> Hosking &amp; Wallis built the L-moment regional procedure (discordancy, heterogeneity, Z-DIST goodness of fit, index-flood estimation; book 1997, cited, not read) and distribute it as the LMOMENTS Fortran package and the R package lmomRFA (Fortran core, CRAN 3.8). Its help pages and example outputs were read.</li>
+<li><b>Comparison of homogeneity tests.</b> Viglione, Laio &amp; Claps (2007, <i>Water Resources Research</i> 43:W03428; finding read in the authors' homtest documentation, paper PDF unreachable today): H1 (based on L-CV) is preferable when regional L-skewness is low, the bootstrap k-sample Anderson–Darling test when it is high, split at \(t_3^R=0.23\); H2 lacks power. Our regions have \(t_3^R\) at most 0.24 (median 0.04–0.08), so H1 is the recommended choice here.</li>
+<li><b>Short records.</b> Wiltshire (1986, <i>Hydrological Sciences Journal</i>; excerpt read): for 20 sites, power to detect a CV ratio of 0.75 is 12% with 5-year records vs 90% with 50 years. Our records are 4–6 years.</li>
+<li><b>Intersite correlation and skew.</b> Lilienthal, Fried &amp; Schumann (2018, <i>J. Hydrology</i>; open preprint excerpt read): cross-correlated sites make H tests anticonservative and lower their power (citing Castellarin et al. 2008); they propose a copula-based bootstrap and cite a correction \(H_1^{\rm adj}=H_1+C\,\bar\rho^2(d-1)\) with \(C=0.122\).</li>
+<li><b>Stated assumption.</b> The H thresholds 1 and 2 are guidelines; the test is exact only for independent data and a kappa parent (homtest documentation).</li>
+</ul>
+
+<h4>Our reproduction (Cascades rainfall, 19 sites; lmomRFA vs Hosking's Fortran CASCADES.OUT)</h4>
+<div class="table-wrap"><table>
+<tr><th>Quantity</th><th>Bar (pre-stated)</th><th>Result (computed)</th></tr>
+<tr><td>D_i, 19 sites</td><td>exact to print</td><td>all 19 exact. <b>Pass.</b></td></tr>
+<tr><td>Weighted regional L-moments (0.1103, 0.0279, 0.1366)</td><td>exact</td><td>exact. <b>Pass.</b></td></tr>
+<tr><td>Kappa parameters (0.9542, 0.1533, 0.1236, −0.2955)</td><td>exact</td><td>exact. <b>Pass.</b></td></tr>
+<tr><td>H1, H2, H3 (Fortran 0.62, −1.49, −2.37)</td><td>±0.25</td><td>0.52, −1.45, −2.34; 20 seeds: H1 0.57 ± 0.06. <b>Pass.</b></td></tr>
+<tr><td>Z-DIST</td><td>±0.3</td><td>all within 0.3 (GLO 3.41 vs 3.46). <b>Pass.</b></td></tr>
+<tr><td>GNO, PE3, Wakeby fits</td><td>exact</td><td>exact (GNO 0.994, 0.195, −0.057). <b>Pass.</b></td></tr>
+<tr><td>Speed</td><td>—</td><td>regtst with 500 simulations: 0.04 s</td></tr>
+</table></div>
+<div class="callouts"><p><b>Verdict for the home field: sound and well tested, within its stated limits.</b> <b>What breaks on transfer:</b> our records are shorter than any home-field guidance (4–6 years), and programs share year effects (the generator's raking and macro years), so H is likely optimistic about homogeneity. Our power study confirms the short-record problem: H1 ≥ 2 has 9% false alarms at N = 20–50 and no power edge at matched size. <b>What it finds that the standard toolkit misses:</b> a calibrated answer to "can these programs share a band?" that ranks truly mixed regions better than Brown–Forsythe (AUC 0.86 / 0.89 vs 0.81 / 0.85, post hoc), and the pooled quantile itself.</p></div>
+<p class="small">Other fields it could carry to: any portfolio of short, comparable records needing a tail bound: claims by branch, incident counts by site, vendor price changes, loan-loss rates by small segment, maintenance cost overruns by asset class.</p>
