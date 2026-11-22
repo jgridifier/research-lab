@@ -1,0 +1,2 @@
+accumulated tau at index 50: np.float64(0.0)
+exact-grid max diff vs shipped 0.0009678832119193737

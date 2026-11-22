@@ -1,0 +1,26 @@
+{
+ "Corning_mock": {
+  "n_regions": 77,
+  "n_mixed": 24,
+  "auc_H1": 0.863,
+  "auc_BF": 0.807,
+  "spearman_H1_sigmacv": 0.58,
+  "spearman_BF_sigmacv": 0.538,
+  "H1ge2_in_mixed": 0.542,
+  "H1ge2_in_pure": 0.132,
+  "BF05_in_mixed": 0.25,
+  "BF05_in_pure": 0.038
+ },
+ "MorganStanley_mock": {
+  "n_regions": 84,
+  "n_mixed": 28,
+  "auc_H1": 0.892,
+  "auc_BF": 0.851,
+  "spearman_H1_sigmacv": 0.454,
+  "spearman_BF_sigmacv": 0.414,
+  "H1ge2_in_mixed": 0.571,
+  "H1ge2_in_pure": 0.071,
+  "BF05_in_mixed": 0.071,
+  "BF05_in_pure": 0.0
+ }
+}

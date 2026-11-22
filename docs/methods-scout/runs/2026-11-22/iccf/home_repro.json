@@ -1,0 +1,42 @@
+{
+ "n_lags": 101,
+ "shipped_lags_match": true,
+ "max_abs_orig_vs_shipped": 0.0009678832119376923,
+ "max_abs_numpy_vs_shipped": 0.0009678832119193737,
+ "max_abs_numpy_vs_orig": 2.0683454948766666e-13,
+ "lags_identical": true,
+ "peak_orig": 20.0,
+ "cent_orig": 20.117283565791624,
+ "peak_numpy": 20.0,
+ "cent_numpy": 20.117283565791503,
+ "max_abs_numpy_vs_orig_random50": 4.218847493575595e-15,
+ "cccd_shipped": [
+  13.75,
+  21.92,
+  27.12
+ ],
+ "cccd_orig_rerun": [
+  13.99,
+  21.01,
+  26.06
+ ],
+ "cccd_numpy": [
+  12.91,
+  20.95,
+  26.99
+ ],
+ "ccpd_shipped": [
+  12.0,
+  20.0,
+  30.0
+ ],
+ "ccpd_numpy": [
+  12.0,
+  20.0,
+  30.0
+ ],
+ "n_ok_shipped": 500,
+ "n_ok_numpy": 500,
+ "seconds_orig_500": 2.57,
+ "seconds_numpy_500": 0.24
+}

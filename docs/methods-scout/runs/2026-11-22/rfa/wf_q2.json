@@ -1,0 +1,66 @@
+{
+ "Corning_mock": {
+  "n": 805,
+  "test_year": 2025,
+  "sarimax_fallbacks": 20,
+  "coverage": {
+   "at-site lognormal": 0.858,
+   "RFA index-flood, regions B": 0.894,
+   "RFA index-flood, regions A (function)": 0.888,
+   "category-pooled lognormal (function)": 0.894,
+   "OLS on stated features": 0.909,
+   "pooled ARDL(1), regions B": 0.907,
+   "SARIMAX(1,0,0) per program": 0.793
+  },
+  "pinball": {
+   "at-site lognormal": 0.03552,
+   "RFA index-flood, regions B": 0.03361,
+   "RFA index-flood, regions A (function)": 0.03295,
+   "category-pooled lognormal (function)": 0.0328,
+   "OLS on stated features": 0.03114,
+   "pooled ARDL(1), regions B": 0.03097,
+   "SARIMAX(1,0,0) per program": 0.0432
+  },
+  "pinball_ratio_vs_at_site": {
+   "at-site lognormal": 1.0,
+   "RFA index-flood, regions B": 0.946,
+   "RFA index-flood, regions A (function)": 0.928,
+   "category-pooled lognormal (function)": 0.923,
+   "OLS on stated features": 0.877,
+   "pooled ARDL(1), regions B": 0.872,
+   "SARIMAX(1,0,0) per program": 1.216
+  }
+ },
+ "MorganStanley_mock": {
+  "n": 1404,
+  "test_year": 2025,
+  "sarimax_fallbacks": 39,
+  "coverage": {
+   "at-site lognormal": 0.833,
+   "RFA index-flood, regions B": 0.868,
+   "RFA index-flood, regions A (function)": 0.869,
+   "category-pooled lognormal (function)": 0.88,
+   "OLS on stated features": 0.899,
+   "pooled ARDL(1), regions B": 0.898,
+   "SARIMAX(1,0,0) per program": 0.719
+  },
+  "pinball": {
+   "at-site lognormal": 0.03554,
+   "RFA index-flood, regions B": 0.03308,
+   "RFA index-flood, regions A (function)": 0.03094,
+   "category-pooled lognormal (function)": 0.03057,
+   "OLS on stated features": 0.02997,
+   "pooled ARDL(1), regions B": 0.0301,
+   "SARIMAX(1,0,0) per program": 0.04778
+  },
+  "pinball_ratio_vs_at_site": {
+   "at-site lognormal": 1.0,
+   "RFA index-flood, regions B": 0.931,
+   "RFA index-flood, regions A (function)": 0.871,
+   "category-pooled lognormal (function)": 0.86,
+   "OLS on stated features": 0.843,
+   "pooled ARDL(1), regions B": 0.847,
+   "SARIMAX(1,0,0) per program": 1.344
+  }
+ }
+}

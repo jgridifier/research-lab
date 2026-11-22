@@ -826,6 +826,54 @@ Distance to the firm's own requirement (stressed trough − (4.5% + SCB), 2021�
 
 ---
 
+## Interpolated cross-correlation with RSS lag distributions (ICCF; PyCCF)
+
+Peterson, B. M., Wanders, I., Horne, K. et al. (1998), "On uncertainties in cross-correlation lags and the reality of wavelength-dependent continuum lags in active galactic nuclei", *PASP* 110:660 (arXiv:astro-ph/9802103); PyCCF V2.2 (Sun, Grier & Peterson, ASCL 1805.032). Scouted on the [2026-11-22 scheduled edition](2026-11-22.html#iccf-lag), aimed at [Q1](QUESTIONS.md#q1) (Q1.1, Q1.3), public aggregates. Novelty: exotic-transfer (astrostatistics, reverberation mapping). Home-field verdict: established, with caveats. Status: proposed (interesting). Issue [#85](https://github.com/jgridifier/research-lab/issues/85). Research card: [m/iccf-lag.html](m/iccf-lag.html). Plans only.
+
+**Found via.** Web search 2026-11-22 14:19 ET → [PyCCF, ASCL 1805.032](https://www.ascl.net/1805.032); [pyzdcf](https://github.com/LSST-sersag/pyzdcf). Field: astrostatistics.
+
+**What our run showed.** PyCCF ported to Python 3 and to vectorized NumPy (2×10⁻¹³ parity, 10× faster; lag 0 of the shipped output off by 9.7×10⁻⁴ from a duplicate timestamp). Yu et al. (2020) direction reproduced (η 1.21 > 1); on our cadence slightly tight (η 0.90, 68% coverage 0.61). Five pre-registered Form PF × weekly pairs: only PF reverse repo → DVP volume passes Holm under AR(1) and phase nulls (centroid +38.6 d, 68% [+31, +54] d, r 0.92, p 0.001; ZDCF +46 d); every pair's 68% interval excludes 0. Independent series with our persistence: home-field 68% rule 54–60% false lags, Bartlett 75–99%, our AR(1) null 4.7% (P1) and 14% (P5; P5 survives persistence 0.995/0.999). The P5 lead holds in 2018–21 and flips sign in 2022–25. Miss: no gain over ARDL/SARIMAX in walk-forward (−0.24%, DM p 0.47).
+
+### 1 · Engineering (effort S)
+
+Batched ICCF: interpolation as a sparse matrix built once per sampling; RSS draws as masks and null surrogates as extra columns, so all lags × draws × surrogates run in one pass; PyCCF as oracle. Closest prior work: PyCCF (pure Python and Cython), pyPETaL wrapper. **Test:** r(τ) within 10⁻¹² of the PyCCF port on the sample and 50 random pairs; 2,000 RSS + 2,000 null draws for P1 under 2 s; refitted-AR(1) null size in [0.03, 0.07] at P1 persistence (500 simulations).
+
+### 2 · Math (top pick, effort M)
+
+Calibrated lag confidence set: a detection test for \(\max_\tau|r|\) against a bias-corrected persistent null, and a lag set from inverting, at each candidate \(\tau_c\), the simulated distribution of the drop \(r(\hat\tau)-r(\tau_c)\) under the fitted model with lag \(\tau_c\) (sets can be disjoint). Closest prior work: Alexander (2013) PLIKE likelihood interval for the ZDCF peak (arXiv:1302.1508, abstract read); JAVELIN's DRW likelihood (Zu, Kochanek & Peterson 2011, cited, not read). **Test:** 300 planted-lag pairs at P1 and P5 cadence and persistence, 68% and 95% coverage in [0.63, 0.73] and [0.92, 0.97]; false "lag found" ≤ 0.05 on 300 independent pairs at both persistences; report whether P5's set excludes 0.
+
+### 3 · New use on our data (effort S)
+
+Rolling 36-month ICCF of PF reverse repo → DVP volume, stepped monthly, to date the end of the 2018–21 lead (Q1.3). Break = first month after which \(r^*_w\) stays below its AR(1)-null 95% quantile for six consecutive windows; block-shift null (13-week blocks, 999 shifts). **Test:** break reported only with block-shift p < 0.05 and a stable pre-break centroid (IQR ≤ 30 d); otherwise "no datable break".
+
+**Why Math is the top pick.** The run's main lesson is that the home-field interval measures lag precision, not lag existence, and on our persistence it calls lags in noise most of the time; a calibrated set is what makes any Form PF lead/lag claim defensible, including the rolling analysis.
+
+---
+
+## L-moment regional frequency analysis (Hosking–Wallis; lmomRFA)
+
+Hosking, J. R. M. & Wallis, J. R. (1997), *Regional Frequency Analysis: An Approach Based on L-Moments*, Cambridge University Press (cited, not read); lmomRFA 3.8 and lmom 3.3 (CRAN, Hosking). Scouted on the [2026-11-22 scheduled edition](2026-11-22.html#lmom-rfa), aimed at [Q2](QUESTIONS.md#q2) (Q2.1, Q2.2, Q2.3), SYNTHETIC mock ZBB. Novelty: exotic-transfer (hydrology). Home-field verdict: established, with known limits. Status: proposed (interesting). Issue [#86](https://github.com/jgridifier/research-lab/issues/86). Research card: [m/lmom-rfa.html](m/lmom-rfa.html). Plans only.
+
+**Found via.** Web search 2026-11-22 14:19 ET → [lmomRFA regtst help](https://search.r-project.org/CRAN/refmans/lmomRFA/html/regtst.html); robustness via [homtest documentation](https://rdrr.io/cran/homtest/man/HOMTESTS.html) (Viglione et al. 2007). Field: hydrology.
+
+**What our run showed.** Cascades example reproduced exactly against Hosking's Fortran output (D_i, regional L-moments, kappa, GNO/PE3/Wakeby; H1 0.52 vs 0.62 within simulation noise). On the SYNTHETIC books (901 / 1,549 programs, 4–6 years): H1 picks stated function as homogeneous (median −0.09 / −0.05) and rejects discretionary × size (3.56 / 2.34), text clusters and random groupings; ranks mixed regions better than Brown–Forsythe (AUC 0.86 / 0.89 vs 0.81 / 0.85, post hoc), but no power edge at matched size (pre-registered bar failed). q90 RMSE: RFA by function −23% / −26% vs at-site, tied with category pooling; pre-registered regions −11% (bar failed). Discordancy vs planted mislabels: AUC 0.64 (MS-like) and 0.54 (Corning-like), precision 5–6%. Walk-forward FY2025: RFA passes the promising bar (pinball 0.95 / 0.93), pooled OLS/ARDL better.
+
+### 1 · Engineering (effort S)
+
+Vectorized regtst: L-moments as fixed weight matrices per record length; all regions of a scheme simulated together from the kappa quantile function with segment sums for V; Z-DIST from the same draws; lmomRFA as oracle. Closest prior work: lmomRFA, lmom, lmomco, homtest, nsRFA. **Test:** D_i and V within 10⁻¹⁰ of lmomRFA on Cascades and both mocks; H1 within ±0.1 of the 20-seed lmomRFA mean; 1,000 regions × 500 simulations under 10 s.
+
+### 2 · Math (top pick, effort M)
+
+H-guided region search with a year-effect null: greedy agglomeration over the stated-category lattice (function × segment × text cluster), minimizing simulated q90 RMSE subject to \(H_1^{\rm yr}<1\) per region, where \(H_1^{\rm yr}\) simulates homogeneous regions through a Gaussian copula with the fitted between-program year correlation. Closest prior work: Hosking & Wallis region formation by cluster analysis (cited, not read); nsRFA region formation; Lilienthal, Fried & Schumann (2018) copula-bootstrap H (preprint excerpt read). **Test:** on both books, q90 RMSE ≤ 0.95 × category pooling and ≤ 10% of searched regions mixing answer-key σ classes; on 200 simulated books with ρ̄ = 0.3, size of \(H_1^{\rm yr}\ge2\) in [0.03, 0.07].
+
+### 3 · New use on our data (effort S)
+
+Regional growth curves for year-on-year surprises (Q2.3): fit the regional curve to growth ratios (raking factor divided out) within homogeneous regions; flag FY2025 moves beyond the regional 2.5%/97.5% curve. **Test:** AUC for the planted stated-growth / actually-declining programs (6 / 26) ≥ at-site z + 0.03, with flag precision at the 95% curve.
+
+**Why Math is the top pick.** Today H found the right pooling unit but RFA only tied plain category pooling; a search that can merge and split categories under an honest (correlation-aware) H is the one route to beating it, and it addresses the main home-field critique for our data.
+
+---
+
 ## Citations used (verified)
 
 - Donges, J. F., Schleussner, C.-F., Siegmund, J. F. & Donner, R. V. (2016). Event coincidence analysis for quantifying statistical interrelationships between event time series. *European Physical Journal Special Topics*, 225(3):471–487.
@@ -879,6 +927,15 @@ Only papers we located with venue, year, and pages, plus the four method papers 
 - Dul, J. (2016). Necessary Condition Analysis (NCA): Logic and methodology of "necessary but not sufficient" causality. *Organizational Research Methods*, 19(1):10–52.
 - Dul, J., van der Laan, E. & Kuik, R. (2020). A statistical significance test for Necessary Condition Analysis. *Organizational Research Methods*, 23(2):385–395.
 
+- Peterson, B. M., Wanders, I., Horne, K., Collier, S., Alexander, T., Kaspi, S. & Maoz, D. (1998). On uncertainties in cross-correlation lags and the reality of wavelength-dependent continuum lags in active galactic nuclei. *PASP*, 110:660. arXiv:astro-ph/9802103.
+- Sun, M., Grier, C. J. & Peterson, B. M. (2018). PyCCF: Python Cross Correlation Function for reverberation mapping studies. Astrophysics Source Code Library, ascl:1805.032.
+- Yu, Z., Kochanek, C. S., Peterson, B. M. et al. (2020). On reverberation mapping lag uncertainties. *MNRAS*, 491(4):6045. arXiv:1909.03072.
+- Li, J., Shen, Y., Grier, C. J. et al. (2019). The Sloan Digital Sky Survey Reverberation Mapping Project: Comparison of lag measurement methods with simulated observations. *ApJ*, 884:119.
+- Alexander, T. (2013). Improved AGN light curve analysis with the z-transformed discrete correlation function. arXiv:1302.1508.
+- Hosking, J. R. M. & Wallis, J. R. (1997). *Regional Frequency Analysis: An Approach Based on L-Moments*. Cambridge University Press.
+- Viglione, A., Laio, F. & Claps, P. (2007). A comparison of homogeneity tests for regional frequency analysis. *Water Resources Research*, 43:W03428. doi:10.1029/2006WR005095.
+- Lilienthal, J., Fried, R. & Schumann, A. (2018). Homogeneity testing for skewed and cross-correlated data in regional flood frequency analysis. *Journal of Hydrology*.
+- Wiltshire, S. E. (1986). Regional flood frequency analysis I: Homogeneity statistics. *Hydrological Sciences Journal*.
 ## What this is not
 
 Plans only. Nothing here is being built. Edition 3’s plans are grounded in the 11-12 scheduled scout runs already published on that edition’s page; no further fits were run to write these plans. Edition 4’s plans (ebnm, DenseLines) are grounded in the 2026-11-13 scheduled run on SYNTHETIC mock ZBB data. Edition 5’s plans (CRQA, IDR) are grounded in the 2026-11-14 scheduled run, completed 2026-11-15, on public data. Edition 6’s plans (CCM, kairos/tabula) are grounded in the 2026-11-15 scheduled run on public data. Nothing is promoted into analysis-skills. No `APPROVAL.md` is written. No raw private Drive rows are published. This file and its page live in research-lab, not in traceot. Research-lab PRs #25 and #21 are not touched.

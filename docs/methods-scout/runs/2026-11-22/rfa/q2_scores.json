@@ -1,0 +1,180 @@
+{
+ "Corning_mock": {
+  "rmse_logq90": {
+   "at-site empirical": 0.1152,
+   "at-site lognormal": 0.1062,
+   "RFA regions B (disc x size)": 0.095,
+   "RFA regions A (function)": 0.0818,
+   "RFA regions C (text)": 0.0936,
+   "RFA random regions": 0.0994,
+   "RFA oracle regions (answer key)": 0.0788,
+   "category-pooled lognormal (function)": 0.0811,
+   "EB-shrunk sd (to region B)": 0.0937,
+   "EB-shrunk sd (to function)": 0.0857
+  },
+  "ratio_ci": {
+   "RFA regions B (disc x size) / at-site lognormal": [
+    0.894,
+    0.8516,
+    0.9375
+   ],
+   "RFA regions A (function) / at-site lognormal": [
+    0.7698,
+    0.738,
+    0.8043
+   ],
+   "category-pooled lognormal (function) / at-site lognormal": [
+    0.7634,
+    0.7273,
+    0.8013
+   ]
+  },
+  "rmse_sd_at_site": 0.0556,
+  "rmse_sd_rfa_A": null,
+  "homogeneity": {
+   "reg_A": {
+    "n_regions": 47,
+    "share_levene_p05": 0.043,
+    "share_H1ge2": 0.149,
+    "share_H1ge1": 0.234,
+    "median_H1": -0.09,
+    "siteweighted_H1ge2": 0.137
+   },
+   "reg_B": {
+    "n_regions": 6,
+    "share_levene_p05": 0.5,
+    "share_H1ge2": 0.667,
+    "share_H1ge1": 0.833,
+    "median_H1": 3.56,
+    "siteweighted_H1ge2": 0.68
+   },
+   "reg_C": {
+    "n_regions": 30,
+    "share_levene_p05": 0.2,
+    "share_H1ge2": 0.433,
+    "share_H1ge1": 0.6,
+    "median_H1": 1.42,
+    "siteweighted_H1ge2": 0.493
+   },
+   "reg_D": {
+    "n_regions": 6,
+    "share_levene_p05": 0.667,
+    "share_H1ge2": 0.833,
+    "share_H1ge1": 1.0,
+    "median_H1": 4.89,
+    "siteweighted_H1ge2": 0.968
+   },
+   "reg_O": {
+    "n_regions": 4,
+    "share_levene_p05": 0.0,
+    "share_H1ge2": 0.0,
+    "share_H1ge1": 0.5,
+    "median_H1": 0.92,
+    "siteweighted_H1ge2": 0.0
+   }
+  },
+  "q3": {
+   "n_mandatory": 569,
+   "n_planted": 12,
+   "auc": {
+    "D_i (region B)": 0.536,
+    "D_i (function)": 0.597,
+    "L-CV z within region B": 0.568,
+    "z of at-site log sd within region B": 0.558,
+    "chi-square variance ratio vs region B": 0.561
+   },
+   "n_flag_D3": 20,
+   "precision_D3": 0.05,
+   "recall_D3": 0.083
+  }
+ },
+ "MorganStanley_mock": {
+  "rmse_logq90": {
+   "at-site empirical": 0.1176,
+   "at-site lognormal": 0.1073,
+   "RFA regions B (disc x size)": 0.095,
+   "RFA regions A (function)": 0.0793,
+   "RFA regions C (text)": 0.095,
+   "RFA random regions": 0.0987,
+   "RFA oracle regions (answer key)": 0.0763,
+   "category-pooled lognormal (function)": 0.078,
+   "EB-shrunk sd (to region B)": 0.0939,
+   "EB-shrunk sd (to function)": 0.0847
+  },
+  "ratio_ci": {
+   "RFA regions B (disc x size) / at-site lognormal": [
+    0.8856,
+    0.851,
+    0.9237
+   ],
+   "RFA regions A (function) / at-site lognormal": [
+    0.739,
+    0.7146,
+    0.7638
+   ],
+   "category-pooled lognormal (function) / at-site lognormal": [
+    0.7267,
+    0.6991,
+    0.7577
+   ]
+  },
+  "rmse_sd_at_site": 0.0604,
+  "rmse_sd_rfa_A": null,
+  "homogeneity": {
+   "reg_A": {
+    "n_regions": 54,
+    "share_levene_p05": 0.0,
+    "share_H1ge2": 0.074,
+    "share_H1ge1": 0.148,
+    "median_H1": -0.05,
+    "siteweighted_H1ge2": 0.05
+   },
+   "reg_B": {
+    "n_regions": 5,
+    "share_levene_p05": 0.2,
+    "share_H1ge2": 0.6,
+    "share_H1ge1": 0.6,
+    "median_H1": 2.34,
+    "siteweighted_H1ge2": 0.797
+   },
+   "reg_C": {
+    "n_regions": 30,
+    "share_levene_p05": 0.067,
+    "share_H1ge2": 0.533,
+    "share_H1ge1": 0.767,
+    "median_H1": 2.16,
+    "siteweighted_H1ge2": 0.642
+   },
+   "reg_D": {
+    "n_regions": 5,
+    "share_levene_p05": 0.4,
+    "share_H1ge2": 0.6,
+    "share_H1ge1": 0.6,
+    "median_H1": 8.33,
+    "siteweighted_H1ge2": 0.929
+   },
+   "reg_O": {
+    "n_regions": 5,
+    "share_levene_p05": 0.0,
+    "share_H1ge2": 0.0,
+    "share_H1ge1": 0.0,
+    "median_H1": -1.72,
+    "siteweighted_H1ge2": 0.0
+   }
+  },
+  "q3": {
+   "n_mandatory": 744,
+   "n_planted": 21,
+   "auc": {
+    "D_i (region B)": 0.635,
+    "D_i (function)": 0.664,
+    "L-CV z within region B": 0.459,
+    "z of at-site log sd within region B": 0.47,
+    "chi-square variance ratio vs region B": 0.465
+   },
+   "n_flag_D3": 17,
+   "precision_D3": 0.058823529411764705,
+   "recall_D3": 0.048
+  }
+ }
+}

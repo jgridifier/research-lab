@@ -79,6 +79,12 @@ On 2026-11-14 Jared approved this pairing, together with Q3, with the wording "N
   - Q1.5: positioning → fails is Granger-significant (p = 0.012) but carries no information flow (τ −0.10%, p = 0.26); the 11-17 ECA tail coincidence is a tail effect outside a linear flow.
   - Method note: the package's test equals the lag-1 Granger t-test; on these weekly series it rejects true-zero links 14–20% of the time at 5% (shift surrogates 39–67%, HC3 4.5–9.5%). Future Q1 link tests should use the edge-zeroed block bootstrap. Miss: LKIF-selected parents do not improve a walk-forward fails ARDL (−2.4%, DM p = 0.57).
   - Next: sandwich inference for the flow (top pick); storm-window flows for Q1.2. Data gap unchanged: TFF after 2025-12-30 (public refresh); Form PF publication dates.
+- **2026-11-21 (scheduled)**. The run failed and published nothing. Status and missing data unchanged.
+- **2026-11-22 (scheduled)** ([edition](2026-11-22.html); [research card](m/iccf-lag.html)). Method: interpolated cross-correlation with RSS centroid distributions (PyCCF; astrostatistics, reverberation mapping; interesting), with the ZDCF as cross-check. Public aggregates (lab copies): SEC Form PF tab 8.27 monthly 2013-01..2025-12 on its own monthly clock against weekly NY Fed financing fails (from 2013-04), OFR tri-party volume (from 2014-08), OFR DVP volume and DVP − tri-party spread (from 2018-05); no regridding. Five pre-registered pairs; matched-persistence AR(1) and phase-randomized nulls (1,000 each), Holm over five.
+  - Q1.1 lead/lag: OFR DVP repo volume follows Form PF reverse-repo borrowing by about six weeks (centroid +38.6 d, RSS 68% [+31, +54] d, r 0.92, p = 0.001 under both nulls; ZDCF +46 d). Prime-broker borrowing: no lag beyond chance against fails (−113 d, p 0.12 / 0.50), tri-party (p 0.17 / 0.19), DVP (p 0.83) or the spread (edge peak).
+  - Q1.3: the reverse repo → DVP lead holds in 2018-05..2021-12 (r 0.86, centroid +28 d) and is replaced in 2022–2025 by a negative edge correlation (−0.67); the prime-broker × fails lag moves from +272 d (2013–19) to −177 d (2020–25).
+  - Method note: on independent series with our persistence, the home-field rule (68% RSS interval excludes 0) finds a lag 54–60% of the time and monthly Bartlett bands 75–99%; the refitted AR(1) null is right-sized at P1 persistence (4.7%) but 14% near a unit root, and P5 still passes with persistence pushed to 0.995/0.999. Miss: an ICCF-lag input does not improve a walk-forward ARDL (−0.24%, DM p = 0.47).
+  - Next: a calibrated lag confidence set by test inversion (top pick); rolling-window dating of the P5 break (Q1.3). Data gap: Form PF publication dates and whether tab 8.27 values are month-end or monthly averages (about −15 d shift if averages).
 
 <a id="q2"></a>
 
@@ -139,6 +145,12 @@ On 2026-11-13 Jared approved the question, all five sub-questions, and the addit
   - Q2.4 structure (post hoc): LIPA-positive programs fall in planted co-moving groups at 0.49 and 0.41, but flagging extreme function × intent cells does as well (0.53 and 0.45).
   - Still missing: real program-level budgets, actuals, headcount and decision packages for any firm. Next: measurement-error-corrected λ (top pick); tree-borrowed growth vs ebnm.
 - **2026-11-20 (scheduled)** ([edition](2026-11-20.html)). No Q2 analysis; the picks targeted Q1 and Q3. Status and missing data unchanged.
+- **2026-11-21 (scheduled)**. The run failed and published nothing. Status and missing data unchanged.
+- **2026-11-22 (scheduled)** ([edition](2026-11-22.html); [research card](m/lmom-rfa.html)). Method: L-moment regional frequency analysis (Hosking & Wallis; lmomRFA 3.8; hydrology; interesting). SYNTHETIC mock ZBB data only (Corning_mock 901 programs with ≥ 4 years, FY2020–25; MorganStanley_mock 1,549, FY2021–25); yearly budget-miss ratio actual ÷ budget. Answer key (generator σ re-derived exactly) used only for scoring.
+  - Q2.3 real change vs noise: H1 identifies stated function as a homogeneous pooling unit (median −0.09 / −0.05; answer-key classes agree) and rejects discretionary × size (3.56 / 2.34), text clusters (1.42 / 2.16) and random groupings (4.89 / 8.33). It ranks truly mixed regions better than Brown–Forsythe (AUC 0.86 / 0.89 vs 0.81 / 0.85, post hoc), but at matched false-alarm rate has no power edge (pre-registered bar failed).
+  - Q2.1 borrowing strength: RFA on function regions cuts the log-q90 RMSE 23% / 26% vs at-site lognormal (0.082 / 0.079 vs 0.106 / 0.107), tied with category pooling (0.081 / 0.078); on the pre-registered discretionary × size regions only 11% (bar failed). Walk-forward FY2025: RFA passes the "promising" bar (pinball 0.95 / 0.93, coverage 0.89 / 0.87), but pooled OLS and ARDL(1) do better (0.88 / 0.84); SARIMAX worst.
+  - Q2.2 text vs numbers: discordancy finds planted mandatory-but-discretionary programs only on the MS-like book (AUC 0.64 vs 0.47; Corning-like 0.54 vs 0.57), precision 5–6% at D ≥ 3.
+  - Still missing: real program-level budgets, actuals, headcount and decision packages for any firm; histories longer than 6 years. Next: H-guided region search with a year-effect null (top pick); regional growth curves for year-on-year surprises.
 
 <a id="q3"></a>
 
@@ -224,6 +236,8 @@ Natural timing: results are published mid-year Y, the SCB is effective 1 October
   - Q3.3: the gate tightened: 2013–19 d 0.31 (spuriousness p = 0.079), 2020–25 d 0.36 (p = 0.005); the trough among firms paying the median rose from 5.6% to 6.4%.
   - Robustness and misses: total payout weakens to p = 0.082 without the best-capitalized 2% of firm-years (components hold); on our data shape the default NCA test calls correlated-only data "necessary" 56–74% of the time at ρ = 0.3. As a walk-forward upper envelope it is looser than a 95% quantile line (headroom 2.04 vs 1.42 pp).
   - Data still missing: firm-level baseline projections (not published); the October 2020 SCB PDF. Next: noise-robust ceiling with a copula-family null (top pick); distance to the firm's own requirement (4.5% + SCB) for dividends vs buybacks.
+- **2026-11-21 (scheduled)**. The run failed and published nothing. Status and missing data unchanged.
+- **2026-11-22 (scheduled)** ([edition](2026-11-22.html)). No Q3 analysis; the picks targeted Q1 and Q2. Status and missing data unchanged.
 
 <a id="retired"></a>
 

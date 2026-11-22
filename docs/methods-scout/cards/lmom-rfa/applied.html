@@ -1,0 +1,56 @@
+<h4>Who plays what</h4>
+<div class="table-wrap"><table>
+<tr><th>Home field (regional flood frequency)</th><th>Our data (Q2, SYNTHETIC mock ZBB)</th></tr>
+<tr><td>Gauging site with 10–50 years of annual floods</td><td>Program with 4–6 years of budget-miss ratios (actual ÷ budget)</td></tr>
+<tr><td>Region: catchments with similar area, rainfall, geology</td><td>Programs with the same stated function, or the same stated discretionary flag and size band, or similar descriptions</td></tr>
+<tr><td>Index flood: the site's mean annual flood</td><td>The program's mean ratio</td></tr>
+<tr><td>Regional growth curve \(q(F)\), the 100-year flood</td><td>Regional curve for the ratio; \(Q(0.9)\), a 90% "how bad can the miss be" bound</td></tr>
+<tr><td>Discordant gauge (data error, different hydrology)</td><td>Program whose miss pattern does not match its stated peers (possible mislabel)</td></tr>
+</table></div>
+
+<h4>Inputs and preprocessing</h4>
+<ul>
+<li>SYNTHETIC mocks from <code>/workspace/q2-mock-zbb/output</code>: Corning-like (FY2020–25) and Morgan-Stanley-like (FY2021–25). Programs with ≥ 4 years kept: 901 (178 dropped) and 1,549 (291 dropped). The ratio is invariant to the generator's raking (actual and budget scale together).</li>
+<li>Regions: (A) stated function, 47 / 54 regions; (B) stated discretionary × size band (&lt; 3m, 3–8m, ≥ 8m), 6 / 5; (C) k-means (k = 30) on TF-IDF of descriptions with numeric and history sentences removed; (D) random, sizes matched to B; (O) the generator's true noise class (answer key; the σ = 0.16 class has only 1 / 2 programs). Regions under 5 programs merged into the nearest by mean log size (pre-registered).</li>
+<li>Answer key for scoring only: per-program σ re-derived by re-running the generator's own draws (log ratios match history to 1.1×10⁻⁸); true \(\log q_{90}\) from the generator's formula. No answer-key field enters any estimator.</li>
+<li>Pre-registration written 14:29 ET before any run (<a href="https://github.com/jgridifier/research-lab/blob/main/docs/methods-scout/runs/2026-11-22/PREREG.md">PREREG.md</a>).</li>
+</ul>
+
+<h4>Q2.3 · homogeneity: which scheme can share a band?</h4>
+<div class="table-wrap"><table>
+<tr><th>Scheme</th><th>Median H1 (Corning-like / MS-like)</th><th>Share H1 ≥ 2</th><th>Share Brown–Forsythe p &lt; 0.05</th></tr>
+<tr><td>Stated function</td><td>−0.09 / −0.05</td><td>15% / 7%</td><td>4% / 0%</td></tr>
+<tr><td>Text clusters</td><td>1.42 / 2.16</td><td>43% / 53%</td><td>20% / 7%</td></tr>
+<tr><td>Discretionary × size</td><td>3.56 / 2.34</td><td>67% / 60%</td><td>50% / 20%</td></tr>
+<tr><td>Random (null)</td><td>4.89 / 8.33</td><td>83% / 60%</td><td>67% / 40%</td></tr>
+<tr><td>True σ class (answer key)</td><td>0.92 / −1.72</td><td>0% / 0%</td><td>0% / 0%</td></tr>
+</table></div>
+<p class="small">Computed, 500 kappa simulations per region. Z-DIST: \(|Z^{\rm GNO}|\le1.64\) in 91% / 87% of function regions; best-fitting family varies (GEV 22 and GLO 12 of 47 Corning-like regions). Regional L-skewness median 0.08 / 0.04, max 0.24.</p>
+
+<h4>Q2.1 · borrowing strength for the 90% bound</h4>
+<p>RMSE of \(\log q_{90}\) vs truth (Corning-like / MS-like): at-site empirical 0.115 / 0.118; at-site lognormal 0.106 / 0.107; RFA, discretionary × size 0.095 / 0.095; RFA, text clusters 0.094 / 0.095; RFA, function 0.082 / 0.079; category-pooled lognormal (function) 0.081 / 0.078; EB-shrunk sd to B 0.094 / 0.094, to function 0.086 / 0.085; random regions 0.099 / 0.099; oracle 0.079 / 0.076. Ratio to at-site lognormal with 95% bootstrap interval: RFA B 0.89 [0.85, 0.94] / 0.89 [0.85, 0.92]; RFA A 0.77 [0.74, 0.80] / 0.74 [0.71, 0.76]; category pooling 0.76 / 0.73. <b>Pre-registered pass failed</b> (RFA on B not 20% better, and not ≤ category pooling).</p>
+
+<h4>Q2.2 · discordancy vs planted mislabels</h4>
+<p>AUC among stated-mandatory programs (569 Corning-like, 12 planted): D_i (B) 0.536, D_i (function) 0.597, best comparator L-CV z 0.568. MS-like (21 planted): D_i (B) 0.635, D_i (function) 0.664, best comparator 0.470. <b>Pass on MS-like, fail on Corning-like</b>; D_i ≥ 3 precision 5% / 6%.</p>
+
+<h4>B · walk-forward FY2025 (pre-stated "promising": pinball ≤ 0.95 × at-site and coverage in [0.86, 0.94])</h4>
+<div class="table-wrap"><table>
+<tr><th>Method</th><th>Pinball ratio (Corning-like / MS-like)</th><th>Coverage of 90% bound</th></tr>
+<tr><td>At-site lognormal</td><td>1 / 1</td><td>0.858 / 0.833</td></tr>
+<tr><td>RFA, discretionary × size</td><td>0.946 / 0.931</td><td>0.894 / 0.868</td></tr>
+<tr><td>RFA, function</td><td>0.928 / 0.871</td><td>0.888 / 0.869</td></tr>
+<tr><td>Category-pooled lognormal</td><td>0.923 / 0.860</td><td>0.894 / 0.880</td></tr>
+<tr><td>OLS on stated features</td><td>0.877 / 0.843</td><td>0.909 / 0.899</td></tr>
+<tr><td>Pooled ARDL(1) by region B</td><td>0.872 / 0.847</td><td>0.907 / 0.898</td></tr>
+<tr><td>SARIMAX(1,0,0) per program</td><td>1.216 / 1.344</td><td>0.793 / 0.719</td></tr>
+</table></div>
+<p class="small">Computed; 805 / 1,404 programs with ≥ 3 earlier years; SARIMAX fell back to at-site lognormal for 20 / 39. RFA passes the bar on both books; the pooled regressions are better.</p>
+
+<h4>Deviations from the pre-registration</h4>
+<ul>
+<li>Home reproduction H1 0.52 vs Fortran 0.62 (inside the ±0.25 bar; 20-seed mean 0.57 ± 0.06).</li>
+<li>lmomRFA's regtst errors on sites with n = 4 (no \(t_5\)); \(t_5\) was set to 0 for those sites after checking that D, H and Z are unchanged (as we read the code, t_5 feeds only the regional Wakeby fit).</li>
+<li>Post hoc additions, labelled: the AUC of H1 vs Brown–Forsythe on real category regions; the matched-size power table was pre-registered, the AUC was not.</li>
+<li>The pre-registered NumPy port parity check (R2) was not run; only lmomRFA was used.</li>
+</ul>
+<p class="small">Code and aggregated outputs (no per-program rows): <a href="https://github.com/jgridifier/research-lab/tree/main/docs/methods-scout/runs/2026-11-22/rfa">runs/2026-11-22/rfa/</a>. SYNTHETIC data only.</p>

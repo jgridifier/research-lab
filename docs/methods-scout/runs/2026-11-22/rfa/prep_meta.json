@@ -1,0 +1,65 @@
+{
+ "Corning_mock": {
+  "n_programs": 901,
+  "n_dropped_lt4": 178,
+  "rows": 5211,
+  "years": [
+   2020,
+   2025
+  ],
+  "n_regions": {
+   "reg_A": 47,
+   "reg_B": 6,
+   "reg_C": 30,
+   "reg_D": 6
+  },
+  "n_oracle": 5,
+  "reg_B_sizes": {
+   "mandatory|3to8m": 281,
+   "mandatory|lt3m": 259,
+   "discretionary|3to8m": 191,
+   "discretionary|ge8m": 112,
+   "discretionary|lt3m": 29,
+   "mandatory|ge8m": 29
+  },
+  "mismatch_counts": {
+   "": 848,
+   "stated_transform_actually_run": 15,
+   "stated_mandatory_actually_discretionary": 12,
+   "stated_people_actually_vendor": 11,
+   "stated_run_actually_transform": 9,
+   "stated_growth_actually_declining": 6
+  }
+ },
+ "MorganStanley_mock": {
+  "n_programs": 1549,
+  "n_dropped_lt4": 291,
+  "rows": 7600,
+  "years": [
+   2021,
+   2025
+  ],
+  "n_regions": {
+   "reg_A": 54,
+   "reg_B": 5,
+   "reg_C": 30,
+   "reg_D": 5
+  },
+  "n_oracle": 5,
+  "reg_B_sizes": {
+   "discretionary|ge8m": 734,
+   "mandatory|ge8m": 433,
+   "mandatory|3to8m": 272,
+   "discretionary|3to8m": 68,
+   "mandatory|lt3m": 42
+  },
+  "mismatch_counts": {
+   "": 1452,
+   "stated_growth_actually_declining": 26,
+   "stated_mandatory_actually_discretionary": 21,
+   "stated_transform_actually_run": 18,
+   "stated_people_actually_vendor": 17,
+   "stated_run_actually_transform": 15
+  }
+ }
+}
