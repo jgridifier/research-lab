@@ -1,0 +1,65 @@
+{
+ "prereg": "runs/2026-11-23-build/PREREG-D3.md",
+ "data": "SYNTHETIC Q2 mock ZBB regenerated with seed 20261123",
+ "mocks": {
+  "Corning_mock": {
+   "n_series": 1052,
+   "years": [
+    2020,
+    2021,
+    2022,
+    2023,
+    2024,
+    2025
+   ],
+   "w1_to_truth_denselines": 0.0496154031331335,
+   "w1_to_truth_unnormalised": 0.05244517560969148,
+   "tv_to_truth_denselines": 0.6859819423676741,
+   "tv_to_truth_unnormalised": 0.68944616641328,
+   "clusters_on_pass": true,
+   "dip_unshuffled": {
+    "dip": 0.007535571295522406,
+    "p": 0.9904567768122583
+   },
+   "shuffles": 200,
+   "shuffle_flags_p_lt_0.05": 0,
+   "shuffle_flag_rate": 0.0,
+   "shuffle_p_quantiles": [
+    0.7802128894931915,
+    0.9893069538771646,
+    0.99779884032995
+   ],
+   "clusters_off_pass": true
+  },
+  "MorganStanley_mock": {
+   "n_series": 1774,
+   "years": [
+    2021,
+    2022,
+    2023,
+    2024,
+    2025
+   ],
+   "w1_to_truth_denselines": 0.035928580940136255,
+   "w1_to_truth_unnormalised": 0.03696124165342143,
+   "tv_to_truth_denselines": 0.5937077152649761,
+   "tv_to_truth_unnormalised": 0.5967653920032617,
+   "clusters_on_pass": true,
+   "dip_unshuffled": {
+    "dip": 0.005221089355053721,
+    "p": 0.9944314203143212
+   },
+   "shuffles": 200,
+   "shuffle_flags_p_lt_0.05": 0,
+   "shuffle_flag_rate": 0.0,
+   "shuffle_p_quantiles": [
+    0.9044858398310155,
+    0.9940633769330154,
+    0.9993806722561219
+   ],
+   "clusters_off_pass": true
+  }
+ },
+ "step3_pass": true,
+ "kill_triggered": false
+}

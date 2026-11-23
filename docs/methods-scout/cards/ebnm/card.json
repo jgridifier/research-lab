@@ -166,6 +166,36 @@
           ]
         ]
       }
+    },
+    {
+      "h": "Build 2026-11-23: Rust is faster, but not 5× faster.",
+      "miss": true,
+      "t": "The same solver in NumPy and Rust both match ebnm to 8e-12. One fit at 998 programs: 3.17 ms (NumPy) vs 1.36 ms (Rust) vs 13 ms (R). The keep-Rust rule needs 5×; we got 2.3×, and NumPy alone misses the 3 ms bar by 0.17 ms.",
+      "chart": {
+        "type": "hbars",
+        "title": "One ash fit, 998 programs, ms (lower is better)",
+        "max": 14,
+        "rows": [
+          [
+            "ebnm in R",
+            13.0,
+            "amber",
+            "13"
+          ],
+          [
+            "NumPy port",
+            3.17,
+            "muted",
+            "3.17"
+          ],
+          [
+            "Rust port",
+            1.36,
+            "teal",
+            "1.36"
+          ]
+        ]
+      }
     }
   ]
 }

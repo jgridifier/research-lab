@@ -1,0 +1,62 @@
+{
+ "data": "SYNTHETIC Q2 mock ZBB (2026-11-13)",
+ "host": "box, 8 vCPU shared; bootstrap with 4 workers/threads",
+ "mocks": {
+  "Corning_mock": {
+   "n": 998,
+   "parity_vs_ebnm_oracle_grid": {
+    "numpy": {
+     "d_loglik": 2.1884716261411086e-12,
+     "max_d_mean": 2.9718307148485223e-08,
+     "max_d_lfsr": 3.6087536292583877e-09
+    },
+    "rust": {
+     "d_loglik": 2.9842794901924208e-12,
+     "max_d_mean": 2.971830692644062e-08,
+     "max_d_lfsr": 3.6087528521022705e-09
+    }
+   },
+   "one_fit_ms": {
+    "numpy_median100": 3.1717534984636586,
+    "rust_median200": 1.363375,
+    "R_ebnm_median20": 12.9999999999999
+   },
+   "refits": {
+    "rust_10000_s_4threads": 3.425443307,
+    "numpy_1000_s_4procs": 0.7151702129995101,
+    "numpy_10000_s_4procs_extrapolated": 7.151702129995101
+   },
+   "speedup_rust_vs_numpy_one_fit": 2.3263984585779105
+  },
+  "MorganStanley_mock": {
+   "n": 1702,
+   "parity_vs_ebnm_oracle_grid": {
+    "numpy": {
+     "d_loglik": 4.973799150320701e-12,
+     "max_d_mean": 4.4952654709717876e-08,
+     "max_d_lfsr": 4.612203591269903e-09
+    },
+    "rust": {
+     "d_loglik": 7.929656931082718e-12,
+     "max_d_mean": 4.486201132802847e-08,
+     "max_d_lfsr": 4.60083890430063e-09
+    }
+   },
+   "one_fit_ms": {
+    "numpy_median100": 2.7130320013384335,
+    "rust_median200": 1.814736,
+    "R_ebnm_median20": 19.0000000000001
+   },
+   "refits": {
+    "rust_10000_s_4threads": 5.067905679,
+    "numpy_1000_s_4procs": 0.7856325519969687,
+    "numpy_10000_s_4procs_extrapolated": 7.856325519969687
+   },
+   "speedup_rust_vs_numpy_one_fit": 1.495000926492026
+  }
+ },
+ "accept": "one ash fit <= 3 ms at ~1,000 programs; 10,000 refits <= 30 s on 4 vCPU; keep Rust only if >= 5x faster than the best Python path",
+ "pass_fit_3ms": true,
+ "pass_10000_refits_30s": true,
+ "keep_rust": false
+}

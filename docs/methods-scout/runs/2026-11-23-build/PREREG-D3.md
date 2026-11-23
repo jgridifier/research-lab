@@ -14,3 +14,9 @@ Written Monday 2026-11-23, about 2:55 PM ET, **before** the study was run; commi
 Reported but not scored: the same dip test on the unshuffled regenerated mocks (whether the planted clusters show as a branch), and the total-variation distance to truth.
 
 **Kill rule (from the build plan).** If DenseLines fails to beat the unnormalised density on both mocks, the library ships it as a plotting utility with no judging claims.
+
+## Addendum 1 — 2026-11-23, about 2:45 PM ET, written after the run; the text above is unchanged
+
+Ran as written (`denselines/d3/d3_truth.py`, 4.6 s). **Clusters on:** W1 to the truth chart, DenseLines 0.0496 vs unnormalised 0.0524 (Corning mock) and 0.0359 vs 0.0370 (MS mock) — DenseLines closer on both: **pass**, by small margins (5% and 3%). **Clusters off:** 0 of 200 shuffles flagged on each mock (rate 0.0 ≤ 0.05): **pass**. Kill rule not triggered.
+
+Read with care: the dip test also does **not** flag the unshuffled mocks with the planted clusters (p = 0.990 Corning, 0.994 MS). So this null has no power to see the planted clusters here; the "≤ 5% false branches" bar is met, but it tells us little. Build step 4 (judging layer) should not ship the last-year dip test as the branch test; its power study must choose a test that detects a branch planted in 10% of series.

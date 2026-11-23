@@ -126,6 +126,41 @@
           ]
         ]
       }
+    },
+    {
+      "h": "Build 2026-11-23: a little closer to the truth, and no false branches.",
+      "t": "Pre-registered, on mocks regenerated with a new seed: the DenseLines chart is closer to the true-path chart than the unnormalised one on both mocks (W1 0.0496 vs 0.0524; 0.0359 vs 0.0370). Shuffling years made the branch test fire in 0 of 200 runs, but it also missed the planted clusters, so that test has no power here.",
+      "chart": {
+        "type": "hbars",
+        "title": "Distance to the true-path chart (W1, lower is better)",
+        "max": 0.06,
+        "rows": [
+          [
+            "Unnormalised · Corning",
+            0.0524,
+            "amber",
+            "0.0524"
+          ],
+          [
+            "DenseLines · Corning",
+            0.0496,
+            "teal",
+            "0.0496"
+          ],
+          [
+            "Unnormalised · MS",
+            0.037,
+            "amber",
+            "0.0370"
+          ],
+          [
+            "DenseLines · MS",
+            0.0359,
+            "teal",
+            "0.0359"
+          ]
+        ]
+      }
     }
   ]
 }
