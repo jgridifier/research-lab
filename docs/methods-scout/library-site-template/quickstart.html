@@ -1,0 +1,61 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Quickstart · {{LIB_NAME}}</title>
+<meta name="description" content="Install and run {{LIB_NAME}}">
+<link rel="icon" href="assets/favicon-32.png" type="image/png" sizes="32x32">
+<link rel="icon" href="favicon.ico" sizes="any">
+<link rel="apple-touch-icon" href="assets/logo-192.png">
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Roboto+Mono:wght@400;500&display=swap">
+<link rel="stylesheet" href="assets/site.css">
+<link rel="alternate" type="text/plain" href="{{REPO_URL}}/blob/main/llms.txt" title="llms.txt">
+
+</head>
+<body>
+<header class="topbar"><div class="in">
+<a class="wordmark" href="index.html"><img src="assets/logo.png" alt="" width="32" height="32"><span>{{LIB_NAME}}</span></a>
+<nav class="nav" aria-label="Site">
+<a href="index.html">Overview</a>
+<a href="how-it-works.html">How it works</a>
+<a href="quickstart.html">Quickstart</a>
+<a href="example.html">Worked example</a>
+<a href="judging.html">How to judge</a>
+<a href="benchmarks.html">Benchmarks</a>
+<a href="api.html">API</a>
+<a href="provenance.html">Provenance</a>
+<a href="cite.html">Cite &amp; changelog</a>
+<a href="{{REPO_URL}}">GitHub</a>
+</nav>
+</div></header>
+<section class="hero">
+<p class="eyebrow">Quickstart</p>
+<h1>Run it in a minute</h1>
+<p class="lede">Install from source, run the 15-line agent quickstart, read the verdict.</p>
+</section>
+<main>
+<article class="prose">
+<h2>Install</h2>
+<pre><code>git clone {{REPO_URL}}.git
+cd {{REPO_NAME}}
+pip install -e ".[fast]"</code></pre>
+<p>Not on a package index yet: releases need the maintainer's explicit go.</p>
+<h2>First run</h2>
+<p>This is <code>examples/agent_quickstart.py</code>. CI runs it on every push.</p>
+<pre><code>{{QUICKSTART_CODE}}</code></pre>
+<h2>What you should see</h2>
+<pre><code>{{QUICKSTART_OUTPUT}}</code></pre>
+<div class="callout"><p><b>Next:</b> read <a href="judging.html">how to judge the output</a> before you trust a result.</p></div>
+</article>
+</main>
+<footer class="foot"><div class="in">
+<div><h4>{{LIB_NAME}}</h4><p>{{TAGLINE}}</p><p>{{LICENSE}} licensed. Nothing here is published to a package index until the maintainer says so.</p></div>
+<div><h4>For humans</h4><a href="quickstart.html">Quickstart</a><a href="judging.html">How to judge the output</a><a href="benchmarks.html">Benchmarks</a><a href="provenance.html">Provenance</a></div>
+<div><h4>For agents</h4><a href="{{REPO_URL}}/blob/main/AGENTS.md">AGENTS.md</a><a href="{{REPO_URL}}/blob/main/llms.txt">llms.txt</a><a href="{{REPO_URL}}/blob/main/docs/api.md">docs/api.md</a><a href="{{REPO_URL}}/blob/main/docs/HOW_TO_JUDGE.md">docs/HOW_TO_JUDGE.md</a></div>
+<div><h4>Project</h4><a href="{{REPO_URL}}">Repository</a><a href="{{REPO_URL}}/blob/main/CHANGELOG.md">Changelog</a><a href="{{REPO_URL}}/blob/main/CITATION.cff">CITATION.cff</a><a href="{{REPO_URL}}/blob/main/NOTICE">NOTICE</a></div>
+</div></footer>
+<script src="assets/site.js"></script>
+</body>
+</html>

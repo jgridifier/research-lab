@@ -1,0 +1,68 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>How to judge the output · {{LIB_NAME}}</title>
+<meta name="description" content="How to judge {{LIB_NAME}} output: diagnostics, nulls, failure modes, minimum data">
+<link rel="icon" href="assets/favicon-32.png" type="image/png" sizes="32x32">
+<link rel="icon" href="favicon.ico" sizes="any">
+<link rel="apple-touch-icon" href="assets/logo-192.png">
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Roboto+Mono:wght@400;500&display=swap">
+<link rel="stylesheet" href="assets/site.css">
+<link rel="alternate" type="text/plain" href="{{REPO_URL}}/blob/main/llms.txt" title="llms.txt">
+
+</head>
+<body>
+<header class="topbar"><div class="in">
+<a class="wordmark" href="index.html"><img src="assets/logo.png" alt="" width="32" height="32"><span>{{LIB_NAME}}</span></a>
+<nav class="nav" aria-label="Site">
+<a href="index.html">Overview</a>
+<a href="how-it-works.html">How it works</a>
+<a href="quickstart.html">Quickstart</a>
+<a href="example.html">Worked example</a>
+<a href="judging.html">How to judge</a>
+<a href="benchmarks.html">Benchmarks</a>
+<a href="api.html">API</a>
+<a href="provenance.html">Provenance</a>
+<a href="cite.html">Cite &amp; changelog</a>
+<a href="{{REPO_URL}}">GitHub</a>
+</nav>
+</div></header>
+<section class="hero">
+<p class="eyebrow">How to judge the output</p>
+<h1>Trust it only when the checks say so</h1>
+<p class="lede">Every result comes with <code>.diagnostics()</code> and <code>.null_test()</code>, each returning pass, warn or fail with a reason. This page says what each one means.</p>
+</section>
+<main>
+<article class="prose">
+<nav class="toc" aria-label="On this page"><a href="#diagnostics">Diagnostics</a><a href="#null">The null test</a><a href="#failure">Failure modes</a><a href="#minimum">Minimum data size</a><a href="#notuse">When not to use it</a></nav>
+<h2 id="diagnostics">Diagnostics</h2>
+<div class="table-wrap"><table>
+<tr><th>Check</th><th>What it looks at</th><th>Pass</th><th>Warn</th><th>Fail</th></tr>
+<tr><td><code>{{CHECK_1}}</code></td><td>{{CHECK_1_WHAT}}</td><td><span class="chip pass">pass</span> {{CHECK_1_PASS}}</td><td><span class="chip warn">warn</span> {{CHECK_1_WARN}}</td><td><span class="chip fail">fail</span> {{CHECK_1_FAIL}}</td></tr>
+</table></div>
+<h2 id="null">The null test</h2>
+<p>{{NULL_TEST_MEANING}}</p>
+<div class="callout"><p><b>Reading the p-value.</b> {{P_VALUE_READING}}</p></div>
+<h2 id="failure">Failure modes</h2>
+<ul><li><b>{{FAILURE_1}}.</b> {{FAILURE_1_DETAIL}}</li></ul>
+<h2 id="minimum">Minimum data size</h2>
+<p>From the pre-registered power study (<a href="{{REPO_URL}}/blob/main/{{POWER_STUDY_PATH}}">results</a>):</p>
+<div class="cards"><div class="card"><div class="k">Minimum</div><div class="v">{{MIN_DATA}}</div><p>{{MIN_DATA_NOTE}}</p></div></div>
+<figure><div class="ph">Power curve: real numbers from the power study (use a data-driven .chart.lines)</div><figcaption><b>Figure 1.</b> {{POWER_CAPTION}}</figcaption></figure>
+<h2 id="notuse">When not to use it</h2>
+<ul><li>{{DONT_USE_1}}</li></ul>
+<p>Agents read the same content in <a href="{{REPO_URL}}/blob/main/docs/HOW_TO_JUDGE.md">docs/HOW_TO_JUDGE.md</a>.</p>
+</article>
+</main>
+<footer class="foot"><div class="in">
+<div><h4>{{LIB_NAME}}</h4><p>{{TAGLINE}}</p><p>{{LICENSE}} licensed. Nothing here is published to a package index until the maintainer says so.</p></div>
+<div><h4>For humans</h4><a href="quickstart.html">Quickstart</a><a href="judging.html">How to judge the output</a><a href="benchmarks.html">Benchmarks</a><a href="provenance.html">Provenance</a></div>
+<div><h4>For agents</h4><a href="{{REPO_URL}}/blob/main/AGENTS.md">AGENTS.md</a><a href="{{REPO_URL}}/blob/main/llms.txt">llms.txt</a><a href="{{REPO_URL}}/blob/main/docs/api.md">docs/api.md</a><a href="{{REPO_URL}}/blob/main/docs/HOW_TO_JUDGE.md">docs/HOW_TO_JUDGE.md</a></div>
+<div><h4>Project</h4><a href="{{REPO_URL}}">Repository</a><a href="{{REPO_URL}}/blob/main/CHANGELOG.md">Changelog</a><a href="{{REPO_URL}}/blob/main/CITATION.cff">CITATION.cff</a><a href="{{REPO_URL}}/blob/main/NOTICE">NOTICE</a></div>
+</div></footer>
+<script src="assets/site.js"></script>
+</body>
+</html>

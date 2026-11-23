@@ -1,0 +1,15 @@
+{
+  "LIB_NAME": "examplelib",
+  "REPO_NAME": "examplelib",
+  "REPO_URL": "https://github.com/jgridifier/examplelib",
+  "TAGLINE": "One-line description of what the method does",
+  "LICENSE": "MIT",
+  "METHOD_FAMILY": "Method family, e.g. compositional time series",
+  "HERO_HEADLINE": "A short, plain-language promise",
+  "ONE_PARAGRAPH_SUMMARY": "Two or three sentences a non-specialist can follow.",
+  "STATUS_LINE": "v0.1.0 · source install only · synthetic and public data only",
+  "PARITY_HEADLINE": "1,260 / 1,280",
+  "SPEEDUP_HEADLINE": "160×",
+  "BACKEND": "Numba",
+  "CREDIT_LINE": "The method is by Author et al. (Year, Journal), implemented in the original package <a href=\"https://example.org\">name</a>."
+}

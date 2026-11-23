@@ -160,11 +160,11 @@ Every approved method ends as an **agent-ready library**. Reference model: [jgri
 4. **Parity tests** with the original implementation as a black-box oracle, run as a separate program; fixtures come from scripts under `oracle/`.
 5. **A judging layer:** library functions such as `.diagnostics()` and `.null_test()` that return **pass / warn / fail** with a reason, plus `docs/HOW_TO_JUDGE.md` covering what good output looks like, which null to read, failure modes, when not to use it, and the **minimum data size from a power study**.
 6. **Examples** on public or SYNTHETIC data only, including `examples/agent_quickstart.py` (at most 15 lines), and README code blocks that run in CI.
-7. **Docs:** AGENTS.md, llms.txt, docs/api.md, a GitHub Pages docs site, CHANGELOG, CITATION.cff, and a **provenance note** (NOTICE / README): built by AI coding agents from the papers, benchmarked against the original, an independent implementation. Legal analysis never goes on GitHub.
+7. **Docs:** AGENTS.md, llms.txt, docs/api.md, the library's **own repo + human Pages site in the Google Research style built from the template** ([library-site-template/](library-site-template/README.md); style only, no Google branding): overview with a hero figure, how it works (intuition + KaTeX math), quickstart, worked example with real output plots, how to judge the output, benchmarks (parity + speed charts), API reference, provenance, and citation + changelog, linking AGENTS.md and llms.txt for agents. Plus CHANGELOG, CITATION.cff, and a **provenance note** (NOTICE / README): built by AI coding agents from the papers, benchmarked against the original, an independent implementation. Legal analysis never goes on GitHub.
 8. **Release-ready metadata** for PyPI and, for a Rust core, crates.io. Wheels build in CI. **Nothing is published** without Jared's explicit go.
 9. **A skill card** (`SKILL.md`) for the analytical coding agent: when to use it, the call, how to judge the output, when not to use it. Promotion into analysis-skills still needs Jared's own dated `methods/<method>/APPROVAL.md` (see below).
 
-Logos only via Grok Imagine; agents do not draw them.
+Logos and illustrations only via Grok Imagine; agents do not draw them. Charts and plots come from the package's real output. (Jared, 2026-11-23: "each of these packages should be a repo with a beautiful pages site that explains it and everything for humans - let's use google research theme".)
 
 ### Build plan (`build_plan` in the state file)
 
