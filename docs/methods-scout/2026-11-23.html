@@ -1,0 +1,77 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Methods scout · 2026-11-23 · research-lab</title>
+<meta name="description" content="Methods scout 2026-11-23, aimed at Q3: partial information decomposition (computational neuroscience) splits what the SCB and the stress drawdown say about bank payouts into shared, unique and synergistic information.">
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,400..800&family=Newsreader:ital,opsz,wght@0,6..72,400..600;1,6..72,400..500&family=JetBrains+Mono:wght@400;500;700&display=swap">
+<link rel="stylesheet" href="../assets/brief.css">
+<link rel="stylesheet" href="feedback.css">
+<!-- Methods Scout home-screen / PWA tags. Paste into <head> of every methods-scout page.
+     Paths are root-absolute so they resolve under https://jgridifier.github.io/research-lab/. -->
+<link rel="apple-touch-icon" sizes="180x180" href="/research-lab/methods-scout/icons/apple-touch-icon.png">
+<link rel="icon" type="image/png" sizes="32x32" href="/research-lab/methods-scout/icons/favicon-32.png">
+<link rel="icon" type="image/png" sizes="192x192" href="/research-lab/methods-scout/icons/icon-192.png">
+<link rel="manifest" href="/research-lab/methods-scout/manifest.webmanifest">
+<meta name="apple-mobile-web-app-title" content="Methods Scout">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="theme-color" content="#0F2A23">
+</head>
+<body><main>
+<header class="mast">
+  <div class="date">Monday · November 23, 2026 · scheduled edition · aimed at Q3 · exotic · public data</div>
+  <h1>Methods scout</h1>
+  <p class="dek">One borrowed tool with a full research card. From computational neuroscience: <em>partial information decomposition</em>, the way neuroscientists ask whether two brain areas carry the same information about a stimulus, different information, or information that only shows up when both are read together. Here the two "brain areas" are the stress capital buffer and the stress-test drawdown, and the "stimulus" is what each bank paid out.</p>
+  <nav><a href="index.html">Queue</a><a href="archive.html">Archive</a><a href="board.html">Feedback board</a><a href="secret-sauce.html">Secret sauce</a><a href="https://github.com/jgridifier/research-lab/blob/main/docs/methods-scout/QUESTIONS.md">Research questions</a><a href="https://github.com/jgridifier/research-lab/tree/main/docs/methods-scout/runs/2026-11-23">Run folder</a></nav>
+</header>
+
+<div class="ticker">
+  <span><b>●</b> Q3.2: within a test year the SCB carries 0.023 bits about payout ranks, all shared with the drawdown. The pair adds 0.097 bits of synergy, and that synergy is the SCB's dividend add-on (SCB − drawdown). OLS reads the same fact as "a higher SCB, higher payouts" (t = +5.07).</span>
+  <span><b>●</b> Miss: the synergy is significant only under MMI, the measure with the most synergy; under Idep and at the measure-free lower bound its CI reaches 0 (Idep power 32% at n = 132).</span>
+</div>
+
+<section class="tldr">
+<h2>The short version</h2>
+<ul>
+<li><b>Partial information decomposition, Gaussian-copula form (MMI and Idep)</b> · computational neuroscience · Q3 · <span class="verdict interesting">interesting</span> · home field: promising but contested. Williams–Beer AND gate, Barrett's closed form and Kay &amp; Ince's Example 4 all reproduced, but redundancy measures disagree. On 2021–2025 stress tests it explains the SCB's sign flip in OLS as synergy and traces it to the dividend add-on. After 2020, drawdown and pre-tax income say more of the same about payouts (shared 0.036 → 0.128 bits, p = 0.033). Adverse vs severely adverse adds nothing robust.</li>
+</ul>
+</section>
+
+<section id="gaussian-pid">
+<div class="card teal"><div class="card-top"><span class="tag teal">Method · Q3</span><span class="verdict interesting">interesting</span></div>
+<h3><a href="m/gaussian-pid.html">Partial information decomposition: research card →</a></h3>
+<p>On the card: the usual tools (OLS with VIF, commonality) against the PID atoms on the same data; the add-on mechanism check; the measure-dependence miss with the power study; Q3.4 and Q3.3 results; the walk-forward benchmark against OLS, ARDL and SARIMAX; the home-field reproductions; and three secret-sauce avenues.</p>
+<figure><img src="fig/2026-11-23/pid_atoms.png" alt="Stacked bars of shared, unique and synergistic information about payout/RWA from the SCB and the CET1 drawdown under MMI and Idep, and with the dividend add-on in place of the SCB"></figure>
+<p class="found-via"><strong>Found via</strong> · web search 2026-11-23 14:23 ET → <a href="https://github.com/praveenv253/gpid">gpid</a> (<a href="https://arxiv.org/abs/2307.10515">Venkatesh et al. 2023</a>), <a href="https://arxiv.org/abs/1411.2832">Barrett (2015)</a>; X 14:40 ET → <a href="https://x.com/Encoding/status/2118725778070266240">post</a> → <a href="https://arxiv.org/abs/2611.08131">Van Santen, Rosseel &amp; Marinazzo (2026)</a>. Novelty: exotic-transfer.</p>
+<p><b>Data.</b> Public: Fed stress-test results (severely adverse 2013–2025, Adverse 2014–2019), FR Y-9C HI-A payouts, SCB from the Large Bank Capital Requirements PDFs (2021–2025), the lab's verified panel <code>runs/2026-11-17/statis/q3_pim_panel.csv</code>. Descriptive.</p>
+<div class="table-wrap"><table>
+<tr><th>Sources → target (years, n)</th><th>I₁ / I₂ / both (bits)</th><th>MMI shared · unique · synergy</th><th>Synergy CI · null p</th><th>Idep synergy</th></tr>
+<tr><td><b>SCB, drawdown → payout/RWA</b> (2021–25, 132)</td><td>0.023 / 0.111 / 0.208</td><td>0.023 · 0.087 (dd) · <b>0.097</b></td><td>0.008–0.186 · 0.0002</td><td>0.078 (CI to 0)</td></tr>
+<tr><td>SCB, drawdown → dividends/RWA</td><td>0.047 / 0.203 / 0.388</td><td>0.047 · 0.155 · <b>0.185</b></td><td>0.034–0.301 · 0.0002</td><td>0.151 (CI to 0)</td></tr>
+<tr><td>SCB, drawdown → net buybacks/RWA</td><td>0.002 / 0.009 / 0.006</td><td>joint p = 0.22</td><td>—</td><td>0</td></tr>
+<tr><td>add-on (SCB − dd), drawdown → payout/RWA (post hoc)</td><td>0.282 / 0.111 / 0.276</td><td>0.111 · 0.171 (add-on) · −0.006</td><td>—</td><td>0</td></tr>
+<tr><td>SA dd, Adverse dd → payout/RWA (2014–19, 177)</td><td>0.037 / 0.001 / 0.074</td><td>0.001 · 0.035 (SA) · 0.037</td><td>−0.004–0.120 · 0.0016</td><td>0.036</td></tr>
+<tr><td>dd, pre-tax → payout/RWA, 2013–19 (195)</td><td>0.036 / 0.184 / 0.186</td><td>0.036 · 0.148 (pre-tax) · 0.002</td><td>· 0.24</td><td>0</td></tr>
+<tr><td>dd, pre-tax → payout/RWA, 2020–25 (165)</td><td>0.128 / 0.208 / 0.212</td><td>0.128 · 0.080 (pre-tax) · 0.004</td><td>· 0.18</td><td>0</td></tr>
+</table></div>
+<p class="small">Computed; bits bias-corrected; within-year copula ranks; firm-block bootstrap (2,000) and within-year Freedman–Lane nulls (4,999). Holm over the five P1 synergy tests: 0.001, 0.001, 0.020, 0.64, 0.72. Code: <a href="https://github.com/jgridifier/research-lab/tree/main/docs/methods-scout/runs/2026-11-23/pid">runs/2026-11-23/pid</a>.</p>
+<aside class="scout-respond" data-issue="99" data-slug="gaussian-pid">
+  <span class="scout-chip status-proposed">Proposed</span>
+  <a class="scout-respond-btn" href="https://github.com/jgridifier/research-lab/issues/99">Respond on GitHub</a>
+  <p class="scout-respond-hint">👍 go ahead · 👎 drop · or just comment what you think</p>
+</aside>
+</div>
+</section>
+
+<section>
+<div class="card"><div class="card-top"><span class="tag">Notes</span></div>
+<ul>
+<li><b>Question rotation.</b> One method today. Q1 and Q2 ran on 11-22; Q3 last ran on 11-20, so today is Q3. The 11-21 run failed and published nothing; the 11-22 edition was published and merged (PR #87).</li>
+<li><b>Steering.</b> No new comments from Jared on scout issues since 11-19. Standing steering applied: exotic transfer (#46); new to the lab (no information-decomposition method before; LKIF on 11-20 is information <i>flow</i>, a different tool); ARDL and SARIMAX(X) next to OLS for the time-indexed benchmark (#63). The pick targets the 11-16 pim result that SCB and drawdown were "jointly unidentified".</li>
+<li><b>Pre-registration.</b> Written at 14:27 ET before any run on our data, with an Idep addendum at 14:33 ET after the home-field reproduction: <a href="https://github.com/jgridifier/research-lab/blob/main/docs/methods-scout/runs/2026-11-23/PREREG.md">runs/2026-11-23/PREREG.md</a>. Added after results, labelled: the dividend add-on mechanism check; the Hi-Fi–MMI segment bounds. Deviation: gpid parity 1.1×10⁻⁷, not ≤ 10⁻⁹ (gpid's ridge). Failed or not met: synergy robust across measures; the Q3.4 synergy CI.</li>
+<li><b>Watchlist</b> (not run): Hi-Fi–MMI segment PID, multivariate Gaussian ~G-PID (gpid), O-information, Integrated Information Decomposition (PhiID), JIDT. See <a href="https://github.com/jgridifier/research-lab/blob/main/docs/methods-scout/watchlist.md">watchlist.md</a>.</li>
+<li><b>Data Jared would need to supply.</b> Nothing private for today's run. Still missing for Q3: firm-level baseline projections (not published), the October 2020 SCB PDF, and each firm's planned-dividend add-on as published numbers (we infer it as SCB − drawdown above the floor).</li>
+</ul>
+</div>
+</section>
+</main></body></html>

@@ -1,0 +1,46 @@
+{
+ "B": {
+  "ols_dd": 1.0536447396689257,
+  "ols_pt": 1.0200804485956563,
+  "ols_pt_dd": 1.0262175167060945,
+  "ardl_dd": 1.0657420112097546,
+  "ardl_pt": 1.0641305327342832,
+  "ardl_pt_dd": 1.069195644024259,
+  "sarimax_pt": 1.1167255334553816,
+  "sarimax_pt_dd": 1.169941632122331,
+  "n": 254,
+  "n_sarimax_firm_fits": 118,
+  "climatology_prev_mean": 1.0652623969360853,
+  "ols_dd_added_pct": 0.6016258932211693,
+  "ardl_dd_added_pct": 0.4759858996772781,
+  "sarimax_dd_added_pct": 4.765369562410537,
+  "ols_pt_added_to_dd_pct": -2.6030807092957464,
+  "ardl_pt_added_to_dd_pct": 0.32405899159253515
+ },
+ "B_scb_unscored": {
+  "ols_dd": {
+   "n": 52,
+   "rmse": 1.300705128018413
+  },
+  "ols_dd_scb": {
+   "n": 52,
+   "rmse": 1.2174470449517936
+  },
+  "ardl_dd": {
+   "n": 52,
+   "rmse": 1.2656739466691205
+  },
+  "ardl_dd_scb": {
+   "n": 52,
+   "rmse": 1.236785134681646
+  }
+ },
+ "timing": {
+  "ours_mmi_us": 93.12378600225202,
+  "ours_idep_us": 2.3986404994502664,
+  "gpid_mmi_us": 251.78247199801265,
+  "copnorm_360x3_us": 363.1169639993459,
+  "dit_broja_terciles_ms": 393.26946266616386,
+  "dit_ccs_terciles_ms": 48.26651133286456
+ }
+}

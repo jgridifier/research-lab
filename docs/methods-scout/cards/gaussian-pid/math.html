@@ -1,0 +1,47 @@
+<h4>Notation</h4>
+<div class="table-wrap"><table>
+<tr><th>Symbol</th><th>Meaning</th><th>Here</th></tr>
+<tr><td>\(T\)</td><td>target</td><td>a firm's Y-9C payout/RWA in the test's calendar year (also dividends/RWA, net buybacks/RWA, next-year payout)</td></tr>
+<tr><td>\(X_1,\ X_2\)</td><td>the two sources</td><td>SCB and SA CET1 drawdown (Q3.2); SA and Adverse drawdown (Q3.4); drawdown and SA pre-tax income (Q3.3)</td></tr>
+<tr><td>\(z\)</td><td>copula-normal score \(\Phi^{-1}(\mathrm{rank}/(n_y+1))\), computed within each test year</td><td>removes year-level payout regimes and outliers; only the order of firms in a year matters</td></tr>
+<tr><td>\(I(T;X)\)</td><td>mutual information, in bits</td><td>how much knowing a firm's stress result narrows down its payout rank</td></tr>
+<tr><td>\(R,\ U_1,\ U_2,\ S\)</td><td>redundancy, unique information of each source, synergy</td><td>shared by SCB and drawdown; only in SCB; only in drawdown; only visible when both are known</td></tr>
+<tr><td>\(a,\ c,\ b\)</td><td>\(\mathrm{corr}(T,X_1)\), \(\mathrm{corr}(T,X_2)\), \(\mathrm{corr}(X_1,X_2)\) of the \(z\) scores</td><td>P1: \(a=-0.20\) (SCB), \(c=-0.39\) (drawdown), \(b=0.90\)</td></tr>
+<tr><td>\(\mathrm{coI}\)</td><td>co-information \(I(T;X_1)+I(T;X_2)-I(T;X_1,X_2)\) = redundancy minus synergy</td><td>negative when synergy dominates</td></tr>
+</table></div>
+
+<h4>Assumptions</h4>
+<ul>
+<li>The three copula scores are jointly Gaussian (a Gaussian copula). Then all information quantities are functions of \(a,b,c\) and are a lower bound on the information in the raw data (Ince et al. 2017). Ties (zero payouts) get average ranks.</li>
+<li>Within a test year, firms are exchangeable under the null; firms are the independent units for uncertainty (firm-block bootstrap).</li>
+<li>A PID needs one extra definition beyond Shannon theory, the redundancy. That choice is the contested part (see Robust at home). We report MMI (pre-registered) and Idep, plus the bounds every nonnegative PID must satisfy.</li>
+</ul>
+
+<h4>The estimator</h4>
+<p>The three equations Shannon theory gives, with four unknowns (Williams &amp; Beer 2010):</p>
+$$I(T;X_1)=R+U_1,\qquad I(T;X_2)=R+U_2,\qquad I(T;X_1,X_2)=R+U_1+U_2+S.$$
+<p>For Gaussian scores, \(I(T;X_j)=-\tfrac12\log_2(1-\rho_j^2)\) and \(I(T;X_1,X_2)=\tfrac12\log_2\frac{1-b^2}{1-a^2-b^2-c^2+2abc}\), each with the analytic small-sample entropy correction used by gcmi. The fourth equation is the redundancy:</p>
+$$R_{\mathrm{MMI}}=\min\{I(T;X_1),\,I(T;X_2)\}\quad\text{(Barrett 2015, eq. 33)},\qquad \mathrm{unq}_1^{\mathrm{dep}}=\min\{b_e,\,d_e,\,i_e,\,k_e\}\quad\text{(Kay \& Ince 2018, Table 5)},$$
+<p>where the Idep edge values are \(b_e=d_e=I(T;X_1)\), \(i_e=\tfrac12\log_2\frac{1-a^2c^2}{(1-a^2)(1-c^2)}-I(T;X_2)\), \(k_e=I(T;X_1,X_2)-I(T;X_2)\), and symmetrically for \(X_2\). Every nonnegative PID lies on the segment \(\max(0,\mathrm{coI})\le R\le R_{\mathrm{MMI}}\), so \(S\ge\max(0,-\mathrm{coI})\) (Van Santen, Rosseel &amp; Marinazzo 2026).</p>
+
+<h4>Why it works, step by step</h4>
+<div class="step"><b class="n">Step 1 · MMI synergy is the weak source's conditional information</b>Say \(X_2\) is the stronger source. Then \(R=I(T;X_1)\), \(U_1=0\) and \(S=I(T;X_1,X_2)-I(T;X_2)\). By the chain rule \(I(T;X_1,X_2)=I(T;X_2)+I(T;X_1\mid X_2)\), so \(S_{\mathrm{MMI}}=I(T;X_1\mid X_2)=-\tfrac12\log_2\big(1-r^2_{T1\cdot2}\big)\), where the partial correlation is \(r_{T1\cdot2}=(a-bc)/\sqrt{(1-b^2)(1-c^2)}\).</div>
+<div class="step"><b class="n">Step 2 · zero synergy is a line, and our point is far from it</b>From step 1, \(S_{\mathrm{MMI}}=0\iff a=bc\iff b=a/c\) (Barrett 2015, below eq. 67). For P1, \(a/c=0.51\) but the observed source correlation is \(b=0.90\). Because \(S\) grows quickly as \(b\to1\) (the determinant \(1-a^2-b^2-c^2+2abc\to0\)), two highly correlated sources that point slightly differently at the target create a lot of synergy. That is the "Barrett plane" chart.</div>
+<div class="step"><b class="n">Step 3 · why OLS flips the SCB's sign</b>The standardized OLS slope on \(X_1\) given \(X_2\) is \(\beta_1=(a-bc)/(1-b^2)\), the same numerator as in step 1. With \(a=-0.20,\ b=0.90,\ c=-0.39\): \(a-bc=-0.20+0.35>0\), so \(\beta_1>0\) although the SCB alone is negatively related to payouts. OLS shows this as a large positive \(t\) with an inflated variance. Commonality analysis shows it as a negative common share \(a^2+c^2-R^2_{12}<0\). PID books the same fact as a nonnegative amount of synergy, and does not call the SCB "positive for payouts".</div>
+
+<h4>The null and inference</h4>
+<ul>
+<li><b>Any information at all:</b> permute \(T\) within test year (4,999), statistic \(I(T;X_1,X_2)\).</li>
+<li><b>Synergy:</b> a Freedman–Lane null. Regress the weaker source on the stronger, permute the residuals within year (4,999) and rebuild the weaker source. This keeps the source correlation and breaks only the weak source's conditional link to \(T\).</li>
+<li><b>Uncertainty:</b> firm-block bootstrap (2,000 resamples of the 34–40 firms, with the copula recomputed per resample) for every atom. An atom is called "present" only if its 95% CI excludes 0 <i>and</i> its null p &lt; 0.05. It is called "robust" only if that holds under MMI and Idep.</li>
+<li><b>Multiplicity:</b> the five P1 synergy tests (payout, dividends, next-year, buybacks, SCB vs pre-tax) Holm-adjusted: 0.001, 0.001, 0.020, 0.64, 0.72 (computed). Era differences: exact over all 1,716 assignments of 7 of the 13 test years.</li>
+<li><b>Calibration on our shape</b> (Gaussian simulations, \(n=132\), 300 each): with true synergy 0, the Freedman–Lane test rejects 3.3% and the full MMI rule 0%. At the observed shape (true \(S_{\mathrm{MMI}}=0.104\), \(S_{\mathrm{dep}}=0.079\)): MMI rule 88% power, Idep CI rule 32%. With a weaker effect (\(a=-0.27\), true \(S_{\mathrm{MMI}}=0.026\)): 17% and 0.7%.</li>
+</ul>
+
+<div class="toy"><h5>Toy example (computed by <code>cards/_toys/toys.py</code>)</h5>
+<p>Correlations \(a=\mathrm{corr}(T,\mathrm{SCB})=-0.2\), \(c=\mathrm{corr}(T,\mathrm{dd})=-0.4\), \(b=\mathrm{corr}(\mathrm{SCB},\mathrm{dd})=0.9\). \(R^2\): SCB 0.04, dd 0.16, both \((0.04+0.16-2(-0.2)(0.9)(-0.4))/(1-0.81)=0.056/0.19=0.2947\). In bits: \(I_1=0.0294\), \(I_2=0.1258\), \(I_{12}=0.2519\).</p>
+<p>MMI: redundancy 0.0294, unique SCB 0, unique dd 0.0963, synergy \(0.2519-0.1258=0.1261\). Idep: unique SCB 0.0248, unique dd 0.1211, redundancy 0.0046, synergy 0.1013.</p>
+<p>The usual tools: standardized OLS betas SCB \(+0.842\), dd \(-1.158\) (the SCB flips sign). Commonality: unique 0.1347 and 0.2547, common \(-0.0947\). The zero-synergy line is \(b=a/c=0.5\). At \(b=0.9\) the SCB's partial correlation with \(T\) given dd is 0.401.</p></div>
+
+<div class="diff"><b>How it differs from the standard tool.</b> Regression (OLS, ARDL, SARIMAX with both regressors) asks for a coefficient per source holding the other fixed. With collinear sources that question is unstable and can flip signs, and variance inflation is treated as a nuisance. Commonality analysis splits \(R^2\) but allows negative shares. PID asks a different question: how much of what each source says is said by the other, how much only by it, and how much only by the pair. It answers in nonnegative bits on a rank (copula) scale that is robust to the payout outliers. It costs one extra assumption, the redundancy measure, and we show how much that choice moves the answer.</div>
+<p class="cite">Followed: Barrett (2015), <i>Phys. Rev. E</i> 91:052802, arXiv:1411.2832, Sec. 4.2–4.3, eqs. (33), (64)–(67) (closed form checked to 10<sup>−15</sup>). Kay &amp; Ince (2018), arXiv:1803.02030, Sec. 2, Table 5, Proposition 2, Example 4 (reproduced to 4 dp). Copula estimator: Ince et al. (2017), <i>Hum. Brain Mapp.</i> 38(3):1541–1573 (abstract read; bias correction as in the gcmi code, parity 2×10<sup>−15</sup>). Lattice: Williams &amp; Beer (2010), arXiv:1004.2515 (abstract read). Segment bounds: Van Santen, Rosseel &amp; Marinazzo (2026), arXiv:2611.08131 (abstract read; the segment statement is taken from the abstract, and its equations were not checked).</p>

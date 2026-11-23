@@ -91,3 +91,9 @@ totals [23.0, 25.0, 27.0, 29.0] var(total) 6.667 sum of vars 10.0 VR 0.667
 shares [[0.435, 0.217, 0.348], [0.48, 0.24, 0.28], [0.519, 0.259, 0.222], [0.552, 0.276, 0.172]] VR on shares: var(total share) 0.0 => VR = 0
 ranks (1 = largest) per quarter [[1, 3, 2], [1, 3, 2], [1, 2, 3], [1, 2, 3]] rank shifts per step [0.0, 0.6666666666666666, 0.0]
 share distances by lag [(1, 0.0846), (2, 0.1567), (3, 0.2188), (1, 0.0721), (2, 0.1342), (1, 0.0621)] rate of change (OLS slope) 0.0728
+== Partial information decomposition, Gaussian (2026-11-23): corr(T,SCB) = a = -0.2, corr(T,dd) = c = -0.4, corr(SCB,dd) = b = 0.9
+R2: SCB 0.04  dd 0.16  both 0.2947  -> bits I1 = 0.0294  I2 = 0.1258  I12 = 0.2519
+MMI: redundancy = min = 0.0294  unique SCB = 0.0  unique dd = 0.0963  synergy = I12 - max = 0.1261
+OLS standardized betas: SCB 0.842  dd -1.158 (SCB flips to positive);  commonality: unique SCB 0.1347  unique dd 0.2547  common -0.0947
+Idep (Kay & Ince 2018): unique SCB = 0.0248  unique dd = 0.1211  redundancy = 0.0046  synergy = 0.1013
+zero-synergy line b = a/c = 0.5 ; with b = 0.9 the weak source (SCB) has partial corr with T given dd = 0.401
