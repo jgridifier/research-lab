@@ -250,6 +250,46 @@
         ]
       },
       "note": "Speed measured on the shared box (load 4.4 after the ecotraj run ended; 11.2 s for numpy while it ran). Parity is exact either way."
+    },
+    {
+      "h": "Build step 3 (11-23): a leave-one-firm-out jackknife fixes the coverage gap; the two planned fixes do not.",
+      "t": "Pre-registered rerun of the 11-17 design (40 firms × 13 years, 2,000 reps; SYNTHETIC). Firm SEs again cover 91.65% / 91.75%. The jackknife covers 94.20% (β = 0) and 94.15% (β = 0.5), inside the 93.5–96.5% band, so it becomes the default. Our dyadic CR2 adjustment adds only about one point (92.70% / 92.35%); the firm wild score bootstrap is worse (89.10% / 88.15%). Three options were tried and one passed.",
+      "chart": {
+        "type": "hbars",
+        "title": "95% interval coverage, β = 0.5 scenario (band 93.5–96.5%)",
+        "max": 100,
+        "ref": [
+          95,
+          "95% nominal"
+        ],
+        "rows": [
+          [
+            "firm SE (11-17 default)",
+            91.75,
+            "muted",
+            "91.75%"
+          ],
+          [
+            "dyadic CR2",
+            92.35,
+            "amber",
+            "92.35%"
+          ],
+          [
+            "firm wild score bootstrap",
+            88.15,
+            "amber",
+            "88.15%"
+          ],
+          [
+            "leave-one-firm-out jackknife",
+            94.15,
+            "teal",
+            "94.15%"
+          ]
+        ]
+      },
+      "note": "Computed; Monte Carlo SE about 0.5 points. The jackknife is still about 0.8 points below 95% and costs 40 refits (about 0.025 s per fit here). Scripts and the full table: runs/2026-11-23-build/pim/ and PREREG-P3.md Addendum 1."
     }
   ]
 }

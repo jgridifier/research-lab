@@ -1,7 +1,7 @@
 {
   "version": 1,
   "repo": "jgridifier/research-lab",
-  "updated_at": "2026-11-23T19:49:39Z",
+  "updated_at": "2026-11-23T20:05:00Z",
   "issues": {
     "46": {
       "issue": 46,
@@ -775,6 +775,14 @@
           "actor": "jgridifier",
           "action": "'Yes move forward with pim' (said in chat, not on GitHub): go on Eng + Math despite the benchmark miss; pre-registered (PR #69) and ran",
           "ref": null
+        },
+        {
+          "at": "2026-11-23T20:05:00Z",
+          "signal": "result",
+          "source": "bot",
+          "actor": "quant-scout-bot",
+          "action": "build step 3 done (pre-registered PREREG-P3, PR #101): firm jackknife coverage 94.20% / 94.15% in band -> default; CR2 and wild miss",
+          "ref": null
         }
       ],
       "build_plan": {
@@ -782,7 +790,7 @@
         "repo": "jgridifier/pimfast (not created yet)",
         "ticket": 89,
         "finish": "Agent-ready library (finish-line spec in FEEDBACK.md)",
-        "updated_at": "2026-11-23T17:30:00Z",
+        "updated_at": "2026-11-23T20:05:00Z",
         "steps": [
           {
             "n": 1,
@@ -801,10 +809,11 @@
           {
             "n": 3,
             "title": "Small-sample SEs that hold coverage",
-            "status": "todo",
+            "status": "done",
             "do": "Pre-register, then add vcov='firm_cr2' (Bell–McCaffrey / Mancl–DeRouen bias reduction on the dyadic meat of Aronow et al. 2015) and 'score_wild' (Kline–Santos firm-level score bootstrap).",
             "accept": "Rerun the math_sim.py design (40 firms × 13 years, seed 20261117, 2,000 reps, β = 0 and 0.5). The default's 95% coverage is in [93.5%, 96.5%] in both. Firm SEs gave 91.7%, the sandwich 72%.",
-            "kill": "If no option reaches the band, ship 'firm' as the default with a hard warning below the power-study minimum, and record the miss. Do not call it fixed."
+            "kill": "If no option reaches the band, ship 'firm' as the default with a hard warning below the power-study minimum, and record the miss. Do not call it fixed.",
+            "result": "2026-11-23, pre-registered (runs/2026-11-23-build/PREREG-P3.md, PR #101): leave-one-firm-out jackknife ('firm_jack') covers 94.20% (β = 0) and 94.15% (β = 0.5), inside the band, so it becomes the default. Pass (1 of 3 candidates). Dyadic CR2 92.70% / 92.35% and firm wild score bootstrap 89.10% / 88.15% miss; firm SEs reproduce 91.65% / 91.75%. The engineering ticket should add vcov='firm_jack' (default), keep 'firm', and drop 'score_wild'."
           },
           {
             "n": 4,
