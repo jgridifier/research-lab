@@ -1,0 +1,58 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>API reference · {{LIB_NAME}}</title>
+<meta name="description" content="{{LIB_NAME}} API reference">
+<link rel="icon" href="assets/favicon-32.png" type="image/png" sizes="32x32">
+<link rel="icon" href="favicon.ico" sizes="any">
+<link rel="apple-touch-icon" href="assets/logo-192.png">
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Roboto+Mono:wght@400;500&display=swap">
+<link rel="stylesheet" href="assets/site.css">
+<link rel="alternate" type="text/plain" href="{{REPO_URL}}/blob/main/llms.txt" title="llms.txt">
+
+</head>
+<body>
+<header class="topbar"><div class="in">
+<a class="wordmark" href="index.html"><img src="assets/logo.png" alt="" width="32" height="32"><span>{{LIB_NAME}}</span></a>
+<nav class="nav" aria-label="Site">
+<a href="index.html">Overview</a>
+<a href="how-it-works.html">How it works</a>
+<a href="quickstart.html">Quickstart</a>
+<a href="example.html">Worked example</a>
+<a href="judging.html">How to judge</a>
+<a href="benchmarks.html">Benchmarks</a>
+<a href="api.html">API</a>
+<a href="provenance.html">Provenance</a>
+<a href="cite.html">Cite &amp; changelog</a>
+<a href="{{REPO_URL}}">GitHub</a>
+</nav>
+</div></header>
+<section class="hero">
+<p class="eyebrow">API reference</p>
+<h1>The public API</h1>
+<p class="lede">A small, typed API with sensible defaults. The canonical text is <a href="{{REPO_URL}}/blob/main/docs/api.md">docs/api.md</a>.</p>
+</section>
+<main>
+<article class="prose">
+<h2 id="fn-main"><code>{{MAIN_FUNCTION}}</code></h2>
+<pre><code>{{MAIN_SIGNATURE}}</code></pre>
+<p>{{MAIN_DESCRIPTION}}</p>
+<div class="table-wrap"><table><tr><th>Argument</th><th>Type</th><th>Default</th><th>Meaning</th></tr>
+<tr><td><code>{{ARG}}</code></td><td><code>{{TYPE}}</code></td><td><code>{{DEFAULT}}</code></td><td>{{MEANING}}</td></tr></table></div>
+<p><b>Returns</b> {{RETURNS}}</p>
+<h2>Judging methods</h2>
+<p><code>.diagnostics()</code> and <code>.null_test()</code> return a verdict of <span class="chip pass">pass</span> <span class="chip warn">warn</span> <span class="chip fail">fail</span> with a reason. See <a href="judging.html">How to judge</a>.</p>
+</article>
+</main>
+<footer class="foot"><div class="in">
+<div><h4>{{LIB_NAME}}</h4><p>{{TAGLINE}}</p><p>{{LICENSE}} licensed. Nothing here is published to a package index until the maintainer says so.</p></div>
+<div><h4>For humans</h4><a href="quickstart.html">Quickstart</a><a href="judging.html">How to judge the output</a><a href="benchmarks.html">Benchmarks</a><a href="provenance.html">Provenance</a></div>
+<div><h4>For agents</h4><a href="{{REPO_URL}}/blob/main/AGENTS.md">AGENTS.md</a><a href="{{REPO_URL}}/blob/main/llms.txt">llms.txt</a><a href="{{REPO_URL}}/blob/main/docs/api.md">docs/api.md</a><a href="{{REPO_URL}}/blob/main/docs/HOW_TO_JUDGE.md">docs/HOW_TO_JUDGE.md</a></div>
+<div><h4>Project</h4><a href="{{REPO_URL}}">Repository</a><a href="{{REPO_URL}}/blob/main/CHANGELOG.md">Changelog</a><a href="{{REPO_URL}}/blob/main/CITATION.cff">CITATION.cff</a><a href="{{REPO_URL}}/blob/main/NOTICE">NOTICE</a></div>
+</div></footer>
+<script src="assets/site.js"></script>
+</body>
+</html>

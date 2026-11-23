@@ -173,7 +173,7 @@
             "title": "Port, parity, speed, docs (done)",
             "status": "done",
             "do": "A clean-room Python port with optional Numba, the Extension 2 increment split with sign-flip tests, the P2 power curve, AGENTS.md, llms.txt, docs/api.md, the Pages site and the NOTICE provenance note.",
-            "accept": "Done: 1,260 of 1,280 parity checks pass, with 20 documented R quirks. 0.59 s vs 98.8 s in R, and Rust showed no material gain. P2 size is 0.051/0.042. ecotraj-py PRs #12, #14 and #15."
+            "accept": "Done: 1,260 of 1,280 parity checks pass, with 20 documented R quirks. 0.59 s vs 98.8 s in R, and Rust showed no material gain. P2 size is 0.051/0.042. ecotraj-py PRs #12, #14 and #15. Site restyled to the library-site template theme on 2026-11-23 (ecotraj-py PR #16)."
           },
           {
             "n": 2,
@@ -184,10 +184,10 @@
           },
           {
             "n": 3,
-            "title": "Agent smoke test and skill card",
+            "title": "Agent smoke test, skill card and full human site",
             "status": "todo",
-            "do": "Add examples/agent_quickstart.py on synthetic data, and SKILL.md covering when to use it, the call, how to judge it and when not to.",
-            "accept": "The quickstart (≤ 15 lines) and every README block run in CI. SKILL.md is linked from llms.txt, with no promotion without Jared's APPROVAL.md."
+            "do": "Add examples/agent_quickstart.py on synthetic data, and SKILL.md covering when to use it, the call, how to judge it and when not to. Fill the rest of the human Pages site from the template (docs/methods-scout/library-site-template/): quickstart, worked example with real output plots, how to judge, benchmarks, API, provenance, cite and changelog, on the existing theme.",
+            "accept": "The quickstart (≤ 15 lines) and every README block run in CI. SKILL.md is linked from llms.txt, with no promotion without Jared's APPROVAL.md. Every template page returns 200 with no unfilled {{tokens}}."
           },
           {
             "n": 4,
@@ -294,8 +294,8 @@
             "n": 5,
             "title": "Docs, packaging and skill card: agent-ready",
             "status": "todo",
-            "do": "Create the repo with AGENTS.md, llms.txt, API docs, the Pages site, CHANGELOG, CITATION (Hallett et al. 2016), NOTICE, quickstart and SKILL.md.",
-            "accept": "The quickstart and README blocks run in CI, the build passes and the Pages site returns 200. Nothing is published or promoted."
+            "do": "Build the library's own repo + human Pages site in the Google Research style built from the template (docs/methods-scout/library-site-template/). Also write AGENTS.md, llms.txt, API docs, CHANGELOG, CITATION (Hallett et al. 2016), NOTICE, quickstart and SKILL.md.",
+            "accept": "The quickstart and README blocks run in CI, the build passes and every page of the template-built Pages site returns 200 with no unfilled {{tokens}}. Nothing is published or promoted."
           }
         ]
       }
@@ -377,8 +377,8 @@
             "n": 5,
             "title": "Docs, packaging and skill card: agent-ready",
             "status": "todo",
-            "do": "Write AGENTS.md, llms.txt, docs/api.md, the Pages site, CHANGELOG, CITATION.cff (Lovell 2015; Quinn 2017), NOTICE, examples/agent_quickstart.py and SKILL.md. Build the sdist and wheel and publish nothing.",
-            "accept": "The quickstart and README blocks run in CI, twine check passes and the Pages site returns 200. Promotion only with Jared's dated APPROVAL.md."
+            "do": "Build the library's own repo + human Pages site in the Google Research style built from the template (docs/methods-scout/library-site-template/). Also write AGENTS.md, llms.txt, docs/api.md, CHANGELOG, CITATION.cff (Lovell 2015; Quinn 2017), NOTICE, examples/agent_quickstart.py and SKILL.md. Build the sdist and wheel and publish nothing.",
+            "accept": "The quickstart and README blocks run in CI, twine check passes and every page of the template-built Pages site returns 200 with no unfilled {{tokens}}. Promotion only with Jared's dated APPROVAL.md."
           }
         ]
       }
@@ -470,8 +470,8 @@
             "n": 5,
             "title": "Docs, packaging and skill card: agent-ready",
             "status": "todo",
-            "do": "Create the repo with AGENTS.md, llms.txt, API docs, the Pages site, CHANGELOG, CITATION (Stephens 2017; Willwerscheid et al. for ebnm), NOTICE (independent implementation; R run only as an oracle), quickstart and SKILL.md.",
-            "accept": "The quickstart and README blocks run in CI, the build passes and the Pages site returns 200. Nothing is published or promoted. Real budgets are optional, once Jared provides them."
+            "do": "Build the library's own repo + human Pages site in the Google Research style built from the template (docs/methods-scout/library-site-template/). Also write AGENTS.md, llms.txt, API docs, CHANGELOG, CITATION (Stephens 2017; Willwerscheid et al. for ebnm), NOTICE (independent implementation; R run only as an oracle), quickstart and SKILL.md.",
+            "accept": "The quickstart and README blocks run in CI, the build passes and every page of the template-built Pages site returns 200 with no unfilled {{tokens}}. Nothing is published or promoted. Real budgets are optional, once Jared provides them."
           }
         ]
       }
@@ -544,8 +544,8 @@
             "n": 5,
             "title": "Docs, packaging and skill card: agent-ready",
             "status": "todo",
-            "do": "Create the repo with AGENTS.md, llms.txt, API docs, the Pages site, CHANGELOG, CITATION, NOTICE, quickstart and SKILL.md. Build wheels and publish nothing.",
-            "accept": "The quickstart and README blocks run in CI, wheels build, the Pages site returns 200 and nothing is published or promoted. Real budgets are an optional extra once Jared provides them."
+            "do": "Build the library's own repo + human Pages site in the Google Research style built from the template (docs/methods-scout/library-site-template/). Also write AGENTS.md, llms.txt, API docs, CHANGELOG, CITATION, NOTICE, quickstart and SKILL.md. Build wheels and publish nothing.",
+            "accept": "The quickstart and README blocks run in CI, wheels build, every page of the template-built Pages site returns 200 with no unfilled {{tokens}} and nothing is published or promoted. Real budgets are an optional extra once Jared provides them."
           }
         ]
       }
@@ -761,8 +761,8 @@
             "n": 5,
             "title": "Docs, packaging and skill card: agent-ready",
             "status": "todo",
-            "do": "Write AGENTS.md, llms.txt, docs/api.md, the Pages site, CHANGELOG, CITATION.cff, the NOTICE provenance note, examples/agent_quickstart.py and SKILL.md. Build wheels in CI and publish nothing.",
-            "accept": "The quickstart (≤ 15 lines) and every README code block run in CI. Wheels build for Linux and macOS, twine check passes and the Pages site returns 200. Promotion only with Jared's dated APPROVAL.md."
+            "do": "Build the library's own repo + human Pages site in the Google Research style built from the template (docs/methods-scout/library-site-template/). Also write AGENTS.md, llms.txt, docs/api.md, CHANGELOG, CITATION.cff, the NOTICE provenance note, examples/agent_quickstart.py and SKILL.md. Build wheels in CI and publish nothing.",
+            "accept": "The quickstart (≤ 15 lines) and every README code block run in CI. Wheels build for Linux and macOS, twine check passes and every page of the template-built Pages site returns 200 with no unfilled {{tokens}}. Promotion only with Jared's dated APPROVAL.md."
           }
         ]
       }

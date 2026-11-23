@@ -1,0 +1,62 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Benchmarks · {{LIB_NAME}}</title>
+<meta name="description" content="{{LIB_NAME}} parity and speed benchmarks">
+<link rel="icon" href="assets/favicon-32.png" type="image/png" sizes="32x32">
+<link rel="icon" href="favicon.ico" sizes="any">
+<link rel="apple-touch-icon" href="assets/logo-192.png">
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Roboto+Mono:wght@400;500&display=swap">
+<link rel="stylesheet" href="assets/site.css">
+<link rel="alternate" type="text/plain" href="{{REPO_URL}}/blob/main/llms.txt" title="llms.txt">
+
+</head>
+<body>
+<header class="topbar"><div class="in">
+<a class="wordmark" href="index.html"><img src="assets/logo.png" alt="" width="32" height="32"><span>{{LIB_NAME}}</span></a>
+<nav class="nav" aria-label="Site">
+<a href="index.html">Overview</a>
+<a href="how-it-works.html">How it works</a>
+<a href="quickstart.html">Quickstart</a>
+<a href="example.html">Worked example</a>
+<a href="judging.html">How to judge</a>
+<a href="benchmarks.html">Benchmarks</a>
+<a href="api.html">API</a>
+<a href="provenance.html">Provenance</a>
+<a href="cite.html">Cite &amp; changelog</a>
+<a href="{{REPO_URL}}">GitHub</a>
+</nav>
+</div></header>
+<section class="hero">
+<p class="eyebrow">Benchmarks</p>
+<h1>Same answers, much faster</h1>
+<p class="lede">Parity against the original implementation run as a separate program, and timings from <code>bench/results.json</code>.</p>
+</section>
+<main>
+<article class="prose">
+<h2>Parity with the original</h2>
+<div class="cards"><div class="card"><div class="k">Checks matched</div><div class="v">{{PARITY_HEADLINE}}</div><p>{{PARITY_NOTE}}</p></div></div>
+<div class="table-wrap"><table><tr><th>Quantity</th><th class="n">Original</th><th class="n">{{LIB_NAME}}</th></tr>
+<tr><td>{{PARITY_ROW}}</td><td class="n">{{ORIG_VALUE}}</td><td class="n ok">{{OUR_VALUE}}</td></tr></table></div>
+<p>Deviations, each explained: <a href="{{REPO_URL}}/blob/main/docs/PARITY.md">PARITY.md</a>.</p>
+<h2>Speed</h2>
+<figure>
+<!-- Fill data-groups from bench/results.json: [label, seconds, colour index 1-4]. -->
+<div class="chart bars" data-unit="s" data-scale="log" data-title="Median wall time" data-groups='[{"label":"{{BENCH_SIZE}}","bars":[["Original",100,1],["Python reference",10,2],["{{LIB_NAME}}",0.5,3]]}]'></div>
+<figcaption><b>Figure 1.</b> {{BENCH_CAPTION}} Placeholder numbers: replace them with bench/results.json.</figcaption>
+</figure>
+<p>Backend rule: keep a Rust core only if it is at least 5&times; faster than the best Python path at the target size.</p>
+</article>
+</main>
+<footer class="foot"><div class="in">
+<div><h4>{{LIB_NAME}}</h4><p>{{TAGLINE}}</p><p>{{LICENSE}} licensed. Nothing here is published to a package index until the maintainer says so.</p></div>
+<div><h4>For humans</h4><a href="quickstart.html">Quickstart</a><a href="judging.html">How to judge the output</a><a href="benchmarks.html">Benchmarks</a><a href="provenance.html">Provenance</a></div>
+<div><h4>For agents</h4><a href="{{REPO_URL}}/blob/main/AGENTS.md">AGENTS.md</a><a href="{{REPO_URL}}/blob/main/llms.txt">llms.txt</a><a href="{{REPO_URL}}/blob/main/docs/api.md">docs/api.md</a><a href="{{REPO_URL}}/blob/main/docs/HOW_TO_JUDGE.md">docs/HOW_TO_JUDGE.md</a></div>
+<div><h4>Project</h4><a href="{{REPO_URL}}">Repository</a><a href="{{REPO_URL}}/blob/main/CHANGELOG.md">Changelog</a><a href="{{REPO_URL}}/blob/main/CITATION.cff">CITATION.cff</a><a href="{{REPO_URL}}/blob/main/NOTICE">NOTICE</a></div>
+</div></footer>
+<script src="assets/site.js"></script>
+</body>
+</html>

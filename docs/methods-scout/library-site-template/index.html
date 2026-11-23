@@ -1,0 +1,78 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>{{LIB_NAME}}: {{TAGLINE}}</title>
+<meta name="description" content="{{TAGLINE}}">
+<link rel="icon" href="assets/favicon-32.png" type="image/png" sizes="32x32">
+<link rel="icon" href="favicon.ico" sizes="any">
+<link rel="apple-touch-icon" href="assets/logo-192.png">
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Roboto+Mono:wght@400;500&display=swap">
+<link rel="stylesheet" href="assets/site.css">
+<link rel="alternate" type="text/plain" href="{{REPO_URL}}/blob/main/llms.txt" title="llms.txt">
+
+</head>
+<body>
+<header class="topbar"><div class="in">
+<a class="wordmark" href="index.html"><img src="assets/logo.png" alt="" width="32" height="32"><span>{{LIB_NAME}}</span></a>
+<nav class="nav" aria-label="Site">
+<a href="index.html">Overview</a>
+<a href="how-it-works.html">How it works</a>
+<a href="quickstart.html">Quickstart</a>
+<a href="example.html">Worked example</a>
+<a href="judging.html">How to judge</a>
+<a href="benchmarks.html">Benchmarks</a>
+<a href="api.html">API</a>
+<a href="provenance.html">Provenance</a>
+<a href="cite.html">Cite &amp; changelog</a>
+<a href="{{REPO_URL}}">GitHub</a>
+</nav>
+</div></header>
+<section class="hero">
+<p class="eyebrow">{{METHOD_FAMILY}}</p>
+<h1>{{HERO_HEADLINE}}</h1>
+<p class="lede">{{ONE_PARAGRAPH_SUMMARY}}</p>
+<div class="cta"><a class="btn primary" href="quickstart.html">Get started</a><a class="btn" href="how-it-works.html">How it works</a><a class="btn" href="{{REPO_URL}}">View on GitHub</a></div>
+<p class="meta">{{STATUS_LINE}}</p>
+</section>
+<div class="hero-figure"><figure>
+<!-- HERO FIGURE: a Grok Imagine image (assets/hero.jpg) or a real plot from the package. Never a hand-drawn SVG. -->
+<div class="ph">Hero figure goes here: assets/hero.jpg (Grok Imagine) or a real output plot</div>
+<figcaption>{{HERO_CAPTION}}</figcaption>
+</figure></div>
+<main>
+<article class="prose">
+<!-- OVERVIEW. Three short sections: what it does, why it matters, where to go next. -->
+<h2>What it does</h2>
+<p>{{WHAT_IT_DOES}}</p>
+<div class="cards">
+  <div class="card"><div class="k">Parity</div><div class="v">{{PARITY_HEADLINE}}</div><p>checks match the original implementation</p></div>
+  <div class="card"><div class="k">Speed</div><div class="v">{{SPEEDUP_HEADLINE}}</div><p>faster than the original at the target size</p></div>
+  <div class="card"><div class="k">Backend</div><div class="v">{{BACKEND}}</div><p>chosen by benchmark, not by default</p></div>
+</div>
+<h2>Why it matters</h2>
+<p>{{WHY_IT_MATTERS}}</p>
+<div class="callout blue"><p><b>Original method.</b> {{CREDIT_LINE}} This library is an independent implementation; see <a href="provenance.html">Provenance</a>.</p></div>
+<h2>Where to go next</h2>
+<div class="cards">
+  <a class="card" href="how-it-works.html"><h3>How it works</h3><p>The intuition first, then the math.</p></a>
+  <a class="card" href="quickstart.html"><h3>Quickstart</h3><p>Install from source and run it in under a minute.</p></a>
+  <a class="card" href="example.html"><h3>Worked example</h3><p>One real run, start to finish, with its plots.</p></a>
+  <a class="card" href="judging.html"><h3>How to judge the output</h3><p>Diagnostics, null tests, failure modes, minimum data.</p></a>
+  <a class="card" href="benchmarks.html"><h3>Benchmarks</h3><p>Parity against the original and speed charts.</p></a>
+  <a class="card" href="api.html"><h3>API reference</h3><p>Every public function, its inputs and outputs.</p></a>
+</div>
+<p class="agents-note">Coding agents: start with <a href="{{REPO_URL}}/blob/main/AGENTS.md">AGENTS.md</a> and <a href="{{REPO_URL}}/blob/main/llms.txt">llms.txt</a>.</p>
+</article>
+</main>
+<footer class="foot"><div class="in">
+<div><h4>{{LIB_NAME}}</h4><p>{{TAGLINE}}</p><p>{{LICENSE}} licensed. Nothing here is published to a package index until the maintainer says so.</p></div>
+<div><h4>For humans</h4><a href="quickstart.html">Quickstart</a><a href="judging.html">How to judge the output</a><a href="benchmarks.html">Benchmarks</a><a href="provenance.html">Provenance</a></div>
+<div><h4>For agents</h4><a href="{{REPO_URL}}/blob/main/AGENTS.md">AGENTS.md</a><a href="{{REPO_URL}}/blob/main/llms.txt">llms.txt</a><a href="{{REPO_URL}}/blob/main/docs/api.md">docs/api.md</a><a href="{{REPO_URL}}/blob/main/docs/HOW_TO_JUDGE.md">docs/HOW_TO_JUDGE.md</a></div>
+<div><h4>Project</h4><a href="{{REPO_URL}}">Repository</a><a href="{{REPO_URL}}/blob/main/CHANGELOG.md">Changelog</a><a href="{{REPO_URL}}/blob/main/CITATION.cff">CITATION.cff</a><a href="{{REPO_URL}}/blob/main/NOTICE">NOTICE</a></div>
+</div></footer>
+<script src="assets/site.js"></script>
+</body>
+</html>
