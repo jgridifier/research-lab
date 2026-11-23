@@ -1,7 +1,7 @@
 {
   "version": 1,
   "repo": "jgridifier/research-lab",
-  "updated_at": "2026-11-23T12:20:00Z",
+  "updated_at": "2026-11-23T17:30:00Z",
   "issues": {
     "46": {
       "issue": 46,
@@ -160,7 +160,51 @@
           "action": "P2 finished and merged (ecotraj-py #12); card updated",
           "ref": null
         }
-      ]
+      ],
+      "build_plan": {
+        "library": "ecotrajpy",
+        "repo": "https://github.com/jgridifier/ecotraj-py",
+        "ticket": null,
+        "finish": "Agent-ready library (finish-line spec in FEEDBACK.md)",
+        "updated_at": "2026-11-23T17:30:00Z",
+        "steps": [
+          {
+            "n": 1,
+            "title": "Port, parity, speed, docs (done)",
+            "status": "done",
+            "do": "A clean-room Python port with optional Numba, the Extension 2 increment split with sign-flip tests, the P2 power curve, AGENTS.md, llms.txt, docs/api.md, the Pages site and the NOTICE provenance note.",
+            "accept": "Done: 1,260 of 1,280 parity checks pass, with 20 documented R quirks. 0.59 s vs 98.8 s in R, and Rust showed no material gain. P2 size is 0.051/0.042. ecotraj-py PRs #12, #14 and #15."
+          },
+          {
+            "n": 2,
+            "title": "Judging layer",
+            "status": "todo",
+            "do": "Add diagnostics(): T and D vs the P2 power curve, zeros, collinear segments, the known R-quirk cases. Add null_test() wrapping the sign-flip test with a pass/warn/fail verdict, plus docs/HOW_TO_JUDGE.md.",
+            "accept": "Every check is driven to pass, warn and fail in tests. The minimum detectable swap is quoted from research/results/p2_summary.json (0.075 at D = 14, 0.10 at D = 6, T = 62)."
+          },
+          {
+            "n": 3,
+            "title": "Agent smoke test and skill card",
+            "status": "todo",
+            "do": "Add examples/agent_quickstart.py on synthetic data, and SKILL.md covering when to use it, the call, how to judge it and when not to.",
+            "accept": "The quickstart (≤ 15 lines) and every README block run in CI. SKILL.md is linked from llms.txt, with no promotion without Jared's APPROVAL.md."
+          },
+          {
+            "n": 4,
+            "title": "Release readiness",
+            "status": "todo",
+            "do": "Version 0.1.0, with the sdist and wheel built in CI.",
+            "accept": "twine check passes and the built wheel passes the non-R tests on 3.11 and 3.13."
+          },
+          {
+            "n": 5,
+            "title": "PyPI release",
+            "status": "blocked",
+            "do": "Publish ecotrajpy 0.1.0.",
+            "accept": "Waits on Jared: his explicit go, plus a PyPI account or a project-scoped token."
+          }
+        ]
+      }
     },
     "51": {
       "issue": 51,
@@ -209,7 +253,52 @@
           "action": "status:approved",
           "ref": null
         }
-      ]
+      ],
+      "build_plan": {
+        "library": "codyn port (working name)",
+        "repo": "not created yet",
+        "ticket": null,
+        "finish": "Agent-ready library (finish-line spec in FEEDBACK.md)",
+        "updated_at": "2026-11-23T17:30:00Z",
+        "steps": [
+          {
+            "n": 1,
+            "title": "Research card plus parity port",
+            "status": "todo",
+            "do": "Write the missing research card. Port rank clocks, the Schluter variance ratio with the Hallett cyclic-shift null, rate of change and mean rank shift, using codyn 2.0.6 (Apache-2.0) as the black-box oracle.",
+            "accept": "Match the 11-12 numbers: VR 4.4537 (panel A), rate of change 0.001379 and 0.004727, mean rank shift 0.3846 and 0.2377, each to ≤ 1e-4, plus fixture parity ≤ 1e-10 on a synthetic panel."
+          },
+          {
+            "n": 2,
+            "title": "Share-space variance ratio (the Math top pick)",
+            "status": "todo",
+            "do": "Pre-register. Derive a compensatory-dynamics VR in ilr/clr coordinates, plus a rank-shift null that does not wrap trending series (block shift without wrap).",
+            "accept": "On simulated 40-quarter panels with a market factor, size in [0.02, 0.08], and power ≥ 0.80 for a planted sticky swap. The official VR on shares stays 0 (verified 4.07e-17).",
+            "kill": "If the size lands outside the band at T = 40, drop the share-space VR from the library and ship only raw-volume VR, with that documented."
+          },
+          {
+            "n": 3,
+            "title": "Speed by benchmark",
+            "status": "todo",
+            "do": "Time all metrics with 999-draw nulls on a synthetic 2,000-entity × 40-period panel, in NumPy/Numba and Rust.",
+            "accept": "≤ 5 s on 4 vCPU (the whole 11-12 R edition took 129 s on 14 entities). Keep Rust only if it is ≥ 5× faster than the best Python path. Commit the timings."
+          },
+          {
+            "n": 4,
+            "title": "Judging layer",
+            "status": "todo",
+            "do": "Add diagnostics(): VR asked of shares (fail), T below the minimum, trending series under a wrapping null (warn), and ties in ranks. Add null_test() and HOW_TO_JUDGE.md, with the minimum T from the step-2 power curve.",
+            "accept": "Every check is driven to pass, warn and fail in tests."
+          },
+          {
+            "n": 5,
+            "title": "Docs, packaging and skill card: agent-ready",
+            "status": "todo",
+            "do": "Create the repo with AGENTS.md, llms.txt, API docs, the Pages site, CHANGELOG, CITATION (Hallett et al. 2016), NOTICE, quickstart and SKILL.md.",
+            "accept": "The quickstart and README blocks run in CI, the build passes and the Pages site returns 200. Nothing is published or promoted."
+          }
+        ]
+      }
     },
     "53": {
       "issue": 53,
@@ -229,7 +318,7 @@
         "pick:engineering"
       ],
       "last_processed_at": "2026-11-17T17:55:18Z",
-      "notes": "11-17: Jared chose Math + Eng. Math: increment-partial rho passes size/power (6.5%/6.2%, power 0.99); the 11-12 level prototype is oversized (13%). Eng: proprlite.py parity exact, 124,750 pairs in 0.03 s. Packaging ticket drafted. Not a promotion.",
+      "notes": "11-17: Jared chose Math + Eng. Math: increment-partial rho passes size/power (6.5%/6.2%, power 0.99); the 11-12 level prototype is oversized (13%). Eng: proprlite.py parity exact, 124,750 pairs in 0.03 s. Packaging ticket drafted. Not a promotion. 11-23: Engineering ticket #90 (proprlite, agent-ready library) filed; build_plan added.",
       "history": [
         {
           "at": "2026-11-14T04:51:00Z",
@@ -247,7 +336,52 @@
           "action": "chose avenues Math + Engineering (resolves direction TBD); both run -> status:in-progress",
           "ref": 6950370736
         }
-      ]
+      ],
+      "build_plan": {
+        "library": "proprlite",
+        "repo": "jgridifier/proprlite (not created yet)",
+        "ticket": 90,
+        "finish": "Agent-ready library (finish-line spec in FEEDBACK.md)",
+        "updated_at": "2026-11-23T17:30:00Z",
+        "steps": [
+          {
+            "n": 1,
+            "title": "Repo plus core, with parity",
+            "status": "todo",
+            "do": "Create jgridifier/proprlite from the ecotraj-py layout and port runs/2026-11-17/lovell/proprlite.py: clr, vlr, phi, rho, pairwise_rho, partial_increment (default), partial_level (warned), cyclic_shift_pvalue and bh.",
+            "accept": "The identity suite passes. E4 ρ = −0.6976291186 and level-partial ρ = −0.8820532158 to ≤ 1e-9, and the increment cyclic p is 1/55. Match propr (from the CRAN archive) to ≤ 1e-10 if it installs; otherwise the README says the identities are the oracle."
+          },
+          {
+            "n": 2,
+            "title": "Pick the backend by benchmark",
+            "status": "todo",
+            "do": "Time NumPy, Numba and Rust on pairwise_rho plus the cyclic-shift null at 500 × 62 and 5,000 × 62 (12.5 M pairs).",
+            "accept": "< 0.1 s at 500 × 62 (the prototype took 0.032 s) and < 3 s at 5,000 × 62, with peak RSS < 4 GB. Keep Rust only if it is ≥ 5× faster than the best Python path at 5,000 parts. Commit the timings."
+          },
+          {
+            "n": 3,
+            "title": "Size, power and proxy-noise study",
+            "status": "todo",
+            "do": "Pre-register, then rerun sim_partial.py at T ∈ {20, 30, 40, 62}, with an exact market proxy and with proxy noise at 0.1, 0.25 and 0.5 sd.",
+            "accept": "With an exact proxy, size in [0.02, 0.08] at T = 40 and 62 and power ≥ 0.80 at T = 62. Publish a minimum-T table and the largest proxy noise that keeps size ≤ 8%. At 0.5 sd noise it was 100% false alarms.",
+            "kill": "If the exact-proxy size lands outside [0.02, 0.08], partial_increment stops being the default and the README says why."
+          },
+          {
+            "n": 4,
+            "title": "Judging layer",
+            "status": "todo",
+            "do": "Add diagnostics(): zeros (fail unless a replacement rule is given), T below the minimum (warn), an estimated or noisy market proxy (fail for the partial test), and use of partial_level (warn). Add null_test() returning p, BH q and a verdict, plus docs/HOW_TO_JUDGE.md.",
+            "accept": "Each check is driven to pass, warn and fail in unit tests. A noisy-proxy input returns fail."
+          },
+          {
+            "n": 5,
+            "title": "Docs, packaging and skill card: agent-ready",
+            "status": "todo",
+            "do": "Write AGENTS.md, llms.txt, docs/api.md, the Pages site, CHANGELOG, CITATION.cff (Lovell 2015; Quinn 2017), NOTICE, examples/agent_quickstart.py and SKILL.md. Build the sdist and wheel and publish nothing.",
+            "accept": "The quickstart and README blocks run in CI, twine check passes and the Pages site returns 200. Promotion only with Jared's dated APPROVAL.md."
+          }
+        ]
+      }
     },
     "54": {
       "issue": 54,
@@ -295,7 +429,52 @@
           "action": "status:approved",
           "ref": null
         }
-      ]
+      ],
+      "build_plan": {
+        "library": "ebnm port (working name)",
+        "repo": "not created yet",
+        "ticket": null,
+        "finish": "Agent-ready library (finish-line spec in FEEDBACK.md)",
+        "updated_at": "2026-11-23T17:30:00Z",
+        "steps": [
+          {
+            "n": 1,
+            "title": "Port with parity (normal, point-normal, ash)",
+            "status": "todo",
+            "do": "Implement the grid of normal mixtures, the concave mixture-weight solve (mixsqp-style SQP) and closed-form posteriors (means, 90% intervals, lfsr) from the papers. Use ebnm 1.1.42 as the black-box oracle.",
+            "accept": "Log-likelihood −145.7808 (Corning_mock, ash) and −238.8506 (MS_mock) to ≤ 1e-4, with posterior means and lfsr within 1e-6 of the oracle on both mocks."
+          },
+          {
+            "n": 2,
+            "title": "Speed by benchmark",
+            "status": "todo",
+            "do": "Benchmark NumPy, Numba and Rust for one fit at 1,000 programs and for 10,000 bootstrap refits.",
+            "accept": "One ash fit ≤ 3 ms (R took about 31 ms) and 10,000 refits ≤ 30 s on 4 vCPU. Keep Rust only if it is ≥ 5× faster than the best Python path. Commit the timings."
+          },
+          {
+            "n": 3,
+            "title": "The 'is this move real?' flag test (replaces 'validate on the real panel')",
+            "status": "todo",
+            "do": "Pre-register. Regenerate both SYNTHETIC mocks with a new seed. Set x = Δlog actual, s = √2·σ̂, a zero-centred ash prior, flag at lfsr < 0.05, and compare against BH at q = 0.05.",
+            "accept": "Wrong-sign rate ≤ 5% among flags, at least 3× BH's calls and lfsr calibration within ±5 points per bin on both mocks. On an all-zero-effect mock, false flags ≤ 5%.",
+            "kill": "If the wrong-sign rate is > 5% on either mock, the flag ships off by default with a warning; shrinkage still ships."
+          },
+          {
+            "n": 4,
+            "title": "Judging layer",
+            "status": "todo",
+            "do": "Add diagnostics(): σ̂ estimated from < 3 points (warn), n below the power-study minimum, π0 near 1 (nothing to find), and the log-likelihood gap between normal and ash (heavy tails). Add null_test() (sign-flip of x) and HOW_TO_JUDGE.md.",
+            "accept": "Every check is driven to pass, warn and fail in tests. The minimum number of programs for 80% power is published."
+          },
+          {
+            "n": 5,
+            "title": "Docs, packaging and skill card: agent-ready",
+            "status": "todo",
+            "do": "Create the repo with AGENTS.md, llms.txt, API docs, the Pages site, CHANGELOG, CITATION (Stephens 2017; Willwerscheid et al. for ebnm), NOTICE (independent implementation; R run only as an oracle), quickstart and SKILL.md.",
+            "accept": "The quickstart and README blocks run in CI, the build passes and the Pages site returns 200. Nothing is published or promoted. Real budgets are optional, once Jared provides them."
+          }
+        ]
+      }
     },
     "56": {
       "issue": 56,
@@ -324,7 +503,52 @@
           "action": "status:approved",
           "ref": null
         }
-      ]
+      ],
+      "build_plan": {
+        "library": "denselines (working name)",
+        "repo": "not created yet",
+        "ticket": null,
+        "finish": "Agent-ready library (finish-line spec in FEEDBACK.md)",
+        "updated_at": "2026-11-23T17:30:00Z",
+        "steps": [
+          {
+            "n": 1,
+            "title": "Gap-safe weighted core, with parity",
+            "status": "todo",
+            "do": "Build the Rust core from parity_harness.rs (runs/2026-11-13) with per-series weights, 0/0 := 0 for columns where a series is absent, and live-count n(c) and weight-mass W(c) channels.",
+            "accept": "Relative difference ≤ 1e-6 vs reference commit 083890c on full-span inputs (n = 100, 1,000, 5,000), with column sums equal to n. On the gap case (50 series, 10 stopping at column 300), there are 0 NaN columns and the column sum after column 300 is 40."
+          },
+          {
+            "n": 2,
+            "title": "Speed and memory by benchmark",
+            "status": "todo",
+            "do": "Stream series into the accumulator instead of holding every rasterised path. Compare against the exact NumPy port.",
+            "accept": "10,000 series × 1,000 columns in ≤ 0.5 s (Rust took 0.50 s and NumPy 62 s). 50,000 series finish with peak RSS < 2 GB; the 11-13 run hit the 15.6 GB memory limit. Commit the timings."
+          },
+          {
+            "n": 3,
+            "title": "Does it show truth better? (replaces 'validate on the real panel')",
+            "status": "todo",
+            "do": "Pre-register. Regenerate both SYNTHETIC mocks with a new seed, once with the planted clusters on and once with them off (years shuffled within program).",
+            "accept": "Clusters on: Wasserstein-1 distance to the true-path chart below the unnormalised density on both mocks (11-13: 0.0526 vs 0.0555 on Corning). Clusters off: the Hartigan dip test flags a branch in ≤ 5% of 200 shuffles.",
+            "kill": "If it fails to beat the unnormalised density on both mocks, ship it as a plotting utility with no judging claims."
+          },
+          {
+            "n": 4,
+            "title": "Judging layer",
+            "status": "todo",
+            "do": "Add diagnostics(): share of columns with fewer than 5 live series, weight concentration (max share > 20% warns), gap fraction. Add null_test() (year-shuffle envelope plus dip test) and HOW_TO_JUDGE.md, with the minimum series count from a power study of a branch planted in 10% of series.",
+            "accept": "Every check is driven to pass, warn and fail in tests. The power table is published."
+          },
+          {
+            "n": 5,
+            "title": "Docs, packaging and skill card: agent-ready",
+            "status": "todo",
+            "do": "Create the repo with AGENTS.md, llms.txt, API docs, the Pages site, CHANGELOG, CITATION, NOTICE, quickstart and SKILL.md. Build wheels and publish nothing.",
+            "accept": "The quickstart and README blocks run in CI, wheels build, the Pages site returns 200 and nothing is published or promoted. Real budgets are an optional extra once Jared provides them."
+          }
+        ]
+      }
     },
     "57": {
       "issue": 57,
@@ -462,7 +686,7 @@
         "pick:new-use"
       ],
       "last_processed_at": "2026-11-17T19:40:00Z",
-      "notes": "11-17: benchmark narrowly missed 'promising'; Jared then said in chat (2:11 PM ET) 'Yes move forward with pim'. Eng + Math pre-registered (PREREG.md E, PR #69) and run. Eng-1 parity pass (3e-15); Eng-2 numpy speed miss; post-hoc Rust 0.57 s. Math-1 coverage miss (firm-clustered 91.7/91.8% vs bar 93.5-96.5; pim default 72%). Pre-tax income survives firm-clustered Holm (0.005); drawdown-alone and pre-2020 dividends do not. Rust core ticket drafted, not filed. Not a promotion; descriptive only.",
+      "notes": "11-17: benchmark narrowly missed 'promising'; Jared then said in chat (2:11 PM ET) 'Yes move forward with pim'. Eng + Math pre-registered (PREREG.md E, PR #69) and run. Eng-1 parity pass (3e-15); Eng-2 numpy speed miss; post-hoc Rust 0.57 s. Math-1 coverage miss (firm-clustered 91.7/91.8% vs bar 93.5-96.5; pim default 72%). Pre-tax income survives firm-clustered Holm (0.005); drawdown-alone and pre-2020 dividends do not. Rust core ticket drafted, not filed. Not a promotion; descriptive only. 11-23: Engineering ticket #89 (pimfast, agent-ready library) filed; build_plan added.",
       "history": [
         {
           "at": "2026-11-17T14:31:34Z",
@@ -496,7 +720,52 @@
           "action": "'Yes move forward with pim' (said in chat, not on GitHub): go on Eng + Math despite the benchmark miss; pre-registered (PR #69) and ran",
           "ref": null
         }
-      ]
+      ],
+      "build_plan": {
+        "library": "pimfast",
+        "repo": "jgridifier/pimfast (not created yet)",
+        "ticket": 89,
+        "finish": "Agent-ready library (finish-line spec in FEEDBACK.md)",
+        "updated_at": "2026-11-23T17:30:00Z",
+        "steps": [
+          {
+            "n": 1,
+            "title": "Repo plus core, with parity",
+            "status": "todo",
+            "do": "Create jgridifier/pimfast from the ecotraj-py layout. Port pim2/pimfast.py into the core: logit and probit difference PIM on pair blocks, batched Newton, deterministic seeds.",
+            "accept": "All 24 fits / 29 coefficients of runs/2026-11-16 match pim 2.0.4 fixtures to |Δβ|, |ΔSE| ≤ 1e-8 (sandwich), and the 50 permutation refits to ≤ 1e-10. The prototype already did this at 3.3e-15."
+          },
+          {
+            "n": 2,
+            "title": "Pick the backend by benchmark",
+            "status": "todo",
+            "do": "Time NumPy, Numba and a Rust (PyO3/maturin) core on 10,000 within-block permutations of the joint model (360 rows, 5,017 pairs).",
+            "accept": "≤ 2.0 s median of 3 on a 4-vCPU CI runner. Keep Rust only if it is ≥ 5× faster than the best Python path (spike: 0.29 s vs 9.1 s). Write timings beside pim's ~75 s to bench/results.json."
+          },
+          {
+            "n": 3,
+            "title": "Small-sample SEs that hold coverage",
+            "status": "todo",
+            "do": "Pre-register, then add vcov='firm_cr2' (Bell–McCaffrey / Mancl–DeRouen bias reduction on the dyadic meat of Aronow et al. 2015) and 'score_wild' (Kline–Santos firm-level score bootstrap).",
+            "accept": "Rerun the math_sim.py design (40 firms × 13 years, seed 20261117, 2,000 reps, β = 0 and 0.5). The default's 95% coverage is in [93.5%, 96.5%] in both. Firm SEs gave 91.7%, the sandwich 72%.",
+            "kill": "If no option reaches the band, ship 'firm' as the default with a hard warning below the power-study minimum, and record the miss. Do not call it fixed."
+          },
+          {
+            "n": 4,
+            "title": "Judging layer and power study",
+            "status": "todo",
+            "do": "Add fit.diagnostics(): convergence, separation, ties, pairs per block, firms vs minimum, firm/sandwich SE ratio > 1.3. Add fit.null_test() (within-block and firm permutations), docs/HOW_TO_JUDGE.md, and a pre-registered power study.",
+            "accept": "Every check is driven to pass, warn and fail in unit tests. null_test p is within ±0.01 of a 10,000-draw reference. The minimum firms × years for 80% power at a probabilistic index of 0.60 is published."
+          },
+          {
+            "n": 5,
+            "title": "Docs, packaging and skill card: agent-ready",
+            "status": "todo",
+            "do": "Write AGENTS.md, llms.txt, docs/api.md, the Pages site, CHANGELOG, CITATION.cff, the NOTICE provenance note, examples/agent_quickstart.py and SKILL.md. Build wheels in CI and publish nothing.",
+            "accept": "The quickstart (≤ 15 lines) and every README code block run in CI. Wheels build for Linux and macOS, twine check passes and the Pages site returns 200. Promotion only with Jared's dated APPROVAL.md."
+          }
+        ]
+      }
     },
     "70": {
       "issue": 70,

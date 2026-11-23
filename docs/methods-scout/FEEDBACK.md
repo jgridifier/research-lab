@@ -148,6 +148,52 @@ Field rules:
 
 `updated_at` is the last time this file was written (ISO-8601 UTC).
 
+## Finish line: agent-ready library
+
+Jared's goal (2026-11-23): build Python and Rust libraries, very fast and very agent-friendly, so the analytical coding agent has a portfolio of exotic analysis skills it can call **without writing or re-validating the method each time**. So part of the job is making each method easy to use and easy to judge. "It doesn't have to have a Rust core, it just needs to be ultra optimized, which usually means a Rust core."
+
+Every approved method ends as an **agent-ready library**. Reference model: [jgridifier/ecotraj-py](https://github.com/jgridifier/ecotraj-py) (AGENTS.md, llms.txt, docs/api.md, research/). The library is done when it has all of these:
+
+1. **Its own repo** under `jgridifier`, MIT unless decided otherwise. No neural nets.
+2. **Ultra-optimized, backend chosen by benchmark.** Usually a Rust core with thin Python bindings (PyO3/maturin). Vectorized NumPy or Numba is fine when Rust shows no material gain; default rule: keep Rust only if it is at least 5× faster than the best Python path at the target size. Timings against the original go in `bench/results.json` either way.
+3. **A small typed API** with sensible defaults.
+4. **Parity tests** with the original implementation as a black-box oracle, run as a separate program; fixtures come from scripts under `oracle/`.
+5. **A judging layer:** library functions such as `.diagnostics()` and `.null_test()` that return **pass / warn / fail** with a reason, plus `docs/HOW_TO_JUDGE.md` covering what good output looks like, which null to read, failure modes, when not to use it, and the **minimum data size from a power study**.
+6. **Examples** on public or SYNTHETIC data only, including `examples/agent_quickstart.py` (at most 15 lines), and README code blocks that run in CI.
+7. **Docs:** AGENTS.md, llms.txt, docs/api.md, a GitHub Pages docs site, CHANGELOG, CITATION.cff, and a **provenance note** (NOTICE / README): built by AI coding agents from the papers, benchmarked against the original, an independent implementation. Legal analysis never goes on GitHub.
+8. **Release-ready metadata** for PyPI and, for a Rust core, crates.io. Wheels build in CI. **Nothing is published** without Jared's explicit go.
+9. **A skill card** (`SKILL.md`) for the analytical coding agent: when to use it, the call, how to judge the output, when not to use it. Promotion into analysis-skills still needs Jared's own dated `methods/<method>/APPROVAL.md` (see below).
+
+Logos only via Grok Imagine; agents do not draw them.
+
+### Build plan (`build_plan` in the state file)
+
+When a method becomes `approved` or `in-progress`, the scanner writes a `build_plan` on its state entry, using 3–6 steps that end in the agent-ready library. Every step names a specific dataset, metric, null and, where a test can fail, a kill rule. "Validate on the real panel" is not a step. If real data is missing, the step uses SYNTHETIC or public data, and the real-data rerun is an optional extra once Jared provides it.
+
+```json
+"build_plan": {
+  "library": "proprlite",
+  "repo": "jgridifier/proprlite (not created yet)",
+  "ticket": 90,
+  "finish": "Agent-ready library (finish-line spec in FEEDBACK.md)",
+  "updated_at": "2026-11-23T17:30:00Z",
+  "steps": [
+    {"n": 1, "title": "Repo plus core, with parity", "status": "todo",
+     "do": "what to build or run",
+     "accept": "the test, with numbers, that decides pass",
+     "kill": "optional: what happens if it fails"}
+  ]
+}
+```
+
+`status` is `todo`, `doing`, `done`, or `blocked` (waiting on Jared or on data). `ticket` is the engineering issue number, or `null`. `build_cards.py` renders the plan on the research card (`#build-plan`) and in the production tracker, and fails the build if a Go or Building method has no valid plan.
+
+**How the scanner moves a plan.** Each run moves an approved or in-progress method through as many steps as it can finish in that run. It runs each step's acceptance test, sets the step to `done` (or records a miss and applies the kill rule), and comments on the issue. When a step needs a new repo or other engineering work, the scanner files the **engineering ticket** itself.
+
+### Engineering tickets
+
+An engineering ticket is a GitHub issue in this repo titled `[Eng] <method>: <library> — agent-ready optimized library`. It is labelled `engineering` and `scout`, and it carries the agent marker. It is **not** a scout method: do not add it to `issues` in the state file, and do not open a research card for it. Link it from the method's scout issue with a marked comment, from `build_plan.ticket`, and from `ticket` in `production-links.json`. The ticket holds the known results, scope and testable acceptance criteria. The build plan holds the step order.
+
 ## Buttons on scout pages
 
 Every method card (the method's `<h2>` section, including backfilled past editions and any new edition the daily scout writes) gets, immediately after the section heading / Found-via line:

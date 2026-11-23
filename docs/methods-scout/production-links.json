@@ -7,14 +7,16 @@
       "package_note": "PyPI: not yet released"
     },
     "lovell-proportionality": {
-      "repo_note": "repo not yet created (proprlite ticket drafted)",
+      "repo_note": "repo not yet created (proprlite ticket #90 filed)",
       "source": "https://github.com/jgridifier/research-lab/tree/main/docs/methods-scout/runs/2026-11-17/lovell",
-      "package_note": "not on PyPI yet"
+      "package_note": "not on PyPI yet",
+      "ticket": "https://github.com/jgridifier/research-lab/issues/90"
     },
     "pim": {
-      "repo_note": "repo not yet created (pimfast-rs ticket drafted)",
+      "repo_note": "repo not yet created (pimfast ticket #89 filed)",
       "source": "https://github.com/jgridifier/research-lab/tree/main/docs/methods-scout/runs/2026-11-17/pim2",
-      "package_note": "not on PyPI or crates.io yet"
+      "package_note": "not on PyPI or crates.io yet",
+      "ticket": "https://github.com/jgridifier/research-lab/issues/89"
     }
   }
 }
