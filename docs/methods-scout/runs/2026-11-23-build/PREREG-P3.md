@@ -19,3 +19,21 @@ Written Monday 2026-11-23, about 3:00 PM ET, **before** any code for this step r
 **Kill rule (build plan).** If no candidate reaches the band in both scenarios, `firm` stays the default with a hard warning below the power-study minimum, and the miss is recorded. It is not called fixed.
 
 Also reported (no bar): mean SE / SD of β̂ for each candidate, interval width, run time per replication.
+
+
+## Addendum 1 — 2026-11-23, about 3:00 PM ET, written after the run; the text above is unchanged
+
+Ran `pim/p3_sim.py` (99 s on 6 processes; results `pim/p3_results.json`). All numbers computed.
+
+**Deviations, disclosed.** (1) The first launch failed on an import path (`vcov_small.py` pointed one folder too shallow); fixed, nothing had run. (2) The identity checks failed on the harness, not the method, before any replication ran: the random test matrix had eig(M'M) ≈ 1.2–1.3, so I − MM' was not positive definite and the dense reference was NaN; and the "≤ 1e-10" meat check was absolute while meat entries are ≈ 3.5e4 (the difference was 1.3e-10 absolute, 3.7e-15 relative). The harness now scales the random M to eig < 1, checks the meat relative to max|B_F|, and adds a check on a real firm cluster (247 pairs, max eig H = 0.051). All three pass: 3.7e-15, 1.8e-15, 5.9e-15. The estimators, design, seeds, bar and selection rule are unchanged.
+
+**Reference reproduces 11-17.** `firm` coverage 91.65% (A) and 91.75% (B), as in 11-17. Pseudo-truth for B = 0.4107.
+
+| Candidate | Coverage A (β = 0) | Coverage B (β = 0.5) | mean SE / SD(β̂) A / B | sec per rep (median) |
+|---|---|---|---|---|
+| `firm` (reference) | 91.65% | 91.75% | 0.920 / 0.909 | 0.0003 |
+| `firm_cr2` | 92.70% | 92.35% | 0.949 / 0.934 | 0.019 |
+| `score_wild` | 89.10% | 88.15% | mean critical value 1.77 / 1.77 (vs 1.96) | 0.092 |
+| `firm_jack` | **94.20%** | **94.15%** | 1.013 / 1.002 | 0.024 |
+
+**Verdict.** Only `firm_jack` is inside [93.5%, 96.5%] in both scenarios, so by the selection rule it becomes the default: **step 3 passes**, with the multiplicity stated (three candidates tried; one passed). It sits about 0.8 points below 95%, that is about 1.7 Monte Carlo SEs (0.49 points); its SE is calibrated (SE/SD ≈ 1.01 / 1.00), so the remaining shortfall is likely the normal critical value with 40 firms. `firm_cr2` helps only a little (+1.0 / +0.6 points): our dyadic bias reduction is too weak here because each firm's leverage is small (max eig ≈ 0.05), so the shortfall is not mainly leverage. `score_wild` is worse than `firm` (89.1% / 88.2%): its bootstrap critical value averages 1.77, below 1.96. It is not offered as an option. Kill rule not triggered.

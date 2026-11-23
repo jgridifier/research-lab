@@ -1,0 +1,82 @@
+{
+ "prereg": "runs/2026-11-23-build/PREREG-P3.md",
+ "identities": {
+  "meat_cr2_off_vs_firm_meat_max_rel": 3.703726786220965e-15,
+  "rank_k_isqrt_vs_dense_random_max_abs": 1.7763568394002505e-15,
+  "rank_k_isqrt_vs_dense_real_firm0_max_abs": 5.88418203051333e-15,
+  "real_firm0_max_eig_H": 0.050711103514256284,
+  "n_pairs_firm0": 247,
+  "pass": true
+ },
+ "truthB": 0.4106748028189773,
+ "A": {
+  "beta": 0.0,
+  "truth": 0.0,
+  "R": 2000,
+  "sd_b": 0.11904923594514041,
+  "firm": {
+   "coverage": 0.9165,
+   "mean_se_over_sd": 0.9202013406718991,
+   "mean_halfwidth": 0.21471261691723897
+  },
+  "firm_cr2": {
+   "coverage": 0.927,
+   "mean_se_over_sd": 0.9494566255510418,
+   "mean_halfwidth": 0.22153881733384953
+  },
+  "score_wild": {
+   "coverage": 0.891,
+   "mean_q": 1.774257944232963,
+   "mean_halfwidth": 0.1943532269963364
+  },
+  "firm_jack": {
+   "coverage": 0.942,
+   "mean_se_over_sd": 1.0129809027753194,
+   "mean_halfwidth": 0.2363610776346677
+  },
+  "sec_per_rep_median": {
+   "firm": 0.00028551900322781876,
+   "firm_cr2": 0.018513210998207796,
+   "score_wild": 0.09174913050082978,
+   "firm_jack": 0.024123442999552935
+  }
+ },
+ "B": {
+  "beta": 0.5,
+  "truth": 0.4106748028189773,
+  "R": 2000,
+  "sd_b": 0.12752616389891455,
+  "firm": {
+   "coverage": 0.9175,
+   "mean_se_over_sd": 0.9088214570355163,
+   "mean_halfwidth": 0.2271569134678409
+  },
+  "firm_cr2": {
+   "coverage": 0.9235,
+   "mean_se_over_sd": 0.9338165660889448,
+   "mean_halfwidth": 0.23340435820015315
+  },
+  "score_wild": {
+   "coverage": 0.8815,
+   "mean_q": 1.7672816105383904,
+   "mean_halfwidth": 0.20472561213824433
+  },
+  "firm_jack": {
+   "coverage": 0.9415,
+   "mean_se_over_sd": 1.0015411159718532,
+   "mean_halfwidth": 0.25033188516191934
+  },
+  "sec_per_rep_median": {
+   "firm": 0.0002866040013032034,
+   "firm_cr2": 0.018469070000719512,
+   "score_wild": 0.09161364250030601,
+   "firm_jack": 0.026389918002678314
+  }
+ },
+ "passing": [
+  "firm_jack"
+ ],
+ "default": "firm_jack",
+ "step3_pass": true,
+ "seconds": 99.14305448532104
+}
