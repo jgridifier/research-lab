@@ -1,6 +1,155 @@
 {
-  "issue": 52,
-  "stub": true,
-  "verdict": "Recommend",
-  "one": "Raw dealer volumes co-move (VR 4.45 vs null 0.44–2.00); foreign IHC volumes do not."
+ "issue": 52,
+ "name": "codyn rank clocks and community dynamics",
+ "title": "Who swapped places, and do volumes move together?",
+ "field": "community ecology",
+ "what": "Treat dealers as species: rank clocks show reordering, a variance ratio tests whether volumes co-move, with a persistence-keeping null.",
+ "verdict": "Recommend",
+ "grade": "not graded (the 11-12 ad hoc edition predates grading)",
+ "pick_eff": "L",
+ "pick_line": "A share-space variance ratio that is not identically zero, plus a rank-shift null that does not wrap trends.",
+ "data": "PROXY public FR Y-9C dealer panels (trading assets; big-4 equity trading revenue), not prime brokerage",
+ "one": "Raw dealer volumes co-move (VR 4.45 vs null 0.44–2.00); foreign IHC volumes do not.",
+ "picture": {
+  "type": "numbers",
+  "left": {
+   "lab": "Usual reading (independent volumes)",
+   "big": "1.00",
+   "sub": "variance ratio expected if dealers moved independently (cyclic-shift null mean 1.01)"
+  },
+  "right": {
+   "lab": "codyn variance ratio",
+   "big": "4.45",
+   "sub": "14-dealer trading assets, above the 95% null 0.44–2.00"
+  }
+ },
+ "findings": [
+  {
+   "h": "US dealer volumes co-move; the foreign IHCs, alone, do not.",
+   "t": "Variance ratio on raw trading assets: 4.45 (all 14), 4.43 (US big-6), 0.73 (eight foreign IHCs, inside the null 0.29–2.19). Big-4 equity revenue: 2.36 vs null 0.57–1.66.",
+   "chart": {
+    "type": "hbars",
+    "title": "Variance ratio on raw volumes (1 = independent)",
+    "max": 5,
+    "ref": [
+     1,
+     "1 = independent"
+    ],
+    "rows": [
+     [
+      "Trading assets, all 14",
+      4.45,
+      "teal",
+      "4.45"
+     ],
+     [
+      "US big-6 only",
+      4.43,
+      "teal",
+      "4.43"
+     ],
+     [
+      "Eight foreign IHCs",
+      0.73,
+      "muted",
+      "0.73 (inside null)"
+     ],
+     [
+      "Big-4 equity revenue",
+      2.36,
+      "teal",
+      "2.36"
+     ]
+    ]
+   },
+   "fig": "fig/2026-11-12-adhoc/m1_rate_vr.png"
+  },
+  {
+   "h": "The rank clock turns the GS→JPM swap into one picture.",
+   "t": "Big-4 equity revenue share: GS 52.3% → 23.1%, JPM 14.5% → 43.4% (2011Q1–2026Q2). On trading assets UBS+CS falls from rank 7 to 14.",
+   "fig": "fig/2026-11-12-adhoc/m1_rankclocks.png",
+   "chart": {
+    "type": "hbars",
+    "title": "Share of big-4 equity trading revenue, %",
+    "max": 60,
+    "rows": [
+     [
+      "GS 2011Q1",
+      52.3,
+      "amber",
+      "52.3"
+     ],
+     [
+      "GS 2026Q2",
+      23.1,
+      "teal",
+      "23.1"
+     ],
+     [
+      "JPM 2011Q1",
+      14.5,
+      "amber",
+      "14.5"
+     ],
+     [
+      "JPM 2026Q2",
+      43.4,
+      "teal",
+      "43.4"
+     ]
+    ]
+   }
+  },
+  {
+   "h": "Our independent port matches codyn exactly (build step 1).",
+   "t": "All five 11-12 numbers reproduced within 2.2e-5 of their published rounding (≤ 2.7e-15 vs a codyn rerun); SYNTHETIC fixture parity ≤ 4.3e-14. A 999-draw VR null: 0.009 s vs 1.49 s in R (computed).",
+   "chart": {
+    "type": "hbars",
+    "title": "999-draw VR null on panel A, seconds (lower is better)",
+    "max": 1.6,
+    "rows": [
+     [
+      "codyn 2.0.6 (R)",
+      1.491,
+      "amber",
+      "1.49 s"
+     ],
+     [
+      "NumPy port",
+      0.0088,
+      "teal",
+      "0.009 s"
+     ]
+    ]
+   }
+  },
+  {
+   "h": "Honest: the official tools cannot answer the share question.",
+   "miss": true,
+   "t": "VR on shares is identically 0 (4.07e-17 on panel A), and the wrap-around null inflates mean rank shift on trending series. That is the Math top pick.",
+   "chart": {
+    "type": "hbars",
+    "title": "Variance ratio on panel A",
+    "max": 5,
+    "ref": [
+     1,
+     "1 = independent"
+    ],
+    "rows": [
+     [
+      "Raw volumes",
+      4.45,
+      "teal",
+      "4.45"
+     ],
+     [
+      "Shares",
+      0.0,
+      "muted",
+      "4.07e-17 (identically 0)"
+     ]
+    ]
+   }
+  }
+ ]
 }

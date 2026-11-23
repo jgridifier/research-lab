@@ -1,0 +1,14 @@
+[package]
+name = "denselines_core"
+version = "0.0.1"
+edition = "2021"
+license = "MIT"
+description = "Research prototype: gap-safe, weighted, streaming DenseLines (Moritz & Fisher 2018) accumulator"
+
+[dependencies]
+rayon = "1.10"
+
+[profile.release]
+opt-level = 3
+lto = true
+codegen-units = 1

@@ -1,0 +1,13 @@
+<div class="sauce"><span class="t">1 · Engineering · Effort M</span><h5>A Python or Rust port with the R package as oracle</h5>
+<p>Faithful rank clocks, VR with the cyclic-shift null, and rate of change, checked against codyn 2.0.6, then sped up for a panel with many entities (for example funds × brokers).</p>
+<p><b>Math sketch.</b> The null VR for draw \(b\) is \(\sum_t(\sum_i \tilde x^{(b)}_{it})^2/\sum_{i,t}(\tilde x^{(b)}_{it})^2\) on centred rotated series, so all draws vectorise as one gather plus two reductions.</p>
+<p class="small"><b>Test.</b> Parity on the 11-12 numbers (VR 4.4537; rate of change 0.001379 and 0.004727; mean rank shift 0.3846 and 0.2377), then 10×–100× wall time on a larger panel.</p></div>
+<div class="sauce top"><span class="t">2 · Math · Effort L · ★ Top pick</span><h5>A share-space variance ratio that isn't identically zero</h5>
+<p>The official VR cannot be used on shares. Build a compensatory-dynamics metric in ilr or clr coordinates, plus a rank-shift null that does not wrap trending series.</p>
+<p><b>Math sketch.</b> With clr shares \(c_{it}=\log s_{it}-\tfrac1N\sum_k\log s_{kt}\), \(\sum_i c_{it}=0\) again, so use an ilr basis or a pairwise log-ratio variance ratio, \(\sum_{i&lt;j}\operatorname{Var}(\log s_i/s_j)\) against its block-shift (no wrap) null.</p>
+<p class="small"><b>Test.</b> On simulated 40-quarter panels with a market factor: size in [0.02, 0.08] and power ≥ 0.80 for a planted sticky swap; the official VR on shares stays 0.</p></div>
+<div class="sauce"><span class="t">3 · New use on our data · Effort S</span><h5>Rank clocks on real prime-broker counts</h5>
+<p>Rerun the same clocks, VR and rate of change on Form ADV Schedule D prime-broker client counts, once that panel is built, and colour the clock by market regime.</p>
+<p><b>Math sketch.</b> Unchanged statistics; regime colouring by a VIX or NFCI high/low split.</p>
+<p class="small"><b>Test.</b> Whether the GS→JPM clock and a rate of change above the same null recur on real prime-broker relationships, or an honest non-recurrence.</p></div>
+<p class="small">👍 on the issue means go with the ★ top pick. To choose another, just say so in a comment.</p>

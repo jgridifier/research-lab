@@ -10,26 +10,162 @@
   "pick_line": "An “is this move real?” flag for every program in each budget cycle.",
   "data": "SYNTHETIC mock budgets (Corning_mock, MS_mock), not any firm's budget",
   "one": "It finds 6–7× more real moves than BH, with almost no wrong signs.",
-  "picture": {"type": "numbers",
-    "left": {"lab": "Usual test (BH)", "big": "14", "sub": "programs called “really changed” (Corning mock)"},
-    "right": {"lab": "ebnm", "big": "91", "sub": "called, all with the right sign"}},
+  "picture": {
+    "type": "numbers",
+    "left": {
+      "lab": "Usual test (BH)",
+      "big": "14",
+      "sub": "programs called “really changed” (Corning mock)"
+    },
+    "right": {
+      "lab": "ebnm",
+      "big": "91",
+      "sub": "called, all with the right sign"
+    }
+  },
   "findings": [
-    {"h": "It finds 6–7× more real moves, with almost no wrong signs.",
-     "t": "Calls of “this program really changed”: 91 vs 14 (Corning mock) and 200 vs 28 (MS mock). Wrong sign: 0% and 1.5%.",
-     "chart": {"type": "hbars", "title": "Programs called “really changed”", "max": 230,
-       "rows": [["BH test · Corning", 14, "amber", "14"], ["ebnm · Corning (0% wrong)", 91, "teal", "91"],
-                ["BH test · MS", 28, "amber", "28"], ["ebnm · MS (1.5% wrong)", 200, "teal", "200"]]},
-     "fig": "fig/2026-11-13/m1_lfsr.png"},
-    {"h": "Pooling cuts each program's level error by about a quarter.",
-     "t": "Log RMSE 0.146 → 0.108 (Corning mock) and 0.138 → 0.109 (MS mock). Programs alone in their group lose a little (0.110 → 0.120).",
-     "chart": {"type": "hbars", "title": "Error in 2025 level (log RMSE, lower is better)", "max": 0.17,
-       "rows": [["Own number · Corning", 0.146, "amber", "0.146"], ["ebnm · Corning", 0.108, "teal", "0.108"],
-                ["Own number · MS", 0.138, "amber", "0.138"], ["ebnm · MS", 0.109, "teal", "0.109"]]},
-     "fig": "fig/2026-11-13/m1_shrink.png"},
-    {"h": "Honest: shrinkage adds nothing to the text-vs-numbers check.", "miss": true,
-     "t": "Comparing with peers does the work. On the MS mock: AUC 0.777 with ebnm, 0.775 with a plain z-score.",
-     "chart": {"type": "hbars", "title": "Finding “says grow, actually shrinking” (MS mock AUC)", "max": 1.0, "ref": [0.5, "0.5 = chance"],
-       "rows": [["Absolute slope (ebnm)", 0.624, "muted", "0.624"], ["Peer-relative, plain z", 0.775, "amber", "0.775"], ["Peer-relative, ebnm", 0.777, "teal", "0.777"]]},
-     "fig": "fig/2026-11-13/m1_text.png"}
+    {
+      "h": "It finds 6–7× more real moves, with almost no wrong signs.",
+      "t": "Calls of “this program really changed”: 91 vs 14 (Corning mock) and 200 vs 28 (MS mock). Wrong sign: 0% and 1.5%.",
+      "chart": {
+        "type": "hbars",
+        "title": "Programs called “really changed”",
+        "max": 230,
+        "rows": [
+          [
+            "BH test · Corning",
+            14,
+            "amber",
+            "14"
+          ],
+          [
+            "ebnm · Corning (0% wrong)",
+            91,
+            "teal",
+            "91"
+          ],
+          [
+            "BH test · MS",
+            28,
+            "amber",
+            "28"
+          ],
+          [
+            "ebnm · MS (1.5% wrong)",
+            200,
+            "teal",
+            "200"
+          ]
+        ]
+      },
+      "fig": "fig/2026-11-13/m1_lfsr.png"
+    },
+    {
+      "h": "Pooling cuts each program's level error by about a quarter.",
+      "t": "Log RMSE 0.146 → 0.108 (Corning mock) and 0.138 → 0.109 (MS mock). Programs alone in their group lose a little (0.110 → 0.120).",
+      "chart": {
+        "type": "hbars",
+        "title": "Error in 2025 level (log RMSE, lower is better)",
+        "max": 0.17,
+        "rows": [
+          [
+            "Own number · Corning",
+            0.146,
+            "amber",
+            "0.146"
+          ],
+          [
+            "ebnm · Corning",
+            0.108,
+            "teal",
+            "0.108"
+          ],
+          [
+            "Own number · MS",
+            0.138,
+            "amber",
+            "0.138"
+          ],
+          [
+            "ebnm · MS",
+            0.109,
+            "teal",
+            "0.109"
+          ]
+        ]
+      },
+      "fig": "fig/2026-11-13/m1_shrink.png"
+    },
+    {
+      "h": "Honest: shrinkage adds nothing to the text-vs-numbers check.",
+      "miss": true,
+      "t": "Comparing with peers does the work. On the MS mock: AUC 0.777 with ebnm, 0.775 with a plain z-score.",
+      "chart": {
+        "type": "hbars",
+        "title": "Finding “says grow, actually shrinking” (MS mock AUC)",
+        "max": 1.0,
+        "ref": [
+          0.5,
+          "0.5 = chance"
+        ],
+        "rows": [
+          [
+            "Absolute slope (ebnm)",
+            0.624,
+            "muted",
+            "0.624"
+          ],
+          [
+            "Peer-relative, plain z",
+            0.775,
+            "amber",
+            "0.775"
+          ],
+          [
+            "Peer-relative, ebnm",
+            0.777,
+            "teal",
+            "0.777"
+          ]
+        ]
+      },
+      "fig": "fig/2026-11-13/m1_text.png"
+    },
+    {
+      "h": "Build 2026-11-23: our own port matches ebnm; the flag test misses one calibration bar.",
+      "miss": true,
+      "t": "With the same scale grid the port matches ebnm to 1.5e-12 in log-likelihood. On mocks regenerated with a new seed (pre-registered): 1.9% / 1.8% wrong signs among flags, 107 vs 0 and 163 vs 42 BH calls, 0% false flags with no true effects, but the MS lfsr 0.2–0.5 bin is off by 5.4 points (bar ±5).",
+      "chart": {
+        "type": "hbars",
+        "title": "Programs flagged “really changed” (regenerated SYNTHETIC mocks)",
+        "max": 180,
+        "rows": [
+          [
+            "BH · Corning",
+            0,
+            "amber",
+            "0"
+          ],
+          [
+            "ebnm port · Corning (1.9% wrong)",
+            107,
+            "teal",
+            "107"
+          ],
+          [
+            "BH · MS",
+            42,
+            "amber",
+            "42"
+          ],
+          [
+            "ebnm port · MS (1.8% wrong)",
+            163,
+            "teal",
+            "163"
+          ]
+        ]
+      }
+    }
   ]
 }

@@ -1,0 +1,66 @@
+{
+ "data": "SYNTHETIC random walks (xorshift, seed 20261123)",
+ "threads": 8,
+ "host": "box, 8 vCPU, shared with other jobs",
+ "n10000_w1000": {
+  "runs": [
+   {
+    "n": 10000,
+    "width": 1000,
+    "height": 300,
+    "chunk": 10000,
+    "threads": 8,
+    "total_s": 0.3942,
+    "gen_s": 0.0593,
+    "density_s": 0.335,
+    "colsum0": 10000,
+    "peak_rss_MB": 262.52734375
+   },
+   {
+    "n": 10000,
+    "width": 1000,
+    "height": 300,
+    "chunk": 10000,
+    "threads": 8,
+    "total_s": 0.4347,
+    "gen_s": 0.0582,
+    "density_s": 0.3765,
+    "colsum0": 10000,
+    "peak_rss_MB": 289.84375
+   },
+   {
+    "n": 10000,
+    "width": 1000,
+    "height": 300,
+    "chunk": 10000,
+    "threads": 8,
+    "total_s": 0.3952,
+    "gen_s": 0.0612,
+    "density_s": 0.334,
+    "colsum0": 10000,
+    "peak_rss_MB": 281.00390625
+   }
+  ],
+  "median_density_s": 0.335,
+  "median_total_s": 0.3952
+ },
+ "n50000_w1000": {
+  "n": 50000,
+  "width": 1000,
+  "height": 300,
+  "chunk": 10000,
+  "threads": 8,
+  "total_s": 1.3547,
+  "gen_s": 0.2472,
+  "density_s": 1.1075,
+  "colsum0": 50000,
+  "peak_rss_MB": 356.171875
+ },
+ "reference_11_13": {
+  "rust_reference_10k_s": 0.5,
+  "numpy_port_10k_s": 62,
+  "reference_50k": "killed at the 15.6 GB memory limit"
+ },
+ "accept": "10,000 x 1,000 in <= 0.5 s; 50,000 series finish with peak RSS < 2 GB",
+ "pass": true
+}

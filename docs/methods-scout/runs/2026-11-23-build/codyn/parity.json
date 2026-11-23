@@ -1,0 +1,92 @@
+{
+ "oracle": "codyn 2.0.6 (R 4.5.3)",
+ "fixture": "SYNTHETIC 30 species x 25 periods, seed 20261123, ties, zeros, absences",
+ "fixture_parity": {
+  "vr": {
+   "oracle": 1.34761662929394,
+   "port": 1.3476166292939404,
+   "abs_diff": 4.440892098500626e-16,
+   "pass": true
+  },
+  "rate_change": {
+   "oracle": 0.0714437463929457,
+   "port": 0.07144374639294405,
+   "abs_diff": 1.6514567491299204e-15,
+   "pass": true
+  },
+  "mrs_mean": {
+   "oracle": 9.72495210727969,
+   "port": 9.724952107279693,
+   "abs_diff": 3.552713678800501e-15,
+   "pass": true
+  },
+  "rank_shift_per_pair": {
+   "n_pairs": 24,
+   "max_abs_diff": 4.263256414560601e-14,
+   "pass": true
+  }
+ },
+ "panels_11_12": {
+  "A:vr_raw": {
+   "port": 4.45367828781069,
+   "oracle_rerun": 4.45367828781069,
+   "abs_diff_vs_oracle": 0.0,
+   "published_11_12": 4.4537,
+   "abs_diff_vs_published": 2.171218931046326e-05,
+   "pass_1e-4": true
+  },
+  "A:rate_change_shares": {
+   "port": 0.0013789308745291728,
+   "oracle_rerun": 0.00137893087452917,
+   "abs_diff_vs_oracle": 2.8189256484623115e-18,
+   "published_11_12": 0.001379,
+   "abs_diff_vs_published": 6.912547082719815e-08,
+   "pass_1e-4": true
+  },
+  "A:mrs_shares": {
+   "port": 0.38461538461538464,
+   "oracle_rerun": 0.384615384615385,
+   "abs_diff_vs_oracle": 3.885780586188048e-16,
+   "published_11_12": 0.3846,
+   "abs_diff_vs_published": 1.538461538463931e-05,
+   "pass_1e-4": true
+  },
+  "E4:vr_raw": {
+   "port": 2.3556776689712873,
+   "oracle_rerun": 2.35567766897129,
+   "abs_diff_vs_oracle": 2.6645352591003757e-15
+  },
+  "E4:rate_change_shares": {
+   "port": 0.00472650335894008,
+   "oracle_rerun": 0.00472650335894008,
+   "abs_diff_vs_oracle": 0.0,
+   "published_11_12": 0.004727,
+   "abs_diff_vs_published": 4.966410599204288e-07,
+   "pass_1e-4": true
+  },
+  "E4:mrs_shares": {
+   "port": 0.23770491803278687,
+   "oracle_rerun": 0.237704918032787,
+   "abs_diff_vs_oracle": 1.3877787807814457e-16,
+   "published_11_12": 0.2377,
+   "abs_diff_vs_published": 4.918032786876969e-06,
+   "pass_1e-4": true
+  }
+ },
+ "timing": {
+  "port_999_null_sec_median3": 0.008148573004291393,
+  "R_codyn_999_null_sec": 1.491,
+  "port_null": {
+   "lowerCI": 0.43878681948390197,
+   "upperCI": 1.9909456428879038,
+   "nullmean": 0.9948962211993454
+  },
+  "R_null": {
+   "lowerCI": 0.418201172540655,
+   "upperCI": 1.90192731466292,
+   "nullmean": 0.975508425615551
+  },
+  "note": "null intervals are random draws (different RNGs); compared loosely, not for parity"
+ },
+ "step1_numeric_pass": true
+}

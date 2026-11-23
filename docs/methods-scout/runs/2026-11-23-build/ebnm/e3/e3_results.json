@@ -1,0 +1,131 @@
+{
+ "prereg": "runs/2026-11-23-build/PREREG.md section E3",
+ "data": "SYNTHETIC Q2 mock ZBB regenerated with seed 20261123",
+ "mocks": {
+  "Corning_mock": {
+   "n": 991,
+   "years": [
+    2024,
+    2025
+   ],
+   "flags": 107,
+   "bh_calls": 0,
+   "wrong_sign_rate_flags": 0.018691588785046728,
+   "bh_wrong_sign_rate": null,
+   "flags_over_bh": null,
+   "calibration": [
+    {
+     "bin": "(0, 0.01]",
+     "n": 31,
+     "mean_lfsr": 0.004382125224273845,
+     "wrong_sign": 0.0,
+     "abs_gap": 0.004382125224273845,
+     "scored": true,
+     "pass": true
+    },
+    {
+     "bin": "(0.01, 0.05]",
+     "n": 76,
+     "mean_lfsr": 0.027407686519830856,
+     "wrong_sign": 0.02631578947368421,
+     "abs_gap": 0.001091897046146647,
+     "scored": true,
+     "pass": true
+    },
+    {
+     "bin": "(0.05, 0.2]",
+     "n": 194,
+     "mean_lfsr": 0.13400150840484587,
+     "wrong_sign": 0.12371134020618557,
+     "abs_gap": 0.010290168198660299,
+     "scored": true,
+     "pass": true
+    },
+    {
+     "bin": "(0.2, 0.5]",
+     "n": 690,
+     "mean_lfsr": 0.36021782350872306,
+     "wrong_sign": 0.4072463768115942,
+     "abs_gap": 0.047028553302871146,
+     "scored": true,
+     "pass": true
+    }
+   ],
+   "all_zero_false_flag_rate": 0.0,
+   "loglik_port": 72.22671510889677,
+   "loglik_R": 72.2215507764,
+   "R_flags": 107,
+   "pass": {
+    "wrong_sign_le_5pct": true,
+    "flags_ge_3x_bh": true,
+    "calibration_within_5pts": true,
+    "all_zero_false_flags_le_5pct": true
+   },
+   "note_flags_vs_bh": "107 flags vs 0 BH calls; bar is flags >= 3 x BH calls (BH made 0 calls, so the bar holds trivially)"
+  },
+  "MorganStanley_mock": {
+   "n": 1639,
+   "years": [
+    2024,
+    2025
+   ],
+   "flags": 163,
+   "bh_calls": 42,
+   "wrong_sign_rate_flags": 0.018404907975460124,
+   "bh_wrong_sign_rate": 0.0,
+   "flags_over_bh": 3.880952380952381,
+   "calibration": [
+    {
+     "bin": "(0, 0.01]",
+     "n": 54,
+     "mean_lfsr": 0.00396928046253547,
+     "wrong_sign": 0.0,
+     "abs_gap": 0.00396928046253547,
+     "scored": true,
+     "pass": true
+    },
+    {
+     "bin": "(0.01, 0.05]",
+     "n": 109,
+     "mean_lfsr": 0.02844753100654186,
+     "wrong_sign": 0.027522935779816515,
+     "abs_gap": 0.0009245952267253436,
+     "scored": true,
+     "pass": true
+    },
+    {
+     "bin": "(0.05, 0.2]",
+     "n": 375,
+     "mean_lfsr": 0.128117865637359,
+     "wrong_sign": 0.13066666666666665,
+     "abs_gap": 0.002548801029307657,
+     "scored": true,
+     "pass": true
+    },
+    {
+     "bin": "(0.2, 0.5]",
+     "n": 1101,
+     "mean_lfsr": 0.35755023510214934,
+     "wrong_sign": 0.4114441416893733,
+     "abs_gap": 0.05389390658722398,
+     "scored": true,
+     "pass": false
+    }
+   ],
+   "all_zero_false_flag_rate": 0.0,
+   "loglik_port": 150.9981858358085,
+   "loglik_R": 151.0015773201,
+   "R_flags": 163,
+   "pass": {
+    "wrong_sign_le_5pct": true,
+    "flags_ge_3x_bh": true,
+    "calibration_within_5pts": false,
+    "all_zero_false_flags_le_5pct": true
+   },
+   "note_flags_vs_bh": "163 flags vs 42 BH calls; bar is flags >= 3 x BH calls"
+  }
+ },
+ "step3_pass": false,
+ "kill_triggered": false,
+ "note": "flags_ge_3x_bh recomputed as flags >= 3*bh_calls (the script's first version required a finite ratio, which wrongly failed BH = 0). R cross-check: same 107/163 flags as R ebnm 1.1.42."
+}

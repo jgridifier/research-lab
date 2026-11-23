@@ -86,3 +86,8 @@ b0, b1, b2 = 1.1 0.6167 0.4417  l1 = 1.1  l2 = 0.1333  l3 = 0.05  L-CV t = l2/l1
 check: l2 = half the mean |xi - xj| over pairs = 0.1333
 five sites (t, t3, t4): [[0.1, 0.0, 0.1], [0.05, 0.1, 0.12], [0.08, -0.1, 0.11], [0.06, 0.05, 0.1], [0.2, 0.3, 0.15]]  D_i = [0.73, 1.074, 1.23, 0.652, 1.314]  sum = 5.0 (always = N) max possible D_i = (N-1)/3 = 1.333
 regional L-CV tR = 0.098  observed dispersion V = 0.0538  H1 = (V - mean V_sim) / sd V_sim, with V_sim from a kappa fitted to the regional L-moments (not run in the toy)
+== codyn: 3 dealers x 4 quarters, raw volumes A=(10,12,14,16), B=(5,6,7,8), C=(8,7,6,5)
+totals [23.0, 25.0, 27.0, 29.0] var(total) 6.667 sum of vars 10.0 VR 0.667
+shares [[0.435, 0.217, 0.348], [0.48, 0.24, 0.28], [0.519, 0.259, 0.222], [0.552, 0.276, 0.172]] VR on shares: var(total share) 0.0 => VR = 0
+ranks (1 = largest) per quarter [[1, 3, 2], [1, 3, 2], [1, 2, 3], [1, 2, 3]] rank shifts per step [0.0, 0.6666666666666666, 0.0]
+share distances by lag [(1, 0.0846), (2, 0.1567), (3, 0.2188), (1, 0.0721), (2, 0.1342), (1, 0.0621)] rate of change (OLS slope) 0.0728
