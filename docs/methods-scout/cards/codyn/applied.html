@@ -1,0 +1,40 @@
+<h4>Who plays what</h4>
+<div class="table-wrap"><table>
+<tr><th>In ecology</th><th>Here</th></tr>
+<tr><td>Species</td><td>A dealer holding company (14 on panel A; JPM, GS, MS, BAC on E4)</td></tr>
+<tr><td>Sampling date</td><td>A quarter</td></tr>
+<tr><td>Abundance</td><td>Trading assets (BHCK3545) or trailing-4Q equity trading revenue (BHCK8759)</td></tr>
+<tr><td>Relative abundance</td><td>The dealer's share of the panel total</td></tr>
+<tr><td>Synchrony (VR &gt; 1)</td><td>A market-wide activity cycle: dealers grow and shrink together</td></tr>
+<tr><td>Compensation (VR &lt; 1)</td><td>One dealer's gain is another's loss in the amounts themselves</td></tr>
+</table></div>
+
+<h4>Inputs and preprocessing</h4>
+<p>PROXY data, not prime brokerage: the public FFIEC/NIC FR Y-9C panels built on 2026-11-11. Panel A: trading assets of 14 dealer holding companies, 2016Q3–2026Q2 (40 quarters, UBS and Credit Suisse summed). Panel E4: trailing-4-quarter equity trading revenue of JPM, GS, MS and BAC, 2011Q1–2026Q2 (62 quarters). Balanced panels, nothing interpolated or dropped. Shares are each dealer's amount over the panel total. No raw rows are published.</p>
+
+<h4>What we ran</h4>
+<ol>
+<li>2026-11-12: codyn 2.0.6 in R: rank clocks, turnover, rank shift, rate of change, and the variance ratio with 999 cyclic-shift draws, plus windows and leave-outs (<code>runs/2026-11-12-adhoc/m1_codyn.R</code>, seed 20261112).</li>
+<li>2026-11-23 (build step 1): an independent NumPy port of VR, the cyclic-shift null, rate of change and rank shift, checked against codyn as a black-box oracle on the two proxy panels and on a SYNTHETIC 30-species × 25-period fixture with ties, zeros and absences (<code>runs/2026-11-23-build/codyn/</code>).</li>
+</ol>
+
+<h4>How to read the main chart</h4>
+<div class="callouts">
+<p><b>1.</b> Each bar is one variance ratio on raw volumes; the reference line at 1 is what independent dealers would give.</p>
+<p><b>2.</b> On the 11-12 figure, whiskers are the 95% cyclic-shift null interval. A bar whose value sits outside its whiskers is a real departure from independence.</p>
+<p><b>3.</b> Above the interval means volumes co-move (a market cycle). Below means they compensate (candidate sticky migration in the amounts).</p>
+<p><b>4.</b> On the rank clock, angle is time and radius is share; a dealer spiralling outward is gaining share, and two spirals crossing is a swap.</p>
+</div>
+
+<div class="plain"><b>What it means for a decision-maker.</b> The big US dealers' balance sheets rise and fall together, which says most of the volume swings are the market, not one firm taking business from another. The foreign banks, as a group, do not move with them. The share swap between Goldman Sachs and JPMorgan in equity revenue is real and large, but this tool can only show it as a picture; it cannot yet test it in share terms. That gap is the next piece of work.</div>
+
+<h4>Where it breaks</h4>
+<ul>
+<li>VR is identically 0 on shares (4.07e-17 on panel A), so it answers a volumes question, not a shares question.</li>
+<li>The cyclic-shift null wraps trending series, which inflates the MRS null and weakens long-lag distances in the rate null.</li>
+<li>Closed 14- and 4-firm panels: incidence turnover is 0 by construction.</li>
+<li>Short windows (14 to 26 quarters) give wide null intervals; "just above" should be read softly.</li>
+</ul>
+
+<h4>What we'd do next</h4>
+<p>Build step 2 (the Math top pick): pre-register and test a share-space variance ratio in log-ratio coordinates and a block-shift null that does not wrap, on simulated 40-quarter panels with a market factor. Then step 3: time every metric with 999-draw nulls on a 2,000-entity × 40-period SYNTHETIC panel.</p>

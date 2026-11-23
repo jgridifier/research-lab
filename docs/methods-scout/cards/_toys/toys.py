@@ -279,3 +279,17 @@ print("five sites (t, t3, t4):", u.tolist(), " D_i =", Di.round(3).tolist(), " s
 nrec = np.array([5, 5, 5, 5, 5]); tR = np.sum(nrec * u[:, 0]) / nrec.sum()
 V = np.sqrt(np.sum(nrec * (u[:, 0] - tR) ** 2) / nrec.sum())
 print("regional L-CV tR =", round(tR, 4), " observed dispersion V =", round(V, 4), " H1 = (V - mean V_sim) / sd V_sim, with V_sim from a kappa fitted to the regional L-moments (not run in the toy)")
+
+print("== codyn: 3 dealers x 4 quarters, raw volumes A=(10,12,14,16), B=(5,6,7,8), C=(8,7,6,5)")
+Xc = np.array([[10, 5, 8], [12, 6, 7], [14, 7, 6], [16, 8, 5]], float)
+def svar(x): return float(np.var(x, ddof=1))
+tot = Xc.sum(1); vr = svar(tot) / sum(svar(Xc[:, i]) for i in range(3))
+print("totals", tot.tolist(), "var(total)", round(svar(tot), 3), "sum of vars", round(sum(svar(Xc[:, i]) for i in range(3)), 3), "VR", round(vr, 3))
+Sh = Xc / tot[:, None]; tsh = Sh.sum(1)
+print("shares", Sh.round(3).tolist(), "VR on shares: var(total share)", round(svar(tsh), 12), "=> VR = 0")
+rk = np.array([np.argsort(np.argsort(-r)) + 1 for r in Xc])
+print("ranks (1 = largest) per quarter", rk.tolist(), "rank shifts per step", [float(np.abs(rk[t + 1] - rk[t]).mean()) for t in range(3)])
+D = lambda a, b: float(np.sqrt(((Sh[a] - Sh[b]) ** 2).sum()))
+lags = [(j - i, D(i, j)) for i in range(4) for j in range(i + 1, 4)]
+lg = np.array([l for l, _ in lags], float); dd = np.array([d for _, d in lags])
+print("share distances by lag", [(l, round(d, 4)) for l, d in lags], "rate of change (OLS slope)", round(float(np.polyfit(lg, dd, 1)[0]), 4))

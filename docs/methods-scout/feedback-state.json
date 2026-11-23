@@ -1,7 +1,7 @@
 {
   "version": 1,
   "repo": "jgridifier/research-lab",
-  "updated_at": "2026-11-23T17:30:00Z",
+  "updated_at": "2026-11-23T19:38:01Z",
   "issues": {
     "46": {
       "issue": 46,
@@ -252,21 +252,30 @@
           "actor": "jgridifier",
           "action": "status:approved",
           "ref": null
+        },
+        {
+          "at": "2026-11-23T19:38:01Z",
+          "signal": "result",
+          "source": "bot",
+          "actor": "quant-scout-bot",
+          "action": "build step 1 done (card + parity); engineering ticket #96 filed",
+          "ref": null
         }
       ],
       "build_plan": {
-        "library": "codyn port (working name)",
+        "library": "codynfast (working name)",
         "repo": "not created yet",
-        "ticket": null,
+        "ticket": 96,
         "finish": "Agent-ready library (finish-line spec in FEEDBACK.md)",
-        "updated_at": "2026-11-23T17:30:00Z",
+        "updated_at": "2026-11-23T19:38:01Z",
         "steps": [
           {
             "n": 1,
             "title": "Research card plus parity port",
-            "status": "todo",
+            "status": "done",
             "do": "Write the missing research card. Port rank clocks, the Schluter variance ratio with the Hallett cyclic-shift null, rate of change and mean rank shift, using codyn 2.0.6 (Apache-2.0) as the black-box oracle.",
-            "accept": "Match the 11-12 numbers: VR 4.4537 (panel A), rate of change 0.001379 and 0.004727, mean rank shift 0.3846 and 0.2377, each to ≤ 1e-4, plus fixture parity ≤ 1e-10 on a synthetic panel."
+            "accept": "Match the 11-12 numbers: VR 4.4537 (panel A), rate of change 0.001379 and 0.004727, mean rank shift 0.3846 and 0.2377, each to ≤ 1e-4, plus fixture parity ≤ 1e-10 on a synthetic panel.",
+            "result": "2026-11-23 (runs/2026-11-23-build/codyn): research card written. 11-12 numbers within 2.2e-5 of published rounding (≤ 2.7e-15 vs a codyn rerun); SYNTHETIC fixture parity ≤ 4.3e-14. Pass. 999-draw VR null 0.009 s vs 1.49 s in R."
           },
           {
             "n": 2,
@@ -335,6 +344,14 @@
           "actor": "jgridifier",
           "action": "chose avenues Math + Engineering (resolves direction TBD); both run -> status:in-progress",
           "ref": 6950370736
+        },
+        {
+          "at": "2026-11-23T19:38:01Z",
+          "signal": "result",
+          "source": "bot",
+          "actor": "quant-scout-bot",
+          "action": "build step 3 done (pre-registered size/power/proxy-noise study)",
+          "ref": null
         }
       ],
       "build_plan": {
@@ -342,7 +359,7 @@
         "repo": "jgridifier/proprlite (not created yet)",
         "ticket": 90,
         "finish": "Agent-ready library (finish-line spec in FEEDBACK.md)",
-        "updated_at": "2026-11-23T17:30:00Z",
+        "updated_at": "2026-11-23T19:38:01Z",
         "steps": [
           {
             "n": 1,
@@ -361,10 +378,11 @@
           {
             "n": 3,
             "title": "Size, power and proxy-noise study",
-            "status": "todo",
+            "status": "done",
             "do": "Pre-register, then rerun sim_partial.py at T ∈ {20, 30, 40, 62}, with an exact market proxy and with proxy noise at 0.1, 0.25 and 0.5 sd.",
             "accept": "With an exact proxy, size in [0.02, 0.08] at T = 40 and 62 and power ≥ 0.80 at T = 62. Publish a minimum-T table and the largest proxy noise that keeps size ≤ 8%. At 0.5 sd noise it was 100% false alarms.",
-            "kill": "If the exact-proxy size lands outside [0.02, 0.08], partial_increment stops being the default and the README says why."
+            "kill": "If the exact-proxy size lands outside [0.02, 0.08], partial_increment stops being the default and the README says why.",
+            "result": "2026-11-23, pre-registered (runs/2026-11-23-build/PREREG.md L3): exact-proxy size 0.055 (T = 40) and 0.070 (T = 62), power 0.988 at T = 62. Pass. Minimum T = 30 (size 0.072, power 0.805); T = 20 cannot reject. Any proxy noise ≥ 0.10 sd gives size 0.49–1.00, so the partial test needs an exact proxy."
           },
           {
             "n": 4,
@@ -428,21 +446,30 @@
           "actor": "jgridifier",
           "action": "status:approved",
           "ref": null
+        },
+        {
+          "at": "2026-11-23T19:38:01Z",
+          "signal": "result",
+          "source": "bot",
+          "actor": "quant-scout-bot",
+          "action": "build steps 1 and 3 run (step 1 partial, step 3 missed one bar); engineering ticket #94 filed",
+          "ref": null
         }
       ],
       "build_plan": {
-        "library": "ebnm port (working name)",
+        "library": "ebnmfast (working name)",
         "repo": "not created yet",
-        "ticket": null,
+        "ticket": 94,
         "finish": "Agent-ready library (finish-line spec in FEEDBACK.md)",
-        "updated_at": "2026-11-23T17:30:00Z",
+        "updated_at": "2026-11-23T19:38:01Z",
         "steps": [
           {
             "n": 1,
             "title": "Port with parity (normal, point-normal, ash)",
-            "status": "todo",
+            "status": "doing",
             "do": "Implement the grid of normal mixtures, the concave mixture-weight solve (mixsqp-style SQP) and closed-form posteriors (means, 90% intervals, lfsr) from the papers. Use ebnm 1.1.42 as the black-box oracle.",
-            "accept": "Log-likelihood −145.7808 (Corning_mock, ash) and −238.8506 (MS_mock) to ≤ 1e-4, with posterior means and lfsr within 1e-6 of the oracle on both mocks."
+            "accept": "Log-likelihood −145.7808 (Corning_mock, ash) and −238.8506 (MS_mock) to ≤ 1e-4, with posterior means and lfsr within 1e-6 of the oracle on both mocks.",
+            "result": "2026-11-23 (runs/2026-11-23-build/ebnm): with ebnm’s own scale grid, log-lik within 1.5e-12 / 3.8e-12, posterior means within 4.5e-8, lfsr within 4.6e-9 (pass). With the port’s exact KL-bound grid, log-lik is off by 3.2e-4 / 3.7e-4 (bar 1e-4: miss), because ebnm interpolates a precomputed table. Needs a call on the default grid rule; see ticket #94."
           },
           {
             "n": 2,
@@ -454,10 +481,11 @@
           {
             "n": 3,
             "title": "The 'is this move real?' flag test (replaces 'validate on the real panel')",
-            "status": "todo",
+            "status": "doing",
             "do": "Pre-register. Regenerate both SYNTHETIC mocks with a new seed. Set x = Δlog actual, s = √2·σ̂, a zero-centred ash prior, flag at lfsr < 0.05, and compare against BH at q = 0.05.",
             "accept": "Wrong-sign rate ≤ 5% among flags, at least 3× BH's calls and lfsr calibration within ±5 points per bin on both mocks. On an all-zero-effect mock, false flags ≤ 5%.",
-            "kill": "If the wrong-sign rate is > 5% on either mock, the flag ships off by default with a warning; shrinkage still ships."
+            "kill": "If the wrong-sign rate is > 5% on either mock, the flag ships off by default with a warning; shrinkage still ships.",
+            "result": "2026-11-23, pre-registered (runs/2026-11-23-build/PREREG.md E3), regenerated mocks seed 20261123: wrong sign among flags 1.9% / 1.8% (pass); flags 107 vs BH 0 and 163 vs BH 42 (pass); zero-effect false flags 0% (pass); calibration off by 5.4 points in the MS lfsr 0.2–0.5 bin (miss). Not passed; kill rule not triggered."
           },
           {
             "n": 4,
@@ -502,28 +530,38 @@
           "actor": "jgridifier",
           "action": "status:approved",
           "ref": null
+        },
+        {
+          "at": "2026-11-23T19:38:01Z",
+          "signal": "result",
+          "source": "bot",
+          "actor": "quant-scout-bot",
+          "action": "build steps 1 and 2 done; engineering ticket #95 filed",
+          "ref": null
         }
       ],
       "build_plan": {
         "library": "denselines (working name)",
         "repo": "not created yet",
-        "ticket": null,
+        "ticket": 95,
         "finish": "Agent-ready library (finish-line spec in FEEDBACK.md)",
-        "updated_at": "2026-11-23T17:30:00Z",
+        "updated_at": "2026-11-23T19:38:01Z",
         "steps": [
           {
             "n": 1,
             "title": "Gap-safe weighted core, with parity",
-            "status": "todo",
+            "status": "done",
             "do": "Build the Rust core from parity_harness.rs (runs/2026-11-13) with per-series weights, 0/0 := 0 for columns where a series is absent, and live-count n(c) and weight-mass W(c) channels.",
-            "accept": "Relative difference ≤ 1e-6 vs reference commit 083890c on full-span inputs (n = 100, 1,000, 5,000), with column sums equal to n. On the gap case (50 series, 10 stopping at column 300), there are 0 NaN columns and the column sum after column 300 is 40."
+            "accept": "Relative difference ≤ 1e-6 vs reference commit 083890c on full-span inputs (n = 100, 1,000, 5,000), with column sums equal to n. On the gap case (50 series, 10 stopping at column 300), there are 0 NaN columns and the column sum after column 300 is 40.",
+            "result": "2026-11-23 (runs/2026-11-23-build/denselines): max abs diff / max ref 1.15e-7, 1.36e-7, 1.16e-7 at n = 100, 1,000, 5,000; column sums = n; gap case 0 NaN columns, column sum 40 after column 300. Pass."
           },
           {
             "n": 2,
             "title": "Speed and memory by benchmark",
-            "status": "todo",
+            "status": "done",
             "do": "Stream series into the accumulator instead of holding every rasterised path. Compare against the exact NumPy port.",
-            "accept": "10,000 series × 1,000 columns in ≤ 0.5 s (Rust took 0.50 s and NumPy 62 s). 50,000 series finish with peak RSS < 2 GB; the 11-13 run hit the 15.6 GB memory limit. Commit the timings."
+            "accept": "10,000 series × 1,000 columns in ≤ 0.5 s (Rust took 0.50 s and NumPy 62 s). 50,000 series finish with peak RSS < 2 GB; the 11-13 run hit the 15.6 GB memory limit. Commit the timings.",
+            "result": "2026-11-23: streamed Rust core, 10,000 × 1,000 in 0.395 s (median of 3, 8 threads); 50,000 × 1,000 in 1.35 s with peak RSS 356 MB. Exact NumPy port: 1.51 s for 1,000 × 1,000. Pass."
           },
           {
             "n": 3,

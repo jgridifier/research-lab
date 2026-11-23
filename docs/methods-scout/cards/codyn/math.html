@@ -1,0 +1,41 @@
+<h4>Notation</h4>
+<div class="table-wrap"><table>
+<tr><th>Symbol</th><th>Meaning</th><th>Here</th></tr>
+<tr><td>\(x_{it}\)</td><td>abundance of species \(i\) at time \(t\)</td><td>a dealer's raw trading assets (panel A) or trailing-4Q equity trading revenue (panel E4) in quarter \(t\)</td></tr>
+<tr><td>\(s_{it}=x_{it}/\sum_k x_{kt}\)</td><td>relative abundance</td><td>the dealer's share of the panel total</td></tr>
+<tr><td>\(N,\ T\)</td><td>species, time points</td><td>14 dealers × 40 quarters (A); 4 dealers × 62 quarters (E4)</td></tr>
+<tr><td>\(r_{it}\)</td><td>rank of species \(i\) at \(t\) (1 = largest)</td><td>the dealer's league-table position</td></tr>
+<tr><td>\(d(t,t')\)</td><td>Euclidean distance between share vectors</td><td>how far the league composition moved between two quarters</td></tr>
+</table></div>
+
+<h4>Assumptions</h4>
+<ul>
+<li>A fixed list of species observed over time; absent records count as 0 abundance for VR and rate of change, and are skipped for rank shift.</li>
+<li>VR needs raw amounts, not shares: shares sum to one, so their total has zero variance.</li>
+<li>The cyclic-shift null assumes each series is stationary enough that rotating it in time keeps its persistence and breaks only the cross-species timing.</li>
+</ul>
+
+<h4>The statistics</h4>
+$$\mathrm{VR}=\frac{\operatorname{Var}\!\bigl(\sum_i x_{it}\bigr)}{\sum_i \operatorname{Var}(x_{it})},\qquad
+\text{rate}=\hat b\ \text{in}\ d(t,t')=a+b\,|t-t'|+e,\qquad
+\mathrm{MRS}_t=\frac{1}{|P_t|}\sum_{i\in P_t}\lvert r_{i,t+1}-r_{it}\rvert ,$$
+<p>where \(P_t\) is the set of species recorded at both \(t\) and \(t+1\), and ranks for MRS are taken within \(P_t\).</p>
+
+<h4>Why it works, step by step</h4>
+<div class="step"><b class="n">Step 1 · the variance of a sum</b>\(\operatorname{Var}(\sum_i x_i)=\sum_i\operatorname{Var}(x_i)+2\sum_{i&lt;j}\operatorname{Cov}(x_i,x_j)\). So \(\mathrm{VR}=1+2\sum_{i&lt;j}\operatorname{Cov}(x_i,x_j)/\sum_i\operatorname{Var}(x_i)\): VR above 1 means covariances are mostly positive (volumes rise and fall together), below 1 means they mostly offset (compensation).</div>
+<div class="step"><b class="n">Step 2 · why shares give exactly zero</b>On shares \(\sum_i s_{it}=1\) for every \(t\), so \(\operatorname{Var}(\sum_i s_{it})=0\) and \(\mathrm{VR}=0\) whatever the dealers do. The covariances are forced to sum to \(-\tfrac12\sum_i\operatorname{Var}(s_i)\). That is why the official VR is run on raw volumes, and why a share-space version needs log-ratio coordinates (the Math pick).</div>
+<div class="step"><b class="n">Step 3 · the cyclic-shift null</b>Rotate each series by its own random offset \(k_i\): \(x^{*}_{it}=x_{i,(t+k_i)\bmod T}\). Each series keeps its mean, variance and (apart from one wrap point) its autocorrelation, but the offsets break the timing between series, so \(\mathbb E[\operatorname{Cov}(x^*_i,x^*_j)]\approx 0\) and the null VR is centred near 1. On a trending series the wrap joins the end to the start and creates one artificial jump, which is the MRS caveat.</div>
+<div class="step"><b class="n">Step 4 · rate of change</b>A composition that walks in one direction moves further the longer you wait, so \(d\) grows roughly linearly with lag. A bounded wander saturates. The OLS slope of \(d\) on lag is the rate (Collins, Micheli &amp; Hartt 2000).</div>
+
+<h4>The null and inference</h4>
+<ul>
+<li>VR: 999 cyclic-shift draws; report the 2.5% and 97.5% quantiles of the null VR. Observed outside the interval = synchrony (above) or compensation (below).</li>
+<li>Rate of change and MRS: the same rotation null was used on 11-12 as a description. On trending series the wrap shrinks long-lag distances and inflates rank jumps, so those p-values are read softly.</li>
+<li>No multiple-testing correction: one pre-chosen test per panel.</li>
+</ul>
+
+<div class="toy"><h5>Toy example (computed on the box)</h5>
+<p>Three dealers over four quarters, raw volumes \(A=(10,12,14,16)\), \(B=(5,6,7,8)\), \(C=(8,7,6,5)\). Totals \(23,25,27,29\): variance of the total \(6.667\); sum of the three variances \(10.0\); so \(\mathrm{VR}=0.667\) (below 1: C's decline offsets part of A and B). On shares the total is 1 every quarter, its variance is \(0\), so VR on shares is \(0\). Ranks (1 = largest) are \((1,3,2),(1,3,2),(1,2,3),(1,2,3)\); the rank shifts per step are \(0,\ 0.667,\ 0\). Share distances by lag give a rate of change of \(0.0728\).</p></div>
+
+<div class="diff"><b>How it differs mathematically from the standard tool.</b> The usual finance view is a correlation matrix of shares, or of returns. Correlation of shares is pushed negative by the unit-sum constraint and changes if you add or drop a dealer. VR works on raw amounts and asks one question about the whole community (synchrony vs compensation), and its null keeps each series' persistence instead of assuming independent draws. Rank clocks and MRS look only at order, so they are unaffected by the size of the total.</div>
+<p class="cite">Followed: Hallett et al. (2016), <em>Methods in Ecology and Evolution</em> 7(10):1146–1151 (codyn); Schluter (1984), <em>Ecology</em> 65(3):998–1005 (VR); Hallett et al. (2014), <em>Ecology</em> 95(6):1693–1700 (cyclic shift); Collins, Micheli &amp; Hartt (2000), <em>Oikos</em> 91(2):285–293 (rate of change); Collins et al. (2008), <em>Ecology</em> 89(12):3534–3541 (rank clocks, MRS). Section and equation numbers not checked. Definitions were checked against codyn 2.0.6 by parity (build step 1). Toy: <code>cards/_toys/toys.py</code>.</p>

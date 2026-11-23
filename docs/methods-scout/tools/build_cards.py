@@ -95,9 +95,10 @@ def plan_steps_html(bp: dict) -> str:
     for st in bp["steps"]:
         ic, lab = PLAN_STATUS[st["status"]]
         kill = f'<p class="kill"><b>Kill rule:</b> {e(st["kill"])}</p>' if st.get("kill") else ""
+        res = f'<p class="bp-res"><b>Result:</b> {e(st["result"])}</p>' if st.get("result") else ""
         rows.append(f'<li class="bp-step bp-{e(st["status"])}"><div class="bp-head"><span class="bp-n">{st.get("n", "")}</span>'
                     f'<span class="bp-t">{e(st["title"])}</span><span class="chip bp-st">{ic} {lab}</span></div>'
-                    f'<p><b>Do:</b> {e(st["do"])}</p><p><b>Pass when:</b> {e(st["accept"])}</p>{kill}</li>')
+                    f'<p><b>Do:</b> {e(st["do"])}</p><p><b>Pass when:</b> {e(st["accept"])}</p>{kill}{res}</li>')
     return f'<ol class="bp-steps">{"".join(rows)}</ol>'
 
 
@@ -326,7 +327,7 @@ def card_page(c):
 {picture(c['picture'])}
 <div style="margin:1rem 0 .4rem">{respond(c['issue'], big=True)}</div>
 {build_plan_section(c)}<div class="tabs">{radios}<div class="tabbar">{labels}</div><div class="panels">{''.join(panels)}</div></div>
-<p class="cite">Full tables, code and data notes: <a href="../{c['edition']}">the {c['date']} edition</a> · scripts in <code>runs/{c['date']}/</code> · card sources in <code>cards/{c['slug']}/</code>.</p>
+<p class="cite">Full tables, code and data notes: <a href="../{c['edition']}">the {c['date']} edition</a> · scripts in <code>runs/{c['edition'].split('#')[0].removesuffix('.html')}/</code> · card sources in <code>cards/{c['slug']}/</code>.</p>
 <div style="margin:1.4rem 0">{respond(c['issue'])}</div>
 <script>(function(){{var m={{"math":1,"applied":2,"robust":3,"sauce":4,"questions":5}};var h=location.hash.slice(1);var i=m[h]||(/^t[1-5]$/.test(h)?+h[1]:0);if(i)document.getElementById("t"+i).checked=true;}})();</script>"""
     return page(f"{c['name']} · research card · methods scout", body, depth=1, math=True)
