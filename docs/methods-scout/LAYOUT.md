@@ -8,7 +8,7 @@ How the methods scout is laid out on the site, and what every research card must
 |---|---|---|
 | `index.html` | **Home: the ranked queue**, including the research-to-production tracker | `tools/build_cards.py` (do not edit by hand) |
 | `m/<slug>.html` | One **research card** per method | `tools/build_cards.py` |
-| `production-links.json` | Build repo, docs site, and published-package URLs, keyed by slug | by hand, when a repo or package exists |
+| `production-links.json` | Build repo, docs site, published-package and engineering-ticket URLs, keyed by slug | by hand, when a repo, package or ticket exists |
 | `cards/<slug>/card.json` | Summary box, one picture, findings | the daily scout |
 | `cards/<slug>/{math,applied,robust,sauce,questions}.html` | The five tab bodies (HTML fragments, KaTeX allowed) | the daily scout |
 | `cards/<slug>/deep.html` | Optional deep dive (HTML fragment, KaTeX allowed), rendered to `m/<slug>-deep.html` and linked under the card's summary box | the daily scout or scanner, when Jared asks for more depth |
@@ -36,7 +36,7 @@ Sections, in this order, each shown only if non-empty:
 2. **Undecided, ranked**: status `proposed`, ranked by the rule below, with the rule printed above the list.
 3. **Moving**: `approved`, `in-progress`, `refine`.
 4. **Parked**, then **Closed** (`dropped`, `done`).
-5. **Research to production**: every method whose status is `approved` (Go) or `in-progress` (Building). Each row shows the stage along `research → go → building → released`, then the lineage: originating and later edition pages, the research card, the GitHub issue, then the build repo, docs site, and published package. Missing build artifacts are written in plain words, never as a broken link.
+5. **Research to production**: every method whose status is `approved` (Go) or `in-progress` (Building). Each row shows the stage along `research → go → building → released`, then the lineage: originating and later edition pages, the research card, the GitHub issue, then the engineering ticket, the build plan (steps done and the next step, expandable), the build repo, docs site, and published package. Missing build artifacts are written in plain words, never as a broken link.
 
 Each queue row: rank (or status icon), method name, the `one` line, chips (status, question, verdict, "Research card"). Tapping opens a drawer with the rank-score arithmetic, top pick, the Respond button, a link to the card, and the response line.
 
@@ -52,6 +52,7 @@ Each queue row: rank (or status icon), method name, the `one` line, chips (statu
 | `package` | URL of a published package (only after the URL returns 200; never invent one) |
 | `package_label` | Link text for a published package |
 | `package_note` | Stand-in when nothing is published (default: "not on PyPI yet") |
+| `ticket` | URL of the engineering ticket (a GitHub issue labelled `engineering`). If absent, the tracker falls back to `build_plan.ticket` in the state file |
 
 A Go or Building method with no entry in the file still appears, with the default missing notes. Stage is `released` when `package` is set, otherwise `building` if the status is `in-progress`, otherwise `go`. A future scout run that changes a status, or a new edition page that carries the slug, updates the tracker on the next `build_cards.py` run. When a repo, docs site, or package comes into being, add the verified URL to `production-links.json`.
 
@@ -77,6 +78,7 @@ A Go or Building method with no entry in the file still appears, with the defaul
 - **Summary box**, four rows: What it is (`what`, ≤ 22 words) · Verdict + home-field grade · Top pick (from `top_pick` in the state file, plus `pick_eff` and `pick_line`, ≤ 22 words) · Data (say SYNTHETIC when it is).
 - **The one picture**: a before/after pair of numbers (`picture.type = "numbers"`) or of images (`"images"`). The left side is the usual tool, the right side is this method, on the same data.
 - **Respond button** and the response line.
+- **Build plan** (`id="build-plan"`), only for Go and Building methods: rendered by `build_cards.py` from `build_plan` in `feedback-state.json` (never hand-written in the card folder). It shows the library name, repo, ticket, and each step with its status, what to do, the acceptance test ("Pass when") and any kill rule. It ends in the agent-ready library defined in [FEEDBACK.md](FEEDBACK.md#finish-line-agent-ready-library). **The build fails** if a Go or Building method has no `build_plan`, has fewer than 3 or more than 6 steps, has a step without `title`, `do`, `accept` or a valid `status`, or does not end in the agent-ready library. A stub card shows its plan in the production tracker instead.
 
 Word caps apply **only** to the summary box and the queue row (`one`, ≤ 20 words). The build fails if they are exceeded. The tabs have no word cap: depth comes first, plain language always.
 
@@ -129,5 +131,5 @@ It lives in one place, `RESPOND_HINT` in `tools/scout_feedback.py`. How the scan
 2. Add the toy to `cards/_toys/toys.py`, run it, and update `toys_output.txt`.
 3. Write `cards/<slug>/card.json` and the five tab fragments.
 4. Run `build_cards.py` (writes `m/<slug>.html`, the queue, the production tracker and `status.js`) and `build_board.py`.
-5. Add the edition to `archive.html`. If a Go or Building method now has a repo, docs site, or published package, add the verified URL to `production-links.json`.
+5. Add the edition to `archive.html`. If a Go or Building method now has a repo, docs site, published package or engineering ticket, add the verified URL to `production-links.json`. When a method becomes Go, write its `build_plan` in `feedback-state.json` before rebuilding (the build fails without it).
 6. Check the card on a 390-px-wide screen: the math scrolls sideways inside its box, the tabs wrap.

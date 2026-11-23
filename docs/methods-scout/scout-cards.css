@@ -166,3 +166,23 @@ details.qrow p{color:var(--body)}
 .prod-links .k{font-family:var(--f-mono);font-size:.66rem;letter-spacing:.1em;text-transform:uppercase;color:var(--muted);padding-top:.2rem}
 .prod-links .missing{color:var(--muted)}
 .prod-links a{overflow-wrap:anywhere}
+
+/* Build plan (FEEDBACK.md finish line: agent-ready library) */
+.bplan{margin:1.2rem 0 1rem}
+.bp-steps{list-style:none;padding:0;margin:.4rem 0 0;counter-reset:none}
+.bp-step{background:var(--card);border:2px solid var(--ink);margin:0 0 .55rem;padding:.6rem .75rem}
+.bp-step.bp-done{opacity:.8}
+.bp-step.bp-blocked{border-style:dashed}
+.bp-head{display:flex;flex-wrap:wrap;align-items:center;gap:.45rem;margin:0 0 .3rem}
+.bp-n{font-family:var(--f-mono);font-weight:700;font-size:.8rem;border:2px solid var(--ink);padding:0 .35rem}
+.bp-t{font-family:var(--f-head);font-weight:800;font-size:1rem;flex:1 1 12rem;line-height:1.2}
+.bp-step p{margin:.25rem 0;font-size:.92rem;line-height:1.45}
+.bp-step .kill{color:var(--red)}
+.bp-done .bp-st{background:var(--green)}
+.bp-blocked .bp-st{background:#d8ccb4}
+.prod-links details.bp-mini{background:none;border:0;box-shadow:none;padding:0;margin:0;color:var(--ink)}
+.prod-links .bp-mini summary{cursor:pointer;font-family:var(--f-body);font-size:.9rem;font-weight:400;letter-spacing:0;text-transform:none;color:var(--ink);text-decoration:underline;text-decoration-color:var(--amber)}
+.bp-mini .bp-steps{margin-top:.5rem}
+.bp-mini .bp-step p{color:var(--ink)}
+.bp-mini .bp-step .kill{color:var(--red)}
+.prod-links li.bp-step{display:block;margin:0 0 .45rem}

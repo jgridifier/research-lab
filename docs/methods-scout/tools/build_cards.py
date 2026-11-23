@@ -60,6 +60,62 @@ def check_budget(card: dict) -> None:
                 raise SystemExit(f"{card['slug']}: '{k}' is {w} words (limit {n}): {card[k]}")
 
 
+PLAN_STATUS = {"todo": ("○", "To do"), "doing": ("▶", "Doing"), "done": ("✓", "Done"), "blocked": ("❚❚", "Waiting")}
+
+
+def check_build_plan(c: dict) -> None:
+    """Every Go / Building method needs a build plan of 3-6 steps, each with an acceptance test (FEEDBACK.md)."""
+    bp = c.get("build_plan")
+    if c["status"] not in ("approved", "in-progress"):
+        return
+    if not bp:
+        raise SystemExit(f"{c['slug']}: status {c['status']} needs a build_plan in feedback-state.json (FEEDBACK.md)")
+    steps = bp.get("steps") or []
+    if not 3 <= len(steps) <= 6:
+        raise SystemExit(f"{c['slug']}: build_plan needs 3-6 steps, has {len(steps)}")
+    for i, st in enumerate(steps, 1):
+        for k in ("title", "do", "accept", "status"):
+            if not st.get(k):
+                raise SystemExit(f"{c['slug']}: build_plan step {i} is missing '{k}'")
+        if st["status"] not in PLAN_STATUS:
+            raise SystemExit(f"{c['slug']}: build_plan step {i} status '{st['status']}' not in {list(PLAN_STATUS)}")
+    if "agent-ready" not in (bp.get("finish") or "").lower() and "agent-ready" not in steps[-1]["title"].lower():
+        raise SystemExit(f"{c['slug']}: build_plan must end in the agent-ready library (FEEDBACK.md finish line)")
+
+
+def ticket_url(c: dict, links: dict | None = None) -> str | None:
+    if links and links.get("ticket"):
+        return links["ticket"]
+    bp = c.get("build_plan") or {}
+    return f"{REPO}/issues/{bp['ticket']}" if bp.get("ticket") else None
+
+
+def plan_steps_html(bp: dict) -> str:
+    rows = []
+    for st in bp["steps"]:
+        ic, lab = PLAN_STATUS[st["status"]]
+        kill = f'<p class="kill"><b>Kill rule:</b> {e(st["kill"])}</p>' if st.get("kill") else ""
+        rows.append(f'<li class="bp-step bp-{e(st["status"])}"><div class="bp-head"><span class="bp-n">{st.get("n", "")}</span>'
+                    f'<span class="bp-t">{e(st["title"])}</span><span class="chip bp-st">{ic} {lab}</span></div>'
+                    f'<p><b>Do:</b> {e(st["do"])}</p><p><b>Pass when:</b> {e(st["accept"])}</p>{kill}</li>')
+    return f'<ol class="bp-steps">{"".join(rows)}</ol>'
+
+
+def build_plan_section(c: dict) -> str:
+    bp = c.get("build_plan")
+    if not bp:
+        return ""
+    t = ticket_url(c)
+    tk = f' · Engineering ticket: <a href="{e(t, quote=True)}">#{e(str(bp["ticket"]))}</a>' if t else ""
+    done = sum(1 for st in bp["steps"] if st["status"] == "done")
+    return (f'<section class="bplan" id="build-plan"><h2 class="sect">Build plan <span class="cnt">{done}/{len(bp["steps"])} done</span></h2>'
+            f'<p class="rule">Ends in an <b>agent-ready library</b>: fast (backend chosen by benchmark, usually a Rust core), '
+            f'parity-tested against the original, with diagnostics and null tests that say pass / warn / fail, a how-to-judge guide '
+            f'and a skill card. Library: <b>{e(bp.get("library") or "TBD")}</b> · repo: {e(bp.get("repo") or "not created yet")}{tk}. '
+            f'Finish-line spec: <a href="{REPO}/blob/main/docs/methods-scout/FEEDBACK.md#finish-line-agent-ready-library">FEEDBACK.md</a>.</p>'
+            f'{plan_steps_html(bp)}</section>\n')
+
+
 def fit_pts(q):
     return 2 if q in ("Q1", "Q2", "Q3") else (0 if q == "watchlist" else 1)
 
@@ -226,7 +282,9 @@ def load_cards(state):
         c["edition"] = c["page"] + c["page_anchor"]
         c["pick_key"] = st["top_pick"]
         c.setdefault("method", st["method"])
+        c["build_plan"] = st.get("build_plan")
         check_budget(c)
+        check_build_plan(c)
         if not c.get("stub"):
             for k, _ in TABS:
                 if not (d / f"{k}.html").exists():
@@ -267,7 +325,7 @@ def card_page(c):
 {deep_link(c)}<p class="kicker" style="margin-top:1rem">The one picture</p>
 {picture(c['picture'])}
 <div style="margin:1rem 0 .4rem">{respond(c['issue'], big=True)}</div>
-<div class="tabs">{radios}<div class="tabbar">{labels}</div><div class="panels">{''.join(panels)}</div></div>
+{build_plan_section(c)}<div class="tabs">{radios}<div class="tabbar">{labels}</div><div class="panels">{''.join(panels)}</div></div>
 <p class="cite">Full tables, code and data notes: <a href="../{c['edition']}">the {c['date']} edition</a> · scripts in <code>runs/{c['date']}/</code> · card sources in <code>cards/{c['slug']}/</code>.</p>
 <div style="margin:1.4rem 0">{respond(c['issue'])}</div>
 <script>(function(){{var m={{"math":1,"applied":2,"robust":3,"sauce":4,"questions":5}};var h=location.hash.slice(1);var i=m[h]||(/^t[1-5]$/.test(h)?+h[1]:0);if(i)document.getElementById("t"+i).checked=true;}})();</script>"""
@@ -380,6 +438,21 @@ def prod_row(c: dict, links: dict) -> str:
     else:
         card_html = f'<a href="m/{e(slug)}.html">research card</a>'
     issue_html = f'<a href="{REPO}/issues/{c["issue"]}">#{c["issue"]}</a>'
+    t = ticket_url(c, links)
+    if t:
+        m = re.search(r"/issues/(\d+)", t)
+        ticket_html = f'<a href="{e(t, quote=True)}">{"#" + m.group(1) if m else e(t)}</a> (engineering)'
+    else:
+        ticket_html = '<span class="missing">no engineering ticket yet</span>'
+    bp = c.get("build_plan")
+    if bp:
+        done = sum(1 for st in bp["steps"] if st["status"] == "done")
+        nxt = next((st for st in bp["steps"] if st["status"] != "done"), None)
+        where = (f' · <a href="m/{e(slug)}.html#build-plan">on the card</a>' if not c.get("stub") else "")
+        plan_html = (f'<details class="bp-mini"><summary>{done}/{len(bp["steps"])} steps done'
+                     f'{" · next: " + e(nxt["title"]) if nxt else ""}</summary>{plan_steps_html(bp)}</details>{where}')
+    else:
+        plan_html = '<span class="missing">no build plan yet</span>'
 
     if links.get("repo"):
         url = links["repo"]
@@ -410,6 +483,8 @@ def prod_row(c: dict, links: dict) -> str:
 {_li("Editions", ed_html)}
 {_li("Card", card_html)}
 {_li("Issue", issue_html)}
+{_li("Ticket", ticket_html)}
+{_li("Plan", plan_html)}
 {_li("Repo", repo_html)}
 {_li("Docs", docs_html)}
 {_li("Package", pkg_html)}
