@@ -874,6 +874,30 @@ Regional growth curves for year-on-year surprises (Q2.3): fit the regional curve
 
 ---
 
+## Partial information decomposition (Gaussian PID: MMI and Idep)
+
+Williams, P. L. & Beer, R. D. (2010), arXiv:1004.2515 (abstract read); Barrett, A. B. (2015), *Phys. Rev. E* 91:052802 (Sec. 4 read); Kay, J. W. & Ince, R. A. A. (2018), arXiv:1803.02030 (Sec. 2 read); copula estimator Ince et al. (2017), *Hum. Brain Mapp.* 38(3):1541–1573. Implementations: dit 2.4, gpid, gcmi, and a NumPy port in the run folder. Scouted on the [2026-11-23 scheduled edition](2026-11-23.html#gaussian-pid), aimed at [Q3](QUESTIONS.md#q3) (Q3.2, Q3.3, Q3.4, Q3.5), public data. Novelty: exotic-transfer (computational neuroscience / information theory). Home-field verdict: promising but contested. Status: proposed (interesting). Issue [#99](https://github.com/jgridifier/research-lab/issues/99). Research card: [m/gaussian-pid.html](m/gaussian-pid.html). Plans only.
+
+**Found via.** Web search 2026-11-23 14:23 ET → [gpid](https://github.com/praveenv253/gpid) / [arXiv:2307.10515](https://arxiv.org/abs/2307.10515) and [Barrett (2015)](https://arxiv.org/abs/1411.2832); X search 14:40 ET → [post](https://x.com/Encoding/status/2118725778070266240) → [arXiv:2611.08131](https://arxiv.org/abs/2611.08131). Field: computational neuroscience.
+
+**What our run showed.** Home field reproduced: Williams–Beer AND gate (redundancy 0.3113, synergy 0.5) with CCS and I_dep disagreeing (0.104, 0.082); Barrett eqs. (64)–(67) to 10⁻¹⁵; Kay & Ince Example 4 to 4 dp; gcmi parity 2×10⁻¹⁵. On 2021–2025 stress tests (132 firm-years, within-year ranks): SCB 0.023 bits about payout/RWA, drawdown 0.111, both 0.208; MMI synergy 0.097 (firm-bootstrap CI 0.008–0.186; Freedman–Lane p = 0.0002), dividends 0.185; OLS gives the SCB t = +5.07 (VIF 6.5) and commonality a negative common share (−0.236). Post hoc: the synergy is the dividend add-on (SCB − drawdown; Spearman 0.83 with dividends/RWA above the floor; synergy −0.006 when it replaces the SCB). Miss: Idep synergy 0.078 and the Hi-Fi lower bound 0.074 have CIs reaching 0 (Idep power 32% at our shape). Q3.4: Adverse drawdown adds nothing robust. Q3.3: shared information of drawdown and pre-tax income rose 0.036 → 0.128 bits after 2020 (exact p = 0.033). Walk-forward: the redundant source adds ≤ 0.6% RMSE in OLS and ARDL (as PID predicts); nothing beats climatology by much.
+
+### 1 · Engineering (effort S)
+
+A batched Gaussian-copula PID engine: MMI, Idep and the Hi-Fi–MMI segment from three copula correlations; Freedman–Lane permutations as one gather plus two matrix–vector products (only the weak column changes); firm-block bootstrap from cached per-year rank tables; all pairwise PIDs for p features from one correlation matrix; pass/warn/fail judgement. Closest prior work: gpid (no resampling nulls), gcmi (MI only), dit (discrete), JIDT (Java). **Test:** atoms within 10⁻¹⁰ of the closed forms and this run's port on P1–P3; Kay & Ince Example 4 to 4 dp; ≥ 50× faster than this run's 6.6 s per pair (4,999 + 4,999 permutations, 2,000 bootstraps).
+
+### 2 · Math (top pick, effort M)
+
+Measure-robust synergy with a named contrast: (i) report \(S\in[\max(0,-\mathrm{coI}),S_{\rm MMI}]\) with a joint firm-block bootstrap, calling synergy robust only if the lower end's one-sided 95% bound is above 0 after per-atom Cai et al. bias correction; (ii) Freedman–Lane within-year null at the lower end; (iii) since \(S_{\rm MMI}=I(T;X_w\mid X_s)\), report the carrying contrast \(d=X_w-bX_s\) in source units with a bootstrap band, and its angle to rule-based contrasts. Closest prior work: Van Santen, Rosseel & Marinazzo (2026, arXiv:2611.08131; segment, no inference); Venkatesh et al. (2023; union-information bias correction); Kay & Ince (2018; deviance tests). **Test:** Gaussian simulations at n = 132 (300 per setting): robust-synergy false-positive rate ≤ 5% at true synergy 0 and power ≥ 60% at 0.08 bits; on P1 the contrast is within 15° of SCB − drawdown. Null: Freedman–Lane within year.
+
+### 3 · New use on our data (effort M)
+
+Text vs numbers for many short programs (Q2.2, SYNTHETIC mocks): target program growth; sources TF-IDF SVD components of the scrubbed descriptions vs tabular features; multivariate Gaussian-copula PID (~G-PID for vector sources, MMI and Idep as bounds). **Test:** unique(text) CI excludes 0 on the generator's planted text-signal programs and ≤ 0.01 bits with the cue scrubbed; within-function text permutation null (999).
+
+**Why Math is the top pick.** Today's headline (SCB × drawdown synergy) holds only at the MMI end of the range of PID measures; making synergy measure-robust and naming its contrast is what turns PID from a suggestive picture into a claim we can defend, and it would have found the dividend add-on without a post-hoc step.
+
+---
+
 ## Citations used (verified)
 
 - Donges, J. F., Schleussner, C.-F., Siegmund, J. F. & Donner, R. V. (2016). Event coincidence analysis for quantifying statistical interrelationships between event time series. *European Physical Journal Special Topics*, 225(3):471–487.
@@ -936,6 +960,15 @@ Only papers we located with venue, year, and pages, plus the four method papers 
 - Viglione, A., Laio, F. & Claps, P. (2007). A comparison of homogeneity tests for regional frequency analysis. *Water Resources Research*, 43:W03428. doi:10.1029/2006WR005095.
 - Lilienthal, J., Fried, R. & Schumann, A. (2018). Homogeneity testing for skewed and cross-correlated data in regional flood frequency analysis. *Journal of Hydrology*.
 - Wiltshire, S. E. (1986). Regional flood frequency analysis I: Homogeneity statistics. *Hydrological Sciences Journal*.
+- Williams, P. L. & Beer, R. D. (2010). Nonnegative decomposition of multivariate information. arXiv:1004.2515.
+- Barrett, A. B. (2015). Exploration of synergistic and redundant information sharing in static and dynamical Gaussian systems. *Physical Review E*, 91:052802. arXiv:1411.2832.
+- Kay, J. W. & Ince, R. A. A. (2018). Exact partial information decompositions for Gaussian systems based on dependency constraints. arXiv:1803.02030.
+- James, R. G., Emenheiser, J. & Crutchfield, J. P. (2017). Unique information via dependency constraints. arXiv:1709.06653.
+- Ince, R. A. A., Giordano, B. L., Kayser, C., Rousselet, G. A., Gross, J. & Schyns, P. G. (2017). A statistical framework for neuroimaging data analysis based on mutual information estimated via a gaussian copula. *Human Brain Mapping*, 38(3):1541–1573.
+- Venkatesh, P. et al. (2023). Gaussian partial information decomposition: bias correction and application to high-dimensional data. NeurIPS 2023. arXiv:2307.10515.
+- Van Santen, N., Rosseel, Y. & Marinazzo, D. (2026). Between Hi-Fi and MMI: the overlap of redundancy and synergy in partial information decomposition. arXiv:2611.08131.
+- 12 CFR 225.8(f)(2), stress capital buffer requirement calculation (Federal Reserve FRRS).
+
 ## What this is not
 
 Plans only. Nothing here is being built. Edition 3’s plans are grounded in the 11-12 scheduled scout runs already published on that edition’s page; no further fits were run to write these plans. Edition 4’s plans (ebnm, DenseLines) are grounded in the 2026-11-13 scheduled run on SYNTHETIC mock ZBB data. Edition 5’s plans (CRQA, IDR) are grounded in the 2026-11-14 scheduled run, completed 2026-11-15, on public data. Edition 6’s plans (CCM, kairos/tabula) are grounded in the 2026-11-15 scheduled run on public data. Nothing is promoted into analysis-skills. No `APPROVAL.md` is written. No raw private Drive rows are published. This file and its page live in research-lab, not in traceot. Research-lab PRs #25 and #21 are not touched.

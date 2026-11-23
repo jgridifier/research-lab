@@ -1,7 +1,7 @@
 {
   "version": 1,
   "repo": "jgridifier/research-lab",
-  "updated_at": "2026-11-23T19:44:13Z",
+  "updated_at": "2026-11-23T19:49:39Z",
   "issues": {
     "46": {
       "issue": 46,
@@ -1045,6 +1045,26 @@
         "pick:math"
       ],
       "last_processed_at": "2026-11-22T19:48:29Z",
+      "notes": "",
+      "history": []
+    },
+    "99": {
+      "issue": 99,
+      "slug": "gaussian-pid",
+      "method": "Partial information decomposition (Gaussian PID)",
+      "scout_date": "2026-11-23",
+      "page": "2026-11-23.html",
+      "page_anchor": "#gaussian-pid",
+      "question": "Q3",
+      "status": "proposed",
+      "top_pick": "math",
+      "labels": [
+        "scout",
+        "scout:Q3",
+        "status:proposed",
+        "pick:math"
+      ],
+      "last_processed_at": "2026-11-23T19:41:38Z",
       "notes": "",
       "history": []
     }

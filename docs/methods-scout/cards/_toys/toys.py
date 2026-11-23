@@ -293,3 +293,18 @@ D = lambda a, b: float(np.sqrt(((Sh[a] - Sh[b]) ** 2).sum()))
 lags = [(j - i, D(i, j)) for i in range(4) for j in range(i + 1, 4)]
 lg = np.array([l for l, _ in lags], float); dd = np.array([d for _, d in lags])
 print("share distances by lag", [(l, round(d, 4)) for l, d in lags], "rate of change (OLS slope)", round(float(np.polyfit(lg, dd, 1)[0]), 4))
+
+print("== Partial information decomposition, Gaussian (2026-11-23): corr(T,SCB) = a = -0.2, corr(T,dd) = c = -0.4, corr(SCB,dd) = b = 0.9")
+a, c, b = -0.2, -0.4, 0.9
+I = lambda r2: 0.5 * np.log2(1 / (1 - r2))
+R2_1, R2_2 = a * a, c * c
+R2_12 = (a * a + c * c - 2 * a * b * c) / (1 - b * b)
+I1, I2, I12 = I(R2_1), I(R2_2), I(R2_12)
+print("R2: SCB", round(R2_1, 4), " dd", round(R2_2, 4), " both", round(R2_12, 4), " -> bits I1 =", round(I1, 4), " I2 =", round(I2, 4), " I12 =", round(I12, 4))
+red = min(I1, I2); print("MMI: redundancy = min =", round(red, 4), " unique SCB =", round(I1 - red, 4), " unique dd =", round(I2 - red, 4), " synergy = I12 - max =", round(I12 - max(I1, I2), 4))
+bS, bD = (a - b * c) / (1 - b * b), (c - b * a) / (1 - b * b)
+print("OLS standardized betas: SCB", round(bS, 3), " dd", round(bD, 3), "(SCB flips to positive);  commonality: unique SCB", round(R2_12 - R2_2, 4), " unique dd", round(R2_12 - R2_1, 4), " common", round(R2_1 + R2_2 - R2_12, 4))
+t7 = 0.5 * np.log2((1 - a * a * c * c) / ((1 - a * a) * (1 - c * c)))
+u1 = min(I1, t7 - I2, I12 - I2); u2 = min(I2, t7 - I1, I12 - I1); rd = I1 - u1
+print("Idep (Kay & Ince 2018): unique SCB =", round(u1, 4), " unique dd =", round(u2, 4), " redundancy =", round(rd, 4), " synergy =", round(I12 - u1 - u2 - rd, 4))
+print("zero-synergy line b = a/c =", round(a / c, 3), "; with b = 0.9 the weak source (SCB) has partial corr with T given dd =", round((a - b * c) / np.sqrt((1 - b * b) * (1 - c * c)), 3))

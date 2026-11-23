@@ -1,0 +1,62 @@
+<h4>Who plays what</h4>
+<div class="table-wrap"><table>
+<tr><th>Home field (neuroscience)</th><th>Our data (Q3, public)</th></tr>
+<tr><td>Stimulus or behaviour (the target the brain encodes)</td><td>A firm's realized payout/RWA (or dividends, net buybacks) from FR Y-9C</td></tr>
+<tr><td>Two brain regions or neurons (sources)</td><td>Two stress-test outputs for the same firm and test: SCB and CET1 drawdown; SA and Adverse drawdown; drawdown and pre-tax income</td></tr>
+<tr><td>Trials</td><td>Firm-years within a test year (ranks are taken within the year)</td></tr>
+<tr><td>Redundancy: both regions carry the same stimulus information</td><td>Both outputs rank firms' payouts the same way</td></tr>
+<tr><td>Synergy: information only in the joint pattern (the XOR case)</td><td>Payouts line up with a contrast of the two outputs, here SCB minus drawdown (the dividend add-on)</td></tr>
+<tr><td>Gaussian-copula MI for MEG/EEG (Ince et al. 2017)</td><td>Rank-based information that ignores the payout outliers (max payout/RWA 7.97% vs median below 1%)</td></tr>
+</table></div>
+
+<h4>Inputs and preprocessing</h4>
+<ul>
+<li>The lab's verified public panel <code>runs/2026-11-17/statis/q3_pim_panel.csv</code> (sha256 6aa2f52a…), built 11-14/11-16 from <code>public_results_DFAST_2026.csv</code>, FFIEC BHCF zips (HI-A Q4: BHCK4460, BHCK4783, BHCK4782; RWA) and the Large Bank Capital Requirements PDFs. 13 severely adverse exercises 2013–2025, 364 firm-years (360 with payouts), 43 firms.</li>
+<li>P1 (Q3.2): 2021–2025, the SCB years, 132 firm-years, 34 firms, 50 of them at the 2.5% floor. P2 (Q3.4): 2014–2019, the years with Adverse results, 177 firm-years with both drawdowns. P3 (Q3.3/Q3.5): all years, split 2013–2019 (195) and 2020–2025 (165).</li>
+<li>Every variable is rank-normalized within its test year. No imputation, no winsorizing (ranks make it unnecessary). Rows with a missing target or source are dropped per analysis.</li>
+</ul>
+
+<h4>What we ran</h4>
+<ol>
+<li>Home field (before our data): Williams–Beer and four other PID measures on the XOR and AND gates (dit 2.4); Barrett's closed form vs gpid's <code>mmi_pid</code> vs our port; Kay &amp; Ince's Example 4; our Gaussian MI vs gcmi <code>mi_gg</code>.</li>
+<li>Bias at our sizes: 2,000 Gaussian draws at n = 132, 181 and 360. The plug-in redundancy is biased up by 0.001–0.004 bits and the plug-in synergy by 0.002–0.004; the corrected estimates are within 0.005 of the truth (computed, <code>power_bias.json</code>).</li>
+<li>P1: atoms for payout, dividends, net buybacks and next-year payout from (SCB, drawdown), and payout from (SCB, pre-tax income); three nulls and firm-block CIs; OLS (firm-clustered), VIF and commonality on raw and on rank data.</li>
+<li>P1 mechanism check (post hoc, labelled): replace the SCB by SCB − drawdown, the dividend add-on of 12 CFR 225.8(f)(2).</li>
+<li>P2: SA vs Adverse drawdown, payout and next-year payout.</li>
+<li>P3: drawdown vs pre-tax income by era, exact era-split permutations, leave-one-year-out.</li>
+<li>Idep for every P1–P3 analysis (pre-stated addendum); Hi-Fi–MMI segment bounds (added after results, labelled).</li>
+<li>P4: size and power of the synergy rule at the observed P1 shape.</li>
+<li>Benchmark B: walk-forward next-year payout/RWA with OLS, pooled ARDL(1,0) and per-firm SARIMAX(1,0,0) + exog (≥ 7 firm observations, else ARDL; 118 firm fits), test years 2016–2024; timing.</li>
+</ol>
+<p class="small">Pre-registered before any run on our data: <a href="https://github.com/jgridifier/research-lab/blob/main/docs/methods-scout/runs/2026-11-23/PREREG.md">runs/2026-11-23/PREREG.md</a> (14:27 ET, Idep addendum 14:33 ET). Added after seeing results and labelled: the add-on mechanism check and the segment bounds. One deviation: the pre-registration asked for parity with gpid below 10<sup>−9</sup>; we get 1.1×10<sup>−7</sup>, because gpid adds a 10<sup>−7</sup> ridge to the source covariance (its code). Parity with the closed form is below 10<sup>−15</sup>.</p>
+
+<h4>How to read the main chart</h4>
+<div class="callouts">
+<div><b>1</b> Left picture (usual tools): OLS with both regressors gives the SCB a <i>positive</i> t of +5.07 and the drawdown −5.42. Taken at face value, that says a higher buffer goes with higher payouts. The commonality bars sum to more than the total R² because the "common" bar is negative (−0.236).</div>
+<div><b>2</b> Right picture (PID): each bar is 100% of what the two sources tell us about payout ranks, in bits, split into grey (shared), orange (only in the first source), blue (only in the drawdown) and purple (only in the pair).</div>
+<div><b>3</b> Top bar (MMI): the SCB alone says 0.023 bits, all of it shared. The drawdown adds 0.087 of its own. The pair adds 0.097 that neither shows alone.</div>
+<div><b>4</b> Middle bar (Idep): a different redundancy rule moves 0.025 bits from "shared" to "only in the SCB" and keeps most of the synergy (0.078). That is the measure dependence the home field argues about.</div>
+<div><b>5</b> Bottom bar: replace the SCB by SCB − drawdown (the dividend add-on) and the purple bar disappears. The add-on carries 0.171 bits on its own, so the "synergy" was a contrast of the two sources.</div>
+<div><b>6</b> Barrett-plane chart: synergy rises steeply once two sources are more than about 0.8 correlated. Our SCB and drawdown sit at 0.90, far from the zero-synergy line at 0.51.</div>
+</div>
+
+<h4>What it means for a decision-maker</h4>
+<div class="plain">
+<p>Ranked within a test year, a bank's stress capital buffer says little about how much it pays out. What it does say mostly repeats the drawdown. The buffer looks informative only next to the drawdown, and the reason is the rule that sets it: the buffer is the stress drawdown <i>plus</i> a year of the bank's own planned dividends. Subtract the drawdown and you are left with the dividend plan, which of course lines up with dividends paid. So the regression that says "a higher buffer goes with higher payouts" is reading the dividend plan baked into the buffer, not a reward for a bigger buffer. Separately, since 2020 the drawdown and projected earnings carry more of the same message about payouts than before. The less stressed earnings path still adds its own, smaller piece. Nothing here predicts next year's payouts better than simple averages.</p>
+</div>
+
+<h4>Where it breaks</h4>
+<ul>
+<li>Measure dependence: the synergy passes our rule under MMI, the measure with the largest possible synergy, but under Idep and at the measure-free lower bound its CI reaches 0. At our n the Idep test has 32% power, so the miss may be power, not absence.</li>
+<li>The mechanism is by construction. Our SCB values are rounded to 0.1 in the PDFs, so SCB − drawdown is slightly negative for a few firms. Planned dividends (quarters 4–7) and realized calendar-year dividends are different periods and RWAs.</li>
+<li>Copula scores assume a Gaussian dependence. Tail-only links (e.g. the NCA ceiling seen on 11-20) are underestimated: GCMI is a lower bound.</li>
+<li>Small samples: 34 firms; firm-block CIs are wide (synergy 0.008–0.186). Era results pool unbalanced firm sets.</li>
+<li>Calendar-year payouts partly precede the June results; association only.</li>
+</ul>
+
+<h4>What we'd do next</h4>
+<ul>
+<li>Math (top pick): measure-robust synergy. Report the whole Hi-Fi–MMI segment with a design-aware small-sample test, and name the source contrast that carries any synergy (here it should recover SCB − drawdown).</li>
+<li>Three-source PID on dividends vs buybacks with the SCB split into decline and add-on (Q3.5).</li>
+<li>New use for Q2.2, text vs numbers, on the SYNTHETIC mocks (see Secret sauce).</li>
+</ul>

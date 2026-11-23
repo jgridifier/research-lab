@@ -1,0 +1,108 @@
+{
+ "issue": 99,
+ "name": "Partial information decomposition (Gaussian PID: MMI and Idep)",
+ "title": "Is the stress buffer's payout news shared, unique, or synergistic?",
+ "field": "computational neuroscience and information theory (how brain areas jointly encode a stimulus)",
+ "what": "Splits what two stress results tell us about payouts into shared, unique-to-each, and only-together (synergy) bits.",
+ "verdict": "Interesting",
+ "grade": "promising but contested (redundancy measures disagree; Gaussian mechanics well established)",
+ "pick_eff": "M",
+ "pick_line": "Measure-robust synergy: report the whole Hi-Fi–MMI range with a small-sample test, and name the source contrast carrying it.",
+ "data": "Public filings (Fed DFAST/CCAR results 2013–2025, FR Y-9C payouts, SCB 2021–2025); descriptive only",
+ "one": "SCB alone says little about payouts; its synergy with drawdown is the dividend add-on, which OLS misreads.",
+ "picture": {
+  "type": "images",
+  "la": "Usual tools: OLS says higher SCB, higher payout (t = +5.07); commonality goes negative",
+  "a": "../fig/2026-11-23/pid_ols.png",
+  "lb": "PID: SCB 0.023 bits alone, 0.097 bits synergy with drawdown",
+  "b": "../fig/2026-11-23/pid_atoms.png"
+ },
+ "findings": [
+  {
+   "h": "The SCB tells little on its own; with the drawdown it adds synergy.",
+   "t": "2021–2025, 132 firm-years, 34 firms, within-year copula ranks. Information about payout/RWA: SCB 0.023 bits, CET1 drawdown 0.111, both 0.208 (within-year permutation p = 0.0002). MMI: shared 0.023, unique to drawdown 0.087, synergy 0.097 (firm-bootstrap 95% CI 0.008–0.186; Freedman–Lane null 95th percentile 0.012, p = 0.0002). Dividends/RWA: synergy 0.185 (CI 0.034–0.301). Net buybacks: nothing (joint p = 0.22). On the same data OLS gives SCB t = +5.07 and drawdown t = −5.42 (VIF 6.5), and commonality analysis gives unique shares 0.250 and 0.352 with a common share of −0.236.",
+   "note": "Pre-registered finding (joint p < 0.05; atom CI excludes 0 and its null p < 0.05) met under MMI for payout and dividends. Bits are bias-corrected (computed).",
+   "chart": {
+    "type": "images",
+    "la": "Usual tools on the same data",
+    "a": "../fig/2026-11-23/pid_ols.png",
+    "lb": "PID atoms (MMI, Idep, add-on)",
+    "b": "../fig/2026-11-23/pid_atoms.png"
+   }
+  },
+  {
+   "h": "The synergy is the SCB's dividend add-on, put there by rule.",
+   "t": "By 12 CFR 225.8(f)(2), SCB = max(2.5%, stress CET1 decline + four quarters of planned dividends / RWA). Above the 2.5% floor (82 of 132 firm-years) SCB − drawdown ranks with realized dividends/RWA at Spearman 0.83. With the add-on and the drawdown as sources, synergy is −0.006 bits (MMI) and 0 (Idep), and the add-on carries 0.171 bits about payout/RWA (0.513 about dividends) that the drawdown does not.",
+   "note": "Post hoc (labelled): run after the synergy was seen. A mechanical link, not a behavioural finding; the QUESTIONS.md caveat on post-2020 construction applies.",
+   "chart": {
+    "type": "images",
+    "la": "SCB − drawdown vs realized dividends",
+    "a": "../fig/2026-11-23/pid_mech.png",
+    "lb": "Where our estimate sits on the Barrett plane",
+    "b": "../fig/2026-11-23/pid_plane.png"
+   }
+  },
+  {
+   "h": "The synergy depends on the PID measure; at n = 132 only MMI calls it.",
+   "miss": true,
+   "t": "Kay & Ince's Idep on the same data: unique to SCB 0.025 (CI 0.0001–0.071), unique to drawdown 0.112, shared 0.004, synergy 0.078 with a CI down to 0. The measure-free lower bound (the Hi-Fi end of Van Santen et al.'s segment) is 0.074 bits, and its CI also reaches 0. Gaussian simulations at our shape (300 each): the MMI rule has 0% false positives when synergy is 0 and 88% power at the observed effect, but the Idep CI rule has only 32% power.",
+   "note": "So the synergy is real under the maximum-overlap measure, and positive in point estimate under every measure, but not measure-robust at our sample size. This is the top-pick Math avenue.",
+   "chart": {
+    "type": "hbars",
+    "title": "Synergy, payout/RWA 2021–2025 (bits): point estimate by measure",
+    "max": 0.12,
+    "rows": [
+     ["MMI (largest possible)", 0.0971, "teal", "0.097 (CI excl. 0)"],
+     ["Idep", 0.0781, "amber", "0.078 (CI to 0)"],
+     ["Hi-Fi end (smallest possible)", 0.0738, "amber", "0.074 (CI to 0)"]
+    ]
+   }
+  },
+  {
+   "h": "Adverse vs severely adverse drawdown: no robust extra information (Q3.4).",
+   "t": "2014–2019, 177 firm-years: SA drawdown 0.037 bits, Adverse drawdown 0.001, both 0.074. MMI synergy 0.037 (Freedman–Lane p = 0.0016) but firm-bootstrap CI −0.004 to 0.120; Idep gives unique-to-SA 0.040 (CI 0.0004–0.134) and nothing robust for Adverse. OLS on raw data: neither slope significant (p = 0.15 and 0.33).",
+   "note": "Agrees with the 11-16 pim run (the SA−Adverse gap adds nothing).",
+   "chart": {
+    "type": "hbars",
+    "title": "Bits about payout/RWA, 2014–2019",
+    "max": 0.08,
+    "rows": [
+     ["SA drawdown alone", 0.0366, "teal", "0.037"],
+     ["Adverse drawdown alone", 0.0014, "muted", "0.001"],
+     ["Both together", 0.0739, "teal", "0.074"],
+     ["Synergy (CI to −0.004)", 0.0372, "amber", "0.037"]
+    ]
+   }
+  },
+  {
+   "h": "After 2020 drawdown and pre-tax income share more of what they say (Q3.3).",
+   "t": "Sources: SA drawdown and SA pre-tax income. Shared information about payout/RWA rose from 0.036 bits (2013–2019, n = 195) to 0.128 (2020–2025, n = 165), exact p = 0.033 over all 1,716 7/6 splits of the 13 test years (Idep 0.034 → 0.124, p = 0.042). For dividends: 0.110 → 0.205 (p = 0.027), while pre-tax income's unique part fell 0.315 → 0.165 (p = 0.061). Leave-one-year-out: era-2 shared 0.111–0.172 vs era-1 0.029–0.041 in every drop. No synergy in either era; the drawdown has no unique information once pre-tax income is known.",
+   "note": "Pre-registered (P3). Consistent with the 11-17 STATIS era split.",
+   "chart": {
+    "type": "images",
+    "la": "Shared vs unique by era",
+    "a": "../fig/2026-11-23/pid_eras.png",
+    "lb": "Home field: AND gate under five PID measures",
+    "b": "../fig/2026-11-23/pid_home.png"
+   }
+  },
+  {
+   "h": "Out of sample, the redundant source adds nothing, as PID predicts; nothing beats climatology by much.",
+   "t": "Walk-forward next-year payout/RWA, test years 2016–2024 (254 firm-years). RMSE: OLS(pre-tax) 1.020, + drawdown 1.026 (+0.6%); ARDL(1,0)(pre-tax) 1.064, + drawdown 1.069 (+0.5%); per-firm SARIMAX(1,0,0)+exog 1.117 → 1.170 (+4.8%); climatology 1.065. Adding pre-tax income to drawdown helps OLS (−2.6%) but not ARDL (+0.3%).",
+   "note": "Pre-stated check met: the redundant source's added value ≤ 1% in OLS and ARDL. A description tool, not a forecaster. The SCB walk-forward (2 test years, 52 firm-years) is too short and not scored.",
+   "chart": {
+    "type": "hbars",
+    "title": "Walk-forward RMSE, next-year payout/RWA (lower is better)",
+    "max": 1.2,
+    "rows": [
+     ["OLS pre-tax", 1.0201, "teal", "1.020"],
+     ["OLS pre-tax + drawdown", 1.0262, "muted", "1.026"],
+     ["ARDL(1,0) pre-tax", 1.0641, "teal", "1.064"],
+     ["ARDL(1,0) pre-tax + drawdown", 1.0692, "muted", "1.069"],
+     ["SARIMAX(1,0,0)+exog pre-tax", 1.1167, "amber", "1.117"],
+     ["Climatology", 1.0653, "muted", "1.065"]
+    ]
+   }
+  }
+ ]
+}
