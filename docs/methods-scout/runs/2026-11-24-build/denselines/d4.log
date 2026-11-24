@@ -1,0 +1,24 @@
+50 {"null": {"lrt_size": 0.05, "lrt_crit95": 9.715583422026949, "dip_size": 0.0025}, "s1.5": {"drift": 0.13573272428536828, "lrt_power": 0.072, "dip_power": 0.0}, "s2.0": {"drift": 0.18529087094104987, "lrt_power": 0.102, "dip_power": 0.0}, "s3.0": {"drift": 0.2701697427006581, "lrt_power": 0.424, "dip_power": 0.0}} 29 s
+100 {"null": {"lrt_size": 0.05, "lrt_crit95": 9.223271813288902, "dip_size": 0.0}, "s1.5": {"drift": 0.13755241547773717, "lrt_power": 0.076, "dip_power": 0.002}, "s2.0": {"drift": 0.18502479595863083, "lrt_power": 0.18, "dip_power": 0.0}, "s3.0": {"drift": 0.2761760012328962, "lrt_power": 0.772, "dip_power": 0.0}} 40 s
+200 {"null": {"lrt_size": 0.05, "lrt_crit95": 8.338311754751603, "dip_size": 0.0005}, "s1.5": {"drift": 0.13868023690190592, "lrt_power": 0.13, "dip_power": 0.002}, "s2.0": {"drift": 0.18675948708498005, "lrt_power": 0.364, "dip_power": 0.0}, "s3.0": {"drift": 0.2747993031162984, "lrt_power": 0.992, "dip_power": 0.0}} 56 s
+500 {"null": {"lrt_size": 0.05, "lrt_crit95": 7.358672828946722, "dip_size": 0.0}, "s1.5": {"drift": 0.13914398126197874, "lrt_power": 0.244, "dip_power": 0.0}, "s2.0": {"drift": 0.18648713701172426, "lrt_power": 0.818, "dip_power": 0.0}, "s3.0": {"drift": 0.2760053693318666, "lrt_power": 1.0, "dip_power": 0.0}} 102 s
+1000 {"null": {"lrt_size": 0.05, "lrt_crit95": 7.0028603969673595, "dip_size": 0.0}, "s1.5": {"drift": 0.13871212922971426, "lrt_power": 0.538, "dip_power": 0.0}, "s2.0": {"drift": 0.18668715228931818, "lrt_power": 0.994, "dip_power": 0.0}, "s3.0": {"drift": 0.2765146869523567, "lrt_power": 1.0, "dip_power": 0.0}} 174 s
+2000 {"null": {"lrt_size": 0.05, "lrt_crit95": 6.703321384101956, "dip_size": 0.0}, "s1.5": {"drift": 0.1383345586410738, "lrt_power": 0.816, "dip_power": 0.0}, "s2.0": {"drift": 0.18545859597331343, "lrt_power": 1.0, "dip_power": 0.0}, "s3.0": {"drift": 0.27793767672924596, "lrt_power": 1.0, "dip_power": 0.0}} 322 s
+{
+ "min_N": {
+  "lrt_s1.5_min_N_power_ge_0.8": 2000,
+  "dip_s1.5_min_N_power_ge_0.8": null,
+  "lrt_s2.0_min_N_power_ge_0.8": 500,
+  "dip_s2.0_min_N_power_ge_0.8": null,
+  "lrt_s3.0_min_N_power_ge_0.8": 200,
+  "dip_s3.0_min_N_power_ge_0.8": null
+ },
+ "size_ok": {
+  "lrt": true,
+  "dip": true
+ },
+ "adopt": {
+  "lrt": true,
+  "dip": false
+ }
+}
