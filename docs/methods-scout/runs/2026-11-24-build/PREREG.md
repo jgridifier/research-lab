@@ -1,7 +1,7 @@
 <!-- quant-scout-bot -->
 # Pre-registration: picked-methods build steps, 2026-11-24
 
-Written Tuesday 2026-11-24, about 2:50 PM ET, **before** the study below was run. Committed and merged before the run. Anything learned afterwards goes in a dated addendum at the end; the text above it is not edited.
+Written Tuesday 2026-11-24, about 2:27 PM ET, **before** the study below was run. Committed and merged before the run. Anything learned afterwards goes in a dated addendum at the end; the text above it is not edited.
 
 ## C2. codyn (#52), build step 2: share-space compensation test
 
@@ -21,9 +21,9 @@ Not a study. All metrics with 999-draw nulls on a SYNTHETIC 2,000-entity × 40-p
 
 ---
 
-# Pre-registration: scheduled methods scout 2026-11-24 (written about 3:30 PM ET, before any run of the new method on our data)
+# Pre-registration: scheduled methods scout 2026-11-24 (written about 2:28 PM ET, before any run of the new method on our data)
 
-Rotation: Q1 and Q2 were last targeted 2026-11-22, Q3 on 11-23. Q1 has the thinnest method coverage that is not lead-lag only... but its core sub-question (who leads, and does it disconnect in stress) is exactly what the new method answers, and the real public series are on the box. Picked methods exist (feedback-state.json), so today scouts ONE new method.
+Rotation: Q1 and Q2 were last targeted 2026-11-22, Q3 on 2026-11-23; Q1 is chosen because its core sub-question (who leads, and does it disconnect in stress) is exactly what the new method answers, and the real public series are on the box. Picked methods exist (feedback-state.json), so today scouts ONE new method. (Clock times in this file were corrected from the box clock before merge.)
 
 ## Method — Phase Slope Index (PSI) with segment-jackknife standardisation (Nolte et al. 2008; EEG / neuroscience), Q1
 Home field: EEG effective connectivity (Nolte, Ziehe, Nikulin, Schlögl, Krämer, Brismar, Müller, PRL 100:234101, 2008, arXiv:0712.2352). Implementation oracle: `mne-connectivity` 0.9.0 `phase_slope_index`; independent NumPy implementation for our use.
