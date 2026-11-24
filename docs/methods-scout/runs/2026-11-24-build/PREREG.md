@@ -43,3 +43,19 @@ Analyses (all computed, none run yet):
 
 Visual: lead-lag strip chart (PSI by band and window, coloured by sign, hatched where |z| < 2) vs rolling correlation line (standard).
 Pass bars: A1 (i)–(ii) as stated; A4 as stated. Kill/limit: if A4 size fails for a pair type, its observed z is reported as descriptive only. Y-9C is not used.
+
+---
+
+## Addendum 2 — written 2026-11-24, about 2:43 PM ET, before the D4 run; the text above is unchanged
+
+## D4. DenseLines (#56), build step 4 input: a branch test with power (the dip test missed the planted clusters at p = 0.99 on 2026-11-23)
+
+**Question.** What is the smallest number of series at which a test on the last-column residuals detects a branch planted in 10% of the series with power ≥ 0.80 while holding size ≤ 0.05, and does the Hartigan dip test or a two-component Gaussian-mixture likelihood-ratio test (LRT) do it?
+
+**Design.** SYNTHETIC. T = 6 yearly points. Each series: yearly log changes iid N(0, 0.15²), series level removed (row-demeaned) and the column median removed as in `d3_truth.py::resid_last`. Branch: a random 10% of series get an extra drift per year after year 3 (years 4–6, three steps) of size d so that the expected separation of the branch mean from the main mean at the last column equals s standard deviations of the last-column residual of the main group (s ∈ {1.5, 2, 3}; d solved from the simulated sd of the null residual, computed once per N). N ∈ {50, 100, 200, 500, 1,000, 2,000}. R = 500 replications per (N, s) cell for power; 2,000 replications for the null (s = 0, no branch) per N. Seeds: `SeedSequence(20261124).spawn` in the order null, then s = 1.5, 2, 3, N outer.
+
+**Tests.** (i) Hartigan dip test with the `diptest` package p-value, reject at p < 0.05. (ii) 2-vs-1 Gaussian mixture LRT (1-d EM, 6 random restarts, variance floor 1e-6 of the sample variance, minimum component weight 0.03), rejected when the LRT exceeds the 95% quantile of its null distribution at that N (the 2,000 null replications; the null is calibrated by simulation, not by the chi-square approximation).
+
+**Pass bars.** Size of each test ≤ 0.07 at every N (null, 2,000 reps; Monte Carlo 2 SE about 0.01). A test is adopted for the library if its size passes and its power ≥ 0.80 at s = 2 for some N ≤ 2,000; the published table gives, per s, the smallest N with power ≥ 0.80. If neither test passes, the branch check ships off by default with the dip test's missing power documented.
+
+**Not claimed.** The null is Gaussian by construction, so size on real heavy-tailed budget residuals is not tested here. The library's diagnostics()/null_test()/HOW_TO_JUDGE.md are engineering and are not part of this study.
