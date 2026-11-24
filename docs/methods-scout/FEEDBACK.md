@@ -186,7 +186,7 @@ When a method becomes `approved` or `in-progress`, the scanner writes a `build_p
 }
 ```
 
-`status` is `todo`, `doing`, `done`, or `blocked` (waiting on Jared or on data). Optional `result` records what the acceptance test actually measured (dated, with the numbers, including misses); the card shows it under the step. `ticket` is the engineering issue number, or `null`. `build_cards.py` renders the plan on the research card (`#build-plan`) and in the production tracker, and fails the build if a Go or Building method has no valid plan.
+`status` is `todo`, `doing`, `done`, `done-with-waiver`, or `blocked` (waiting on Jared or on data). `done-with-waiver` is a finished step whose acceptance test missed a bar that Jared accepted; record his quote and the timestamp on the step's `decision` and in `build_plan.decisions`. Optional `result` records what the acceptance test actually measured (dated, with the numbers, including misses); the card shows it under the step. Optional `known_differences` is a short note, shown on the card under the plan, for an intentional difference from the original implementation. `ticket` is the engineering issue number, or `null`. `build_cards.py` renders the plan on the research card (`#build-plan`) and in the production tracker, and fails the build if a Go or Building method has no valid plan.
 
 **How the scanner moves a plan.** Each run moves an approved or in-progress method through as many steps as it can finish in that run. It runs each step's acceptance test, sets the step to `done` (or records a miss and applies the kill rule), and comments on the issue. When a step needs a new repo or other engineering work, the scanner files the **engineering ticket** itself.
 

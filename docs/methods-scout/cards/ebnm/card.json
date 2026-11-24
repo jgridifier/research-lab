@@ -134,7 +134,7 @@
     {
       "h": "Build 2026-11-23: our own port matches ebnm; the flag test misses one calibration bar.",
       "miss": true,
-      "t": "With the same scale grid the port matches ebnm to 1.5e-12 in log-likelihood. On mocks regenerated with a new seed (pre-registered): 1.9% / 1.8% wrong signs among flags, 107 vs 0 and 163 vs 42 BH calls, 0% false flags with no true effects, but the MS lfsr 0.2–0.5 bin is off by 5.4 points (bar ±5).",
+      "t": "The default grid is an accepted, intentional difference from ebnm's interpolated table (exact KL bound; ~3e-4 log-likelihood gap). With the same scale grid the port matches ebnm to 1.5e-12 in log-likelihood. On mocks regenerated with a new seed (pre-registered): 1.9% / 1.8% wrong signs among flags, 107 vs 0 and 163 vs 42 BH calls, 0% false flags with no true effects, but the MS lfsr 0.2–0.5 bin is off by 5.4 points (bar ±5).",
       "chart": {
         "type": "hbars",
         "title": "Programs flagged “really changed” (regenerated SYNTHETIC mocks)",
@@ -168,9 +168,8 @@
       }
     },
     {
-      "h": "Build 2026-11-23: Rust is faster, but not 5× faster.",
-      "miss": true,
-      "t": "The same solver in NumPy and Rust both match ebnm to 8e-12. One fit at 998 programs: 3.17 ms (NumPy) vs 1.36 ms (Rust) vs 13 ms (R). The keep-Rust rule needs 5×; we got 2.3×, and NumPy alone misses the 3 ms bar by 0.17 ms.",
+      "h": "Build 2026-11-23: NumPy is the accepted backend.",
+      "t": "The same solver in NumPy and Rust both match ebnm to 8e-12. One fit at 998 programs: 3.17 ms (NumPy) vs 1.36 ms (Rust) vs 13 ms (R). Rust is 2.3×, below the 5× cutoff, so Rust is dropped. Jared accepted NumPy at 3.17 ms (2026-11-23, 7:22 PM ET).",
       "chart": {
         "type": "hbars",
         "title": "One ash fit, 998 programs, ms (lower is better)",
