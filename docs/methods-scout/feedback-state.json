@@ -1,7 +1,7 @@
 {
   "version": 1,
   "repo": "jgridifier/research-lab",
-  "updated_at": "2026-11-23T20:05:00Z",
+  "updated_at": "2026-11-24T00:26:00Z",
   "issues": {
     "46": {
       "issue": 46,
@@ -462,6 +462,24 @@
           "actor": "quant-scout-bot",
           "action": "build step 2 benchmarked (Rust 1.36 ms vs NumPy 3.17 ms; bars conflict, not passed)",
           "ref": null
+        },
+        {
+          "at": "2026-11-24T00:22:00Z",
+          "signal": "free_text",
+          "source": "chat",
+          "actor": "jgridifier",
+          "action": "step 1 done-with-waiver: keep the exact grid and accept the 3e-4 miss on the default grid",
+          "ref": null,
+          "quote": "Keep the exact grid and accept the 3e-4 miss on the default grid"
+        },
+        {
+          "at": "2026-11-24T00:22:00Z",
+          "signal": "free_text",
+          "source": "chat",
+          "actor": "jgridifier",
+          "action": "step 2 done: keep NumPy at 3.17 ms; drop Rust (below the 5× cutoff)",
+          "ref": null,
+          "quote": "Keep NumPy at 3.17 ms"
         }
       ],
       "build_plan": {
@@ -469,23 +487,35 @@
         "repo": "not created yet",
         "ticket": 94,
         "finish": "Agent-ready library (finish-line spec in FEEDBACK.md)",
-        "updated_at": "2026-11-23T19:44:13Z",
+        "updated_at": "2026-11-24T00:26:00Z",
         "steps": [
           {
             "n": 1,
             "title": "Port with parity (normal, point-normal, ash)",
-            "status": "doing",
+            "status": "done-with-waiver",
             "do": "Implement the grid of normal mixtures, the concave mixture-weight solve (mixsqp-style SQP) and closed-form posteriors (means, 90% intervals, lfsr) from the papers. Use ebnm 1.1.42 as the black-box oracle.",
             "accept": "Log-likelihood −145.7808 (Corning_mock, ash) and −238.8506 (MS_mock) to ≤ 1e-4, with posterior means and lfsr within 1e-6 of the oracle on both mocks.",
-            "result": "2026-11-23 (runs/2026-11-23-build/ebnm): with ebnm’s own scale grid, log-lik within 1.5e-12 / 3.8e-12, posterior means within 4.5e-8, lfsr within 4.6e-9 (pass). With the port’s exact KL-bound grid, log-lik is off by 3.2e-4 / 3.7e-4 (bar 1e-4: miss), because ebnm interpolates a precomputed table. Needs a call on the default grid rule; see ticket #94."
+            "result": "2026-11-23 (runs/2026-11-23-build/ebnm): with ebnm’s own scale grid, log-lik within 1.5e-12 / 3.8e-12, posterior means within 4.5e-8, lfsr within 4.6e-9 (pass). With the port’s exact KL-bound grid, log-lik is off by 3.2e-4 / 3.7e-4 (bar 1e-4: miss), because ebnm interpolates a precomputed table. Accepted as a documented, intentional difference. Jared, 2026-11-23 at 7:22 PM ET: \"Keep the exact grid and accept the 3e-4 miss on the default grid.\"",
+            "decision": {
+              "at": "2026-11-24T00:22:00Z",
+              "at_label": "2026-11-23 7:22 PM ET",
+              "actor": "jgridifier",
+              "quote": "Keep the exact grid and accept the 3e-4 miss on the default grid"
+            }
           },
           {
             "n": 2,
             "title": "Speed by benchmark",
-            "status": "doing",
+            "status": "done",
             "do": "Benchmark NumPy, Numba and Rust for one fit at 1,000 programs and for 10,000 bootstrap refits.",
             "accept": "One ash fit ≤ 3 ms (R took about 31 ms) and 10,000 refits ≤ 30 s on 4 vCPU. Keep Rust only if it is ≥ 5× faster than the best Python path. Commit the timings.",
-            "result": "2026-11-23 (runs/2026-11-23-build/ebnm/s2): same active-set SQP in NumPy and Rust, both matching ebnm to ≤ 8e-12 in log-lik. One fit at 998 programs: Rust 1.36 ms, NumPy 3.17 ms (R 13 ms); 10,000 refits on 4 threads: Rust 3.4 s, NumPy about 7.2 s. Rust is 2.3× (1.5× at 1,702 programs), under the 5× keep-Rust rule, and the NumPy path misses 3 ms by 0.17 ms. Not passed as written; the bars conflict, see issue #55."
+            "result": "2026-11-23 (runs/2026-11-23-build/ebnm/s2): same active-set SQP in NumPy and Rust, both matching ebnm to ≤ 8e-12 in log-lik. One fit at 998 programs: Rust 1.36 ms, NumPy 3.17 ms (R 13 ms); 10,000 refits on 4 threads: Rust 3.4 s, NumPy about 7.2 s. Rust is 2.3× (1.5× at 1,702 programs), under the 5× keep-Rust rule, so Rust is dropped. NumPy at 3.17 ms is the accepted backend against the 3 ms bar. Jared, 2026-11-23 at 7:22 PM ET: \"Keep NumPy at 3.17 ms.\"",
+            "decision": {
+              "at": "2026-11-24T00:22:00Z",
+              "at_label": "2026-11-23 7:22 PM ET",
+              "actor": "jgridifier",
+              "quote": "Keep NumPy at 3.17 ms"
+            }
           },
           {
             "n": 3,
@@ -510,7 +540,24 @@
             "do": "Build the library's own repo + human Pages site in the Google Research style built from the template (docs/methods-scout/library-site-template/). Also write AGENTS.md, llms.txt, API docs, CHANGELOG, CITATION (Stephens 2017; Willwerscheid et al. for ebnm), NOTICE (independent implementation; R run only as an oracle), quickstart and SKILL.md.",
             "accept": "The quickstart and README blocks run in CI, the build passes and every page of the template-built Pages site returns 200 with no unfilled {{tokens}}. Nothing is published or promoted. Real budgets are optional, once Jared provides them."
           }
-        ]
+        ],
+        "decisions": [
+          {
+            "at": "2026-11-24T00:22:00Z",
+            "at_label": "2026-11-23 7:22 PM ET",
+            "actor": "jgridifier",
+            "step": 1,
+            "quote": "Keep the exact grid and accept the 3e-4 miss on the default grid"
+          },
+          {
+            "at": "2026-11-24T00:22:00Z",
+            "at_label": "2026-11-23 7:22 PM ET",
+            "actor": "jgridifier",
+            "step": 2,
+            "quote": "Keep NumPy at 3.17 ms"
+          }
+        ],
+        "known_differences": "The port keeps an exact KL-bound scale grid rather than copying ebnm's interpolated precomputed table. On ebnm's own grid, log-likelihood matches to 1e-12. On the default (exact) grid, log-likelihood differs by about 3e-4, which is an accepted, intentional difference. Jared, 2026-11-23 at 7:22 PM ET: \"Keep the exact grid and accept the 3e-4 miss on the default grid.\""
       }
     },
     "56": {

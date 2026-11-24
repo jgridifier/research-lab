@@ -60,7 +60,22 @@ def check_budget(card: dict) -> None:
                 raise SystemExit(f"{card['slug']}: '{k}' is {w} words (limit {n}): {card[k]}")
 
 
-PLAN_STATUS = {"todo": ("○", "To do"), "doing": ("▶", "Doing"), "done": ("✓", "Done"), "blocked": ("❚❚", "Waiting")}
+PLAN_STATUS = {
+    "todo": ("○", "To do"),
+    "doing": ("▶", "Doing"),
+    "done": ("✓", "Done"),
+    "done-with-waiver": ("✓", "Done, with waiver"),
+    "blocked": ("❚❚", "Waiting"),
+}
+COMPLETE_STATUS = {"done", "done-with-waiver"}
+
+
+def steps_done(bp: dict) -> int:
+    return sum(1 for st in bp["steps"] if st["status"] in COMPLETE_STATUS)
+
+
+def next_open_step(bp: dict) -> dict | None:
+    return next((st for st in bp["steps"] if st["status"] not in COMPLETE_STATUS), None)
 
 
 def check_build_plan(c: dict) -> None:
@@ -90,15 +105,38 @@ def ticket_url(c: dict, links: dict | None = None) -> str | None:
     return f"{REPO}/issues/{bp['ticket']}" if bp.get("ticket") else None
 
 
+def decision_html(st: dict) -> str:
+    d = st.get("decision")
+    if not d or not d.get("quote"):
+        return ""
+    when = d.get("at_label") or d.get("at") or ""
+    who = d.get("actor") or "Jared"
+    label = f'{who}, {when}' if when else who
+    return f'<p class="bp-dec"><b>Decision</b> ({e(label)}): “{e(d["quote"])}”</p>'
+
+
+def known_differences_html(bp: dict) -> str:
+    kd = bp.get("known_differences")
+    if not kd:
+        return ""
+    if isinstance(kd, list):
+        items = "".join(f"<li>{e(x)}</li>" for x in kd)
+        body = f"<ul>{items}</ul>"
+    else:
+        body = f"<p>{e(kd)}</p>"
+    return f'<div class="bp-known"><h3>Known differences from the original</h3>{body}</div>'
+
+
 def plan_steps_html(bp: dict) -> str:
     rows = []
     for st in bp["steps"]:
         ic, lab = PLAN_STATUS[st["status"]]
         kill = f'<p class="kill"><b>Kill rule:</b> {e(st["kill"])}</p>' if st.get("kill") else ""
         res = f'<p class="bp-res"><b>Result:</b> {e(st["result"])}</p>' if st.get("result") else ""
+        dec = decision_html(st)
         rows.append(f'<li class="bp-step bp-{e(st["status"])}"><div class="bp-head"><span class="bp-n">{st.get("n", "")}</span>'
                     f'<span class="bp-t">{e(st["title"])}</span><span class="chip bp-st">{ic} {lab}</span></div>'
-                    f'<p><b>Do:</b> {e(st["do"])}</p><p><b>Pass when:</b> {e(st["accept"])}</p>{kill}{res}</li>')
+                    f'<p><b>Do:</b> {e(st["do"])}</p><p><b>Pass when:</b> {e(st["accept"])}</p>{kill}{res}{dec}</li>')
     return f'<ol class="bp-steps">{"".join(rows)}</ol>'
 
 
@@ -108,13 +146,13 @@ def build_plan_section(c: dict) -> str:
         return ""
     t = ticket_url(c)
     tk = f' · Engineering ticket: <a href="{e(t, quote=True)}">#{e(str(bp["ticket"]))}</a>' if t else ""
-    done = sum(1 for st in bp["steps"] if st["status"] == "done")
+    done = steps_done(bp)
     return (f'<section class="bplan" id="build-plan"><h2 class="sect">Build plan <span class="cnt">{done}/{len(bp["steps"])} done</span></h2>'
             f'<p class="rule">Ends in an <b>agent-ready library</b>: fast (backend chosen by benchmark, usually a Rust core), '
             f'parity-tested against the original, with diagnostics and null tests that say pass / warn / fail, a how-to-judge guide '
             f'and a skill card. Library: <b>{e(bp.get("library") or "TBD")}</b> · repo: {e(bp.get("repo") or "not created yet")}{tk}. '
             f'Finish-line spec: <a href="{REPO}/blob/main/docs/methods-scout/FEEDBACK.md#finish-line-agent-ready-library">FEEDBACK.md</a>.</p>'
-            f'{plan_steps_html(bp)}</section>\n')
+            f'{plan_steps_html(bp)}{known_differences_html(bp)}</section>\n')
 
 
 def fit_pts(q):
@@ -447,8 +485,8 @@ def prod_row(c: dict, links: dict) -> str:
         ticket_html = '<span class="missing">no engineering ticket yet</span>'
     bp = c.get("build_plan")
     if bp:
-        done = sum(1 for st in bp["steps"] if st["status"] == "done")
-        nxt = next((st for st in bp["steps"] if st["status"] != "done"), None)
+        done = steps_done(bp)
+        nxt = next_open_step(bp)
         where = (f' · <a href="m/{e(slug)}.html#build-plan">on the card</a>' if not c.get("stub") else "")
         plan_html = (f'<details class="bp-mini"><summary>{done}/{len(bp["steps"])} steps done'
                      f'{" · next: " + e(nxt["title"]) if nxt else ""}</summary>{plan_steps_html(bp)}</details>{where}')
