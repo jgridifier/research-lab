@@ -1,0 +1,41 @@
+<h4>Notation</h4>
+<div class="table-wrap"><table>
+<tr><th>Symbol</th><th>Meaning</th><th>Here</th></tr>
+<tr><td>\(x_t,\ y_t\)</td><td>two stationary series</td><td>weekly or monthly log changes (standardized): e.g. fails and DVP outstanding; Form PF prime-broker borrowing and reverse repo</td></tr>
+<tr><td>\(X_k(f),\ Y_k(f)\)</td><td>Fourier transform of segment \(k\) (Hann window, linear detrend)</td><td>weekly: 52-week segments, 50% overlap, 15 segments; monthly: 24-month segments, 50% overlap, 6–11 segments</td></tr>
+<tr><td>\(S_{xy}(f)\)</td><td>cross-spectrum \(\frac1K\sum_k X_k Y_k^*\)</td><td>average over segments</td></tr>
+<tr><td>\(C_{xy}(f)\)</td><td>complex coherency \(S_{xy}/\sqrt{S_{xx}S_{yy}}\)</td><td>size = how tightly the two move together at frequency \(f\); angle = the time shift at that frequency</td></tr>
+<tr><td>\(\delta f\)</td><td>frequency spacing \(1/\)segment length</td><td>1/52 per week; 1/24 per month</td></tr>
+<tr><td>\(F\)</td><td>band of frequencies</td><td>weekly periods 4–26 weeks; monthly periods 4–12 months (fixed before looking)</td></tr>
+<tr><td>\(\Psi_{xy}\)</td><td>phase slope index; positive means \(x\) leads \(y\)</td><td>"does the phase tilt forward as frequency rises?"</td></tr>
+<tr><td>\(z\)</td><td>\(\Psi\) over its segment-jackknife standard deviation</td><td>the paper treats \(|z|>2\) as significant</td></tr>
+</table></div>
+
+<h4>Assumptions</h4>
+<ul>
+<li>Both series are stationary within each segment (we difference the logs to get close).</li>
+<li>The interaction is mostly a delay: a time shift \(\tau\) appears as a straight line in phase against frequency. PSI still gives a sign when the phase is not straight, but only the average slope.</li>
+<li>Many independent segments. The jackknife needs enough of them; with 6–15 segments it is crude (see "Where it breaks").</li>
+<li>One direction of influence dominates. If both series drive each other, the phase slopes cancel and PSI reads near zero.</li>
+</ul>
+
+<h4>The statistic</h4>
+$$C_{xy}(f)=\frac{S_{xy}(f)}{\sqrt{S_{xx}(f)\,S_{yy}(f)}},\qquad
+\Psi_{xy}=\operatorname{Im}\!\Big(\sum_{f\in F} C_{xy}^{*}(f)\,C_{xy}(f+\delta f)\Big).$$
+<p>With \(C=\alpha e^{i\phi}\) each term is \(\alpha(f)\,\alpha(f+\delta f)\sin\big(\phi(f+\delta f)-\phi(f)\big)\): the tilt of the phase, weighted by how coherent the two series are at the two neighbouring frequencies. Standardized: \(z=\Psi/\widehat{\mathrm{sd}}_{\text{jackknife}}\), with \(\widehat{\mathrm{sd}}^2=\frac{K-1}{K}\sum_k(\Psi_{(k)}-\bar\Psi)^2\) and \(\Psi_{(k)}\) the index with segment \(k\) left out.</p>
+
+<h4>Why it works, step by step</h4>
+<div class="step"><b>Step 1: a delay is a phase that rises with frequency.</b> If \(y_t=a\,x_{t-\tau}\) then \(\hat y(f)=a\,e^{-i2\pi f\tau}\hat x(f)\), so \(S_{xy}(f)\propto e^{+i2\pi f\tau}\) and the phase is \(\phi(f)=2\pi f\tau\). Its slope against \(f\) is \(2\pi\tau\): positive when \(x\) leads.</div>
+<div class="step"><b>Step 2: shared instantaneous shocks have no phase.</b> Suppose both series are mixtures of independent sources \(s_1,s_2\): \(x=m_{11}s_1+m_{12}s_2\), \(y=m_{21}s_1+m_{22}s_2\). Then \(S_{xy}(f)=m_{11}m_{21}S_{11}(f)+m_{12}m_{22}S_{22}(f)\) is a sum of real numbers times real spectra, so \(S_{xy}\) is real and \(\operatorname{Im}\,C_{xy}=0\) at every frequency. Every term of \(\Psi\) is \(\operatorname{Im}(C^*(f)C(f+\delta f))=\operatorname{Re}C(f)\operatorname{Im}C(f+\delta f)-\operatorname{Im}C(f)\operatorname{Re}C(f+\delta f)=0\). A common market shock therefore cannot create a PSI. This is the property (a) of Nolte et al. (2008), re-derived here.</div>
+<div class="step"><b>Step 3: why Granger differs.</b> Granger asks whether the past of \(x\) helps predict \(y\) beyond \(y\)'s own past, so it is not built to ignore mixing. Haufe et al. (2013; abstract read) report that Granger measures with standard significance testing detect spurious connectivity on mixed EEG signals, while PSI does not suffer from that limit because mixing leaves no imaginary coherency. Our own simulation shows the same sign of difference but a smaller size (10% against 3%).</div>
+
+<h4>The null or inference</h4>
+<p>The paper's rule is \(|z|>2\) with the segment jackknife. We checked its size on our sampling: 1,000 independent pairs matched to the fitted AR(p) persistence of the real series (residuals bootstrapped), and the same with a shared same-week shock. Across the four cases \(|z|>2\) rejects 0.6%–4.1% (nominal about 5%; z standard deviation 0.71–0.94): conservative. Multiple testing: Holm over the 7 pairs on the normal p-value. Observed z are descriptive only, because the independent-pair size missed the pre-stated band [3%, 8%].</p>
+
+<h4>A tiny worked toy</h4>
+<div class="toy"><p>Three neighbouring frequency bins, \(|C|=(0.8,0.8,0.7)\), phase \(\phi=(0.20,0.50,0.80)\) rad (computed in <code>cards/_toys/toys.py</code>):</p>
+<p>\(\operatorname{Im}(C_1^*C_2)=0.1891\), \(\operatorname{Im}(C_2^*C_3)=0.1655\), so \(\Psi=0.3546>0\): the first series leads. With the same magnitudes and phase 0 (instantaneous mixing) \(\Psi=0.0\). For a 2-step delay the phase at \(f=0.05,0.10,0.15\) is \(0.6283,1.2566,1.8850\) rad: a slope of \(2\pi\,\delta f\,\tau=0.6283\) rad per bin.</p></div>
+
+<h4>How it differs mathematically from the standard tool</h4>
+<div class="diff"><p><b>Granger / VAR lead-lag</b> assumes the series are the whole system and tests whether lagged \(x\) lowers the prediction error for \(y\); it does not remove instantaneous correlation, and it gives a p-value, not a signed size. <b>Cross-correlation peak lag</b> reads a lag off one correlation curve and can be set by a common factor. <b>PSI</b> assumes nothing about lag order, keeps only the imaginary part of coherency (the part a shared instantaneous shock cannot produce), and summarizes the sign of the phase tilt over a band. It cannot show two-way feedback.</p></div>
+<p class="cite">Nolte, Ziehe, Nikulin, Schlögl, Krämer, Brismar &amp; Müller (2008), <i>Phys. Rev. Lett.</i> 100:234101, arXiv:0712.2352: definition eq. (3)–(4), the weighted-slope form eq. (5) and the jackknife |z| &gt; 2 rule, from the open arXiv text (read via search extract; the equation numbers match the extract, and the full text was not read line by line). Step 2 is our derivation.</p>

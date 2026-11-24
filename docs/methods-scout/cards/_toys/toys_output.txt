@@ -97,3 +97,7 @@ MMI: redundancy = min = 0.0294  unique SCB = 0.0  unique dd = 0.0963  synergy = 
 OLS standardized betas: SCB 0.842  dd -1.158 (SCB flips to positive);  commonality: unique SCB 0.1347  unique dd 0.2547  common -0.0947
 Idep (Kay & Ince 2018): unique SCB = 0.0248  unique dd = 0.1211  redundancy = 0.0046  synergy = 0.1013
 zero-synergy line b = a/c = 0.5 ; with b = 0.9 the weak source (SCB) has partial corr with T given dd = 0.401
+== Phase slope index (2026-11-24): two series, three neighbouring frequency bins; coherency C(f) = |C| e^{i phi}
+phase rises 0.30 rad per bin -> terms Im(C*(f)C(f+df)) = [0.1891, 0.1655]  PSI = 0.3546 (positive: first series leads)
+same magnitudes, zero phase (instantaneous mixing): PSI = 0.0
+delay check: y2(t) = y1(t - tau), tau = 2 steps; phase = 2*pi*f*tau; bins f = 0.05, 0.10, 0.15 -> phase [0.6283, 1.2566, 1.885]  slope per bin 0.6283 rad = 2 pi df tau

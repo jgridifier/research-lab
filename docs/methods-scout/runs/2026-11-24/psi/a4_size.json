@@ -1,0 +1,48 @@
+{
+ "W1": {
+  "n": 437,
+  "ar_lags_x": [
+   1,
+   2,
+   3
+  ],
+  "ar_lags_y": [],
+  "independent": {
+   "psi_reject_abs_z_gt2": 0.006,
+   "granger_either_direction": 0.134,
+   "granger_stated_direction": 0.066,
+   "z_sd": 0.7111215776981102
+  },
+  "common_shock": {
+   "psi_reject_abs_z_gt2": 0.031,
+   "granger_either_direction": 0.121,
+   "granger_stated_direction": 0.073,
+   "z_sd": 0.8796820629813011
+  },
+  "pass_size": {
+   "independent": false,
+   "common_shock": true
+  }
+ },
+ "M2": {
+  "n": 155,
+  "ar_lags_x": [],
+  "ar_lags_y": [],
+  "independent": {
+   "psi_reject_abs_z_gt2": 0.012,
+   "granger_either_direction": 0.061,
+   "granger_stated_direction": 0.033,
+   "z_sd": 0.714739045751949
+  },
+  "common_shock": {
+   "psi_reject_abs_z_gt2": 0.041,
+   "granger_either_direction": 0.07,
+   "granger_stated_direction": 0.047,
+   "z_sd": 0.93913330685212
+  },
+  "pass_size": {
+   "independent": false,
+   "common_shock": true
+  }
+ }
+}

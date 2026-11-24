@@ -1,0 +1,4 @@
+W1 independent {'psi_reject_abs_z_gt2': 0.006, 'granger_either_direction': np.float64(0.134), 'granger_stated_direction': np.float64(0.066), 'z_sd': 0.7111215776981102}
+W1 common_shock {'psi_reject_abs_z_gt2': 0.031, 'granger_either_direction': np.float64(0.121), 'granger_stated_direction': np.float64(0.073), 'z_sd': 0.8796820629813011}
+M2 independent {'psi_reject_abs_z_gt2': 0.012, 'granger_either_direction': np.float64(0.061), 'granger_stated_direction': np.float64(0.033), 'z_sd': 0.714739045751949}
+M2 common_shock {'psi_reject_abs_z_gt2': 0.041, 'granger_either_direction': np.float64(0.07), 'granger_stated_direction': np.float64(0.047), 'z_sd': 0.93913330685212}

@@ -1,0 +1,7 @@
+W1 fails dvp K 15 psi -0.112 z -0.61 p 0.544 holm 1.000 GC {'lag': 8, 'p_x_to_y': 0.3437519524794094, 'p_y_to_x': 0.05245725326565316} ccf 0 0.29 halves z 0.73 -0.73
+W2 fails tri K 15 psi -0.014 z -0.09 p 0.927 holm 1.000 GC {'lag': 8, 'p_x_to_y': 0.02299105991879788, 'p_y_to_x': 0.13873872724085348} ccf 0 0.19 halves z -0.1 0.39
+W3 dvp tri K 15 psi -0.382 z -1.22 p 0.221 holm 1.000 GC {'lag': 6, 'p_x_to_y': 0.30190173744669474, 'p_y_to_x': 0.9765619497528686} ccf 1 0.06 halves z -0.05 -1.42
+M1 pb fails K 11 psi 0.109 z 1.81 p 0.070 holm 0.491 GC {'lag': 2, 'p_x_to_y': 0.49932613159936484, 'p_y_to_x': 0.35624969228747166} ccf -5 0.17 halves z -0.48 0.53
+M2 pb rr K 11 psi -0.063 z -0.28 p 0.779 holm 1.000 GC {'lag': 1, 'p_x_to_y': 0.7695786363129138, 'p_y_to_x': 0.042115980281694186} ccf -1 -0.18 halves z -0.9 -0.71
+M3 pb dvp K 6 psi 0.401 z 0.91 p 0.360 holm 1.000 GC {'lag': 0, 'p_x_to_y': 1.0, 'p_y_to_x': 1.0} ccf 0 -0.22 halves z nan nan
+M4 pb tri K 10 psi 0.002 z 0.01 p 0.989 holm 1.000 GC {'lag': 1, 'p_x_to_y': 0.435357814907364, 'p_y_to_x': 0.511311580206087} ccf 0 -0.19 halves z -3.11 0.35

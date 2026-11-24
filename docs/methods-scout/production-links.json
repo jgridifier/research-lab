@@ -31,8 +31,8 @@
       "ticket": "https://github.com/jgridifier/research-lab/issues/95"
     },
     "codyn": {
-      "repo_note": "repo not yet created (codynfast ticket #96 filed)",
-      "source": "https://github.com/jgridifier/research-lab/tree/main/docs/methods-scout/runs/2026-11-23-build/codyn",
+      "repo_note": "repo not yet created (codynfast ticket #96 filed); steps 1–3 done on the research side, Numba backend chosen",
+      "source": "https://github.com/jgridifier/research-lab/tree/main/docs/methods-scout/runs/2026-11-24-build/codyn",
       "package_note": "not on PyPI yet",
       "ticket": "https://github.com/jgridifier/research-lab/issues/96"
     }

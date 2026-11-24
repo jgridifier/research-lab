@@ -1,0 +1,40 @@
+<h4>Who plays what</h4>
+<div class="table-wrap"><table>
+<tr><th>In EEG</th><th>In our data</th></tr>
+<tr><td>Two scalp channels</td><td>Two funding series: e.g. Treasury financing fails and DVP repo outstanding (weekly); Form PF prime-broker borrowing and reverse repo (monthly)</td></tr>
+<tr><td>Volume conduction (one brain source seen by both channels at once)</td><td>A same-week market shock that moves both series together</td></tr>
+<tr><td>Frequency band (e.g. alpha)</td><td>Periods of 4–26 weeks (weekly) or 4–12 months (monthly)</td></tr>
+<tr><td>Hundreds of seconds of recording, many epochs</td><td>6–15 segments of 24 months or 52 weeks, the main limit</td></tr>
+</table></div>
+<h4>Inputs and preprocessing</h4>
+<ul>
+<li>Weekly (Wednesday) 2018-05-09 to 2026-09-23, 437 weeks after filling 2 missing weeks by linear interpolation of the level: NY Fed primary-dealer UST financing fails to deliver, OFR DVP repo outstanding, OFR tri-party volume (lab copy <code>/workspace/ms-1114/q1/weekly.csv</code>).</li>
+<li>Monthly 2013-01 to 2025-12: SEC Form PF tab 8.27 secured borrowing from prime brokers and from reverse repo; monthly means of fails, tri-party volume and DVP outstanding where available (<code>monthly.csv</code>). Prime broker × DVP starts 2018-06 (91 months, only 6 segments).</li>
+<li>Transform: first difference of the log, standardized. Aggregate public data only; no private rows.</li>
+</ul>
+<h4>What we ran</h4>
+<ol>
+<li>Home-field reproduction on SYNTHETIC data: PSI recovers a planted delay and ignores mixed independent sources (200 runs each).</li>
+<li>PSI, Holm over 7 pairs, with the usual tools (VAR Granger, cross-correlation peak) alongside.</li>
+<li>Stability: first vs second half, and rolling 104-week / 60-month windows.</li>
+<li>Size on our sampling: 1,000 matched-persistence pairs, independent and with a shared shock, for weekly fails × DVP and monthly prime broker × reverse repo.</li>
+<li>Walk-forward benchmark and a speed test. Files: <code>runs/2026-11-24/psi/</code>; pre-registration <code>runs/2026-11-24-build/PREREG.md</code> (merged before the runs).</li>
+</ol>
+<h4>How to read the main chart</h4>
+<div class="callouts"><ol>
+<li>Left picture: the usual rolling correlation, one panel per pair. It says how tightly the two move, never who leads.</li>
+<li>Right picture: one bar per window. Height = PSI (positive: the first series in the panel title leads). Blue/orange = significant at the 5% t-level for that window's number of segments; grey = not.</li>
+<li>Almost all bars are grey: with 3–4 segments per window nothing short of an enormous PSI is significant. Treat a coloured bar as a prompt, not a finding.</li>
+</ol></div>
+<h4>What it means for a decision-maker</h4>
+<div class="plain"><p>On the public funding data we have, no series reliably runs ahead of another. The two links the standard test flagged (fails ahead of tri-party volume; reverse repo ahead of prime-broker borrowing) are what that test also reports about 6–13% of the time for pairs we know are unrelated, so they are not a basis for a trading or monitoring rule. The method itself is also cautious at our short sample sizes, so this is "no evidence", not "evidence of none".</p></div>
+<h4>Where it breaks</h4>
+<ul>
+<li>Short samples: 6–15 segments make the jackknife conservative (size 0.6–4.1%). Rolling windows hold only 3–4 segments.</li>
+<li>First vs second half disagree (prime broker × tri-party z = −3.11 then +0.35), so even a "significant" result here would not be stable.</li>
+<li>The stress window 2020-02..05 cannot be isolated: the first rolling window already spans it.</li>
+<li>Two-way feedback cancels the phase slope. Lead-lag is not causal direction in nonlinear systems (a 2024 comparison with conditional mutual information, abstract read).</li>
+<li>Parity with mne-connectivity was missed; see the engineering finding above.</li>
+</ul>
+<h4>What we'd do next</h4>
+<p>Only if Jared says go: fix the calibration (the Math avenue), then re-run the band-by-regime map with pre-registered stress windows. Missing for the full Q1 picture: a refreshed CFTC TFF series (the lab copy has a gap from 2025-12-30).</p>

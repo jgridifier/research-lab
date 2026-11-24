@@ -150,6 +150,55 @@
      ]
     ]
    }
+  },
+  {
+   "h": "Build step 2 (2026-11-24): the share-space variance ratio failed its pre-registered test and is dropped.",
+   "miss": true,
+   "t": "SYNTHETIC 40-quarter, 10-entity panels with a market factor, 1,000 per scenario. The compensation statistic (most negative pairwise correlation after removing the market loading, no-wrap shifted null) has size 0.011 (bar 0.02–0.08) and power 0.226 for a planted sticky swap (bar 0.80). The official VR on shares is 4.4e-17, as expected. The usual raw-volume VR with the wrap null rejects 0.0% / 2.0% (computed).",
+   "note": "Pre-registered kill rule applied: the library ships raw-volume VR only. No re-run to chase the band.",
+   "chart": {
+    "type": "hbars",
+    "title": "Share-space test, planted swap: power (bar 0.80)",
+    "max": 1,
+    "rows": [
+     [
+      "Share-space statistic",
+      0.226,
+      "amber",
+      "0.226"
+     ],
+     [
+      "Raw-volume VR, wrap null",
+      0.02,
+      "muted",
+      "0.020"
+     ]
+    ]
+   }
+  },
+  {
+   "h": "Build step 3: all metrics on 2,000 entities x 40 periods run in 4.6 s in NumPy and about 0.1 s with Numba.",
+   "t": "4 vCPU, SYNTHETIC panel, median of 3: NumPy port, all metrics with a 999-draw VR null 4.59 s (bar 5 s); the Numba null 0.076 s against 4.56 s (60x), same draws to 2.7e-14. Rust not needed (computed).",
+   "note": "The whole 11-12 R edition took 129 s on 14 entities.",
+   "chart": {
+    "type": "hbars",
+    "title": "999-draw variance-ratio null, seconds",
+    "max": 5,
+    "rows": [
+     [
+      "NumPy port",
+      4.56,
+      "muted",
+      "4.56 s"
+     ],
+     [
+      "Numba",
+      0.076,
+      "teal",
+      "0.076 s"
+     ]
+    ]
+   }
   }
  ]
 }

@@ -1,7 +1,7 @@
 {
   "version": 1,
   "repo": "jgridifier/research-lab",
-  "updated_at": "2026-11-24T00:26:00Z",
+  "updated_at": "2026-11-24T19:45:00Z",
   "issues": {
     "46": {
       "issue": 46,
@@ -260,6 +260,14 @@
           "actor": "quant-scout-bot",
           "action": "build step 1 done (card + parity); engineering ticket #96 filed",
           "ref": null
+        },
+        {
+          "at": "2026-11-24T19:45:00Z",
+          "signal": "result",
+          "source": "bot",
+          "actor": "quant-scout-bot",
+          "action": "build step 2 done-with-waiver (kill rule triggered: share-space VR dropped), step 3 done (Numba 0.076 s null; whole panel NumPy 4.59 s)",
+          "ref": null
         }
       ],
       "build_plan": {
@@ -267,7 +275,7 @@
         "repo": "not created yet",
         "ticket": 96,
         "finish": "Agent-ready library (finish-line spec in FEEDBACK.md)",
-        "updated_at": "2026-11-23T19:38:01Z",
+        "updated_at": "2026-11-24T19:45:00Z",
         "steps": [
           {
             "n": 1,
@@ -280,17 +288,20 @@
           {
             "n": 2,
             "title": "Share-space variance ratio (the Math top pick)",
-            "status": "todo",
+            "status": "done-with-waiver",
             "do": "Pre-register. Derive a compensatory-dynamics VR in ilr/clr coordinates, plus a rank-shift null that does not wrap trending series (block shift without wrap).",
             "accept": "On simulated 40-quarter panels with a market factor, size in [0.02, 0.08], and power ≥ 0.80 for a planted sticky swap. The official VR on shares stays 0 (verified 4.07e-17).",
-            "kill": "If the size lands outside the band at T = 40, drop the share-space VR from the library and ship only raw-volume VR, with that documented."
+            "kill": "If the size lands outside the band at T = 40, drop the share-space VR from the library and ship only raw-volume VR, with that documented.",
+            "result": "2026-11-24, pre-registered (runs/2026-11-24-build/PREREG.md C2, merged in PR #105 before the run), SYNTHETIC 40-quarter x 10-entity panels, 1,000 per scenario: share-space compensation test (min pairwise market-residual correlation vs a no-wrap truncated-shift null) size 0.011 (band 0.02-0.08, miss, conservative), power for the planted sticky swap 0.226 (bar 0.80, miss). Official VR on shares 4.4e-17 (as expected). Raw-volume VR with the wrap null rejects 0.0% (null) and 2.0% (swap). Kill rule triggered: the share-space VR is dropped from the library; ship raw-volume VR only, documented.",
+            "waiver": "Kill rule applied as written; the library ships without a share-space VR. No re-run to chase the band."
           },
           {
             "n": 3,
             "title": "Speed by benchmark",
-            "status": "todo",
+            "status": "done",
             "do": "Time all metrics with 999-draw nulls on a synthetic 2,000-entity × 40-period panel, in NumPy/Numba and Rust.",
-            "accept": "≤ 5 s on 4 vCPU (the whole 11-12 R edition took 129 s on 14 entities). Keep Rust only if it is ≥ 5× faster than the best Python path. Commit the timings."
+            "accept": "≤ 5 s on 4 vCPU (the whole 11-12 R edition took 129 s on 14 entities). Keep Rust only if it is ≥ 5× faster than the best Python path. Commit the timings.",
+            "result": "2026-11-24 (runs/2026-11-24-build/codyn, 4 vCPU via taskset, SYNTHETIC 2,000 entities x 40 periods, median of 3): NumPy port, all metrics with a 999-draw VR null 4.59 s (bar 5 s, pass; the null alone is 4.56 s). Numba null 0.076 s (60x vs the port, 10x vs a chunked NumPy; same draws, max diff 2.7e-14). Rust not built: Numba already clears the bar and 5x over the best Python path is not available above it. Decision: Numba backend."
           },
           {
             "n": 4,
@@ -1121,6 +1132,26 @@
         "pick:math"
       ],
       "last_processed_at": "2026-11-23T19:41:38Z",
+      "notes": "",
+      "history": []
+    },
+    "106": {
+      "issue": 106,
+      "slug": "phase-slope-index",
+      "method": "Phase slope index (PSI)",
+      "scout_date": "2026-11-24",
+      "page": "2026-11-24.html",
+      "page_anchor": "#phase-slope-index",
+      "question": "Q1",
+      "status": "proposed",
+      "top_pick": "math",
+      "labels": [
+        "scout",
+        "scout:Q1",
+        "status:proposed",
+        "pick:math"
+      ],
+      "last_processed_at": "2026-11-24T19:37:16Z",
       "notes": "",
       "history": []
     }

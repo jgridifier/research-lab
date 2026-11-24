@@ -1,0 +1,3 @@
+S0 {'reject_rate': np.float64(0.011), 'mc_se': 0.006892024376045111, 'raw_VR_wrap_lower_reject': 0.0, 'mean_stat': -0.5179266387433932, 'seconds': 6.828797340393066, 'p_hist': [29, 27, 40, 41, 45, 69, 68, 98, 151, 432]}
+S1 {'reject_rate': np.float64(0.226), 'mc_se': 0.006892024376045111, 'raw_VR_wrap_lower_reject': 0.02, 'mean_stat': -0.6333941309418949, 'seconds': 5.440090894699097, 'p_hist': [297, 110, 77, 63, 68, 53, 72, 64, 69, 127]}
+{'size_in_band': False, 'power_ge_080': False, 'vr_shares_zero': True} 4.378679159059406e-17 0.9397918482088619

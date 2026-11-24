@@ -1,0 +1,48 @@
+coupled {'psi_sig_rate': 1.0, 'psi_positive_rate': 1.0, 'granger_either_dir_sig': np.float64(1.0), 'granger_x_to_y_sig': np.float64(1.0)}
+mixture {'psi_sig_rate': 0.03, 'psi_positive_rate': 0.45, 'granger_either_dir_sig': np.float64(0.1), 'granger_x_to_y_sig': np.float64(0.06)}
+{
+ "parity_pairs": [
+  [
+   1.5792999113260644,
+   1.4253125560828983
+  ],
+  [
+   1.5669695381021824,
+   1.3978042012709146
+  ],
+  [
+   1.4510924688824378,
+   1.367513360211778
+  ],
+  [
+   1.5164415960742974,
+   1.328799981919734
+  ],
+  [
+   1.5666348327368989,
+   1.4277497416431406
+  ]
+ ],
+ "parity_max_abs_diff": 0.2720804102261607,
+ "parity_corr": 0.7155649433062531,
+ "parity_ratio_median": 0.901660343742231,
+ "sim": {
+  "coupled": {
+   "psi_sig_rate": 1.0,
+   "psi_positive_rate": 1.0,
+   "granger_either_dir_sig": 1.0,
+   "granger_x_to_y_sig": 1.0
+  },
+  "mixture": {
+   "psi_sig_rate": 0.03,
+   "psi_positive_rate": 0.45,
+   "granger_either_dir_sig": 0.1,
+   "granger_x_to_y_sig": 0.06
+  }
+ },
+ "pass": {
+  "parity": false,
+  "coupled_dir_correct": true,
+  "mixture_psi_false_sig_le_10pct": true
+ }
+}

@@ -308,3 +308,11 @@ t7 = 0.5 * np.log2((1 - a * a * c * c) / ((1 - a * a) * (1 - c * c)))
 u1 = min(I1, t7 - I2, I12 - I2); u2 = min(I2, t7 - I1, I12 - I1); rd = I1 - u1
 print("Idep (Kay & Ince 2018): unique SCB =", round(u1, 4), " unique dd =", round(u2, 4), " redundancy =", round(rd, 4), " synergy =", round(I12 - u1 - u2 - rd, 4))
 print("zero-synergy line b = a/c =", round(a / c, 3), "; with b = 0.9 the weak source (SCB) has partial corr with T given dd =", round((a - b * c) / np.sqrt((1 - b * b) * (1 - c * c)), 3))
+
+print("== Phase slope index (2026-11-24): two series, three neighbouring frequency bins; coherency C(f) = |C| e^{i phi}")
+mag = np.array([0.8, 0.8, 0.7]); phi = np.array([0.20, 0.50, 0.80])
+C = mag * np.exp(1j * phi)
+terms = [np.imag(np.conj(C[k]) * C[k + 1]) for k in range(2)]
+print("phase rises 0.30 rad per bin -> terms Im(C*(f)C(f+df)) =", [round(float(t), 4) for t in terms], " PSI =", round(float(sum(terms)), 4), "(positive: first series leads)")
+print("same magnitudes, zero phase (instantaneous mixing): PSI =", round(float(sum(np.imag(np.conj(m1) * m2) for m1, m2 in [(0.8, 0.8), (0.8, 0.7)])), 4))
+print("delay check: y2(t) = y1(t - tau), tau = 2 steps; phase = 2*pi*f*tau; bins f = 0.05, 0.10, 0.15 -> phase", [round(2 * math.pi * f * 2, 4) for f in (0.05, 0.10, 0.15)], " slope per bin", round(2 * math.pi * 0.05 * 2, 4), "rad = 2 pi df tau")
