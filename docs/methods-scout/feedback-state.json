@@ -1,7 +1,7 @@
 {
   "version": 1,
   "repo": "jgridifier/research-lab",
-  "updated_at": "2026-11-24T19:45:00Z",
+  "updated_at": "2026-11-24T20:05:00Z",
   "issues": {
     "46": {
       "issue": 46,
@@ -613,6 +613,14 @@
           "actor": "quant-scout-bot",
           "action": "build step 3 done (pre-registered truth/shuffle study)",
           "ref": null
+        },
+        {
+          "at": "2026-11-24T20:05:00Z",
+          "signal": "result",
+          "source": "bot",
+          "actor": "quant-scout-bot",
+          "action": "build step 4 power study done: dip test has no power; mixture LRT adopted as the branch check (power 0.82 at 500 series, 2 SD)",
+          "ref": null
         }
       ],
       "build_plan": {
@@ -620,7 +628,7 @@
         "repo": "not created yet",
         "ticket": 95,
         "finish": "Agent-ready library (finish-line spec in FEEDBACK.md)",
-        "updated_at": "2026-11-23T19:44:13Z",
+        "updated_at": "2026-11-24T20:05:00Z",
         "steps": [
           {
             "n": 1,
@@ -650,9 +658,10 @@
           {
             "n": 4,
             "title": "Judging layer",
-            "status": "todo",
+            "status": "doing",
             "do": "Add diagnostics(): share of columns with fewer than 5 live series, weight concentration (max share > 20% warns), gap fraction. Add null_test() (year-shuffle envelope plus dip test) and HOW_TO_JUDGE.md, with the minimum series count from a power study of a branch planted in 10% of series.",
-            "accept": "Every check is driven to pass, warn and fail in tests. The power table is published."
+            "accept": "Every check is driven to pass, warn and fail in tests. The power table is published.",
+            "result": "2026-11-24, power study done (pre-registered, runs/2026-11-24-build/PREREG.md Addendum 2, merged in PR #108 before the run; SYNTHETIC, 10% of series branching at the last column): the Hartigan dip test has size 0-0.25% and power 0 at every N up to 2,000 (it is calibrated against a uniform, so it is far too cautious on Gaussian-like clouds) and is dropped as the branch check. A two-component Gaussian-mixture likelihood-ratio test (simulation-calibrated null, size 0.05 by construction) reaches power >= 0.80 at a branch 2 SD away with 500 series (0.82), at 3 SD with 200 (0.99), at 1.5 SD only with 2,000 (0.82). Still to do: diagnostics(), null_test() in the library, HOW_TO_JUDGE.md, and the pass/warn/fail unit tests (needs the repo)."
           },
           {
             "n": 5,

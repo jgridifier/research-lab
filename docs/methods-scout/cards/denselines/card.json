@@ -1,166 +1,202 @@
 {
-  "issue": 56,
-  "name": "DenseLines (density line charts)",
-  "title": "A thousand short lines as one picture",
-  "field": "visualization research",
-  "what": "Give every series one unit of ink per column, so a thousand lines become a readable density, not spaghetti.",
-  "verdict": "Interesting",
-  "grade": "not graded (the 11-13 edition predates grading)",
-  "pick_eff": "S–M",
-  "pick_line": "Gap-safe, weighted DenseLines in Rust with a Python binding.",
-  "data": "SYNTHETIC mock budgets (Corning_mock, MS_mock), not any firm's budget",
-  "one": "The shared 2022–24 dip and the 2025 split appear; spaghetti hides them.",
-  "picture": {
-    "type": "images",
-    "a": "img/denselines_spaghetti.png",
-    "b": "img/denselines_density.png",
-    "la": "Spaghetti",
-    "lb": "DenseLines"
+ "issue": 56,
+ "name": "DenseLines (density line charts)",
+ "title": "A thousand short lines as one picture",
+ "field": "visualization research",
+ "what": "Give every series one unit of ink per column, so a thousand lines become a readable density, not spaghetti.",
+ "verdict": "Interesting",
+ "grade": "not graded (the 11-13 edition predates grading)",
+ "pick_eff": "S–M",
+ "pick_line": "Gap-safe, weighted DenseLines in Rust with a Python binding.",
+ "data": "SYNTHETIC mock budgets (Corning_mock, MS_mock), not any firm's budget",
+ "one": "The shared 2022–24 dip and the 2025 split appear; spaghetti hides them.",
+ "picture": {
+  "type": "images",
+  "a": "img/denselines_spaghetti.png",
+  "b": "img/denselines_density.png",
+  "la": "Spaghetti",
+  "lb": "DenseLines"
+ },
+ "findings": [
+  {
+   "h": "The authors' code breaks on programs that start or stop.",
+   "miss": true,
+   "t": "One partial series turns a column blank (NaN). 274 of 1,052 Corning-mock programs are partial, so every column fails. Our one-line gap-safe fix: none.",
+   "chart": {
+    "type": "hbars",
+    "title": "Columns that come out blank",
+    "max": 600,
+    "rows": [
+     [
+      "Reference code (MS mock panel)",
+      500,
+      "red",
+      "500 / 500"
+     ],
+     [
+      "Gap-safe fix",
+      0,
+      "teal",
+      "0 / 500"
+     ]
+    ]
+   },
+   "fig": "fig/2026-11-13/m2_startstop.png"
   },
-  "findings": [
-    {
-      "h": "The authors' code breaks on programs that start or stop.",
-      "miss": true,
-      "t": "One partial series turns a column blank (NaN). 274 of 1,052 Corning-mock programs are partial, so every column fails. Our one-line gap-safe fix: none.",
-      "chart": {
-        "type": "hbars",
-        "title": "Columns that come out blank",
-        "max": 600,
-        "rows": [
-          [
-            "Reference code (MS mock panel)",
-            500,
-            "red",
-            "500 / 500"
-          ],
-          [
-            "Gap-safe fix",
-            0,
-            "teal",
-            "0 / 500"
-          ]
-        ]
-      },
-      "fig": "fig/2026-11-13/m2_startstop.png"
-    },
-    {
-      "h": "Chart plus keyword finds 94% of a hidden group, but it is fragile.",
-      "t": "AI-demand group, Corning mock. The brush works at 2–4 px smoothing and vanishes at 6–8 px.",
-      "note": "Precision: 100%, 51% and 56%.",
-      "chart": {
-        "type": "hbars",
-        "title": "Share of the hidden group found (recall)",
-        "max": 110,
-        "rows": [
-          [
-            "Text keyword only",
-            66,
-            "amber",
-            "66%"
-          ],
-          [
-            "Chart brush only",
-            75,
-            "amber",
-            "75%"
-          ],
-          [
-            "Brush OR keyword",
-            94,
-            "teal",
-            "94%"
-          ]
-        ]
-      },
-      "fig": "fig/2026-11-13/m2_residual_corning.png"
-    },
-    {
-      "h": "At 5–6 points per line, the normalisation itself barely matters.",
-      "t": "The noisiest 10% of programs take 12.0% of the ink without normalisation and 10.7% with it (Corning mock). The density view is the gain.",
-      "chart": {
-        "type": "hbars",
-        "title": "Ink taken by the noisiest 10% of programs",
-        "max": 14,
-        "rows": [
-          [
-            "Fair share",
-            10,
-            "muted",
-            "10%"
-          ],
-          [
-            "Without normalisation",
-            12.0,
-            "amber",
-            "12.0%"
-          ],
-          [
-            "DenseLines",
-            10.7,
-            "teal",
-            "10.7%"
-          ]
-        ]
-      },
-      "fig": "fig/2026-11-13/m2_hero.png"
-    },
-    {
-      "h": "Build 2026-11-23: the gap-safe Rust core is fast and small.",
-      "t": "Parity with the authors' reference to 1.4e-7 (relative), no NaN columns when series stop early, 10,000 series × 1,000 columns in 0.40 s, and 50,000 series in 1.35 s at 356 MB (the 11-13 run hit the 15.6 GB limit). SYNTHETIC inputs.",
-      "chart": {
-        "type": "hbars",
-        "title": "Peak memory for 50,000 series, MB (lower is better)",
-        "max": 16000,
-        "rows": [
-          [
-            "11-13 reference run (killed)",
-            15600,
-            "amber",
-            "> 15,600 (limit hit)"
-          ],
-          [
-            "Streaming core",
-            356,
-            "teal",
-            "356"
-          ]
-        ]
-      }
-    },
-    {
-      "h": "Build 2026-11-23: a little closer to the truth, and no false branches.",
-      "t": "Pre-registered, on mocks regenerated with a new seed: the DenseLines chart is closer to the true-path chart than the unnormalised one on both mocks (W1 0.0496 vs 0.0524; 0.0359 vs 0.0370). Shuffling years made the branch test fire in 0 of 200 runs, but it also missed the planted clusters, so that test has no power here.",
-      "chart": {
-        "type": "hbars",
-        "title": "Distance to the true-path chart (W1, lower is better)",
-        "max": 0.06,
-        "rows": [
-          [
-            "Unnormalised · Corning",
-            0.0524,
-            "amber",
-            "0.0524"
-          ],
-          [
-            "DenseLines · Corning",
-            0.0496,
-            "teal",
-            "0.0496"
-          ],
-          [
-            "Unnormalised · MS",
-            0.037,
-            "amber",
-            "0.0370"
-          ],
-          [
-            "DenseLines · MS",
-            0.0359,
-            "teal",
-            "0.0359"
-          ]
-        ]
-      }
-    }
-  ]
+  {
+   "h": "Chart plus keyword finds 94% of a hidden group, but it is fragile.",
+   "t": "AI-demand group, Corning mock. The brush works at 2–4 px smoothing and vanishes at 6–8 px.",
+   "note": "Precision: 100%, 51% and 56%.",
+   "chart": {
+    "type": "hbars",
+    "title": "Share of the hidden group found (recall)",
+    "max": 110,
+    "rows": [
+     [
+      "Text keyword only",
+      66,
+      "amber",
+      "66%"
+     ],
+     [
+      "Chart brush only",
+      75,
+      "amber",
+      "75%"
+     ],
+     [
+      "Brush OR keyword",
+      94,
+      "teal",
+      "94%"
+     ]
+    ]
+   },
+   "fig": "fig/2026-11-13/m2_residual_corning.png"
+  },
+  {
+   "h": "At 5–6 points per line, the normalisation itself barely matters.",
+   "t": "The noisiest 10% of programs take 12.0% of the ink without normalisation and 10.7% with it (Corning mock). The density view is the gain.",
+   "chart": {
+    "type": "hbars",
+    "title": "Ink taken by the noisiest 10% of programs",
+    "max": 14,
+    "rows": [
+     [
+      "Fair share",
+      10,
+      "muted",
+      "10%"
+     ],
+     [
+      "Without normalisation",
+      12.0,
+      "amber",
+      "12.0%"
+     ],
+     [
+      "DenseLines",
+      10.7,
+      "teal",
+      "10.7%"
+     ]
+    ]
+   },
+   "fig": "fig/2026-11-13/m2_hero.png"
+  },
+  {
+   "h": "Build 2026-11-23: the gap-safe Rust core is fast and small.",
+   "t": "Parity with the authors' reference to 1.4e-7 (relative), no NaN columns when series stop early, 10,000 series × 1,000 columns in 0.40 s, and 50,000 series in 1.35 s at 356 MB (the 11-13 run hit the 15.6 GB limit). SYNTHETIC inputs.",
+   "chart": {
+    "type": "hbars",
+    "title": "Peak memory for 50,000 series, MB (lower is better)",
+    "max": 16000,
+    "rows": [
+     [
+      "11-13 reference run (killed)",
+      15600,
+      "amber",
+      "> 15,600 (limit hit)"
+     ],
+     [
+      "Streaming core",
+      356,
+      "teal",
+      "356"
+     ]
+    ]
+   }
+  },
+  {
+   "h": "Build 2026-11-23: a little closer to the truth, and no false branches.",
+   "t": "Pre-registered, on mocks regenerated with a new seed: the DenseLines chart is closer to the true-path chart than the unnormalised one on both mocks (W1 0.0496 vs 0.0524; 0.0359 vs 0.0370). Shuffling years made the branch test fire in 0 of 200 runs, but it also missed the planted clusters, so that test has no power here.",
+   "chart": {
+    "type": "hbars",
+    "title": "Distance to the true-path chart (W1, lower is better)",
+    "max": 0.06,
+    "rows": [
+     [
+      "Unnormalised · Corning",
+      0.0524,
+      "amber",
+      "0.0524"
+     ],
+     [
+      "DenseLines · Corning",
+      0.0496,
+      "teal",
+      "0.0496"
+     ],
+     [
+      "Unnormalised · MS",
+      0.037,
+      "amber",
+      "0.0370"
+     ],
+     [
+      "DenseLines · MS",
+      0.0359,
+      "teal",
+      "0.0359"
+     ]
+    ]
+   }
+  },
+  {
+   "h": "Build step 4 input (2026-11-24): the dip test cannot see a planted branch; a mixture test can.",
+   "t": "SYNTHETIC, 10% of series branch at the last column, 500 runs per cell, 2,000 null runs per size. Hartigan dip: power 0 up to 2,000 series (size 0-0.25%). Two-component mixture likelihood-ratio test: power 0.82 at 500 series for a branch 2 SD away, 0.99 at 200 series for 3 SD, 0.82 at 2,000 for 1.5 SD (computed).",
+   "note": "The mixture test's size is set to 5% by calibrating on the same null simulations, so it is not an independent size check, and the null is Gaussian by construction.",
+   "chart": {
+    "type": "hbars",
+    "title": "Power at 500 series, branch in 10% of series",
+    "max": 1,
+    "rows": [
+     [
+      "Mixture LRT, 3 SD",
+      1.0,
+      "teal",
+      "1.00"
+     ],
+     [
+      "Mixture LRT, 2 SD",
+      0.818,
+      "teal",
+      "0.82"
+     ],
+     [
+      "Mixture LRT, 1.5 SD",
+      0.244,
+      "muted",
+      "0.24"
+     ],
+     [
+      "Dip test, any SD",
+      0.0,
+      "amber",
+      "0.00"
+     ]
+    ]
+   }
+  }
+ ]
 }
