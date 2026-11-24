@@ -1,0 +1,15 @@
+{
+ "threads": 4,
+ "panel": [
+  40,
+  2000
+ ],
+ "variance_ratio": 0.038321027997881174,
+ "variance_ratio_null_999": 4.564924763995805,
+ "rate_change": 0.004530107995378785,
+ "mean_rank_shift": 0.014236156006518286,
+ "rank_clocks": 0.006753052002750337,
+ "all_numpy_total": 4.590444080000452,
+ "bar_sec": 5.0,
+ "pass_numpy": true
+}

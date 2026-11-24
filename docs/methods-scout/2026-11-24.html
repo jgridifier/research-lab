@@ -1,0 +1,79 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Methods scout · 2026-11-24 · research-lab</title>
+<meta name="description" content="Methods scout 2026-11-24, aimed at Q1: the phase slope index (EEG connectivity) reads lead-lag direction from the cross-spectrum and ignores shared same-week shocks.">
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,400..800&family=Newsreader:ital,opsz,wght@0,6..72,400..600;1,6..72,400..500&family=JetBrains+Mono:wght@400;500;700&display=swap">
+<link rel="stylesheet" href="../assets/brief.css">
+<link rel="stylesheet" href="feedback.css">
+<!-- Methods Scout home-screen / PWA tags. Paste into <head> of every methods-scout page.
+     Paths are root-absolute so they resolve under https://jgridifier.github.io/research-lab/. -->
+<link rel="apple-touch-icon" sizes="180x180" href="/research-lab/methods-scout/icons/apple-touch-icon.png">
+<link rel="icon" type="image/png" sizes="32x32" href="/research-lab/methods-scout/icons/favicon-32.png">
+<link rel="icon" type="image/png" sizes="192x192" href="/research-lab/methods-scout/icons/icon-192.png">
+<link rel="manifest" href="/research-lab/methods-scout/manifest.webmanifest">
+<meta name="apple-mobile-web-app-title" content="Methods Scout">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="theme-color" content="#0F2A23">
+</head>
+<body><main>
+<header class="mast">
+  <div class="date">Tuesday · November 24, 2026 · scheduled edition · aimed at Q1 · exotic · public data</div>
+  <h1>Methods scout</h1>
+  <p class="dek">Picked methods are in build, so today scouts one new method. From EEG brain-connectivity work: the <em>phase slope index</em>, a lead-lag test that reads direction from how the phase of the cross-spectrum tilts with frequency and cannot be fooled by something that moves both series in the same week.</p>
+  <nav><a href="index.html">Queue</a><a href="archive.html">Archive</a><a href="board.html">Feedback board</a><a href="secret-sauce.html">Secret sauce</a><a href="https://github.com/jgridifier/research-lab/blob/main/docs/methods-scout/QUESTIONS.md">Research questions</a><a href="https://github.com/jgridifier/research-lab/tree/main/docs/methods-scout/runs/2026-11-24">Run folder</a></nav>
+</header>
+
+<div class="ticker">
+  <span><b>●</b> Q1.1: no funding pair shows a significant lead-lag after Holm (weekly fails, DVP, tri-party; monthly Form PF prime broker vs reverse repo, fails, DVP, tri-party). Smallest raw p: 0.070.</span>
+  <span><b>●</b> The usual Granger test flags two pairs (p 0.023, 0.042) and false-alarms 13.4% on matched independent weekly pairs; PSI 0.6%. Miss: PSI itself is over-cautious (size 0.6–4.1%) and failed parity with mne-connectivity.</span>
+  <span><b>●</b> Build: codyn step 2 failed its kill rule (share-space VR dropped); step 3 done (Numba null 0.076 s).</span>
+</div>
+
+<section class="tldr">
+<h2>The short version</h2>
+<ul>
+<li><b>Phase slope index</b> · neuroscience (EEG effective connectivity) · Q1 · <span class="verdict interesting">interesting</span> · home field: well established as a linear lead-lag measure, contested as causal direction · exotic-transfer. Top-pick avenue: Math (a small-sample-calibrated test).</li>
+<li><b>Picked methods.</b> codyn step 2 (share-space variance ratio) did not pass its pre-registered test and is dropped from the library; step 3 (speed) passed. See the <a href="index.html#production">research-to-production tracker</a>.</li>
+</ul>
+</section>
+
+<section id="phase-slope-index">
+<div class="card teal"><div class="card-top"><span class="tag teal">Method · Q1</span><span class="verdict interesting">interesting</span></div>
+<h3><a href="m/phase-slope-index.html">Phase slope index: research card →</a></h3>
+<p>On the card: the usual rolling correlation against the PSI strip chart on the same windows; the Granger comparison with simulated false-alarm rates; the home-field reproduction (planted delay and mixed sources); stability across halves; the walk-forward benchmark against OLS, ARDL and SARIMAX(X); the engineering test; and three secret-sauce avenues.</p>
+<figure><img src="fig/2026-11-24/psi_psi.png" alt="Rolling phase slope index for five funding pairs; almost every bar is grey"></figure>
+<p class="found-via"><strong>Found via</strong> · web search 2026-11-24 ~2:35 PM ET → <a href="https://arxiv.org/abs/0712.2352">Nolte et al. (2008), arXiv:0712.2352</a>; critique search ~2:40 PM ET → <a href="https://pubmed.ncbi.nlm.nih.gov/23006806/">Haufe et al. (2013)</a>. Novelty: exotic-transfer.</p>
+<p><b>Data.</b> Public aggregates on the box: NY Fed fails, OFR repo, DVP and tri-party volume (weekly 2018-05..2026-09, 2 missing weeks interpolated), SEC Form PF tab 8.27 (monthly 2013..2025). Descriptive; nothing private.</p>
+<div class="table-wrap"><table>
+<tr><th>Pair</th><th>n · segments</th><th>PSI z (Holm p)</th><th>Granger p (x→y, y→x)</th><th>First / second half z</th></tr>
+<tr><td>W1 fails · DVP</td><td>437 wk · 15</td><td>−0.61 (1.00)</td><td>0.34, 0.052</td><td>0.73 / −0.73</td></tr>
+<tr><td>W2 fails · tri-party</td><td>437 wk · 15</td><td>−0.09 (1.00)</td><td><b>0.023</b>, 0.14</td><td>−0.10 / 0.39</td></tr>
+<tr><td>W3 DVP · tri-party</td><td>437 wk · 15</td><td>−1.22 (1.00)</td><td>0.30, 0.98</td><td>−0.05 / −1.42</td></tr>
+<tr><td>M1 PF prime broker · fails</td><td>152 mo · 11</td><td>1.81 (0.49)</td><td>0.50, 0.36</td><td>−0.48 / 0.53</td></tr>
+<tr><td>M2 PF prime broker · reverse repo</td><td>155 mo · 11</td><td>−0.28 (1.00)</td><td>0.77, <b>0.042</b></td><td>−0.90 / −0.71</td></tr>
+<tr><td>M3 PF prime broker · DVP</td><td>91 mo · 6</td><td>0.91 (1.00)</td><td>1.0, 1.0</td><td>too few segments</td></tr>
+<tr><td>M4 PF prime broker · tri-party</td><td>136 mo · 10</td><td>0.01 (1.00)</td><td>0.44, 0.51</td><td><b>−3.11</b> / 0.35</td></tr>
+</table></div>
+<p class="small">Computed. Positive z: first series leads. Pre-registered (merged in PR #105 before the run): <a href="https://github.com/jgridifier/research-lab/blob/main/docs/methods-scout/runs/2026-11-24-build/PREREG.md">runs/2026-11-24-build/PREREG.md</a>. Code: <a href="https://github.com/jgridifier/research-lab/tree/main/docs/methods-scout/runs/2026-11-24/psi">runs/2026-11-24/psi</a>. Size on our sampling (1,000 matched-persistence pairs): PSI 0.6% / 3.1% (weekly fails × DVP, independent / shared shock), 1.2% / 4.1% (monthly prime broker × reverse repo); Granger either direction 13.4% / 12.1% and 6.1% / 7.0%.</p>
+<aside class="scout-respond" data-issue="106" data-slug="phase-slope-index">
+  <span class="scout-chip status-proposed">Proposed</span>
+  <a class="scout-respond-btn" href="https://github.com/jgridifier/research-lab/issues/106">Respond on GitHub</a>
+  <p class="scout-respond-hint">👍 go ahead · 👎 drop · or just comment what you think</p>
+</aside>
+</div>
+</section>
+
+<section>
+<div class="card"><div class="card-top"><span class="tag">Notes</span></div>
+<ul>
+<li><b>Question rotation.</b> Q1 and Q2 last ran on 11-22 and Q3 on 11-23; Q1 chosen because its lead/lag sub-question is what PSI answers and the data are on the box. Picked methods exist, so one new method today.</li>
+<li><b>Pre-registration.</b> Written at about 2:28 PM ET before any run of PSI on our data; merged before the runs. Deviations, labelled: ARDL uses lags 1..3 of reverse repo (lag 0 is unknown at forecast time; a first run silently fell back to OLS because of that, fixed before reporting); rolling-window significance uses a t reference on K − 1 degrees of freedom because windows hold only 3–4 segments; weekly data run to 2026-09-23 (the pre-registration said 2025-12-31). Failed or not met: parity with mne-connectivity (≤ 1e-8); PSI size band for independent pairs; the benchmark bar.</li>
+<li><b>Does not contradict 11-22.</b> The ICCF run found DVP volume following Form PF reverse repo in detrended log levels; today's pairs are log changes and did not include reverse repo × DVP.</li>
+<li><b>Watchlist</b> (not run): dPLI, wPLI / lagged coherence, time-reversed Granger surrogates, PSI vs conditional mutual information (2024). See <a href="https://github.com/jgridifier/research-lab/blob/main/docs/methods-scout/watchlist.md">watchlist.md</a>.</li>
+<li><b>Data Jared would need to supply.</b> Nothing private. Still missing for Q1: a refreshed CFTC TFF series (the lab copy has a gap from 2025-12-30) and Form PF publication dates.</li>
+</ul>
+</div>
+</section>
+</main></body></html>

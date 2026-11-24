@@ -898,6 +898,30 @@ Text vs numbers for many short programs (Q2.2, SYNTHETIC mocks): target program 
 
 ---
 
+## Phase slope index (PSI; EEG effective connectivity)
+
+Nolte, G., Ziehe, A., Nikulin, V. V., Schlögl, A., Krämer, N., Brismar, T. & Müller, K.-R. (2008), *Phys. Rev. Lett.* 100:234101, arXiv:0712.2352 (abstract and definition read); Haufe, S., Nikulin, V. V., Müller, K.-R. & Nolte, G. (2013), *NeuroImage* (abstract read). Aimed at Q1. Home-field verdict: well established as a linear lead-lag measure; contested as causal direction.
+
+**Found via.** Web search 2026-11-24 ~2:35 PM ET → [arXiv:0712.2352](https://arxiv.org/abs/0712.2352); critique search ~2:40 PM ET → [Haufe et al. 2013](https://pubmed.ncbi.nlm.nih.gov/23006806/).
+
+**What our run showed.** On public weekly and monthly funding series no pair has a significant PSI after Holm; the standard Granger test flags two pairs and false-alarms 13.4% on matched-persistence independent weekly fails × DVP pairs against PSI's 0.6%. PSI's jackknife test is itself over-cautious at 6–15 segments (size 0.6–4.1%). Vectorised PSI is 6.1× faster than a per-pair loop; parity with mne-connectivity was not reached. See [2026-11-24](2026-11-24.html).
+
+### 1 · Engineering (effort S)
+
+psi-fast: segment cross-spectra sums kept once, each leave-one-out PSI by subtraction (cost \(O(PKF)\) not \(O(PK^2F)\)); trace and match mne-connectivity's coherency estimator. Closest prior work: mne-connectivity `phase_slope_index` (v0.9.0, source read); no batched jackknife found. **Test:** Ψ within 1e-8 of mne on 20 pairs; 1,000 pairs in under 1 s on 4 vCPU.
+
+### 2 · Math (top pick, effort M)
+
+A small-sample-calibrated PSI test: delta-method variance from the complex-Wishart cross-spectrum (t reference, K − 1 df) or a time-reversal surrogate null. Closest prior work: Nolte et al. (2008) jackknife; Haufe et al. (2013) time-reversed surrogates for Granger measures; no small-K calibration study of the PSI jackknife found in the sources read. **Test:** size in [0.03, 0.07] at K = 11–15 on the matched-persistence simulations (independent and shared shock); power ≥ 0.80 for a planted 2-week (weekly) or 2-month (monthly) delay.
+
+**Why Math is the top pick.** Today's headline null is only as strong as the test, and the test's size is 0.6–4.1%.
+
+### 3 · New use on our data (effort M)
+
+Band-by-regime lead-lag map of the funding stack (Q1.3): three bands, pre-registered stress and calm regimes, calibrated SEs, Holm over pairs × bands × regimes; extend to CFTC TFF and FINRA margin once refreshed. Closest prior work: LKIF (11-20) and ICCF (11-22) on the same series; none found for PSI on market data. **Test:** at least one cell survives Holm and repeats its sign in a held-out half; null cells passing ≤ 5%.
+
+---
+
 ## Citations used (verified)
 
 - Donges, J. F., Schleussner, C.-F., Siegmund, J. F. & Donner, R. V. (2016). Event coincidence analysis for quantifying statistical interrelationships between event time series. *European Physical Journal Special Topics*, 225(3):471–487.
@@ -992,6 +1016,8 @@ Plans only. Nothing here is being built. Edition 3’s plans are grounded in the
 - Narasimhan, B. & Efron, B. (2020). deconvolveR: A G-Modeling Program for Deconvolution and Empirical Bayes Estimation. *Journal of Statistical Software*, 94(11):1–20.
 - Stephens, M. (2017). False discovery rates: a new deal. *Biostatistics*, 18(2):275–294.
 - Swihart, B. J., Caffo, B., James, B. D., Strand, M., Schwartz, B. S. & Punjabi, N. M. (2010). Lasagna plots: a saucy alternative to spaghetti plots. *Epidemiology*, 21(5):621–625.
+- Nolte, G., Ziehe, A., Nikulin, V. V., Schlögl, A., Krämer, N., Brismar, T. & Müller, K.-R. (2008). Robustly estimating the flow direction of information in complex physical systems. *Physical Review Letters*, 100:234101.
+- Haufe, S., Nikulin, V. V., Müller, K.-R. & Nolte, G. (2013). A critical assessment of connectivity measures for EEG data: a simulation study. *NeuroImage* (2013), PubMed 23006806.
 - Wang, W. & Stephens, M. (2021). Empirical Bayes Matrix Factorization. *Journal of Machine Learning Research*, 22(120):1–40.
 - Willwerscheid, J., Carbonetto, P. & Stephens, M. (2025). ebnm: An R Package for Solving the Empirical Bayes Normal Means Problem Using a Variety of Prior Families. *Journal of Statistical Software*, 114(3):1–33.
 - Coco, M. I. & Dale, R. (2014). Cross-recurrence quantification analysis of categorical and continuous time series: an R package. *Frontiers in Psychology*, 5:510.

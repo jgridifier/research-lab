@@ -1,0 +1,10 @@
+{
+ "numba_null_sec": 0.07563531000050716,
+ "numpy_chunked_null_sec": 0.7587239940039581,
+ "port_original_null_sec": 4.56,
+ "speedup_vs_numpy_chunked": 10.031346390976259,
+ "speedup_vs_port_original": 60.28930138541672,
+ "max_abs_diff": 2.6645352591003757e-14,
+ "threads": 1,
+ "rust_decision": "Rust not built: best Python path (Numba) is 60x faster than the NumPy port; bar for keeping Rust is >=5x over the best Python path, and Numba already puts the full null at 0.076 s"
+}

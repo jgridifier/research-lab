@@ -1,0 +1,228 @@
+{
+ "issue": 106,
+ "name": "Phase slope index (PSI)",
+ "title": "Does any funding series lead another, without being fooled by shared shocks?",
+ "field": "neuroscience (EEG effective connectivity)",
+ "what": "Reads lead-lag direction from how the cross-spectrum's phase changes with frequency; blind to anything that hits both series at once.",
+ "verdict": "Interesting",
+ "grade": "well established as a linear lead-lag measure; contested as proof of causal direction",
+ "pick_eff": "M",
+ "pick_line": "Replace the over-cautious segment jackknife with a small-sample-calibrated test, so short funding series get honest sizes.",
+ "data": "Public aggregates: NY Fed fails, OFR repo, DVP and tri-party volume (weekly 2018-05..2026-09); SEC Form PF 8.27 monthly (2013..2025); descriptive",
+ "one": "No funding pair shows a significant lead-lag; Granger flags two pairs and false-alarms 13% on our weekly data, PSI 0.6%.",
+ "picture": {
+  "type": "images",
+  "la": "Usual picture: rolling correlation of the same windows",
+  "a": "../fig/2026-11-24/psi_std.png",
+  "lb": "PSI: who leads, by window (colour only if significant)",
+  "b": "../fig/2026-11-24/psi_psi.png"
+ },
+ "findings": [
+  {
+   "h": "No pair shows a significant lead-lag after Holm.",
+   "t": "Seven pairs (3 weekly, 4 monthly). Smallest raw p: Form PF prime broker and fails, z = 1.81 (p = 0.070, Holm 0.49; prime broker leads, 11 segments). Weekly fails and DVP, z = -0.61; fails and tri-party, z = -0.09; DVP and tri-party, z = -1.22; prime broker and reverse repo, z = -0.28 (computed).",
+   "note": "The size study below shows PSI is too cautious at these sample sizes, so a null here is weak evidence, not proof of no lead-lag. Pre-registered rule: observed z is descriptive only because size missed the band for independent pairs.",
+   "chart": {
+    "type": "hbars",
+    "title": "|z| of PSI, by pair (|z| = 2 is the paper's rule)",
+    "max": 2.5,
+    "rows": [
+     [
+      "PF prime broker · fails (mo)",
+      1.81,
+      "teal",
+      "1.81"
+     ],
+     [
+      "DVP · tri-party (wk)",
+      1.22,
+      "muted",
+      "1.22"
+     ],
+     [
+      "PF prime broker · DVP (mo, 6 segments)",
+      0.91,
+      "muted",
+      "0.91"
+     ],
+     [
+      "fails · DVP (wk)",
+      0.61,
+      "muted",
+      "0.61"
+     ],
+     [
+      "PF prime broker · reverse repo (mo)",
+      0.28,
+      "muted",
+      "0.28"
+     ],
+     [
+      "fails · tri-party (wk)",
+      0.09,
+      "muted",
+      "0.09"
+     ]
+    ]
+   }
+  },
+  {
+   "h": "The usual Granger test flags two pairs that PSI does not, and it false-alarms more.",
+   "t": "VAR with AIC lag: fails to tri-party p = 0.023 and reverse repo to prime broker p = 0.042 (unadjusted), where PSI gives z = -0.09 and -0.28. On 1,000 matched-persistence independent pairs shaped like weekly fails and DVP, Granger rejects in either direction 13.4% of the time (6.6% in one stated direction); PSI rejects 0.6%. With a shared same-week shock added, Granger 12.1% and PSI 3.1%. Monthly prime broker and reverse repo: Granger 6.1% (independent), 7.0% (shared shock); PSI 1.2% and 4.1% (computed).",
+   "note": "Granger's extra rejections are mostly the two-direction test counted at 5% each. PSI's size is below the pre-stated band [3%, 8%] for independent pairs (z standard deviation 0.71): conservative, so low power.",
+   "chart": {
+    "type": "hbars",
+    "title": "False-alarm rate, weekly fails and DVP, independent pairs",
+    "max": 0.15,
+    "rows": [
+     [
+      "Granger, either direction",
+      0.134,
+      "amber",
+      "13.4%"
+     ],
+     [
+      "Granger, one stated direction",
+      0.066,
+      "amber",
+      "6.6%"
+     ],
+     [
+      "PSI, |z| > 2",
+      0.006,
+      "teal",
+      "0.6%"
+     ]
+    ]
+   }
+  },
+  {
+   "h": "Home-field check: PSI finds the planted delay and ignores mixed sources.",
+   "t": "SYNTHETIC, 200 runs of 5,000 samples. Coupled with a 2-sample delay: PSI direction correct and |z| > 2 in 100%. Random mixture of two independent sources: PSI false significance 3.0%; Granger (AIC lag up to 8) either direction 10.0%, one direction 6.0% (computed).",
+   "note": "The paper's 'Granger fails badly on mixtures' is milder in our setup (10%, not near 100%). Not every number in the paper's simulations was reproduced; only this class of case.",
+   "chart": {
+    "type": "hbars",
+    "title": "Mixture of independent sources: false significance",
+    "max": 0.12,
+    "rows": [
+     [
+      "Granger, either direction",
+      0.1,
+      "amber",
+      "10.0%"
+     ],
+     [
+      "Granger, one direction",
+      0.06,
+      "amber",
+      "6.0%"
+     ],
+     [
+      "PSI",
+      0.03,
+      "teal",
+      "3.0%"
+     ]
+    ]
+   }
+  },
+  {
+   "h": "Direction does not hold across halves or windows.",
+   "t": "Prime broker and tri-party volume: z = -3.11 in the first half (2014-09..2020), +0.35 in the second (5 segments each, so the first-half z is itself unreliable). Rolling windows hold only 3 weekly or 4 monthly segments: nearly every bar is grey, and the few coloured ones are not repeated in the next window.",
+   "note": "Windows are too short for a lead-lag map by band. The 2020-02..05 stress window falls inside the first rolling window and cannot be isolated at this window size.",
+   "chart": {
+    "type": "hbars",
+    "title": "|z|, PF prime broker · tri-party volume, by half",
+    "max": 3.5,
+    "rows": [
+     [
+      "First half (5 segments)",
+      3.11,
+      "amber",
+      "3.11, tri-party leads"
+     ],
+     [
+      "Second half (5 segments)",
+      0.35,
+      "muted",
+      "0.35"
+     ]
+    ]
+   }
+  },
+  {
+   "h": "As a forecasting aid it does not beat OLS, ARDL or SARIMAX(X).",
+   "miss": true,
+   "t": "Walk-forward one-month change in log prime-broker borrowing, 84 months from 2019-01: zero-change RMSE 0.0571; OLS on lagged reverse repo 0.0558; ARDL (BIC) 0.0558; SARIMAX(1,0,1) 0.0584; with reverse repo 0.0574; PSI-gated 0.0584 (the gate never opened). Gated vs best (OLS): -4.8% (worse), Diebold-Mariano p = 0.21.",
+   "note": "Pre-stated bar (>= 3% lower RMSE, DM p < 0.10) failed. Forecasting was low priority.",
+   "chart": {
+    "type": "hbars",
+    "title": "Walk-forward RMSE, change in log prime-broker borrowing",
+    "max": 0.06,
+    "rows": [
+     [
+      "OLS on lagged reverse repo",
+      0.0558,
+      "muted",
+      "0.0558"
+     ],
+     [
+      "ARDL (BIC)",
+      0.0558,
+      "muted",
+      "0.0558"
+     ],
+     [
+      "Zero change",
+      0.0571,
+      "muted",
+      "0.0571"
+     ],
+     [
+      "SARIMAX + reverse repo",
+      0.0574,
+      "muted",
+      "0.0574"
+     ],
+     [
+      "SARIMAX(1,0,1)",
+      0.0584,
+      "muted",
+      "0.0584"
+     ],
+     [
+      "PSI-gated",
+      0.0584,
+      "teal",
+      "0.0584"
+     ]
+    ]
+   }
+  },
+  {
+   "h": "Engineering: a vectorised PSI is 6x faster; parity with mne-connectivity was missed.",
+   "miss": true,
+   "t": "200 channel pairs x 10,000 samples, 77 segments, with the jackknife: loop 1.26 s, vectorised 0.21 s (6.1x); z identical to 1e-15. Against mne-connectivity 0.9.0 phase_slope_index (fourier mode) our PSI differs by up to 0.27 on values near 1.5: its coherency differs from a plain-FFT coherency in the second digit under every window we tried, and we did not trace why.",
+   "note": "Pre-registered parity bar (<= 1e-8) missed. Our own checks pass: PSI(x,y) + PSI(y,x) = 0.0 and rescaling the series changes PSI by 2e-16 (computed); the toy and the simulation recover the planted direction. mne is therefore not used as the oracle.",
+   "chart": {
+    "type": "hbars",
+    "title": "200 pairs x 10,000 samples, with jackknife (seconds)",
+    "max": 1.4,
+    "rows": [
+     [
+      "Per-pair loop",
+      1.265,
+      "muted",
+      "1.26 s"
+     ],
+     [
+      "Vectorised",
+      0.207,
+      "teal",
+      "0.21 s (6.1x)"
+     ]
+    ]
+   }
+  }
+ ]
+}
